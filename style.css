@@ -499,3 +499,9 @@
     display: block;
     text-align: center;
   }
+
+.input-erro-destaque {
+  border: 2px solid #e74c3c !important;
+  background-color: #fdf2f2 !important;
+  transition: all 0.3s ease;
+}
