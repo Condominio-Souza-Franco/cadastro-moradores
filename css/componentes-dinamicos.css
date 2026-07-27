@@ -26,19 +26,32 @@
   flex-grow: 1;
 }
 
-/* Garante que Carros e Motos fiquem perfeitamente alinhados na mesma linha */
-.dynamic-group .row.g-2.dynamic-row-veiculo {
+/* Container de Carros e Motos - Respiro e alinhamento */
+.dynamic-group .dynamic-row-veiculo {
   display: flex !important;
   flex-wrap: nowrap !important;
-  flex-grow: 1;
+  gap: 15px !important; /* ESSE É O RESPIRO ENTRE OS CAMPOS */
   align-items: flex-end;
-  margin: 0 !important;
+  flex-grow: 1;
+  width: 100%;
 }
 
+/* Proporções: 50% para Marca/Modelo e 25% para os outros */
+.campo-50 {
+  flex: 2; /* Representa 50% do espaço */
+}
+
+.campo-25 {
+  flex: 1; /* Representa 25% do espaço */
+}
+
+/* Garante que o input preencha o espaço dele certinho */
 .dynamic-row input, 
-.dynamic-row select {
+.dynamic-row select,
+.dynamic-row-veiculo input {
   margin: 0;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .btn-remove-x {
