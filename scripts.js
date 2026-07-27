@@ -542,8 +542,18 @@ function enviar() {
     { id: "tipoResidente", nome: "Identificação do imóvel" },
     { id: "moradorNome", nome: "Nome" },
     { id: "moradorCpf", nome: "CPF" },
+    { id: "moradorRg", nome: "RG" },
+    { id: "moradorOrgaoEmissor", nome: "Órgão emissor" },
     { id: "moradorNasc", nome: "Data de nascimento" },
     { id: "moradorCelular", nome: "Celular" },
+    { id: "moradorTel", nome: "Telefone fixo" },
+    { id: "moradorEmail", nome: "E-mail" },
+    { id: "vagaSituacao", nome: "Situação da vaga" },
+    { id: "vagaAptoRelacionado", nome: "Apartamento envolvido (Vaga)" },
+    { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
+    { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
+    { id: "inqVigencia", nome: "Vigência do contrato" },
+    { id: "arquivoContrato", nome: "Contrato de locação" },
     { id: "declaracao", nome: "Declaro", tipo: "checkbox" }
   ];
 
@@ -551,10 +561,20 @@ function enviar() {
     const el = document.getElementById(regra.id);
     if (el && el.offsetParent !== null) { // Valida apenas se o elemento estiver visível na tela
       let estaVazio = false;
-      if (regra.tipo === "checkbox") {
-        estaVazio = !el.checked;
+      
+      // Regra especial para a Vaga: Se preencheu a situação, o apto relacionado é obrigatório
+      if (regra.id === "vagaAptoRelacionado") {
+        const situacaoEl = document.getElementById("vagaSituacao");
+        const temSituacao = situacaoEl && situacaoEl.value.trim() !== "";
+        if (temSituacao && (!el.value || el.value.trim() === "")) {
+          estaVazio = true;
+        }
       } else {
-        estaVazio = !el.value || el.value.trim() === "";
+        if (regra.tipo === "checkbox") {
+          estaVazio = !el.checked;
+        } else {
+          estaVazio = !el.value || el.value.trim() === "";
+        }
       }
 
       if (estaVazio) {
@@ -578,7 +598,6 @@ function enviar() {
     const tel = telEl ? telEl.value.trim() : '';
     const chave = chaveEl ? chaveEl.value : '';
 
-    // Se preencheu qualquer campo do prestador, TODOS se tornam obrigatórios
     const preencheuAlgum = (nome !== "" || servico !== "" || tel !== "" || chave !== "");
     const preencheuTodos = (nome !== "" && servico !== "" && tel !== "" && chave !== "");
 
@@ -591,15 +610,33 @@ function enviar() {
   });
 
   // ==========================================
-  // 3. ORDENAÇÃO E EXIBIÇÃO DA MENSAGEM DE ALERTA
+  // 3. ORDENAÇÃO SEGUINDO A ORDEM EXATA DO FORMULÁRIO
   // ==========================================
   const ordemDesejada = [
     "Apartamento",
     "Identificação do imóvel",
     "Nome",
-    "Data de nascimento",
     "CPF",
+    "RG",
+    "Órgão emissor",
+    "Data de nascimento",
     "Celular",
+    "Telefone fixo",
+    "E-mail",
+    "Contato de emergência",
+    "Proprietário / Administradora",
+    "Contato do proprietário",
+    "Vigência do contrato",
+    "Contrato de locação",
+    "Situação da vaga",
+    "Apartamento envolvido",
+    "Ocupante",
+    "Carro",
+    "Moto",
+    "Bike",
+    "Pet",
+    "Prestador",
+    "Observações",
     "Declaro"
   ];
 
