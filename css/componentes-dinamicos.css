@@ -21,14 +21,20 @@
   box-sizing: border-box;
 }
 
-/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Pets, Prestadores): 2 campos por linha */
-.dynamic-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  align-items: flex-end;
+/* Container interno genérico que apenas ocupa o espaço flexível */
+.dynamic-group .dynamic-row {
+  display: flex;
   flex-grow: 1;
   width: 100%;
+  box-sizing: border-box;
+}
+
+/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Pets, Prestadores): 2 campos por linha */
+.dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 15px !important;
+  align-items: flex-end !important;
 }
 
 .dynamic-row input, 
@@ -38,34 +44,28 @@
   box-sizing: border-box;
 }
 
-/* 2. LINHA DE VEÍCULOS (Carros, Motos, Bicicletas): todos na mesma linha ocupando toda a largura */
-.dynamic-group .dynamic-row-veiculo {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 15px;
-  align-items: flex-end;
-  flex-grow: 1;
-  width: 100%;
-  box-sizing: border-box;
+/* 2. LINHA DE VEÍCULOS (Carros, Motos, Bicicletas): Usa o grid 2fr 1fr 1fr de ponta a ponta */
+.dynamic-row-veiculo {
+  display: grid !important;
+  grid-template-columns: 2fr 1fr 1fr !important;
+  gap: 15px !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* Proporções exatas no desktop: 50% (marca/modelo) e 25% (cor e placa) */
-.dynamic-row-veiculo .campo-50 {
-  flex: 2;
-  min-width: 0;
-}
-
+.dynamic-row-veiculo .campo-50,
 .dynamic-row-veiculo .campo-25 {
-  flex: 1;
-  min-width: 0;
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .dynamic-row-veiculo input, 
 .dynamic-row-veiculo select {
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* BOTÕES DE AÇÃO */
@@ -105,25 +105,22 @@
   background-color: #d0e7f9;
 }
 
-/* RESPONSIVO PARA CELULAR (Telas abaixo de 600px) */
+/* RESPONSIVO PARA CELULAR (Abaixo de 600px): Marca/Modelo em cima, Cor e Placa embaixo */
 @media (max-width: 600px) {
-  /* Veículos quebram em grade: Marca/Modelo em cima (largura total), Cor e Placa embaixo lado a lado */
-  .dynamic-group .dynamic-row-veiculo {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+  .dynamic-row-veiculo {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 
   .dynamic-row-veiculo .campo-50 {
-    grid-column: span 2;
+    grid-column: span 2 !important;
   }
 
   .dynamic-row-veiculo .campo-25 {
-    grid-column: span 1;
+    grid-column: span 1 !important;
   }
 
-  /* Demais seções também empilham em 1 coluna se necessário no mobile */
-  .dynamic-row {
-    grid-template-columns: 1fr;
+  .dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
+    grid-template-columns: 1fr !important;
   }
 }
