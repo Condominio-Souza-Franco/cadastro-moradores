@@ -244,8 +244,7 @@ function preencherOcupantes(texto) {
 
 function addCarro(v = {}) {
   adicionarItemDinamico('containerCarros', 'item-carro', `
-    <div><span class="input-label">Marca</span><input type="text" placeholder="Toyota" class="car-marca" value="${v.marca || ''}"></div>
-    <div><span class="input-label">Modelo</span><input type="text" placeholder="Corolla" class="car-modelo" value="${v.modelo || ''}"></div>
+    <div><span class="input-label">Marca e modelo</span><input type="text" placeholder="Toyota Corolla" class="car-marca-modelo" value="${v.marcaModelo || ''}"></div>
     <div><span class="input-label">Cor</span><input type="text" placeholder="Prata" class="car-cor" value="${v.cor || ''}"></div>
     <div><span class="input-label">Placa</span><input type="text" placeholder="SJP-4K82" class="car-placa" value="${v.placa || ''}"></div>
   `);
@@ -258,14 +257,13 @@ function preencherCarros(texto) {
   if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    addCarro({ marca: p[0], modelo: p[1], cor: p[2], placa: p[3] });
+    addCarro({ marcaModelo: p[0], cor: p[1], placa: p[2] });
   });
 }
 
 function addMoto(v = {}) {
   adicionarItemDinamico('containerMotos', 'item-moto', `
-    <div><span class="input-label">Marca</span><input type="text" placeholder="Honda" class="moto-marca" value="${v.marca || ''}"></div>
-    <div><span class="input-label">Modelo</span><input type="text" placeholder="CG 160 Titan" class="moto-modelo" value="${v.modelo || ''}"></div>
+    <div><span class="input-label">Marca e modelo</span><input type="text" placeholder="Honda CG 160 Titan" class="moto-marca-modelo" value="${v.marcaModelo || ''}"></div>
     <div><span class="input-label">Cor</span><input type="text" placeholder="Azul" class="moto-cor" value="${v.cor || ''}"></div>
     <div><span class="input-label">Placa</span><input type="text" placeholder="QMV-7H31" class="moto-placa" value="${v.placa || ''}"></div>
   `);
@@ -278,7 +276,7 @@ function preencherMotos(texto) {
   if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    addMoto({ marca: p[0], modelo: p[1], cor: p[2], placa: p[3] });
+    addMoto({ marcaModelo: p[0], cor: p[1], placa: p[2] });
   });
 }
 
