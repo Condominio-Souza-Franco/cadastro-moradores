@@ -10,20 +10,14 @@ function enviar() {
     if (el && el.offsetParent !== null) { 
       let estaVazio = false;
       
-      if (regra.id === "vagaSituacao") {
-        const situacaoVal = el.value ? el.value.trim() : "";
+      if (regra.id === "vagaSituacao" || regra.id === "vagaAptoRelacionado") {
+        const situacaoEl = document.getElementById("vagaSituacao");
         const aptoRelEl = document.getElementById("vagaAptoRelacionado");
+        
+        const situacaoVal = situacaoEl && situacaoEl.value ? situacaoEl.value.trim() : "";
         const aptoRelVal = aptoRelEl && aptoRelEl.value ? aptoRelEl.value.trim() : "";
         
-        // Se preencheu a situação mas esqueceu o apto, ou vice-versa (ambos são obrigatórios se usar vaga)
-        if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
-          estaVazio = true;
-        }
-      } else if (regra.id === "vagaAptoRelacionado") {
-        const aptoRelVal = el.value ? el.value.trim() : "";
-        const situacaoEl = document.getElementById("vagaSituacao");
-        const situacaoVal = situacaoEl && situacaoEl.value ? situacaoEl.value.trim() : "";
-        
+        // Se preencheu um, o outro se torna obrigatório
         if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
           estaVazio = true;
         }
@@ -36,10 +30,10 @@ function enviar() {
       }
 
       if (estaVazio) {
-        // Evita duplicar o alerta caso ambos os campos da vaga caiam na regra
         let nomeRegra = regra.nome;
+        // Evita duplicar se ambos os campos da vaga falharem
         if (regra.id.startsWith("vaga")) {
-          nomeRegra = "Situação da vaga / Apartamento envolvido";
+          nomeRegra = "Apartamento envolvido (Vaga de garagem)";
         }
         if (!camposFaltantes.includes(nomeRegra)) {
           camposFaltantes.push(nomeRegra);
@@ -71,9 +65,10 @@ function enviar() {
     }
   });
 
+  // Ordenação exata baseada no array ORDEM_DESEJADA definido em config-regras.js
   camposFaltantes.sort((a, b) => {
-    let indexA = ORDEM_DESEJADA.findIndex(item => a.includes(item) || item.includes(a));
-    let indexB = ORDEM_DESEJADA.findIndex(item => b.includes(item) || item.includes(b));
+    let indexA = ORDEM_DESEJADA.findIndex(item => a === item || a.includes(item));
+    let indexB = ORDEM_DESEJADA.findIndex(item => b === item || b.includes(item));
 
     if (a.toLowerCase().includes("prestador")) {
       indexA = ORDEM_DESEJADA.indexOf("Prestador");
@@ -93,7 +88,6 @@ function enviar() {
     return;
   }
 
-  // Restante do fluxo de envio...
   const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
   const textoAtual = btnSubmit ? btnSubmit.innerText : "";
   const eAtualizacao = textoAtual.toLowerCase().includes("atualizar");
