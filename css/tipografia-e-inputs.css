@@ -1,0 +1,76 @@
+/* LABELS, INPUTS GERAIS E ESTADOS */
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 8px; 
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+  width: 100% !important;
+  height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-sizing: border-box !important;
+  font-size: 0.95rem;
+  background-color: #fff;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input:disabled,
+button:disabled {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  border-color: #ced4da !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.input-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: block;
+  text-align: left;
+}
+
+.input-label-consulta {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: block;
+  text-align: center;
+}
+
+.input-erro-destaque {
+  border: 2px solid #e74c3c !important;
+  background-color: #fdf2f2 !important;
+  transition: all 0.3s ease;
+}
+
+#nascConsulta {
+  text-align: center;
+}
