@@ -103,7 +103,7 @@ function enviar() {
     let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
 
     if (preencheuAlgum && !preencheuTodos) {
-      let label = `Carros ${index + 1} (Preencha marca, modelo, cor e placa)`;
+      let label = `Carros ${index + 1} (Preencha Marca e modelo, Cor e Placa)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
     }
@@ -117,7 +117,7 @@ function enviar() {
     let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
 
     if (preencheuAlgum && !preencheuTodos) {
-      let label = `Motos ${index + 1} (Preencha marca, modelo, cor e placa)`;
+      let label = `Motos ${index + 1} (Preencha Marca e modelo, Cor e Placa)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
     }
