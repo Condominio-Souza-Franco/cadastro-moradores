@@ -549,12 +549,12 @@ function enviar() {
     { id: "moradorTel", nome: "Telefone fixo" },
     { id: "moradorEmail", nome: "E-mail" },
     { id: "vagaSituacao", nome: "Situação da vaga" },
-    { id: "vagaAptoRelacionado", nome: "Apartamento envolvido (Vaga)" },
+    { id: "vagaAptoRelacionado", nome: "Apartamento envolvido (Vaga de garagem)" },
     { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
     { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
     { id: "inqVigencia", nome: "Vigência do contrato" },
     { id: "arquivoContrato", nome: "Contrato de locação" },
-    { id: "declaracao", nome: "Declaro", tipo: "checkbox" }
+    { id: "declaracao", nome: "Declaro que as informações prestadas são verdadeiras", tipo: "checkbox" }
   ];
 
   regrasObrigatorias.forEach(regra => {
@@ -612,37 +612,14 @@ function enviar() {
   // ==========================================
   // 3. ORDENAÇÃO SEGUINDO A ORDEM EXATA DO FORMULÁRIO
   // ==========================================
-  const ordemDesejada = [
-    "Apartamento",
-    "Identificação do imóvel",
-    "Nome",
-    "CPF",
-    "RG",
-    "Órgão emissor",
-    "Data de nascimento",
-    "Celular",
-    "Telefone fixo",
-    "E-mail",
-    "Contato de emergência",
-    "Proprietário / Administradora",
-    "Contato do proprietário",
-    "Vigência do contrato",
-    "Contrato de locação",
-    "Situação da vaga",
-    "Apartamento envolvido",
-    "Ocupante",
-    "Carro",
-    "Moto",
-    "Bike",
-    "Pet",
-    "Prestador",
-    "Observações",
-    "Declaro"
-  ];
+  const ordemDesejada = regrasObrigatorias.map(r => r.nome).concat(["Prestador"]);
 
   camposFaltantes.sort((a, b) => {
-    let indexA = ordemDesejada.findIndex(item => a.toLowerCase().includes(item.toLowerCase()));
-    let indexB = ordemDesejada.findIndex(item => b.toLowerCase().includes(item.toLowerCase()));
+    let indexA = ordemDesejada.findIndex(item => a.includes(item) || item.includes(a));
+    let indexB = ordemDesejada.findIndex(item => b.includes(item) || item.includes(b));
+
+    if (a.toLowerCase().includes("prestador")) indexA = 90;
+    if (b.toLowerCase().includes("prestador")) indexB = 90;
 
     if (indexA === -1) indexA = 99;
     if (indexB === -1) indexB = 99;
