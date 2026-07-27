@@ -45,6 +45,12 @@ const ORDEM_DESEJADA = [
   "Contato do proprietário / imobiliária",
   "Vigência do contrato",
   "Contrato de locação",
+  "Caso de emergência",
+  "Demais ocupantes",
+  "Carros",
+  "Motos",
+  "Bicletas",
+  "Pets",
   "Prestador",
   "Declaro que as informações prestadas são verdadeiras"
 ];
