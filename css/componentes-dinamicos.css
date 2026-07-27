@@ -17,41 +17,36 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%; /* Garante que o bloco use toda a largura do container pai */
-  box-sizing: border-box;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.dynamic-row {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 10px;
-  flex-grow: 1;
-}
-
-/* Container de Carros e Motos - Respiro e alinhamento */
-/* Faz o container interno dos campos expandir ocupando todo o espaço até o botão X */
+/* Força a linha dos veículos a ocupar todo o espaço interno do card */
 .dynamic-group .dynamic-row-veiculo {
   display: flex !important;
+  flex-direction: row !important;
   flex-wrap: nowrap !important;
   gap: 15px !important;
-  align-items: flex-end;
+  align-items: flex-end !important;
   flex-grow: 1 !important;
   width: 100% !important;
 }
 
-/* Proporções: 50% para Marca/Modelo e 25% para os outros */
-.campo-50 {
+/* Proporções exatas: 50% (marca/modelo) e 25% (cor e placa) */
+.dynamic-row-veiculo .campo-50 {
   flex: 2 !important;
+  min-width: 0 !important;
 }
 
-.campo-25 {
+.dynamic-row-veiculo .campo-25 {
   flex: 1 !important;
+  min-width: 0 !important;
 }
 
-/* Garante que os inputs preencham 100% da largura de cada coluna proporcional */
+/* Garante que todos os inputs dentro dessa linha estiquem 100% */
 .dynamic-row-veiculo input, 
 .dynamic-row-veiculo select {
-  margin: 0;
+  margin: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
