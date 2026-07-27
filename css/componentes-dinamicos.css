@@ -17,6 +17,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%; /* Garante que o bloco use toda a largura do container pai */
+  box-sizing: border-box;
 }
 
 .dynamic-row {
@@ -27,28 +29,28 @@
 }
 
 /* Container de Carros e Motos - Respiro e alinhamento */
+/* Faz o container interno dos campos expandir ocupando todo o espaço até o botão X */
 .dynamic-group .dynamic-row-veiculo {
   display: flex !important;
   flex-wrap: nowrap !important;
-  gap: 15px !important; /* ESSE É O RESPIRO ENTRE OS CAMPOS */
+  gap: 15px !important;
   align-items: flex-end;
-  flex-grow: 1;
-  width: 100%;
+  flex-grow: 1 !important;
+  width: 100% !important;
 }
 
 /* Proporções: 50% para Marca/Modelo e 25% para os outros */
 .campo-50 {
-  flex: 2; /* Representa 50% do espaço */
+  flex: 2 !important;
 }
 
 .campo-25 {
-  flex: 1; /* Representa 25% do espaço */
+  flex: 1 !important;
 }
 
-/* Garante que o input preencha o espaço dele certinho */
-.dynamic-row input, 
-.dynamic-row select,
-.dynamic-row-veiculo input {
+/* Garante que os inputs preencham 100% da largura de cada coluna proporcional */
+.dynamic-row-veiculo input, 
+.dynamic-row-veiculo select {
   margin: 0;
   width: 100% !important;
   box-sizing: border-box !important;
