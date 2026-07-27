@@ -1,3 +1,5 @@
+// CONSULTA DE CPF, VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS, ORDENAÇÃO DO ALERT E REGRA DA VAGA
+
 function consultarPorCpf() {
   limpaMensagemStatus();
   const inputCpf = document.getElementById("cpfConsulta");
