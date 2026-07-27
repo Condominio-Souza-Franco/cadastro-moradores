@@ -21,7 +21,32 @@
   box-sizing: border-box;
 }
 
-/* Linha dos veículos ocupando todo o espaço interno do card de forma fluida */
+/* Linha padrão para as demais seções dinâmicas (Emergência, Ocupantes, Bicicletas, Pets, Prestadores) */
+.dynamic-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 15px;
+  align-items: flex-end;
+  flex-grow: 1;
+  width: 100%;
+}
+
+/* Garante que os campos dentro das seções padrão dividam o espaço de forma igual e fluida */
+.dynamic-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Garante que os inputs preencham 100% da largura das suas colunas nas seções padrão */
+.dynamic-row input, 
+.dynamic-row select {
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Linha específica dos veículos (Carros e Motos) ocupando todo o espaço interno do card */
 .dynamic-group .dynamic-row-veiculo {
   display: flex;
   flex-direction: row;
@@ -32,7 +57,7 @@
   width: 100%;
 }
 
-/* Proporções exatas: 50% (marca/modelo) e 25% (cor e placa) */
+/* Proporções exatas para veículos: 50% (marca/modelo) e 25% (cor e placa) */
 .dynamic-row-veiculo .campo-50 {
   flex: 2;
   min-width: 0;
@@ -43,7 +68,7 @@
   min-width: 0;
 }
 
-/* Garante que todos os inputs dentro dessa linha estiquem 100% de suas colunas */
+/* Garante que todos os inputs dentro da linha de veículos estiquem 100% de suas colunas */
 .dynamic-row-veiculo input, 
 .dynamic-row-veiculo select {
   margin: 0;
