@@ -590,8 +590,12 @@ function enviar() {
     }
   });
 
+  // ==========================================
+  // 3. ORDENAÇÃO E EXIBIÇÃO DA MENSAGEM DE ALERTA
+  // ==========================================
   const ordemDesejada = [
     "Apartamento",
+    "Identificação do imóvel",
     "Nome",
     "Data de nascimento",
     "CPF",
