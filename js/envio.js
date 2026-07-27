@@ -1,8 +1,25 @@
+document.addEventListener('input', function(e) {
+  if (e.target.classList.contains('input-erro-destaque')) {
+    e.target.classList.remove('input-erro-destaque');
+  }
+});
+
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('input-erro-destaque')) {
+    e.target.classList.remove('input-erro-destaque');
+  }
+});
+
 function enviar() {
   limpaMensagemStatus();
   
-  let camposFaltantes = [];
+  // Limpa destaques anteriores
+  document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
 
+  let camposFaltantes = [];
+  let elementosParaDestacar = [];
+
+  // 1. Regras Padrão
   REGRAS_OBRIGATORIAS.forEach(regra => {
     const el = document.getElementById(regra.id);
     if (el && el.offsetParent !== null) { 
@@ -16,10 +33,11 @@ function enviar() {
         const situacaoVal = situacaoEl && situacaoEl.value ? situacaoEl.value.trim() : "";
         const aptoRelVal = aptoRelEl && aptoRelEl.value ? aptoRelEl.value.trim() : "";
         
-        // Se preencheu um, o outro se torna obrigatório
         if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
           estaVazio = true;
           nomeRegraPersonalizado = "Vaga alugada: preencha todos os campos";
+          if (situacaoVal === "" && situacaoEl) elementosParaDestacar.push(situacaoEl);
+          if (aptoRelVal === "" && aptoRelEl) elementosParaDestacar.push(aptoRelEl);
         }
       } else {
         if (regra.tipo === "checkbox") {
@@ -34,12 +52,103 @@ function enviar() {
         if (!camposFaltantes.includes(nomeRegra)) {
           camposFaltantes.push(nomeRegra);
         }
+        if (regra.id !== "vagaSituacao" && regra.id !== "vagaAptoRelacionado") {
+          elementosParaDestacar.push(el);
+        }
       }
     }
   });
 
+  // 2. Casos de Emergência (Se nome preenchido, telefone obrigatório)
+  const emergencias = document.querySelectorAll('#containerEmergencia .item-emergencia');
+  emergencias.forEach((item, index) => {
+    const nomeEl = item.querySelector('.em-nome');
+    const telEl = item.querySelector('.em-tel');
+    const nome = nomeEl ? nomeEl.value.trim() : '';
+    const tel = telEl ? telEl.value.trim() : '';
+
+    if (nome !== "" && tel === "") {
+      let label = `Caso de emergência ${index + 1}: telefone/celular obrigatório`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      if (telEl) elementosParaDestacar.push(telEl);
+    }
+  });
+
+  // 3. Demais Ocupantes (Se nome preenchido, telefone obrigatório)
+  const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
+  ocupantes.forEach((item, index) => {
+    const nomeEl = item.querySelector('.oc-nome');
+    const telEl = item.querySelector('.oc-tel');
+    const nome = nomeEl ? nomeEl.value.trim() : '';
+    const tel = telEl ? telEl.value.trim() : '';
+
+    if (nome !== "" && tel === "") {
+      let label = `Demais ocupantes ${index + 1}: telefone/celular obrigatório`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      if (telEl) elementosParaDestacar.push(telEl);
+    }
+  });
+
+  // 4. Carros (Todos obrigatórios se algum preenchido)
+  const carros = document.querySelectorAll('#containerCarros .item-carro');
+  carros.forEach((item, index) => {
+    const inputs = item.querySelectorAll('input');
+    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
+    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && !preencheuTodos) {
+      let label = `Carros ${index + 1} (Preencha marca, modelo, cor e placa)`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+    }
+  });
+
+  // 5. Motos (Todos obrigatórios se algum preenchido)
+  const motos = document.querySelectorAll('#containerMotos .item-moto');
+  motos.forEach((item, index) => {
+    const inputs = item.querySelectorAll('input');
+    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
+    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && !preencheuTodos) {
+      let label = `Motos ${index + 1} (Preencha marca, modelo, cor e placa)`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+    }
+  });
+
+  // 6. Bicicletas (Todos obrigatórios se algum preenchido)
+  const bikes = document.querySelectorAll('#containerBikes .item-bike');
+  bikes.forEach((item, index) => {
+    const inputs = item.querySelectorAll('input');
+    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
+    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && !preencheuTodos) {
+      let label = `Bicicletas ${index + 1} (Preencha marca e cor)`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+    }
+  });
+
+  // 7. Pets (Todos obrigatórios se algum preenchido)
+  const pets = document.querySelectorAll('#containerPets .item-pet');
+  pets.forEach((item, index) => {
+    const inputs = item.querySelectorAll('input, select');
+    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
+    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && !preencheuTodos) {
+      let label = `Pets ${index + 1} (Preencha nome, espécie, raça e porte)`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+    }
+  });
+
+  // 8. Prestadores (Regra pré-existente)
   const prestadores = document.querySelectorAll('#containerPrestadores .item-prestador');
   prestadores.forEach((item, index) => {
+    const inputs = item.querySelectorAll('input, select');
     const nomeEl = item.querySelector('.pr-nome');
     const servicoEl = item.querySelector('.pr-servico');
     const telEl = item.querySelector('.pr-tel');
@@ -58,27 +167,31 @@ function enviar() {
       if (!camposFaltantes.includes(labelPrestador)) {
         camposFaltantes.push(labelPrestador);
       }
+      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
     }
   });
 
-  // Ordenação exata baseada na ORDEM_DESEJADA para evitar que itens pulem para o topo
+  // Ordenação
   camposFaltantes.sort((a, b) => {
     let indexA = ORDEM_DESEJADA.indexOf(a);
     let indexB = ORDEM_DESEJADA.indexOf(b);
 
-    // Tratamentos para mensagens customizadas que não estão puras no array de regras
-    if (a.includes("Vaga alugada")) {
-      indexA = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
-    }
-    if (b.includes("Vaga alugada")) {
-      indexB = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
-    }
-    if (a.toLowerCase().includes("prestador")) {
-      indexA = ORDEM_DESEJADA.indexOf("Prestador");
-    }
-    if (b.toLowerCase().includes("prestador")) {
-      indexB = ORDEM_DESEJADA.indexOf("Prestador");
-    }
+    if (a.includes("Vaga alugada")) indexA = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
+    if (b.includes("Vaga alugada")) indexB = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
+    if (a.includes("Caso de emergência")) indexA = ORDEM_DESEJADA.indexOf("Caso de emergência");
+    if (b.includes("Caso de emergência")) indexB = ORDEM_DESEJADA.indexOf("Caso de emergência");
+    if (a.includes("Demais ocupantes")) indexA = ORDEM_DESEJADA.indexOf("Demais ocupantes");
+    if (b.includes("Demais ocupantes")) indexB = ORDEM_DESEJADA.indexOf("Demais ocupantes");
+    if (a.includes("Carros")) indexA = ORDEM_DESEJADA.indexOf("Carros");
+    if (b.includes("Carros")) indexB = ORDEM_DESEJADA.indexOf("Carros");
+    if (a.includes("Motos")) indexA = ORDEM_DESEJADA.indexOf("Motos");
+    if (b.includes("Motos")) indexB = ORDEM_DESEJADA.indexOf("Motos");
+    if (a.includes("Bicicletas")) indexA = ORDEM_DESEJADA.indexOf("Bicicletas");
+    if (b.includes("Bicicletas")) indexB = ORDEM_DESEJADA.indexOf("Bicicletas");
+    if (a.includes("Pets")) indexA = ORDEM_DESEJADA.indexOf("Pets");
+    if (b.includes("Pets")) indexB = ORDEM_DESEJADA.indexOf("Pets");
+    if (a.toLowerCase().includes("prestador")) indexA = ORDEM_DESEJADA.indexOf("Prestador");
+    if (b.toLowerCase().includes("prestador")) indexB = ORDEM_DESEJADA.indexOf("Prestador");
 
     if (indexA === -1) indexA = 99;
     if (indexB === -1) indexB = 99;
@@ -87,6 +200,17 @@ function enviar() {
   });
 
   if (camposFaltantes.length > 0) {
+    // Aplica o destaque visual (UX) nos campos errados
+    elementosParaDestacar.forEach(el => {
+      if (el) el.classList.add('input-erro-destaque');
+    });
+
+    // Dá foco automático e scroll suave no primeiro campo com erro encontrado
+    if (elementosParaDestacar.length > 0) {
+      elementosParaDestacar[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      elementosParaDestacar[0].focus();
+    }
+
     alert("Por favor, preencha os seguintes campos obrigatórios:\n\n• " + camposFaltantes.join("\n• "));
     return;
   }
@@ -208,6 +332,9 @@ function voltarTelaInicial() {
     form.reset();
   }
 
+  // Remove eventuais destaques de erro visuais ao resetar
+  document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
+
   var cpfConsulta = document.getElementById('cpfConsulta');
   var btnBuscarCpf = document.getElementById('btnBuscarCpf');
   
@@ -232,7 +359,7 @@ function voltarTelaInicial() {
     'containerPrestadores'
   ];
 
-  containersDinamicos.forEach(function(id) {
+  containersDinasicos.forEach(function(id) {
     var container = document.getElementById(id);
     if (container) container.innerHTML = '';
   });
