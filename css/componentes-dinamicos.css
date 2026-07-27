@@ -21,7 +21,7 @@
   box-sizing: border-box;
 }
 
-/* Container interno genérico que apenas ocupa o espaço flexível */
+/* Container interno genérico */
 .dynamic-group .dynamic-row {
   display: flex;
   flex-grow: 1;
@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Pets, Prestadores): 2 campos por linha */
+/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Pets, Bicicletas, Prestadores): 2 campos por linha no Desktop */
 .dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
@@ -44,7 +44,7 @@
   box-sizing: border-box;
 }
 
-/* 2. LINHA DE VEÍCULOS (Carros, Motos, Bicicletas): Usa o grid 2fr 1fr 1fr de ponta a ponta */
+/* 2. LINHA DE VEÍCULOS (Carros e Motos): Usa o grid 2fr 1fr 1fr no Desktop */
 .dynamic-row-veiculo {
   display: grid !important;
   grid-template-columns: 2fr 1fr 1fr !important;
@@ -105,8 +105,9 @@
   background-color: #d0e7f9;
 }
 
-/* RESPONSIVO PARA CELULAR (Abaixo de 600px): Marca/Modelo em cima, Cor e Placa embaixo */
+/* RESPONSIVO PARA CELULAR (Abaixo de 600px) */
 @media (max-width: 600px) {
+  /* Carros e Motos continuam quebrando (Marca/Modelo em cima, Cor e Placa embaixo) */
   .dynamic-row-veiculo {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
@@ -120,7 +121,9 @@
     grid-column: span 1 !important;
   }
 
+  /* Demais seções (incluindo Pets e Bicicletas) ficam estritamente com 2 campos por linha */
   .dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 }
