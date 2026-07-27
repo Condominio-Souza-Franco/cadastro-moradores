@@ -26,15 +26,13 @@
   flex-grow: 1;
 }
 
-/* Garante que Carros e Motos fiquem em 3 colunas proporcionais na mesma linha */
-.dynamic-group:has(.car-marca-modelo),
-.dynamic-group:has(.moto-marca-modelo) {
+/* Garante que Carros e Motos fiquem perfeitamente alinhados na mesma linha */
+.dynamic-group .row.g-2.dynamic-row-veiculo {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  flex-grow: 1;
   align-items: flex-end;
-}
-
-.dynamic-group:has(.car-marca-modelo) .dynamic-row,
-.dynamic-group:has(.moto-marca-modelo) .dynamic-row {
-  grid-template-columns: 2fr 1fr 1fr !important;
+  margin: 0 !important;
 }
 
 .dynamic-row input, 
