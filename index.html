@@ -27,7 +27,7 @@
 
 <!-- BLOCO DE CONSULTA POR CPF -->
   <div class="card-consulta centralizado" id="boxConsultaCpf">
-    <h3>Informe seus dados para carregar seu cadastro e atualizá-lo, se necessário.</h3>
+    <h3>Preencha os dados abaixo para localizar seu cadastro e manter suas informações atualizadas.</h3>
     
     <div class="row-consulta" id="rowConsultaCpf">
       <!-- Grupo do CPF -->
@@ -54,7 +54,7 @@
   <form id="cadForm">
     <!-- 1. Identificação do Imóvel (Desbloqueia após CPF ou Checkbox) -->
     <div id="secTipoResidente" class="section hidden centralizado">
-      <label for="tipoResidente">Identificação do Imóvel *</label>
+      <label for="tipoResidente">Qual é o seu vínculo com a unidade? *</label>
       <select id="tipoResidente" onchange="tratarEscolhaTipoResidente(this.value)">
         <option value="">Selecione se é Proprietário ou Inquilino...</option>
         <option value="Proprietário">Proprietário</option>
@@ -66,7 +66,7 @@
     <div id="secApto" class="section hidden centralizado">
       <label for="apto">Qual seu apartamento? *</label>
       <select id="apto" required onchange="aoSelecionarApto(this.value)">
-        <option value="">Selecione o apartamento...</option>
+        <option value="">Selecione...</option>
       </select>
     </div>
 
