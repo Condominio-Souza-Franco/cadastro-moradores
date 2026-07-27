@@ -17,38 +17,38 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Força a linha dos veículos a ocupar todo o espaço interno do card */
+/* Linha dos veículos ocupando todo o espaço interno do card de forma fluida */
 .dynamic-group .dynamic-row-veiculo {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  gap: 15px !important;
-  align-items: flex-end !important;
-  flex-grow: 1 !important;
-  width: 100% !important;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 15px;
+  align-items: flex-end;
+  flex-grow: 1;
+  width: 100%;
 }
 
 /* Proporções exatas: 50% (marca/modelo) e 25% (cor e placa) */
 .dynamic-row-veiculo .campo-50 {
-  flex: 2 !important;
-  min-width: 0 !important;
+  flex: 2;
+  min-width: 0;
 }
 
 .dynamic-row-veiculo .campo-25 {
-  flex: 1 !important;
-  min-width: 0 !important;
+  flex: 1;
+  min-width: 0;
 }
 
-/* Garante que todos os inputs dentro dessa linha estiquem 100% */
+/* Garante que todos os inputs dentro dessa linha estiquem 100% de suas colunas */
 .dynamic-row-veiculo input, 
 .dynamic-row-veiculo select {
-  margin: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .btn-remove-x {
