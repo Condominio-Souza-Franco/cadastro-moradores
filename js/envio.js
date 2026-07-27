@@ -1,5 +1,3 @@
-// RESPONSÁVEL PELO DISPARO DO ENVIO DO FORMULÁRIO, PROCESSAMENTO DE ARQUIVOS VIA FILEREADER E ROTINAS DE RESET
-  
 function enviar() {
   limpaMensagemStatus();
   
@@ -9,6 +7,7 @@ function enviar() {
     const el = document.getElementById(regra.id);
     if (el && el.offsetParent !== null) { 
       let estaVazio = false;
+      let nomeRegraPersonalizado = null;
       
       if (regra.id === "vagaSituacao" || regra.id === "vagaAptoRelacionado") {
         const situacaoEl = document.getElementById("vagaSituacao");
@@ -20,6 +19,7 @@ function enviar() {
         // Se preencheu um, o outro se torna obrigatório
         if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
           estaVazio = true;
+          nomeRegraPersonalizado = "Vaga alugada: preencha todos os campos";
         }
       } else {
         if (regra.tipo === "checkbox") {
@@ -30,11 +30,7 @@ function enviar() {
       }
 
       if (estaVazio) {
-        let nomeRegra = regra.nome;
-        // Evita duplicar se ambos os campos da vaga falharem
-        if (regra.id.startsWith("vaga")) {
-          nomeRegra = "Apartamento envolvido (Vaga de garagem)";
-        }
+        let nomeRegra = nomeRegraPersonalizado || regra.nome;
         if (!camposFaltantes.includes(nomeRegra)) {
           camposFaltantes.push(nomeRegra);
         }
@@ -65,11 +61,18 @@ function enviar() {
     }
   });
 
-  // Ordenação exata baseada no array ORDEM_DESEJADA definido em config-regras.js
+  // Ordenação exata baseada na ORDEM_DESEJADA para evitar que itens pulem para o topo
   camposFaltantes.sort((a, b) => {
-    let indexA = ORDEM_DESEJADA.findIndex(item => a === item || a.includes(item));
-    let indexB = ORDEM_DESEJADA.findIndex(item => b === item || b.includes(item));
+    let indexA = ORDEM_DESEJADA.indexOf(a);
+    let indexB = ORDEM_DESEJADA.indexOf(b);
 
+    // Tratamentos para mensagens customizadas que não estão puras no array de regras
+    if (a.includes("Vaga alugada")) {
+      indexA = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
+    }
+    if (b.includes("Vaga alugada")) {
+      indexB = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
+    }
     if (a.toLowerCase().includes("prestador")) {
       indexA = ORDEM_DESEJADA.indexOf("Prestador");
     }
