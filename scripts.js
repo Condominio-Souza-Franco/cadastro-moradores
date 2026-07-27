@@ -459,7 +459,7 @@ function addPet(v = {}) {
     <div><span class="input-label">Espécie</span><input type="text" placeholder="Cachorro" class="pet-especie" value="${v.especie || ''}"></div>
     <div><span class="input-label">Raça</span><input type="text" placeholder="Beagle" class="pet-raca" value="${v.raca || ''}"></div>
     <div><span class="input-label">Porte</span><select class="pet-porte">
-      <option value="">Porte...</option>
+      <option value="">Selecione...</option>
       <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
       <option value="Médio" ${v.porte === 'Médio' ? 'selected' : ''}>Médio</option>
       <option value="Grande" ${v.porte === 'Grande' ? 'selected' : ''}>Grande</option>
@@ -491,7 +491,7 @@ function addPrestador(v = {}) {
     <div><span class="input-label">Serviço *</span><input type="text" placeholder="Adestrador de animais, diarista etc" class="pr-servico" value="${v.servico || ''}"></div>
     <div><span class="input-label">Telefone / Celular *</span><input type="tel" placeholder="21987654321" class="pr-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Possui chave? *</span><select class="pr-chave">
-      <option value="">Possui chave?</option>
+      <option value="">Selecione...</option>
       <option value="Sim" ${v.chave === 'Sim' ? 'selected' : ''}>Sim</option>
       <option value="Não" ${v.chave === 'Não' ? 'selected' : ''}>Não</option>
     </select></div>
