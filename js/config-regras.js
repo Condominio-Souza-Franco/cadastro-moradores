@@ -1,3 +1,5 @@
+// CONFIGURAÇÕES GLOBAIS E REGRAS DE VALIDAÇÃO ESTRUTURADAS
+
 // ==========================================
 // CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
 // ==========================================
