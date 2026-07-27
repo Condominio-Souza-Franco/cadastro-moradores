@@ -10,10 +10,21 @@ function enviar() {
     if (el && el.offsetParent !== null) { 
       let estaVazio = false;
       
-      if (regra.id === "vagaAptoRelacionado") {
+      if (regra.id === "vagaSituacao") {
+        const situacaoVal = el.value ? el.value.trim() : "";
+        const aptoRelEl = document.getElementById("vagaAptoRelacionado");
+        const aptoRelVal = aptoRelEl && aptoRelEl.value ? aptoRelEl.value.trim() : "";
+        
+        // Se preencheu a situação mas esqueceu o apto, ou vice-versa (ambos são obrigatórios se usar vaga)
+        if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
+          estaVazio = true;
+        }
+      } else if (regra.id === "vagaAptoRelacionado") {
+        const aptoRelVal = el.value ? el.value.trim() : "";
         const situacaoEl = document.getElementById("vagaSituacao");
-        const temSituacao = situacaoEl && situacaoEl.value.trim() !== "";
-        if (temSituacao && (!el.value || el.value.trim() === "")) {
+        const situacaoVal = situacaoEl && situacaoEl.value ? situacaoEl.value.trim() : "";
+        
+        if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
           estaVazio = true;
         }
       } else {
@@ -25,7 +36,14 @@ function enviar() {
       }
 
       if (estaVazio) {
-        camposFaltantes.push(regra.nome);
+        // Evita duplicar o alerta caso ambos os campos da vaga caiam na regra
+        let nomeRegra = regra.nome;
+        if (regra.id.startsWith("vaga")) {
+          nomeRegra = "Situação da vaga / Apartamento envolvido";
+        }
+        if (!camposFaltantes.includes(nomeRegra)) {
+          camposFaltantes.push(nomeRegra);
+        }
       }
     }
   });
@@ -75,6 +93,7 @@ function enviar() {
     return;
   }
 
+  // Restante do fluxo de envio...
   const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
   const textoAtual = btnSubmit ? btnSubmit.innerText : "";
   const eAtualizacao = textoAtual.toLowerCase().includes("atualizar");
