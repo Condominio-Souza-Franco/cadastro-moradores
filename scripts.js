@@ -610,23 +610,41 @@ function enviar() {
   });
 
   // ==========================================
-  // 3. ORDENAÇÃO BASEADA NA SEQUÊNCIA EXATA DO ARRAY DE REGRAS
+  // 3. ORDENAÇÃO BASEADA NA SEQUÊNCIA EXATA DO FORMULÁRIO
   // ==========================================
-  const ordemDesejada = regrasObrigatorias.map(r => r.nome);
+  // Incluímos "Prestador" no array de referência na posição lógica onde ele aparece no form
+  const ordemDesejada = [
+    "Apartamento",
+    "Identificação do imóvel",
+    "Nome",
+    "CPF",
+    "RG",
+    "Órgão emissor",
+    "Data de nascimento",
+    "Celular",
+    "Telefone fixo",
+    "E-mail",
+    "Situação da vaga",
+    "Apartamento envolvido (Vaga de garagem)",
+    "Proprietário / Administradora",
+    "Contato do proprietário / imobiliária",
+    "Vigência do contrato",
+    "Contrato de locação",
+    "Prestador",
+    "Declaro que as informações prestadas são verdadeiras"
+  ];
 
   camposFaltantes.sort((a, b) => {
-    // Se forem prestadores, ordenamos por índice numérico dentro da string (ex: Prestador 1, Prestador 2)
-    const isPrestadorA = a.toLowerCase().includes("prestador");
-    const isPrestadorB = b.toLowerCase().includes("prestador");
+    let indexA = ordemDesejada.findIndex(item => a.includes(item) || item.includes(a));
+    let indexB = ordemDesejada.findIndex(item => b.includes(item) || item.includes(b));
 
-    if (isPrestadorA && isPrestadorB) {
-      return a.localeCompare(b, undefined, { numeric: true });
+    // Se for um prestador dinâmico específico (ex: Prestador 1), usa o índice genérico de "Prestador"
+    if (a.toLowerCase().includes("prestador")) {
+      indexA = ordemDesejada.indexOf("Prestador");
     }
-    if (isPrestadorA) return 1; // Prestadores ficam sempre depois dos campos padrão
-    if (isPrestadorB) return -1;
-
-    let indexA = ordemDesejada.findIndex(item => a === item);
-    let indexB = ordemDesejada.findIndex(item => b === item);
+    if (b.toLowerCase().includes("prestador")) {
+      indexB = ordemDesejada.indexOf("Prestador");
+    }
 
     if (indexA === -1) indexA = 99;
     if (indexB === -1) indexB = 99;
