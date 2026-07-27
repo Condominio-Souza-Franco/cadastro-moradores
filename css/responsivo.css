@@ -1,0 +1,48 @@
+/* MEDIA QUERIES PARA DISPOSITIVOS MÓVEIS */
+
+@media (min-width: 601px) {
+  .form-actions {
+    flex-direction: row;
+  }
+  .btn-submit {
+    flex: 2;
+  }
+  .btn-secondary {
+    flex: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  .container {
+    padding: 15px;
+  }
+  .row-vagas {
+    grid-template-columns: 1fr;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  #cpfConsulta, 
+  #btnBuscarCpf {
+    font-size: 16px !important;
+    min-height: 45px !important;
+  }
+  .dynamic-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+  .dynamic-group:has(.car-marca-modelo) .dynamic-row,
+  .dynamic-group:has(.moto-marca-modelo) .dynamic-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .dynamic-row {
+    grid-template-columns: 1fr !important;
+  }
+}
