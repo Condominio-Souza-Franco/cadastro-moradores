@@ -49,7 +49,7 @@ const ORDEM_DESEJADA = [
   "Demais ocupantes",
   "Carros",
   "Motos",
-  "Bicletas",
+  "Bicicletas",
   "Pets",
   "Prestador",
   "Declaro que as informações prestadas são verdadeiras"
