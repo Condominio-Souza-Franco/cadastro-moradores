@@ -1,3 +1,5 @@
+// DOM, INICIALIZAÇÕES, MENUS SUSPENSOS, MÁSCARAS E GERADORES DE LINHAS DINÂMICAS
+
 window.addEventListener('DOMContentLoaded', function() {
   popularDropdownApto();
   popularDropdownAptos();
