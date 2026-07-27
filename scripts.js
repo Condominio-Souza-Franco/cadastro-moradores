@@ -1,3 +1,13 @@
+// ==========================================
+// CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
+// ==========================================
+// Substitua pela URL da Web App gerada ao publicar seu projeto no Google Apps Script
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqfR0tDzvIfqFn8syMiVufHqA48lmN4qMHpFM9TIozDfN5QOAc0hOyJZAig3E8zJ4B/exec";
+
+// ==========================================
+// INICIALIZAÇÃO DO DOCUMENTO
+// ==========================================
+
 window.addEventListener('DOMContentLoaded', function() {
   popularDropdownApto();
   popularDropdownAptos();
@@ -17,12 +27,10 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   if (inputNasc) {
-    // Transforma em date quando clica/foca para abrir o calendário
     inputNasc.addEventListener('focus', function() {
       this.type = 'date';
     });
     
-    // Se o usuário sair do campo sem digitar nada, volta a ser texto para mostrar o placeholder "dd/mm/aaaa"
     inputNasc.addEventListener('blur', function() {
       if (!this.value) {
         this.type = 'text';
@@ -33,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
     inputNasc.addEventListener('keydown', dispararBuscaEnter);
   }
 });
-   
+    
 
 // --- FUNÇÃO AUXILIAR DE ROLAGEM AUTOMÁTICA --- //
 function rolarParaSecao(secaoId) {
@@ -59,7 +67,6 @@ function popularDropdownAptos() {
   select.add(new Option('901', '901'));
 }
 
-// Preenche o menu dropdown principal do apartamento e gerencia a exibição do formulário
 function popularDropdownApto() {
   const select = document.getElementById('apto');
   if (!select) return;
@@ -74,7 +81,6 @@ function popularDropdownApto() {
   }
   select.add(new Option('901', '901'));
 
-  // Evento acionado ao escolher um apartamento no dropdown
   select.onchange = function() {
     const valor = this.value;
     const secResto = document.getElementById('secRestoFormulario');
@@ -83,7 +89,6 @@ function popularDropdownApto() {
       if (secResto) {
         secResto.classList.remove('hidden');
         secResto.style.display = 'block';
-        // Scroll automático para a continuação do formulário
         rolarParaSecao('secRestoFormulario');
       }
 
@@ -126,7 +131,6 @@ function exibirPassoTipoResidente() {
   if (secTipo) {
     secTipo.classList.remove('hidden');
     secTipo.style.display = 'block';
-    // Scroll automático para a seção de tipo de residente
     rolarParaSecao('secTipoResidente');
   }
 }
@@ -139,7 +143,6 @@ function tratarEscolhaTipoResidente(valor) {
     if (secApto) {
       secApto.classList.remove('hidden');
       secApto.style.display = 'block';
-      // Scroll automático para a seleção de apartamento
       rolarParaSecao('secApto');
     }
 
@@ -172,24 +175,23 @@ function alterarTextoBotaoEnviar(novoTexto) {
   }
 }
 
-// --- CONSULTA CPF GOOGLE APPS SCRIPT COM SEGURANÇA --- //
+// --- CONSULTA CPF VIA FETCH (EXTERNO) --- //
 
 function consultarPorCpf() {
   limpaMensagemStatus();
   const inputCpf = document.getElementById("cpfConsulta");
-  const inputNasc = document.getElementById("nascConsulta"); // NOVO
+  const inputNasc = document.getElementById("nascConsulta");
   const btnBusca = document.getElementById("btnBuscarCpf");
   
   const cpfInput = inputCpf ? inputCpf.value.trim() : "";
   const cpfLimpo = limparCpf(cpfInput);
-  const nascInput = inputNasc ? inputNasc.value : ""; // NOVO
+  const nascInput = inputNasc ? inputNasc.value : "";
   
   if (cpfLimpo.length !== 11) {
     alert("Por favor, digite um CPF válido com 11 dígitos.");
     return;
   }
 
-  // Validação extra: exige a data de nascimento para segurança
   if (!nascInput) {
     alert("Por favor, informe também a sua data de nascimento para confirmar a identidade.");
     if (inputNasc) inputNasc.focus();
@@ -203,128 +205,123 @@ function consultarPorCpf() {
     btnBusca.disabled = true;
   }
   if (inputCpf) inputCpf.disabled = true;
-  if (inputNasc) inputNasc.disabled = true; // NOVO
+  if (inputNasc) inputNasc.disabled = true;
 
-  if (typeof google !== 'undefined' && google.script && google.script.run) {
-    google.script.run
-      .withSuccessHandler(function(resposta) {
-        if (btnBusca) {
-          btnBusca.innerText = textoOriginalBtn;
-          btnBusca.disabled = false;
+  // Requisição Fetch para a função buscarDadosPorCpfESeguranca no Apps Script
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      funcao: 'buscarDadosPorCpfESeguranca',
+      cpf: cpfLimpo,
+      nascimento: nascInput
+    })
+  })
+  .then(response => response.json())
+  .then(resposta => {
+    if (btnBusca) {
+      btnBusca.innerText = textoOriginalBtn;
+      btnBusca.disabled = false;
+    }
+
+    if (resposta && resposta.encontrado) {
+      const d = resposta.dados;
+
+      if (inputCpf) {
+        inputCpf.disabled = true;
+        inputCpf.value = d.cpf || cpfLimpo;
+      }
+      if (inputNasc) {
+        inputNasc.disabled = true;
+      }
+      if (btnBusca) {
+        btnBusca.disabled = true; 
+      }
+
+      if (document.getElementById("moradorNome")) document.getElementById("moradorNome").value = d.nome || "";
+      if (document.getElementById("moradorCpf")) document.getElementById("moradorCpf").value = d.cpf || "";
+      if (document.getElementById("moradorRg")) document.getElementById("moradorRg").value = d.rg || "";
+      if (document.getElementById("moradorOrgaoEmissor")) document.getElementById("moradorOrgaoEmissor").value = d.orgaoEmissor || "";
+      if (document.getElementById("moradorNasc") && d.nasc) document.getElementById("moradorNasc").value = formatarDataParaInput(d.nasc);
+      if (document.getElementById("moradorCelular")) document.getElementById("moradorCelular").value = d.celular || "";
+      if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
+      if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
+
+      if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = d.inqPropAdmin || "";
+      if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
+      if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
+
+      if (document.getElementById("vagaSituacao") && d.vagaSituacao) document.getElementById("vagaSituacao").value = d.vagaSituacao;
+      if (document.getElementById("vagaAptoRelacionado") && d.vagaAptoRelacionado) document.getElementById("vagaAptoRelacionado").value = d.vagaAptoRelacionado;
+
+      if (d.emergencias) preencherEmergencias(d.emergencias);
+      if (d.ocupantes)   preencherOcupantes(d.ocupantes);
+      if (d.carros)      preencherCarros(d.carros);
+      if (d.motos)       preencherMotos(d.motos);
+      if (d.bikes)       preencherBikes(d.bikes);
+      if (d.pets)        preencherPets(d.pets);
+      if (d.prestadores) preencherPrestadores(d.prestadores);
+
+      if (d.tipo) {
+        const elTipo = document.getElementById("tipoResidente");
+        if (elTipo) elTipo.value = d.tipo;
+        tratarEscolhaTipoResidente(d.tipo);
+      }
+
+      if (d.apto) {
+        const elApto = document.getElementById("apto");
+        if (elApto) {
+          elApto.value = d.apto;
+          var evt = document.createEvent("HTMLEvents");
+          evt.initEvent("change", false, true);
+          elApto.dispatchEvent(evt);
         }
+      }
 
-        if (resposta && resposta.encontrado) {
-          const d = resposta.dados;
+      alterarTextoBotaoEnviar("Atualizar cadastro");
+      exibirPassoTipoResidente();
 
-          // MANTÉM OS CAMPOS TRAVADOS / DESABILITADOS
-          if (inputCpf) {
-            inputCpf.disabled = true;
-            inputCpf.value = d.cpf || cpfLimpo;
-          }
-          if (inputNasc) {
-            inputNasc.disabled = true; // NOVO
-          }
-          if (btnBusca) {
-            btnBusca.disabled = true; 
-          }
+    } else {
+      if (inputCpf) inputCpf.disabled = false;
+      if (inputNasc) inputNasc.disabled = false;
+      if (inputCpf) inputCpf.value = "";
+      if (inputNasc) inputNasc.value = "";
+      
+      const secTipo = document.getElementById('secTipoResidente');
+      if (secTipo) { secTipo.classList.add('hidden'); secTipo.style.display = 'none'; }
 
-          // Preenche dados pessoais
-          if (document.getElementById("moradorNome")) document.getElementById("moradorNome").value = d.nome || "";
-          if (document.getElementById("moradorCpf")) document.getElementById("moradorCpf").value = d.cpf || "";
-          if (document.getElementById("moradorRg")) document.getElementById("moradorRg").value = d.rg || "";
-          if (document.getElementById("moradorOrgaoEmissor")) document.getElementById("moradorOrgaoEmissor").value = d.orgaoEmissor || "";
-          if (document.getElementById("moradorNasc") && d.nasc) document.getElementById("moradorNasc").value = formatarDataParaInput(d.nasc);
-          if (document.getElementById("moradorCelular")) document.getElementById("moradorCelular").value = d.celular || "";
-          if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
-          if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
+      const secApto = document.getElementById('secApto');
+      if (secApto) { secApto.classList.add('hidden'); secApto.style.display = 'none'; }
 
-          if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = d.inqPropAdmin || "";
-          if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
-          if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
+      const secResto = document.getElementById('secRestoFormulario');
+      if (secResto) { secResto.classList.add('hidden'); secResto.style.display = 'none'; }
 
-          if (document.getElementById("vagaSituacao") && d.vagaSituacao) document.getElementById("vagaSituacao").value = d.vagaSituacao;
-          if (document.getElementById("vagaAptoRelacionado") && d.vagaAptoRelacionado) document.getElementById("vagaAptoRelacionado").value = d.vagaAptoRelacionado;
-
-          // Preenche listas
-          if (d.emergencias) preencherEmergencias(d.emergencias);
-          if (d.ocupantes)   preencherOcupantes(d.ocupantes);
-          if (d.carros)      preencherCarros(d.carros);
-          if (d.motos)       preencherMotos(d.motos);
-          if (d.bikes)       preencherBikes(d.bikes);
-          if (d.pets)        preencherPets(d.pets);
-          if (d.prestadores) preencherPrestadores(d.prestadores);
-
-          if (d.tipo) {
-            const elTipo = document.getElementById("tipoResidente");
-            if (elTipo) elTipo.value = d.tipo;
-            tratarEscolhaTipoResidente(d.tipo);
-          }
-
-          if (d.apto) {
-            const elApto = document.getElementById("apto");
-            if (elApto) {
-              elApto.value = d.apto;
-              if ("createEvent" in document) {
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent("change", false, true);
-                elApto.dispatchEvent(evt);
-              } else {
-                elApto.fireEvent("onchange");
-              }
-            }
-          }
-
-          alterarTextoBotaoEnviar("Atualizar cadastro");
-          exibirPassoTipoResidente();
-
-        } else {
-          // Se NÃO encontrou ou a data não bateu
-          if (inputCpf) inputCpf.disabled = false;
-          if (inputNasc) inputNasc.disabled = false; // NOVO
-          if (inputCpf) inputCpf.value = "";
-          if (inputNasc) inputNasc.value = ""; // NOVO
-          
-          const secTipo = document.getElementById('secTipoResidente');
-          if (secTipo) { secTipo.classList.add('hidden'); secTipo.style.display = 'none'; }
-
-          const secApto = document.getElementById('secApto');
-          if (secApto) { secApto.classList.add('hidden'); secApto.style.display = 'none'; }
-
-          const secResto = document.getElementById('secRestoFormulario');
-          if (secResto) { secResto.classList.add('hidden'); secResto.style.display = 'none'; }
-
-          alterarTextoBotaoEnviar("Enviar cadastro");
-          alert(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.");
-        }
-      })
-      .withFailureHandler(function(err) {
-        if (btnBusca) {
-          btnBusca.innerText = textoOriginalBtn;
-          btnBusca.disabled = false;
-        }
-        if (inputCpf) inputCpf.disabled = false;
-        if (inputNasc) inputNasc.disabled = false; // NOVO
-        alert("Erro técnico na busca: " + err);
-      })
-      .buscarDadosPorCpfESeguranca(cpfLimpo, nascInput);
-  }
+      alterarTextoBotaoEnviar("Enviar cadastro");
+      alert(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.");
+    }
+  })
+  .catch(err => {
+    if (btnBusca) {
+      btnBusca.innerText = textoOriginalBtn;
+      btnBusca.disabled = false;
+    }
+    if (inputCpf) inputCpf.disabled = false;
+    if (inputNasc) inputNasc.disabled = false;
+    alert("Erro técnico na busca: " + err);
+  });
 }
 
 function formatarDataParaInput(dataStr) {
   if (!dataStr) return "";
   
-  // Se a data já estiver no formato AAAA-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
     return dataStr;
   }
 
-  // Se vier no formato DD/MM/AAAA (padrão comum de planilhas)
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) {
     const partes = dataStr.split('/');
     return `${partes[2]}-${partes[1]}-${partes[0]}`;
   }
 
-  // Tenta converter via objeto Date
   const d = new Date(dataStr);
   if (!isNaN(d.getTime())) {
     const ano = d.getUTCFullYear();
@@ -356,7 +353,7 @@ function removerItem(btn) {
   btn.closest('.dynamic-group').remove();
 }
 
-// --- PREENCHIMENTO AUTOMÁTICO DAS LISTAS (COM INPUT-LABEL) --- //
+// --- PREENCHIMENTO AUTOMÁTICO DAS LISTAS --- //
 
 function addEmergencia(v = {}) {
   adicionarItemDinamico('containerEmergencia', 'item-emergencia', `
@@ -472,9 +469,9 @@ function addPet(v = {}) {
 
 function preencherPets(texto) {
   const container = document.getElementById("containerPets") || 
-                      document.getElementById("containerPet") || 
-                      document.getElementById("petsContainer");
-                      
+                    document.getElementById("containerPet") || 
+                    document.getElementById("petsContainer");
+                    
   if (!container) return;
   
   container.innerHTML = "";
@@ -519,13 +516,11 @@ function coletarDadosGrupados(selectorGroup, camposSelectors) {
   const resultado = [];
   
   grupos.forEach(g => {
-    // Mapeia os campos na ordem exata, mantendo os vazios como "" para não desalinhar
     const valores = camposSelectors.map(s => {
       const el = g.querySelector(s);
       return el ? el.value.trim() : "";
     });
 
-    // Só adiciona o grupo se pelo menos o nome (o primeiro campo) estiver preenchido
     if (valores[0] !== "") {
       resultado.push(valores.join(" | "));
     }
@@ -539,18 +534,15 @@ function enviar() {
   
   let camposFaltantes = [];
 
-  // 1. Valida a seleção do apartamento
   if (!document.getElementById("apto").value) {
     camposFaltantes.push("Apartamento");
   }
 
-  // 2. Valida explicitamente a Data de Nascimento do Morador Principal
   const elNasc = document.getElementById("moradorNasc");
   if (elNasc && (!elNasc.value || elNasc.value.trim() === "")) {
     camposFaltantes.push("Data de nascimento");
   }
 
-  // 3. Procura todos os elementos com atributo required visíveis na tela
   const camposObrigatorios = document.querySelectorAll('#cadForm [required]');
   
   camposObrigatorios.forEach(function(campo) {
@@ -591,7 +583,6 @@ function enviar() {
     }
   });
 
-  // 4. Validação específica: prestadores
   const prestadores = document.querySelectorAll('#containerPrestadores .item-prestador');
   prestadores.forEach((item, index) => {
     const nome = item.querySelector('.pr-nome') ? item.querySelector('.pr-nome').value.trim() : '';
@@ -604,7 +595,6 @@ function enviar() {
     }
   });
 
-  // Reordenação para exibição no alerta
   const ordemDesejada = [
     "Apartamento",
     "Nome",
@@ -696,29 +686,34 @@ function executarEnvio(fileData, eAtualizacao) {
     declaracao: document.getElementById("declaracao").checked
   };
 
-  if (typeof google !== 'undefined' && google.script && google.script.run) {
-    google.script.run
-      .withSuccessHandler(function(res) {
-        const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
-        if (btnSubmit) btnSubmit.disabled = false;
+  // Requisição Fetch para a função processarFormulario no Apps Script
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      funcao: 'processarFormulario',
+      dados: dados
+    })
+  })
+  .then(response => response.json())
+  .then(res => {
+    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+    if (btnSubmit) btnSubmit.disabled = false;
 
-        alert(res.mensagem);
+    alert(res.mensagem);
 
-        if (res.sucesso) {
-          voltarTelaInicial();
-        } else {
-          alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-        }
-      })
-      .withFailureHandler(function(err) {
-        const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
-        if (btnSubmit) btnSubmit.disabled = false;
+    if (res.sucesso) {
+      voltarTelaInicial();
+    } else {
+      alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+    }
+  })
+  .catch(err => {
+    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+    if (btnSubmit) btnSubmit.disabled = false;
 
-        alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-        alert("Erro no envio: " + err);
-      })
-      .processarFormulario(dados);
-  }
+    alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+    alert("Erro no envio: " + err);
+  });
 }
 
 function redefinirBotoesParaNovoCadastro() {
@@ -747,7 +742,6 @@ function voltarTelaInicial() {
   var cpfConsulta = document.getElementById('cpfConsulta');
   var btnBuscarCpf = document.getElementById('btnBuscarCpf');
   
-  // Libera o campo e o botão ao voltar/resetar
   if (cpfConsulta) {
     cpfConsulta.value = '';
     cpfConsulta.disabled = false;
