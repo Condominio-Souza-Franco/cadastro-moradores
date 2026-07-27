@@ -610,16 +610,23 @@ function enviar() {
   });
 
   // ==========================================
-  // 3. ORDENAÇÃO SEGUINDO A ORDEM EXATA DO FORMULÁRIO
+  // 3. ORDENAÇÃO BASEADA NA SEQUÊNCIA EXATA DO ARRAY DE REGRAS
   // ==========================================
-  const ordemDesejada = regrasObrigatorias.map(r => r.nome).concat(["Prestador"]);
+  const ordemDesejada = regrasObrigatorias.map(r => r.nome);
 
   camposFaltantes.sort((a, b) => {
-    let indexA = ordemDesejada.findIndex(item => a.includes(item) || item.includes(a));
-    let indexB = ordemDesejada.findIndex(item => b.includes(item) || item.includes(b));
+    // Se forem prestadores, ordenamos por índice numérico dentro da string (ex: Prestador 1, Prestador 2)
+    const isPrestadorA = a.toLowerCase().includes("prestador");
+    const isPrestadorB = b.toLowerCase().includes("prestador");
 
-    if (a.toLowerCase().includes("prestador")) indexA = 90;
-    if (b.toLowerCase().includes("prestador")) indexB = 90;
+    if (isPrestadorA && isPrestadorB) {
+      return a.localeCompare(b, undefined, { numeric: true });
+    }
+    if (isPrestadorA) return 1; // Prestadores ficam sempre depois dos campos padrão
+    if (isPrestadorB) return -1;
+
+    let indexA = ordemDesejada.findIndex(item => a === item);
+    let indexB = ordemDesejada.findIndex(item => b === item);
 
     if (indexA === -1) indexA = 99;
     if (indexB === -1) indexB = 99;
