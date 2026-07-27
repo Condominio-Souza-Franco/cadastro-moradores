@@ -1,507 +1,457 @@
-  :root {
-    --primary-color: #2c3e50;
-    --accent-color: #3498db;
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    --border-color: #dcdde1;
-    --secondary-color: #7f8c8d;
-    --secondary-hover: #6c7a7d;
-  }
+:root {
+  --primary-color: #2c3e50;
+  --accent-color: #3498db;
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --text-color: #333333;
+  --border-color: #dcdde1;
+  --secondary-color: #7f8c8d;
+  --secondary-hover: #6c7a7d;
+}
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 15px;
-  }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 15px;
+}
 
-  .container {
-    max-width: 750px;
-    margin: 0 auto;
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    box-sizing: border-box;
-  }
+.container {
+  max-width: 750px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
 
-  h1 {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 5px;
-    text-align: center;
-  }
-
-  .subtitle {
-    text-align: center;
-    color: #7f8c8d;
-    margin-bottom: 25px;
-    font-size: 0.95rem;
-  }
-
-  .section {
-    margin-bottom: 20px;
-    padding-top: 10px;
-  }
-
-  #secApto {
-    margin-top: 20px;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  label {
-    display: block;
-    font-weight: 600;
-    margin-top: 12px;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-  }
-
-  /* TAMANHO E ESPAÇAMENTO DOS CHECKBOXES */
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    vertical-align: middle;
-    margin-right: 8px; 
-  }
-
-  /* UNIFORMIZAÇÃO RIGOROSA DE TODOS OS INPUTS */
-  input[type="text"],
-  input[type="tel"],
-  input[type="email"],
-  input[type="date"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100% !important;
-    height: 42px;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    box-sizing: border-box !important;
-    font-size: 0.95rem;
-    background-color: #fff;
-    font-family: inherit;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  /* CENTRALIZAÇÃO DOS BLOCOS INICIAIS */
-  .centralizado {
-    text-align: center !important;
-  }
-
-  .centralizado h3, 
-  .centralizado label {
-    text-align: center !important;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* Centraliza o texto selecionado dentro dos <select> (Apartamento e Tipo) */
-  .centralizado select {
-    text-align: center !important;
-    text-align-last: center !important;
-  }
-
-  /* BLOCO DE CONSULTA CPF (PC E MOBILE) */
-  /* CARD DE CONSULTA COM ALTURA MÍNIMA E MAIS RESPIRO INTERNO */
-  .card-consulta {
-    background-color: #eef2f7;
-    border-left: 4px solid var(--accent-color);
-    padding: 20px 15px !important; /* Aumenta o espaçamento interno superior/inferior */
-    border-radius: 8px;
-    margin-bottom: 25px !important; /* Garante distância para o campo de baixo */
-    min-height: 180px; /* Define altura mínima para não achatar */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-sizing: border-box !important;
-  }
-
-  /* TÍTULO DA BUSCA (evita que fique cortado no topo) */
-  .card-consulta h3 {
-    margin-top: 0 !important;
-    margin-bottom: 15px !important;
-    font-size: 0.95rem;
-    color: var(--primary-color);
-    line-height: 1.3;
-  }
-
-  /* ESPAÇAMENTO ENTRE AS PERGUNTAS QUE APROVEITAM E APARECEM */
-  .section {
-    margin-bottom: 25px !important; /* Garante um respiro confortável entre cada pergunta */
-    padding-top: 5px;
-  }
-
-  /* AJUSTE DAS ETIQUETAS/RÓTULOS */
-  label {
-    display: block;
-    font-weight: 600;
-    margin-top: 5px;
-    //margin-bottom: 8px !important;
-    font-size: 0.95rem;
-  }
-  /* Força a busca a ficar empilhada (botão na linha de baixo) no PC e no Mobile */
-  .row-consulta,
-  #rowConsultaCpf {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    max-width: 400px !important;
-    margin: 0 auto !important;
-  }
-
-  .row-consulta input[type="text"],
-  #cpfConsulta {
-    margin: 0;
-    text-align: center !important;
-  }
-
-  .row-consulta button,
-  #btnBuscarCpf {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    white-space: nowrap;
-    width: 100% !important;
-    min-height: 42px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-  }
-
-  .row-checkbox-morador {
-    margin-top: 15px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-  }
-
-  .row-checkbox-morador input[type="checkbox"] {
-    margin: 0;
-    cursor: pointer;
-  }
-
-  .row-checkbox-morador label {
-    margin: 0;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 15px;
-  }
-
-  .checkbox-group label {
-    margin: 0;
-  }
-
-  /* BLOCOS DINÂMICOS (Emergência, Ocupantes, Carros, Motos, Pets, Prestadores) */
-  .sub-title {
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-top: 15px;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
-  }
-
-  .dynamic-group {
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .dynamic-row {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px;
-    flex-grow: 1;
-  }
-
-  .dynamic-row input, 
-  .dynamic-row select {
-    margin: 0;
-    width: 100% !important;
-  }
-
-  .btn-remove-x {
-    background: transparent;
-    color: #e74c3c;
-    border: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0 8px;
-    line-height: 1;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .btn-remove-x:hover {
-    background-color: #fadbd8;
-    color: #c0392b;
-  }
-
-  .btn-add {
-    background-color: #e8f4fd;
-    color: var(--accent-color);
-    border: 1px dashed var(--accent-color);
-    padding: 10px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-    width: 100%;
-    margin-bottom: 15px;
-  }
-
-  .btn-add:hover {
-    background-color: #d0e7f9;
-  }
-
-  /* BOTÕES DE AÇÃO DO FORMULÁRIO */
-  .form-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  .btn-submit {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
-    width: 100%;
-    cursor: pointer;
-  }
-
-  .btn-submit:hover {
-    background-color: #219150;
-  }
-
-  .btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-
-  .btn-secondary:hover {
-    background-color: var(--secondary-hover);
-  }
-
-  /* MENSAGENS E ALERTAS DE STATUS */
-  #statusMessage {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: bold;
-  }
-
-  .sucesso {
-    background-color: #d4edda;
-    color: #155724;
-  }
-
-  .erro {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-
-  .desc-secao {
-    font-size: 0.85rem;
-    color: #636e72;
-    margin-top: -2px;
-    margin-bottom: 12px;
-    line-height: 1.4;
-  }
-
-  .alert-text {
-    background-color: #fff8e1;
-    border-left: 3px solid #ffc107;
-    padding: 8px 12px;
-    border-radius: 4px;
-    color: #856404;
-  }
-
-  .intro-kit {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #4a5568;
-    margin-top: 5px;
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-
-  .link-destaque {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-size: 0.95rem;
-  }
-
-  .link-destaque a, .email-link {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .link-destaque a:hover, .email-link:hover {
-    text-decoration: underline;
-    color: #2980b9;
-  }
-
-  .title-grupo {
-    font-size: 1.1rem;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 4px;
-    margin-top: 25px;
-  }
-
-  .row-vagas {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  input:disabled,
-  button:disabled {
-    background-color: #e9ecef !important;
-    color: #6c757d !important;
-    border-color: #ced4da !important;
-    cursor: not-allowed !important;
-    opacity: 0.7;
-  }
-
-  .form-row {
-    display: flex;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .form-row > div {
-    flex: 1;
-  }
-
-  /* LAYOUT DESKTOP PARA OS BOTÕES FINAIS */
-  @media (min-width: 601px) {
-    .form-actions {
-      flex-direction: row;
-    }
-
-    .btn-submit {
-      flex: 2;
-    }
-
-    .btn-secondary {
-      flex: 1;
-    }
-  }
-
-  /* AJUSTES PARA DISPOSITIVOS MÓVEIS */
-  @media (max-width: 600px) {
-    body {
-      padding: 10px;
-    }
-
-    .container {
-      padding: 15px;
-    }
-
-    .row-vagas {
-      grid-template-columns: 1fr;
-    }
-
-    .form-row {
-      flex-direction: column;
-      gap: 0;
-    }
-
-    /* Input e Botão do CPF ajustados com fonte de 16px para não dar zoom no iOS */
-    #cpfConsulta, 
-    #btnBuscarCpf {
-      font-size: 16px !important;
-      min-height: 45px !important;
-    }
-
-    .dynamic-row {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 8px;
-    }
-  }
-
-  /* Ajuste para celulares muito pequenos (menos de 380px) */
-  @media (max-width: 380px) {
-    .dynamic-row {
-      grid-template-columns: 1fr !important;
-    }
-  }
-
-  #nascConsulta {
+h1 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 5px;
   text-align: center;
-  }
+}
 
-  /* Rótulo padrão flutuante estilo placeholder */
-  .input-label {
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 2px;
-    margin-top: 6px;
-    font-weight: 500;
-    display: block;
-    text-align: left;
-  }
-  .input-label-consulta {
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 2px;
-    margin-top: 6px;
-    font-weight: 500;
-    display: block;
-    text-align: center;
-  }
+.subtitle {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+.section {
+  margin-bottom: 25px;
+  padding-top: 5px;
+}
+
+#secApto {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 8px; 
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+  width: 100% !important;
+  height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-sizing: border-box !important;
+  font-size: 0.95rem;
+  background-color: #fff;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.centralizado {
+  text-align: center !important;
+}
+
+.centralizado h3, 
+.centralizado label {
+  text-align: center !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.centralizado select {
+  text-align: center !important;
+  text-align-last: center !important;
+}
+
+.card-consulta {
+  background-color: #eef2f7;
+  border-left: 4px solid var(--accent-color);
+  padding: 20px 15px !important;
+  border-radius: 8px;
+  margin-bottom: 25px !important;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box !important;
+}
+
+.card-consulta h3 {
+  margin-top: 0 !important;
+  margin-bottom: 15px !important;
+  font-size: 0.95rem;
+  color: var(--primary-color);
+  line-height: 1.3;
+}
+
+.row-consulta,
+#rowConsultaCpf {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
+.row-consulta input[type="text"],
+#cpfConsulta {
+  margin: 0;
+  text-align: center !important;
+}
+
+.row-consulta button,
+#btnBuscarCpf {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100% !important;
+  min-height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.row-checkbox-morador {
+  margin-top: 15px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.row-checkbox-morador input[type="checkbox"],
+.row-checkbox-morador label {
+  margin: 0;
+  cursor: pointer;
+}
+
+.row-checkbox-morador label {
+  font-weight: bold;
+  color: #333;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.checkbox-group label {
+  margin: 0;
+}
+
+.sub-title {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 15px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.dynamic-group {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dynamic-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+/* NOVO: Garante que Carros e Motos fiquem em 3 colunas proporcionais na mesma linha */
+.dynamic-group:has(.car-marca-modelo),
+.dynamic-group:has(.moto-marca-modelo) {
+  align-items: flex-end;
+}
+
+.dynamic-group:has(.car-marca-modelo) .dynamic-row,
+.dynamic-group:has(.moto-marca-modelo) .dynamic-row {
+  grid-template-columns: 2fr 1fr 1fr !important;
+}
+
+.dynamic-row input, 
+.dynamic-row select {
+  margin: 0;
+  width: 100% !important;
+}
+
+.btn-remove-x {
+  background: transparent;
+  color: #e74c3c;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-remove-x:hover {
+  background-color: #fadbd8;
+  color: #c0392b;
+}
+
+.btn-add {
+  background-color: #e8f4fd;
+  color: var(--accent-color);
+  border: 1px dashed var(--accent-color);
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.btn-add:hover {
+  background-color: #d0e7f9;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-submit {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #219150;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-hover);
+}
+
+#statusMessage {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.sucesso {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.erro {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.desc-secao {
+  font-size: 0.85rem;
+  color: #636e72;
+  margin-top: -2px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.alert-text {
+  background-color: #fff8e1;
+  border-left: 3px solid #ffc107;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #856404;
+}
+
+.title-grupo {
+  font-size: 1.1rem;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 4px;
+  margin-top: 25px;
+}
+
+.row-vagas {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input:disabled,
+button:disabled {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  border-color: #ced4da !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.form-row > div {
+  flex: 1;
+}
+
+#nascConsulta {
+  text-align: center;
+}
+
+.input-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: block;
+  text-align: left;
+}
+
+.input-label-consulta {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: block;
+  text-align: center;
+}
 
 .input-erro-destaque {
   border: 2px solid #e74c3c !important;
   background-color: #fdf2f2 !important;
   transition: all 0.3s ease;
+}
+
+@media (min-width: 601px) {
+  .form-actions {
+    flex-direction: row;
+  }
+  .btn-submit {
+    flex: 2;
+  }
+  .btn-secondary {
+    flex: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  .container {
+    padding: 15px;
+  }
+  .row-vagas {
+    grid-template-columns: 1fr;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  #cpfConsulta, 
+  #btnBuscarCpf {
+    font-size: 16px !important;
+    min-height: 45px !important;
+  }
+  .dynamic-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+  .dynamic-group:has(.car-marca-modelo) .dynamic-row,
+  .dynamic-group:has(.moto-marca-modelo) .dynamic-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .dynamic-row {
+    grid-template-columns: 1fr !important;
+  }
 }
