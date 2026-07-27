@@ -278,8 +278,8 @@ function executarEnvio(fileData, eAtualizacao) {
     arquivoContrato: fileData,
 
     ocupantesList: coletarDadosGrupados(".item-ocupante", [".oc-nome", ".oc-tel", ".oc-nasc", ".oc-vinculo"]),
-    carrosList: coletarDadosGrupados(".item-carro", [".car-marca", ".car-modelo", ".car-cor", ".car-placa"]),
-    motosList: coletarDadosGrupados(".item-moto", [".moto-marca", ".moto-modelo", ".moto-cor", ".moto-placa"]),
+    carrosList: coletarDadosGrupados(".item-carro", [".car-marca-modelo", ".car-cor", ".car-placa"]),
+    motosList: coletarDadosGrupados(".item-moto", [".moto-marca-modelo", ".moto-cor", ".moto-placa"]),
     bikesList: coletarDadosGrupados(".item-bike", [".bike-marca", ".bike-cor"]),
     petsList: coletarDadosGrupados(".item-pet", [".pet-nome", ".pet-especie", ".pet-raca", ".pet-porte"]),
     prestadorList: coletarDadosGrupados(".item-prestador", [".pr-nome", ".pr-servico", ".pr-tel", ".pr-chave"]),
