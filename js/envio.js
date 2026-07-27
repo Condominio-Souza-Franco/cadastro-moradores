@@ -145,7 +145,7 @@ function enviar() {
     }
   });
 
-  // 8. Prestadores (Regra pré-existente)
+  // 8. Prestadores
   const prestadores = document.querySelectorAll('#containerPrestadores .item-prestador');
   prestadores.forEach((item, index) => {
     const inputs = item.querySelectorAll('input, select');
@@ -200,12 +200,10 @@ function enviar() {
   });
 
   if (camposFaltantes.length > 0) {
-    // Aplica o destaque visual (UX) nos campos errados
     elementosParaDestacar.forEach(el => {
       if (el) el.classList.add('input-erro-destaque');
     });
 
-    // Dá foco automático e scroll suave no primeiro campo com erro encontrado
     if (elementosParaDestacar.length > 0) {
       elementosParaDestacar[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
       elementosParaDestacar[0].focus();
@@ -332,7 +330,6 @@ function voltarTelaInicial() {
     form.reset();
   }
 
-  // Remove eventuais destaques de erro visuais ao resetar
   document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
 
   var cpfConsulta = document.getElementById('cpfConsulta');
@@ -359,7 +356,7 @@ function voltarTelaInicial() {
     'containerPrestadores'
   ];
 
-  containersDinasicos.forEach(function(id) {
+  containersDinamicos.forEach(function(id) {
     var container = document.getElementById(id);
     if (container) container.innerHTML = '';
   });
