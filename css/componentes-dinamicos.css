@@ -1,0 +1,80 @@
+/* ITENS DINÂMICOS, CARROS E MOTOS */
+
+.sub-title {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 15px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.dynamic-group {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dynamic-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+/* Garante que Carros e Motos fiquem em 3 colunas proporcionais na mesma linha */
+.dynamic-group:has(.car-marca-modelo),
+.dynamic-group:has(.moto-marca-modelo) {
+  align-items: flex-end;
+}
+
+.dynamic-group:has(.car-marca-modelo) .dynamic-row,
+.dynamic-group:has(.moto-marca-modelo) .dynamic-row {
+  grid-template-columns: 2fr 1fr 1fr !important;
+}
+
+.dynamic-row input, 
+.dynamic-row select {
+  margin: 0;
+  width: 100% !important;
+}
+
+.btn-remove-x {
+  background: transparent;
+  color: #e74c3c;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-remove-x:hover {
+  background-color: #fadbd8;
+  color: #c0392b;
+}
+
+.btn-add {
+  background-color: #e8f4fd;
+  color: var(--accent-color);
+  border: 1px dashed var(--accent-color);
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.btn-add:hover {
+  background-color: #d0e7f9;
+}
