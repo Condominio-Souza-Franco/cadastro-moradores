@@ -244,7 +244,7 @@ function preencherOcupantes(texto) {
 
 function addCarro(v = {}) {
   adicionarItemDinamico('containerCarros', 'item-carro', `
-    <div class="row g-2">
+    <div class="row g-2 dynamic-row-veiculo">
       <div class="col-md-5"><span class="input-label">Marca e modelo</span><input type="text" placeholder="Toyota Corolla" class="car-marca-modelo" value="${v.marcaModelo || ''}"></div>
       <div class="col-md-4"><span class="input-label">Cor</span><input type="text" placeholder="Prata" class="car-cor" value="${v.cor || ''}"></div>
       <div class="col-md-3"><span class="input-label">Placa</span><input type="text" placeholder="SJP-4K82" class="car-placa" value="${v.placa || ''}"></div>
@@ -265,7 +265,7 @@ function preencherCarros(texto) {
 
 function addMoto(v = {}) {
   adicionarItemDinamico('containerMotos', 'item-moto', `
-    <div class="row g-2">
+    <div class="row g-2 dynamic-row-veiculo">
       <div class="col-md-5"><span class="input-label">Marca e modelo</span><input type="text" placeholder="Honda CG 160 Titan" class="moto-marca-modelo" value="${v.marcaModelo || ''}"></div>
       <div class="col-md-4"><span class="input-label">Cor</span><input type="text" placeholder="Azul" class="moto-cor" value="${v.cor || ''}"></div>
       <div class="col-md-3"><span class="input-label">Placa</span><input type="text" placeholder="QMV-7H31" class="moto-placa" value="${v.placa || ''}"></div>
