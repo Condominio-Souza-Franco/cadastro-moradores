@@ -1,4 +1,4 @@
-//Responsável pelo disparo do envio do formulário, processamento de arquivos via FileReader e rotinas de reset
+// RESPONSÁVEL PELO DISPARO DO ENVIO DO FORMULÁRIO, PROCESSAMENTO DE ARQUIVOS VIA FILEREADER E ROTINAS DE RESET
   
 function enviar() {
   limpaMensagemStatus();
