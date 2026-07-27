@@ -487,10 +487,10 @@ function preencherPets(texto) {
 
 function addPrestador(v = {}) {
   adicionarItemDinamico('containerPrestadores', 'item-prestador', `
-    <div><span class="input-label">Nome</span><input type="text" placeholder="César Millan" class="pr-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Serviço</span><input type="text" placeholder="Adestrador de animais, diarista etc" class="pr-servico" value="${v.servico || ''}"></div>
-    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21987654321" class="pr-tel" value="${v.tel || ''}"></div>
-    <div><span class="input-label">Possui chave?</span><select class="pr-chave">
+    <div><span class="input-label">Nome *</span><input type="text" placeholder="César Millan" class="pr-nome" value="${v.nome || ''}"></div>
+    <div><span class="input-label">Serviço *</span><input type="text" placeholder="Adestrador de animais, diarista etc" class="pr-servico" value="${v.servico || ''}"></div>
+    <div><span class="input-label">Telefone / Celular *</span><input type="tel" placeholder="21987654321" class="pr-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Possui chave? *</span><select class="pr-chave">
       <option value="">Possui chave?</option>
       <option value="Sim" ${v.chave === 'Sim' ? 'selected' : ''}>Sim</option>
       <option value="Não" ${v.chave === 'Não' ? 'selected' : ''}>Não</option>
@@ -534,63 +534,58 @@ function enviar() {
   
   let camposFaltantes = [];
 
-  if (!document.getElementById("apto").value) {
-    camposFaltantes.push("Apartamento");
-  }
+  // ==========================================
+  // 1. LISTA CENTRALIZADA DE CAMPOS OBRIGATÓRIOS
+  // ==========================================
+  const regrasObrigatorias = [
+    { id: "apto", nome: "Apartamento" },
+    { id: "tipoResidente", nome: "Identificação do imóvel" },
+    { id: "moradorNome", nome: "Nome" },
+    { id: "moradorCpf", nome: "CPF" },
+    { id: "moradorNasc", nome: "Data de nascimento" },
+    { id: "moradorCelular", nome: "Celular" },
+    { id: "declaracao", nome: "Declaro", tipo: "checkbox" }
+  ];
 
-  const elNasc = document.getElementById("moradorNasc");
-  if (elNasc && (!elNasc.value || elNasc.value.trim() === "")) {
-    camposFaltantes.push("Data de nascimento");
-  }
-
-  const camposObrigatorios = document.querySelectorAll('#cadForm [required]');
-  
-  camposObrigatorios.forEach(function(campo) {
-    if (campo.offsetParent !== null && !campo.classList.contains('pr-chave')) {
+  regrasObrigatorias.forEach(regra => {
+    const el = document.getElementById(regra.id);
+    if (el && el.offsetParent !== null) { // Valida apenas se o elemento estiver visível na tela
       let estaVazio = false;
-      
-      if (campo.type === 'checkbox') {
-        estaVazio = !campo.checked;
+      if (regra.tipo === "checkbox") {
+        estaVazio = !el.checked;
       } else {
-        estaVazio = !campo.value || campo.value.trim() === "";
+        estaVazio = !el.value || el.value.trim() === "";
       }
 
       if (estaVazio) {
-        let nomeCampo = "";
-        
-        const container = campo.closest('div') || campo.parentElement;
-        if (container) {
-          const label = container.querySelector('label');
-          if (label) {
-            nomeCampo = label.innerText.replace('*', '').trim();
-          }
-        }
-
-        if (!nomeCampo && campo.placeholder) {
-          nomeCampo = campo.placeholder.replace('*', '').trim();
-        } else if (!nomeCampo && campo.tagName === 'SELECT' && campo.options[0]) {
-          nomeCampo = campo.options[0].text.replace('*', '').trim();
-        }
-
-        if (!nomeCampo) {
-          nomeCampo = campo.id || "Campo Obrigatório";
-        }
-
-        if (!camposFaltantes.includes(nomeCampo)) {
-          camposFaltantes.push(nomeCampo);
-        }
+        camposFaltantes.push(regra.nome);
       }
     }
   });
 
+  // ==========================================
+  // 2. VALIDAÇÃO OBRIGATÓRIA DOS PRESTADORES
+  // ==========================================
   const prestadores = document.querySelectorAll('#containerPrestadores .item-prestador');
   prestadores.forEach((item, index) => {
-    const nome = item.querySelector('.pr-nome') ? item.querySelector('.pr-nome').value.trim() : '';
-    const chaveSelect = item.querySelector('.pr-chave');
-    if (nome !== "" && chaveSelect && (!chaveSelect.value || chaveSelect.value === "")) {
-      const rotuloChave = `Possui chave? (Prestador ${index + 1})`;
-      if (!camposFaltantes.includes(rotuloChave)) {
-        camposFaltantes.push(rotuloChave);
+    const nomeEl = item.querySelector('.pr-nome');
+    const servicoEl = item.querySelector('.pr-servico');
+    const telEl = item.querySelector('.pr-tel');
+    const chaveEl = item.querySelector('.pr-chave');
+
+    const nome = nomeEl ? nomeEl.value.trim() : '';
+    const servico = servicoEl ? servicoEl.value.trim() : '';
+    const tel = telEl ? telEl.value.trim() : '';
+    const chave = chaveEl ? chaveEl.value : '';
+
+    // Se preencheu qualquer campo do prestador, TODOS se tornam obrigatórios
+    const preencheuAlgum = (nome !== "" || servico !== "" || tel !== "" || chave !== "");
+    const preencheuTodos = (nome !== "" && servico !== "" && tel !== "" && chave !== "");
+
+    if (preencheuAlgum && !preencheuTodos) {
+      let labelPrestador = `Prestador ${index + 1} (Preencha todos os campos obrigatórios: Nome, Serviço, Telefone e Chave)`;
+      if (!camposFaltantes.includes(labelPrestador)) {
+        camposFaltantes.push(labelPrestador);
       }
     }
   });
