@@ -59,7 +59,7 @@ function enviar() {
     }
   });
 
-  // 2. Casos de Emergência (Se nome preenchido, telefone obrigatório)
+  // 2. Casos de Emergência (Se preencheu qualquer campo, Nome e Telefone passam a ser obrigatórios)
   const emergencias = document.querySelectorAll('#containerEmergencia .item-emergencia');
   emergencias.forEach((item, index) => {
     const nomeEl = item.querySelector('.em-nome');
@@ -67,25 +67,31 @@ function enviar() {
     const nome = nomeEl ? nomeEl.value.trim() : '';
     const tel = telEl ? telEl.value.trim() : '';
 
-    if (nome !== "" && tel === "") {
-      let label = `Caso de emergência ${index + 1}: telefone/celular obrigatório`;
+    const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && (nome === "" || tel === "")) {
+      let label = `Caso de emergência ${index + 1} (Preencha Nome e Telefone/Celular)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      if (telEl) elementosParaDestacar.push(telEl);
+      if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
+      if (tel === "" && telEl) elementosParaDestacar.push(telEl);
     }
   });
 
-  // 3. Demais Ocupantes (Se nome preenchido, telefone obrigatório)
+  // 3. Demais Ocupantes (Se preencheu qualquer campo, Nome e Vínculo passam a ser obrigatórios)
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
     const nomeEl = item.querySelector('.oc-nome');
-    const telEl = item.querySelector('.oc-tel');
+    const vinculoEl = item.querySelector('.oc-vinculo');
     const nome = nomeEl ? nomeEl.value.trim() : '';
-    const tel = telEl ? telEl.value.trim() : '';
+    const vinculo = vinculoEl ? vinculoEl.value.trim() : '';
 
-    if (nome !== "" && tel === "") {
-      let label = `Demais ocupantes ${index + 1}: telefone/celular obrigatório`;
+    const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
+
+    if (preencheuAlgum && (nome === "" || vinculo === "")) {
+      let label = `Demais ocupantes ${index + 1} (Preencha Nome e Vínculo)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      if (telEl) elementosParaDestacar.push(telEl);
+      if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
+      if (vinculo === "" && vinculoEl) elementosParaDestacar.push(vinculoEl);
     }
   });
 
@@ -117,17 +123,19 @@ function enviar() {
     }
   });
 
-  // 6. Bicicletas (Todos obrigatórios se algum preenchido)
+  // 6. Bicicletas (Apenas Cor obrigatória se a linha for preenchida)
   const bikes = document.querySelectorAll('#containerBikes .item-bike');
   bikes.forEach((item, index) => {
+    const corEl = item.querySelector('.bike-cor'); // Certifique-se de que a classe do input de cor é .bike-cor
     const inputs = item.querySelectorAll('input');
+    
     let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
-    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+    let cor = corEl ? corEl.value.trim() : "";
 
-    if (preencheuAlgum && !preencheuTodos) {
-      let label = `Bicicletas ${index + 1} (Preencha marca e cor)`;
+    if (preencheuAlgum && cor === "") {
+      let label = `Bicicletas ${index + 1} (Preencha a cor)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+      if (corEl) elementosParaDestacar.push(corEl);
     }
   });
 
