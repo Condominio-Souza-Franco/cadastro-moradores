@@ -485,6 +485,12 @@ function atualizarInfoVaga(apto) {
     return;
   }
 
+  // Proteção para caso esteja testando fora do Google Apps Script (localmente)
+  if (typeof google === 'undefined' || !google.script || !google.script.run) {
+    console.warn("Ambiente Google Apps Script não detectado. A busca de vaga requer hospedagem no Apps Script.");
+    return;
+  }
+
   google.script.run
     .withSuccessHandler(res => {
       if (res.sucesso && res.vaga) {
@@ -497,7 +503,7 @@ function atualizarInfoVaga(apto) {
     .buscarVagaPorApartamento(apto);
 }
 
-// Adicione um ouvinte para disparar quando o campo do apartamento mudar
+// Ouve a alteração manual do select de apartamento
 document.addEventListener("DOMContentLoaded", () => {
   const selectApto = document.getElementById("apto");
   if (selectApto) {
