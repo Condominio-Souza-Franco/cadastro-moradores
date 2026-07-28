@@ -77,15 +77,6 @@ function enviar() {
     }
   });
 
-  function formatarDataParaBr(dataStr) {
-    if (!dataStr) return "";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
-      const partes = dataStr.split('-');
-      return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
-    return dataStr;
-  }
-
   // 3. Demais Ocupantes (Se preencheu qualquer campo, Nome e Vínculo passam a ser obrigatórios)
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
@@ -313,7 +304,13 @@ function executarEnvio(fileData, eAtualizacao) {
         const vinculo = g.querySelector(".oc-vinculo")?.value.trim() || "";
 
         if (nome !== "") {
-          const nascFormatada = formatarDataParaBr(nascInput);
+          // Converte AAAA-MM-DD para DD/MM/AAAA na hora
+          let nascFormatada = nascInput;
+          if (/^\d{4}-\d{2}-\d{2}$/.test(nascInput)) {
+            const partes = nascInput.split('-');
+            nascFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+          }
+          
           resultado.push([nome, tel, nascFormatada, vinculo].join(" | "));
         }
       });
