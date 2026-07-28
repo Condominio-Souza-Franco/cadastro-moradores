@@ -474,3 +474,35 @@ function tratarMoradorNovo(isMarcado) {
     voltarTelaInicial();
   }
 }
+
+function atualizarInfoVaga(apto) {
+  const divVaga = document.getElementById("infoVagaGaragem");
+  if (!divVaga) return;
+
+  if (!apto || apto.trim() === "") {
+    divVaga.style.display = "none";
+    divVaga.innerText = "";
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.sucesso && res.vaga) {
+        divVaga.innerText = res.vaga;
+        divVaga.style.display = "block";
+      } else {
+        divVaga.style.display = "none";
+      }
+    })
+    .buscarVagaPorApartamento(apto);
+}
+
+// Adicione um ouvinte para disparar quando o campo do apartamento mudar
+document.addEventListener("DOMContentLoaded", () => {
+  const selectApto = document.getElementById("apto");
+  if (selectApto) {
+    selectApto.addEventListener("change", (e) => {
+      atualizarInfoVaga(e.target.value);
+    });
+  }
+});
