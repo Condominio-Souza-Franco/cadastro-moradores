@@ -139,17 +139,34 @@ function enviar() {
     }
   });
 
-  // 7. Pets (Todos obrigatórios se algum preenchido)
+  // 7. Pets (Nome preenchido torna Raça/espécie e Porte obrigatórios)
   const pets = document.querySelectorAll('#containerPets .item-pet');
   pets.forEach((item, index) => {
-    const inputs = item.querySelectorAll('input, select');
-    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
-    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+    const nomeEl = item.querySelector('.pet-nome');
+    const racaEspecieEl = item.querySelector('.pet-raca-especie');
+    const porteEl = item.querySelector('.pet-porte');
 
-    if (preencheuAlgum && !preencheuTodos) {
-      let label = `Pets ${index + 1} (Preencha nome, espécie, raça e porte)`;
+    const nome = nomeEl ? nomeEl.value.trim() : '';
+    const racaEspecie = racaEspecieEl ? racaEspecieEl.value.trim() : '';
+    const porte = porteEl ? porteEl.value.trim() : '';
+
+    const preencheuAlgum = (nome !== "" || racaEspecie !== "" || porte !== "");
+    const preencheuNome = nome !== "";
+    const preencheuOutros = (racaEspecie !== "" && porte !== "");
+
+    // Se preencheu o nome mas deixou raça/espécie ou porte vazios
+    if (preencheuNome && !preencheuOutros) {
+      let label = `Pets ${index + 1} (Preencha Raça e espécie e Porte)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+      
+      if (racaEspecie === "" && racaEspecieEl) elementosParaDestacar.push(racaEspecieEl);
+      if (porte === "" && porteEl) elementosParaDestacar.push(porteEl);
+    } 
+    // Caso tenha preenchido os outros campos mas esqueceu o nome
+    else if (!preencheuNome && preencheuAlgum) {
+      let label = `Pets ${index + 1} (Preencha o Nome)`;
+      if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
+      if (nomeEl) elementosParaDestacar.push(nomeEl);
     }
   });
 
@@ -281,7 +298,7 @@ function executarEnvio(fileData, eAtualizacao) {
     carrosList: coletarDadosGrupados(".item-carro", [".car-marca-modelo", ".car-cor", ".car-placa"]),
     motosList: coletarDadosGrupados(".item-moto", [".moto-marca-modelo", ".moto-cor", ".moto-placa"]),
     bikesList: coletarDadosGrupados(".item-bike", [".bike-marca", ".bike-cor"]),
-    petsList: coletarDadosGrupados(".item-pet", [".pet-nome", ".pet-especie", ".pet-raca", ".pet-porte"]),
+    petsList: coletarDadosGrupados(".item-pet", [".pet-nome", ".pet-raca-especie", ".pet-porte"]),
     prestadorList: coletarDadosGrupados(".item-prestador", [".pr-nome", ".pr-servico", ".pr-tel", ".pr-chave"]),
     
     observacoes: document.getElementById("observacoes").value,
