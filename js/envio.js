@@ -530,7 +530,7 @@ function atualizarInfoVagaLocal(apto) {
       const numero = linha[2]; // Coluna C
       
       if (numero && andar) {
-        vagaEncontrada = `Sua vaga fica no ${andar}, de número ${numero} / `;
+        vagaEncontrada = `Sua vaga é a ${numero} e fica no ${andar}`;
       }
       break;
     }
