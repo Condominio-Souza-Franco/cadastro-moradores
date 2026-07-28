@@ -305,7 +305,7 @@ function preencherBikes(texto) {
 function addPet(v = {}) {
   adicionarItemDinamico('containerPets', 'item-pet', `
     <div><span class="input-label">Nome</span><input type="text" placeholder="Snoopy" class="pet-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Raça e espécie</span><input type="text" placeholder="Beagle / Cachorro" class="pet-raca-especie" value="${v.racaEspecie || ''}"></div>
+    <div><span class="input-label">Espécie e raça</span><input type="text" placeholder="Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}"></div>
     <div><span class="input-label">Porte</span><select class="pet-porte">
       <option value="">Selecione...</option>
       <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
