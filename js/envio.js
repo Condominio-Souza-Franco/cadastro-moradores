@@ -475,7 +475,36 @@ function tratarMoradorNovo(isMarcado) {
   }
 }
 
-function atualizarInfoVaga(apto) {
+// Variável global para guardar o gabarito na memória do navegador
+let gabaritoVagasCache = [];
+
+// 1. Carrega o gabarito assim que a página abre (uma única vez)
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(res => {
+        if (res && res.sucesso) {
+          gabaritoVagasCache = res.dados; // Salva a matriz aqui
+          console.log("Gabarito de vagas carregado na memória com sucesso!");
+        }
+      })
+      .obterTodoGabaritoVagas();
+  }
+
+  // Monitora alterações no campo de apartamento
+  const selectApto = document.getElementById("apto");
+  if (selectApto) {
+    selectApto.addEventListener("change", (e) => {
+      atualizarInfoVagaLocal(e.target.value);
+    });
+    selectApto.addEventListener("input", (e) => {
+      atualizarInfoVagaLocal(e.target.value);
+    });
+  }
+});
+
+// 2. Função que busca direto na matriz local (instantâneo e sem requisição)
+function atualizarInfoVagaLocal(apto) {
   const divVaga = document.getElementById("infoVagaGaragem");
   if (!divVaga) return;
 
@@ -485,45 +514,27 @@ function atualizarInfoVaga(apto) {
     return;
   }
 
-  if (typeof google === 'undefined' || !google.script || !google.script.run) {
-    return;
-  }
-
-  google.script.run
-    .withSuccessHandler(res => {
-      if (res && res.sucesso && res.vaga) {
-        divVaga.innerText = res.vaga;
-        divVaga.style.display = "block";
-      } else {
-        divVaga.style.display = "none";
+  // Procura o apartamento dentro do array guardado na memória
+  let vagaEncontrada = null;
+  for (let i = 0; i < gabaritoVagasCache.length; i++) {
+    const linha = gabaritoVagasCache[i];
+    const aptoPlanilha = String(linha[0]).trim().toLowerCase();
+    
+    if (aptoPlanilha === String(apto).trim().toLowerCase()) {
+      const andar = linha[1]; // Coluna B (Andar: G1 ou G2)
+      const numero = linha[2]; // Coluna C (Número da vaga)
+      
+      if (numero && andar) {
+        vagaEncontrada = `Sua vaga é ${numero} no ${andar}`;
       }
-    })
-    .buscarVagaPorApartamento(apto);
-}
-
-// Monitora alterações no campo de apartamento (seja por select, input ou alteração via script)
-document.addEventListener("DOMContentLoaded", () => {
-  const selectApto = document.getElementById("apto");
-  if (selectApto) {
-    // Dispara quando o usuário muda a opção
-    selectApto.addEventListener("change", (e) => {
-      atualizarInfoVaga(e.target.value);
-    });
-
-    // Dispara também se o valor mudar por algum outro script de seleção
-    selectApto.addEventListener("input", (e) => {
-      atualizarInfoVaga(e.target.value);
-    });
-  }
-});
-
-// Observador global para atualizar a vaga sempre que o campo "apto" for alterado na tela
-setInterval(() => {
-  const selectApto = document.getElementById("apto");
-  if (selectApto && selectApto.value) {
-    if (window._ultimoAptoVerificado !== selectApto.value) {
-      window._ultimoAptoVerificado = selectApto.value;
-      atualizarInfoVaga(selectApto.value);
+      break;
     }
   }
-}, 500);
+
+  if (vagaEncontrada) {
+    divVaga.innerText = vagaEncontrada;
+    divVaga.style.display = "block";
+  } else {
+    divVaga.style.display = "none";
+  }
+}
