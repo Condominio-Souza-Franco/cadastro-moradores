@@ -516,3 +516,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// Observador global para atualizar a vaga sempre que o campo "apto" for alterado na tela
+setInterval(() => {
+  const selectApto = document.getElementById("apto");
+  if (selectApto && selectApto.value) {
+    if (window._ultimoAptoVerificado !== selectApto.value) {
+      window._ultimoAptoVerificado = selectApto.value;
+      atualizarInfoVaga(selectApto.value);
+    }
+  }
+}, 500);
