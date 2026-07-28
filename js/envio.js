@@ -156,7 +156,7 @@ function enviar() {
 
     // Se preencheu o nome mas deixou raça/espécie ou porte vazios
     if (preencheuNome && !preencheuOutros) {
-      let label = `Pets ${index + 1} (Preencha Raça e espécie e Porte)`;
+      let label = `Pets ${index + 1} (Preencha Espécie e Raça e Porte)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       
       if (racaEspecie === "" && racaEspecieEl) elementosParaDestacar.push(racaEspecieEl);
