@@ -97,6 +97,11 @@ function consultarPorCpf() {
           evt.initEvent("change", false, true);
           elApto.dispatchEvent(evt);
         }
+        
+        // Atualiza a vaga automaticamente ao carregar o apartamento do morador
+        if (typeof atualizarInfoVaga === 'function') {
+          atualizarInfoVaga(d.apto);
+        }
       }
 
       alterarTextoBotaoEnviar("Atualizar cadastro");
