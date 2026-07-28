@@ -98,9 +98,9 @@ function consultarPorCpf() {
           elApto.dispatchEvent(evt);
         }
         
-        // Atualiza a vaga automaticamente ao carregar o apartamento do morador
-        if (typeof atualizarInfoVaga === 'function') {
-          atualizarInfoVaga(d.apto);
+        // Atualiza a vaga instantaneamente utilizando o cache local em array
+        if (typeof atualizarInfoVagaLocal === 'function') {
+          atualizarInfoVagaLocal(d.apto);
         }
       }
 
