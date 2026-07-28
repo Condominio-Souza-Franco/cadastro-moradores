@@ -77,6 +77,15 @@ function enviar() {
     }
   });
 
+  function formatarDataParaBr(dataStr) {
+    if (!dataStr) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
+      const partes = dataStr.split('-');
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    return dataStr;
+  }
+
   // 3. Demais Ocupantes (Se preencheu qualquer campo, Nome e Vínculo passam a ser obrigatórios)
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
@@ -294,7 +303,23 @@ function executarEnvio(fileData, eAtualizacao) {
     inqVigencia: document.getElementById("inqVigencia").value,
     arquivoContrato: fileData,
 
-    ocupantesList: coletarDadosGrupados(".item-ocupante", [".oc-nome", ".oc-tel", ".oc-nasc", ".oc-vinculo"]),
+    ocupantesList: (() => {
+      const grupos = document.querySelectorAll(".item-ocupante");
+      const resultado = [];
+      grupos.forEach(g => {
+        const nome = g.querySelector(".oc-nome")?.value.trim() || "";
+        const tel = g.querySelector(".oc-tel")?.value.trim() || "";
+        const nascInput = g.querySelector(".oc-nasc")?.value.trim() || "";
+        const vinculo = g.querySelector(".oc-vinculo")?.value.trim() || "";
+
+        if (nome !== "") {
+          const nascFormatada = formatarDataParaBr(nascInput);
+          resultado.push([nome, tel, nascFormatada, vinculo].join(" | "));
+        }
+      });
+      return resultado.join("\n");
+    })(),
+
     carrosList: coletarDadosGrupados(".item-carro", [".car-marca-modelo", ".car-cor", ".car-placa"]),
     motosList: coletarDadosGrupados(".item-moto", [".moto-marca-modelo", ".moto-cor", ".moto-placa"]),
     bikesList: coletarDadosGrupados(".item-bike", [".bike-marca", ".bike-cor"]),
