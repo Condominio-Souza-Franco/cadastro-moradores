@@ -305,8 +305,7 @@ function preencherBikes(texto) {
 function addPet(v = {}) {
   adicionarItemDinamico('containerPets', 'item-pet', `
     <div><span class="input-label">Nome</span><input type="text" placeholder="Snoopy" class="pet-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Espécie</span><input type="text" placeholder="Cachorro" class="pet-especie" value="${v.especie || ''}"></div>
-    <div><span class="input-label">Raça</span><input type="text" placeholder="Beagle" class="pet-raca" value="${v.raca || ''}"></div>
+    <div><span class="input-label">Raça e espécie</span><input type="text" placeholder="Beagle / Cachorro" class="pet-raca-especie" value="${v.racaEspecie || ''}"></div>
     <div><span class="input-label">Porte</span><select class="pet-porte">
       <option value="">Selecione...</option>
       <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
@@ -329,7 +328,11 @@ function preencherPets(texto) {
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
     if (p.some(item => item && item.trim() !== "")) {
-      addPet({ nome: p[0], especie: p[1], raca: p[2], porte: p[3] });
+      addPet({ 
+        nome: p[0], 
+        racaEspecie: p[1], 
+        porte: p[2] 
+      });
     }
   });
 }
