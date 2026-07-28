@@ -475,23 +475,26 @@ function tratarMoradorNovo(isMarcado) {
   }
 }
 
-// Variável global para guardar o gabarito na memória do navegador
 let gabaritoVagasCache = [];
 
-// 1. Carrega o gabarito assim que a página abre (uma única vez)
+// Carrega o gabarito na abertura da página
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
       .withSuccessHandler(res => {
         if (res && res.sucesso) {
-          gabaritoVagasCache = res.dados; // Salva a matriz aqui
-          console.log("Gabarito de vagas carregado na memória com sucesso!");
+          gabaritoVagasCache = res.dados;
+          console.log("SUCESSO: Gabarito carregado na memória. Total de linhas:", gabaritoVagasCache.length);
+        } else {
+          console.warn("FALHA: O Apps Script retornou sucesso=false ao buscar o gabarito.");
         }
+      })
+      .withFailureHandler(err => {
+        console.error("ERRO CRÍTICO ao carregar gabarito:", err);
       })
       .obterTodoGabaritoVagas();
   }
 
-  // Monitora alterações no campo de apartamento
   const selectApto = document.getElementById("apto");
   if (selectApto) {
     selectApto.addEventListener("change", (e) => {
@@ -503,10 +506,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 2. Função que busca direto na matriz local (instantâneo e sem requisição)
 function atualizarInfoVagaLocal(apto) {
   const divVaga = document.getElementById("infoVagaGaragem");
-  if (!divVaga) return;
+  if (!divVaga) {
+    console.warn("Elemento 'infoVagaGaragem' não encontrado no HTML!");
+    return;
+  }
 
   if (!apto || apto.trim() === "") {
     divVaga.style.display = "none";
@@ -514,15 +519,17 @@ function atualizarInfoVagaLocal(apto) {
     return;
   }
 
-  // Procura o apartamento dentro do array guardado na memória
+  console.log("Tentando encontrar vaga para o apto:", apto);
+  console.log("Tamanho atual do cache:", gabaritoVagasCache.length);
+
   let vagaEncontrada = null;
   for (let i = 0; i < gabaritoVagasCache.length; i++) {
     const linha = gabaritoVagasCache[i];
     const aptoPlanilha = String(linha[0]).trim().toLowerCase();
     
     if (aptoPlanilha === String(apto).trim().toLowerCase()) {
-      const andar = linha[1]; // Coluna B (Andar: G1 ou G2)
-      const numero = linha[2]; // Coluna C (Número da vaga)
+      const andar = linha[1]; 
+      const numero = linha[2]; 
       
       if (numero && andar) {
         vagaEncontrada = `Sua vaga é ${numero} no ${andar}`;
@@ -532,9 +539,11 @@ function atualizarInfoVagaLocal(apto) {
   }
 
   if (vagaEncontrada) {
+    console.log("Vaga encontrada:", vagaEncontrada);
     divVaga.innerText = vagaEncontrada;
     divVaga.style.display = "block";
   } else {
+    console.log("Nenhuma vaga correspondente encontrada no cache para o apto:", apto);
     divVaga.style.display = "none";
   }
 }
