@@ -103,6 +103,12 @@ function tratarDigitacaoCPF(input) {
   input.value = value;
 }
 
+function tratarDigitacaoRG(input) {
+  let value = input.value.replace(/\D/g, "");
+  if (value.length > 9) value = value.slice(0, 9);
+  input.value = value;
+}
+
 function limpaMensagemStatus() {
   const statusMsg = document.getElementById("statusMessage");
   if (statusMsg) {
