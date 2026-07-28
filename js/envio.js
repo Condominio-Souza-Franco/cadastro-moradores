@@ -485,14 +485,13 @@ function atualizarInfoVaga(apto) {
     return;
   }
 
-  // Proteção: se rodar fora do ambiente do Google, apenas ignora sem quebrar a página
   if (typeof google === 'undefined' || !google.script || !google.script.run) {
     return;
   }
 
   google.script.run
     .withSuccessHandler(res => {
-      if (res.sucesso && res.vaga) {
+      if (res && res.sucesso && res.vaga) {
         divVaga.innerText = res.vaga;
         divVaga.style.display = "block";
       } else {
@@ -502,11 +501,17 @@ function atualizarInfoVaga(apto) {
     .buscarVagaPorApartamento(apto);
 }
 
-// Ouve a alteração do select de apartamento
+// Monitora alterações no campo de apartamento (seja por select, input ou alteração via script)
 document.addEventListener("DOMContentLoaded", () => {
   const selectApto = document.getElementById("apto");
   if (selectApto) {
+    // Dispara quando o usuário muda a opção
     selectApto.addEventListener("change", (e) => {
+      atualizarInfoVaga(e.target.value);
+    });
+
+    // Dispara também se o valor mudar por algum outro script de seleção
+    selectApto.addEventListener("input", (e) => {
       atualizarInfoVaga(e.target.value);
     });
   }
