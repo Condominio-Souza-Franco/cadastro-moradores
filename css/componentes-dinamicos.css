@@ -68,6 +68,22 @@
   box-sizing: border-box !important;
 }
 
+/* SEÇÃO DE PETS: 3 campos na mesma linha no Desktop */
+.dynamic-group:has(.item-pet) .dynamic-row {
+  display: grid !important;
+  grid-template-columns: 2fr 2fr 1fr !important;
+  gap: 15px !important;
+  align-items: flex-end !important;
+}
+
+/* RESPONSIVO PARA CELULAR (Abaixo de 600px): Pets voltam a ficar 2 por linha */
+@media (max-width: 600px) {
+  .dynamic-group:has(.item-pet) .dynamic-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
 /* BOTÕES DE AÇÃO */
 .btn-remove-x {
   background: transparent;
