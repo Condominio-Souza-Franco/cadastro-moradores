@@ -83,6 +83,8 @@ function consultarPorCpf() {
       if (d.pets)        preencherPets(d.pets);
       if (d.prestadores) preencherPrestadores(d.prestadores);
 
+      if (document.getElementById("observacoes")) document.getElementById("observacoes").value = d.observacoes || "";
+
       if (d.tipo) {
         const elTipo = document.getElementById("tipoResidente");
         if (elTipo) elTipo.value = d.tipo;
