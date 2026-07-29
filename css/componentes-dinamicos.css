@@ -68,7 +68,7 @@
   box-sizing: border-box !important;
 }
 
-/* 3. SEÇÃO DE PETS: Nome e Porte na 1ª linha (2fr 1fr), Espécie e raça na 2ª linha */
+/* 3. SEÇÃO DE PETS: Força o container a empilhar os blocos e estiliza as linhas internas */
 .dynamic-group:has(.item-pet) .dynamic-row {
   display: flex !important;
   flex-direction: column !important;
