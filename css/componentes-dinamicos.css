@@ -153,3 +153,7 @@
     gap: 10px !important;
   }
 }
+#infoVagaGaragem {
+  margin-bottom: 8px;
+  display: none;
+}
