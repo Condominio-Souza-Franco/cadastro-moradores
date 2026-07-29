@@ -81,3 +81,11 @@ h1 {
   text-decoration: underline;
   color: #2980b9;
 }
+
+#secFinal p.desc-secao {
+    margin-top: 10px;
+}
+
+div#secDetalhes {
+    margin-bottom: 0px;
+}
