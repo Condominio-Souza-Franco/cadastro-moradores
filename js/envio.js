@@ -276,6 +276,23 @@ function executarEnvio(fileData, eAtualizacao) {
     moradorNascFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
   }
 
+  // Descobre a vaga e o andar baseado no apartamento selecionado usando o cache do gabarito
+  let vagaNumeroEncontrada = "";
+  let vagaAndarEncontrado = "";
+  const aptoAtual = document.getElementById("apto").value.trim().toLowerCase();
+  
+  if (typeof gabaritoVagasCache !== 'undefined' && gabaritoVagasCache.length > 0) {
+    for (let i = 0; i < gabaritoVagasCache.length; i++) {
+      const linha = gabaritoVagasCache[i];
+      const aptoPlanilha = String(linha[0] || "").trim().toLowerCase();
+      if (aptoPlanilha === aptoAtual) {
+        vagaAndarEncontrado = String(linha[1] || "").trim(); // Coluna B = Andar
+        vagaNumeroEncontrada = String(linha[2] || "").trim(); // Coluna C = Número
+        break;
+      }
+    }
+  }
+
   const dados = {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
@@ -289,6 +306,10 @@ function executarEnvio(fileData, eAtualizacao) {
     moradorCelular: document.getElementById("moradorCelular").value,
     moradorTel: document.getElementById("moradorTel").value,
     moradorEmail: document.getElementById("moradorEmail").value,
+    
+    // Envia o número e o andar corretos capturados do gabarito
+    vagaNumero: vagaNumeroEncontrada,
+    vagaAndar: vagaAndarEncontrado,
     
     vagaSituacao: document.getElementById("vagaSituacao").value,
     vagaAptoRelacionado: document.getElementById("vagaAptoRelacionado").value,
@@ -331,6 +352,35 @@ function executarEnvio(fileData, eAtualizacao) {
     observacoes: document.getElementById("observacoes").value,
     declaracao: document.getElementById("declaracao").checked
   };
+
+  fetch(WEB_APP_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      funcao: 'processarFormulario',
+      dados: dados
+    })
+  })
+  .then(response => response.json())
+  .then(res => {
+    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+    if (btnSubmit) btnSubmit.disabled = false;
+
+    alert(res.mensagem);
+
+    if (res.sucesso) {
+      voltarTelaInicial();
+    } else {
+      alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+    }
+  })
+  .catch(err => {
+    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+    if (btnSubmit) btnSubmit.disabled = false;
+
+    alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+    alert("Erro no envio: " + err);
+  });
+}
 
   fetch(WEB_APP_URL, {
     method: 'POST',
