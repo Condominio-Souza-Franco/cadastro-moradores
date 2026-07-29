@@ -29,8 +29,8 @@
   box-sizing: border-box;
 }
 
-/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Pets, Bicicletas, Prestadores): 2 campos por linha no Desktop */
-.dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
+/* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Bicicletas, Prestadores): 2 campos por linha no Desktop */
+.dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.item-pet)) .dynamic-row {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 15px !important;
@@ -68,20 +68,24 @@
   box-sizing: border-box !important;
 }
 
-/* SEÇÃO DE PETS: 3 campos na mesma linha no Desktop */
+/* 3. SEÇÃO DE PETS: Nome e Porte na 1ª linha (2fr 1fr), Espécie e raça na 2ª linha */
 .dynamic-group:has(.item-pet) .dynamic-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.pet-linha-principal {
   display: grid !important;
-  grid-template-columns: 2fr 2fr 1fr !important;
+  grid-template-columns: 2fr 1fr !important;
   gap: 15px !important;
+  width: 100% !important;
   align-items: flex-end !important;
 }
 
-/* RESPONSIVO PARA CELULAR (Abaixo de 600px): Pets voltam a ficar 2 por linha */
-@media (max-width: 600px) {
-  .dynamic-group:has(.item-pet) .dynamic-row {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-  }
+.pet-linha-inferior {
+  width: 100% !important;
 }
 
 /* BOTÕES DE AÇÃO */
@@ -123,7 +127,7 @@
 
 /* RESPONSIVO PARA CELULAR (Abaixo de 600px) */
 @media (max-width: 600px) {
-  /* Carros e Motos continuam quebrando (Marca/Modelo em cima, Cor e Placa embaixo) */
+  /* Carros e Motos quebram (Marca/Modelo em cima, Cor e Placa embaixo) */
   .dynamic-row-veiculo {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
@@ -137,8 +141,14 @@
     grid-column: span 1 !important;
   }
 
-  /* Demais seções (incluindo Pets e Bicicletas) ficam estritamente com 2 campos por linha */
-  .dynamic-group:not(:has(.dynamic-row-veiculo)) .dynamic-row {
+  /* Pets mantêm Nome e Porte na mesma linha (proporção 2fr 1fr) também no celular */
+  .pet-linha-principal {
+    grid-template-columns: 2fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Demais seções ficam estritamente com 2 campos por linha */
+  .dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.item-pet)) .dynamic-row {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
