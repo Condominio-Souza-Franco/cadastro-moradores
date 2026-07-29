@@ -311,12 +311,16 @@ function preencherBikes(texto) {
 
 function addPet(v = {}) {
   adicionarItemDinamico('containerPets', 'item-pet', `
-    <div><span class="input-label">Nome do Pet</span><input type="text" placeholder="Nome" class="pet-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Espécie e Raça</span><input type="text" placeholder="Ex: Cachorro - Poodle" class="pet-raca-especie" value="${v.racaEspecie || ''}"></div>
-    <div><span class="input-label">Porte</span><input type="text" placeholder="Pequeno, Médio, Grande" class="pet-porte" value="${v.porte || ''}"></div>
+    <div><span class="input-label">Nome</span><input type="text" placeholder="Preencha o nome" class="pet-nome" value="${v.nome || ''}"></div>
+    <div><span class="input-label">Espécie e raça</span><input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}"></div>
+    <div><span class="input-label">Porte</span><select class="pet-porte">
+      <option value="">Selecione...</option>
+      <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
+      <option value="Médio" ${v.porte === 'Médio' ? 'selected' : ''}>Médio</option>
+      <option value="Grande" ${v.porte === 'Grande' ? 'selected' : ''}>Grande</option>
+    </select></div>
   `);
 }
-
 function preencherPets(texto) {
   const container = document.getElementById("containerPets") || 
                     document.getElementById("containerPet") || 
