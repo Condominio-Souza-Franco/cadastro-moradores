@@ -86,8 +86,8 @@
     <div id="secRestoFormulario" class="hidden">
       
       <!-- Dados Pessoais do Morador -->
-<div id="secDadosPessoais" class="section">
-  <h3 id="tituloDadosPessoais">Dados do Morador Titular</h3>
+      <div id="secDadosPessoais" class="section">
+        <h3 id="tituloDadosPessoais">Dados do Morador Titular</h3>
   
       <!-- 1. Nome Completo -->
       <label>Nome Completo *</label>
@@ -163,8 +163,7 @@
         <div id="containerOcupantes"></div>
         <button type="button" class="btn-add" onclick="addOcupante()">+ Adicionar Ocupante</button>
 
-        <!-- Seção Vaga de Garagem -->
-     <!-- Seção Vaga de Garagem -->
+      <!-- Seção Vaga de Garagem -->
       <div class="sub-title title-grupo">Vaga de Garagem</div>
       
       <!-- ELEMENTO DINÂMICO DA VAGA -->
@@ -173,19 +172,27 @@
       <p class="desc-secao">
         <a href="https://drive.google.com/file/d/1fV0ZY6BCPMbW17AUKH3Py9kYcEfmKt2-/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="email-link">Clique aqui</a> para visualizar a demarcação das vagas.
       </p>
+
+      <!-- Aluguel de Vagas -->
+      <div class="sub-title title-grupo">Aluguel de vagas</div>
+      
+      <p class="desc-secao">
+        O aluguel de vagas é permitido exclusivamente entre moradores do condomínio.<br>
+        Preencha os campos abaixo caso você alugue sua vaga para outro morador ou utilize uma vaga alugada de outro morador.
+      </p>
+
+      <div class="row-vagas">
+        <select id="vagaSituacao">
+          <option value="">Selecione...</option>
+          <option value="Minha vaga está alugada para">Minha vaga está alugada para</option>
+          <option value="Alugo vaga do">Alugo vaga do</option>
+        </select>
+
+        <select id="vagaAptoRelacionado">
+          <option value="">Apto envolvido...</option>
+        </select>
+      </div>
         
-        <div class="row-vagas">
-          <select id="vagaSituacao">
-            <option value="">Selecione...</option>
-            <option value="Minha vaga está alugada para">Minha vaga está alugada para</option>
-            <option value="Alugo vaga do">Alugo vaga do</option>
-          </select>
-
-          <select id="vagaAptoRelacionado">
-            <option value="">Apto envolvido...</option>
-          </select>
-        </div>
-
         <!-- Seção Veículos -->
         <div class="sub-title title-grupo">Veículos</div>
         <div class="desc-secao">
