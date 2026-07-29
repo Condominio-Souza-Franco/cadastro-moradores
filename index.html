@@ -45,13 +45,13 @@
       <!-- Grupo do CPF -->
       <div style="display: flex; flex-direction: column; width: 100%;">
         <span class="input-label-consulta">CPF</span>
-        <input type="text" id="cpfConsulta" placeholder="Apenas números" oninput="tratarDigitacaoCPF(this)">
+        <input type="text" id="cpfConsulta" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14">
       </div>
       
       <!-- Grupo da Data de Nascimento -->
       <div style="display: flex; flex-direction: column; width: 100%;">
         <span class="input-label-consulta">Data de nascimento</span>
-        <input type="date" id="nascConsulta">
+        <input type="text" id="nascConsulta" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10">
       </div>
       
       <button type="button" id="btnBuscarCpf" onclick="consultarPorCpf()">Buscar Cadastro</button>
@@ -101,11 +101,11 @@
       <div class="form-row col-3">
         <div>
           <label>CPF *</label>
-          <input type="text" id="moradorCpf" placeholder="Apenas números" required>
+          <input type="text" id="moradorCpf" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14" required>
         </div>
         <div>
           <label>Identidade RG</label>
-          <input type="text" id="moradorRg" placeholder="12.345.678-9">
+          <input type="text" id="moradorRg" class="campo-mascara" data-mascara="rg" placeholder="00.000.000-0" maxlength="12">
         </div>
         <div>
           <label>Órgão Emissor</label>
