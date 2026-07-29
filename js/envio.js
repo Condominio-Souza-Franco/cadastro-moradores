@@ -521,25 +521,27 @@ function atualizarInfoVagaLocal(apto) {
   }
 
 let vagaEncontrada = null;
-  for (let i = 0; i < gabaritoVagasCache.length; i++) {
-    const linha = gabaritoVagasCache[i];
-    const aptoPlanilha = String(linha[0]).trim().toLowerCase();
+for (let i = 0; i < gabaritoVagasCache.length; i++) {
+  const linha = gabaritoVagasCache[i];
+  const aptoPlanilha = String(linha[0]).trim().toLowerCase();
+  
+  if (aptoPlanilha === String(apto).trim().toLowerCase()) {
+    const andar = linha[1]; // Coluna B
+    const numero = linha[2]; // Coluna C
     
-    if (aptoPlanilha === String(apto).trim().toLowerCase()) {
-      const andar = linha[1]; // Coluna B
-      const numero = linha[2]; // Coluna C
-      
-      if (numero && andar) {
-        vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
-      }
-      break;
+    if (numero && andar) {
+      vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
     }
+    break;
   }
+}
 
+const divVaga = document.getElementById("infoVagaGaragem");
+if (divVaga) {
   if (vagaEncontrada) {
-    divVaga.innerHTML = vagaEncontrada;
-    divVaga.style.display = "block";
+    divVaga.innerHTML = vagaEncontrada; // Garante o uso de innerHTML
+    divVaga.style.display = "block";  // Torna a div visível
   } else {
-    divVaga.style.display = "none";
+    divVaga.style.display = "none";   // Esconde se não achar
   }
 }
