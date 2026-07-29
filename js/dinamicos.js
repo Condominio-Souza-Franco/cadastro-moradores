@@ -1,4 +1,51 @@
-// DOM, INICIALIZAÇÕES, MENUS SUSPENSOS, MÁSCARAS E GERADORES DE LINHAS DINÂMICAS
+// ==========================================
+// MÁSCARA UNIFICADA (Data, CPF e RG)
+// ==========================================
+function aplicarMascara(e) {
+  var input = e.target;
+  if (!input.classList.contains('campo-mascara')) return;
+
+  var tipo = input.getAttribute('data-mascara');
+  var valor = input.value.replace(/\D/g, "");
+
+  if (tipo === 'data') {
+    if (valor.length > 8) valor = valor.substring(0, 8);
+    if (valor.length > 4) {
+      valor = valor.substring(0, 2) + '/' + valor.substring(2, 4) + '/' + valor.substring(4);
+    } else if (valor.length > 2) {
+      valor = valor.substring(0, 2) + '/' + valor.substring(2);
+    }
+  } 
+  else if (tipo === 'cpf') {
+    if (valor.length > 11) valor = valor.substring(0, 11);
+    if (valor.length > 9) {
+      valor = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6, 9) + '-' + valor.substring(9);
+    } else if (valor.length > 6) {
+      valor = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6);
+    } else if (valor.length > 3) {
+      valor = valor.substring(0, 3) + '.' + valor.substring(3);
+    }
+  } 
+  else if (tipo === 'rg') {
+    if (valor.length > 9) valor = valor.substring(0, 9);
+    if (valor.length > 8) {
+      valor = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '-' + valor.substring(8);
+    } else if (valor.length > 5) {
+      valor = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5);
+    } else if (valor.length > 2) {
+      valor = valor.substring(0, 2) + '.' + valor.substring(2);
+    }
+  }
+
+  input.value = valor;
+}
+
+document.addEventListener('input', aplicarMascara);
+
+
+// ==========================================
+// DOM, INICIALIZAÇÕES E GERADORES DINÂMICOS
+// ==========================================
 
 window.addEventListener('DOMContentLoaded', function() {
   popularDropdownApto();
@@ -19,17 +66,6 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 
   if (inputNasc) {
-    inputNasc.addEventListener('focus', function() {
-      this.type = 'date';
-    });
-    
-    inputNasc.addEventListener('blur', function() {
-      if (!this.value) {
-        this.type = 'text';
-        this.placeholder = 'dd/mm/aaaa';
-      }
-    });
-
     inputNasc.addEventListener('keydown', dispararBuscaEnter);
   }
 });
@@ -97,18 +133,6 @@ function limparCpf(cpf) {
   return cpf.replace(/\D/g, "");
 }
 
-function tratarDigitacaoCPF(input) {
-  let value = input.value.replace(/\D/g, "");
-  if (value.length > 11) value = value.slice(0, 11);
-  input.value = value;
-}
-
-function tratarDigitacaoRG(input) {
-  let value = input.value.replace(/\D/g, "");
-  if (value.length > 9) value = value.slice(0, 9);
-  input.value = value;
-}
-
 function limpaMensagemStatus() {
   const statusMsg = document.getElementById("statusMessage");
   if (statusMsg) {
@@ -167,29 +191,6 @@ function alterarTextoBotaoEnviar(novoTexto) {
   }
 }
 
-function formatarDataParaInput(dataStr) {
-  if (!dataStr) return "";
-  
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
-    return dataStr;
-  }
-
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) {
-    const partes = dataStr.split('/');
-    return `${partes[2]}-${partes[1]}-${partes[0]}`;
-  }
-
-  const d = new Date(dataStr);
-  if (!isNaN(d.getTime())) {
-    const ano = d.getUTCFullYear();
-    const mes = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const dia = String(d.getUTCDate()).padStart(2, '0');
-    return `${ano}-${mes}-${dia}`;
-  }
-
-  return dataStr;
-}
-
 function adicionarItemDinamico(containerId, classeGrupo, htmlCampos) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -224,7 +225,6 @@ function preencherEmergencias(texto) {
   if (!texto || texto === "-") { addEmergencia(); return; }
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    // Garante a ordem correta: [0] Nome, [1] Tel, [2] Endereço, [3] Vínculo
     addEmergencia({ nome: p[0], tel: p[1], end: p[2], vinculo: p[3] });
   });
 }
@@ -233,7 +233,7 @@ function addOcupante(v = {}) {
   adicionarItemDinamico('containerOcupantes', 'item-ocupante', `
     <div><span class="input-label">Nome</span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${v.nome || ''}"></div>
     <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21987654321" class="oc-tel" value="${v.tel || ''}"></div>
-    <div><span class="input-label">Data de nascimento</span><input type="${v.nasc ? 'date' : 'text'}" placeholder="Preencha a data de nascimento" class="oc-nasc" value="${v.nasc || ''}" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'"></div>
+    <div><span class="input-label">Data de nascimento</span><input type="text" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${v.nasc || ''}"></div>
     <div><span class="input-label">Vínculo / Parentesco</span><input type="text" placeholder="Pode ser filho, cônjuge, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
   `);
 }
@@ -310,7 +310,6 @@ function preencherBikes(texto) {
 }
 
 function addPet(v = {}) {
-  // Ordem rigorosa: Nome (0), Porte (1), Espécie e raça (2)
   adicionarItemDinamico('containerPets', 'item-pet', `
     <div class="pet-linha-principal">
       <div>
@@ -350,9 +349,9 @@ function preencherPets(texto) {
     const p = linha.split(" | ");
     if (p.some(item => item && item.trim() !== "")) {
       addPet({ 
-        nome: p[0],        // Linha 7 do gabarito
-        racaEspecie: p[1], // Linha 8 do gabarito
-        porte: p[2]        // Linha 9 do gabarito
+        nome: p[0],        
+        racaEspecie: p[1], 
+        porte: p[2]        
       });
     }
   });
@@ -378,7 +377,6 @@ function preencherPrestadores(texto) {
   if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    // Ordem exata: [0] Nome, [1] Serviço, [2] Telefone, [3] Chave
     addPrestador({ 
       nome: p[0] || '', 
       servico: p[1] || '', 
