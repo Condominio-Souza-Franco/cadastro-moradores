@@ -224,6 +224,7 @@ function preencherEmergencias(texto) {
   if (!texto || texto === "-") { addEmergencia(); return; }
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
+    // Garante a ordem correta: [0] Nome, [1] Tel, [2] Endereço, [3] Vínculo
     addEmergencia({ nome: p[0], tel: p[1], end: p[2], vinculo: p[3] });
   });
 }
@@ -308,33 +309,6 @@ function preencherBikes(texto) {
   });
 }
 
-function addPet(v = {}) {
-  // Ordem rigorosa baseada no seu gabarito: Nome (0), Espécie e raça (1), Porte (2)
-  adicionarItemDinamico('containerPets', 'item-pet', `
-    <div class="pet-linha-principal">
-      <div>
-        <span class="input-label">Nome</span>
-        <input type="text" placeholder="Preencha o nome" class="pet-nome" value="${v.nome || ''}">
-      </div>
-      <div>
-        <span class="input-label">Espécie e raça</span>
-        <input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}">
-      </div>
-    </div>
-    <div class="pet-linha-inferior">
-      <div>
-        <span class="input-label">Porte</span>
-        <select class="pet-porte">
-          <option value="">Selecione...</option>
-          <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
-          <option value="Médio" ${v.porte === 'Médio' ? 'selected' : ''}>Médio</option>
-          <option value="Grande" ${v.porte === 'Grande' ? 'selected' : ''}>Grande</option>
-        </select>
-      </div>
-    </div>
-  `);
-}
-
 function preencherPets(texto) {
   const container = document.getElementById("containerPets") || 
                     document.getElementById("containerPet") || 
@@ -349,9 +323,9 @@ function preencherPets(texto) {
     const p = linha.split(" | ");
     if (p.some(item => item && item.trim() !== "")) {
       addPet({ 
-        nome: p[0],        // Linha 7 do gabarito
-        racaEspecie: p[1], // Linha 8 do gabarito
-        porte: p[2]        // Linha 9 do gabarito
+        nome: p[0] || '',        
+        racaEspecie: p[1] || '', 
+        porte: p[2] || ''        
       });
     }
   });
@@ -377,7 +351,13 @@ function preencherPrestadores(texto) {
   if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    addPrestador({ nome: p[0], servico: p[1], tel: p[2], chave: p[3] });
+    // Ordem exata: [0] Nome, [1] Serviço, [2] Telefone, [3] Chave
+    addPrestador({ 
+      nome: p[0] || '', 
+      servico: p[1] || '', 
+      tel: p[2] || '', 
+      chave: p[3] || '' 
+    });
   });
 }
 
