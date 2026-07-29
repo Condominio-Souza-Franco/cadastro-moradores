@@ -1,5 +1,15 @@
 // CONSULTA DE CPF, VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS, ORDENAÇÃO DO ALERT E REGRA DA VAGA
 
+function formatarDataParaInput(dataStr) {
+  if (!dataStr) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) return dataStr;
+  let partes = dataStr.split("/");
+  if (partes.length === 3) {
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
+  return dataStr;
+}
+
 function consultarPorCpf() {
   limpaMensagemStatus();
   const inputCpf = document.getElementById("cpfConsulta");
