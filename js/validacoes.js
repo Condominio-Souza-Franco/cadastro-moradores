@@ -2,28 +2,8 @@
 
 function formatarDataParaInput(dataStr) {
   if (!dataStr) return "";
-
-  // Se vier no formato brasileiro "DD/MM/YYYY" ou "DD-MM-YYYY"
-  if (/^\d{2}[-/]\d{2}[-/]\d{4}$/.test(dataStr)) {
-    const partes = dataStr.split(/[-/]/);
-    return `${partes[2]}-${partes[1]}-${partes[0]}`;
-  }
-
-  // Se já vier no formato americano "YYYY-MM-DD" (ou com hora junto)
-  if (/^\d{4}-\d{2}-\d{2}/.test(dataStr)) {
-    return dataStr.substring(0, 10);
-  }
-
-  // Se o servidor mandou uma data em formato ISO ou objeto Date serializado
-  let dataObj = new Date(dataStr);
-  if (!isNaN(dataObj.getTime())) {
-    let ano = dataObj.getUTCFullYear();
-    let mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0');
-    let dia = String(dataObj.getUTCDate()).padStart(2, '0');
-    return `${ano}-${mes}-${dia}`;
-  }
-
-  return "";
+  // Como o backend já manda em AAAA-MM-DD, basta retornar o valor limpo
+  return dataStr.substring(0, 10);
 }
 
 function consultarPorCpf() {
