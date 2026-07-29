@@ -317,7 +317,7 @@ function executarEnvio(fileData, eAtualizacao) {
     carrosList: coletarDadosGrupados(".item-carro", [".car-marca-modelo", ".car-cor", ".car-placa"]),
     motosList: coletarDadosGrupados(".item-moto", [".moto-marca-modelo", ".moto-cor", ".moto-placa"]),
     bikesList: coletarDadosGrupados(".item-bike", [".bike-marca", ".bike-cor"]),
-    petsList: coletarDadosGrupados(".item-pet", [".pet-nome", ".pet-raca-especie", ".pet-porte"]),
+    petsList: coletarDadosGrupados(".item-pet", [".pet-nome", ".pet-porte", ".pet-raca-especie"]),
     prestadorList: coletarDadosGrupados(".item-prestador", [".pr-nome", ".pr-servico", ".pr-tel", ".pr-chave"]),
     
     observacoes: document.getElementById("observacoes").value,
