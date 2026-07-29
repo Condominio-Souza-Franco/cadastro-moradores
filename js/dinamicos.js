@@ -310,19 +310,13 @@ function preencherBikes(texto) {
 }
 
 function addPet(v = {}) {
-  // Ordem rigorosa baseada no seu gabarito: Nome (0), Espécie e raça (1), Porte (2)
+  // Ordem rigorosa: Nome (0), Porte (1), Espécie e raça (2)
   adicionarItemDinamico('containerPets', 'item-pet', `
     <div class="pet-linha-principal">
       <div>
         <span class="input-label">Nome</span>
         <input type="text" placeholder="Preencha o nome" class="pet-nome" value="${v.nome || ''}">
       </div>
-      <div>
-        <span class="input-label">Espécie e raça</span>
-        <input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}">
-      </div>
-    </div>
-    <div class="pet-linha-inferior">
       <div>
         <span class="input-label">Porte</span>
         <select class="pet-porte">
@@ -331,6 +325,12 @@ function addPet(v = {}) {
           <option value="Médio" ${v.porte === 'Médio' ? 'selected' : ''}>Médio</option>
           <option value="Grande" ${v.porte === 'Grande' ? 'selected' : ''}>Grande</option>
         </select>
+      </div>
+    </div>
+    <div class="pet-linha-inferior">
+      <div>
+        <span class="input-label">Espécie e raça</span>
+        <input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}">
       </div>
     </div>
   `);
