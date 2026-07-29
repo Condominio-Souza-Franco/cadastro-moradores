@@ -138,3 +138,6 @@ function consultarPorCpf() {
     alert("Erro técnico na busca: " + err);
   });
 }
+
+console.log("Dados recebidos do backend:", d);
+console.log("Observações específicas:", d.observacoes);
