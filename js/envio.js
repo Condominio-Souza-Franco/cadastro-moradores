@@ -520,7 +520,7 @@ function atualizarInfoVagaLocal(apto) {
     return;
   }
 
-  let vagaEncontrada = null;
+let vagaEncontrada = null;
   for (let i = 0; i < gabaritoVagasCache.length; i++) {
     const linha = gabaritoVagasCache[i];
     const aptoPlanilha = String(linha[0]).trim().toLowerCase();
@@ -530,14 +530,14 @@ function atualizarInfoVagaLocal(apto) {
       const numero = linha[2]; // Coluna C
       
       if (numero && andar) {
-        vagaEncontrada = `Sua vaga é a ${numero} e fica no ${andar}`;
+        vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
       }
       break;
     }
   }
 
   if (vagaEncontrada) {
-    divVaga.innerText = vagaEncontrada;
+    divVaga.innerHTML = vagaEncontrada;
     divVaga.style.display = "block";
   } else {
     divVaga.style.display = "none";
