@@ -2,11 +2,18 @@
 
 function formatarDataParaInput(dataStr) {
   if (!dataStr) return "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) return dataStr;
+  
+  // Se vier no formato ISO/americano (AAAA-MM-DD ou com hora AAAA-MM-DDTHH:mm:ss...)
+  if (/^\d{4}-\d{2}-\d{2}/.test(dataStr)) {
+    return dataStr.substring(0, 10);
+  }
+  
+  // Se vier no formato brasileiro (DD/MM/AAAA)
   let partes = dataStr.split("/");
   if (partes.length === 3) {
     return `${partes[2]}-${partes[1]}-${partes[0]}`;
   }
+  
   return dataStr;
 }
 
@@ -110,7 +117,6 @@ function consultarPorCpf() {
           elApto.dispatchEvent(evt);
         }
         
-        // Atualiza a vaga instantaneamente utilizando o cache local em array
         if (typeof atualizarInfoVagaLocal === 'function') {
           atualizarInfoVagaLocal(d.apto);
         }
