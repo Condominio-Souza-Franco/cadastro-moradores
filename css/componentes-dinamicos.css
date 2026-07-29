@@ -30,7 +30,7 @@
 }
 
 /* 1. SEÇÕES PADRÃO (Emergência, Ocupantes, Bicicletas, Prestadores): 2 campos por linha no Desktop */
-.dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.item-pet)) .dynamic-row {
+.dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.pet-linha-principal)) .dynamic-row {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 15px !important;
@@ -69,11 +69,13 @@
 }
 
 /* 3. SEÇÃO DE PETS: Força o container a empilhar os blocos e estiliza as linhas internas */
+.dynamic-group:has(.pet-linha-principal) .dynamic-row,
 .dynamic-group:has(.item-pet) .dynamic-row {
   display: flex !important;
   flex-direction: column !important;
   gap: 10px !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .pet-linha-principal {
@@ -82,10 +84,20 @@
   gap: 15px !important;
   width: 100% !important;
   align-items: flex-end !important;
+  box-sizing: border-box !important;
 }
 
 .pet-linha-inferior {
   width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.pet-linha-principal input,
+.pet-linha-principal select,
+.pet-linha-inferior input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
 }
 
 /* BOTÕES DE AÇÃO */
@@ -148,11 +160,12 @@
   }
 
   /* Demais seções ficam estritamente com 2 campos por linha */
-  .dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.item-pet)) .dynamic-row {
+  .dynamic-group:not(:has(.dynamic-row-veiculo)):not(:has(.pet-linha-principal)) .dynamic-row {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
 }
+
 #infoVagaGaragem {
   margin-bottom: 8px;
 }
