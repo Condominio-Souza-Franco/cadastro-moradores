@@ -442,13 +442,16 @@ function tratarMoradorNovo(isMarcado) {
   var cpfConsulta = document.getElementById('cpfConsulta');
   var nascConsulta = document.getElementById('nascConsulta');
   var btnBuscarCpf = document.getElementById('btnBuscarCpf');
+  var chkMoradorNovo = document.getElementById('chkMoradorNovo');
 
   if (isMarcado) {
-    voltarTelaInicial(); 
+    // 1. Primeiro limpa tudo
+    voltarTelaInicial();  
     
-    var chkMoradorNovo = document.getElementById('chkMoradorNovo');
+    // 2. Garante que o checkbox continue marcado após limpar
     if (chkMoradorNovo) chkMoradorNovo.checked = true;
 
+    // 3. Trava os campos de consulta por CPF
     if (cpfConsulta) {
       cpfConsulta.value = '';
       cpfConsulta.disabled = true;
@@ -463,8 +466,10 @@ function tratarMoradorNovo(isMarcado) {
 
     redefinirBotoesParaNovoCadastro();
 
+    // 4. POR ÚLTIMO: Revela a seção do tipo de residente (garantindo que não vai ser escondida depois)
     if (secTipoResidente) {
       secTipoResidente.classList.remove('hidden');
+      secTipoResidente.style.display = 'block'; // Força a exibição caso o CSS use display
       rolarParaSecao('secTipoResidente');
     }
   } else {
