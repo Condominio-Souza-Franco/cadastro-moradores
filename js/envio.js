@@ -22,7 +22,7 @@ function enviar() {
   // 1. Regras Padrão
   REGRAS_OBRIGATORIAS.forEach(regra => {
     const el = document.getElementById(regra.id);
-    if (el && el.offsetParent !== null) { 
+    if (el && el.offsetParent !== null) {  
       let estaVazio = false;
       let nomeRegraPersonalizado = null;
       
@@ -59,7 +59,7 @@ function enviar() {
     }
   });
 
-  // 2. Casos de Emergência (Se preencheu qualquer campo, Nome e Telefone passam a ser obrigatórios)
+  // 2. Casos de Emergência
   const emergencias = document.querySelectorAll('#containerEmergencia .item-emergencia');
   emergencias.forEach((item, index) => {
     const nomeEl = item.querySelector('.em-nome');
@@ -77,7 +77,7 @@ function enviar() {
     }
   });
 
-  // 3. Demais Ocupantes (Se preencheu qualquer campo, Nome e Vínculo passam a ser obrigatórios)
+  // 3. Demais Ocupantes
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
     const nomeEl = item.querySelector('.oc-nome');
@@ -95,7 +95,7 @@ function enviar() {
     }
   });
 
-  // 4. Carros (Todos obrigatórios se algum preenchido)
+  // 4. Carros
   const carros = document.querySelectorAll('#containerCarros .item-carro');
   carros.forEach((item, index) => {
     const inputs = item.querySelectorAll('input');
@@ -109,7 +109,7 @@ function enviar() {
     }
   });
 
-  // 5. Motos (Todos obrigatórios se algum preenchido)
+  // 5. Motos
   const motos = document.querySelectorAll('#containerMotos .item-moto');
   motos.forEach((item, index) => {
     const inputs = item.querySelectorAll('input');
@@ -123,7 +123,7 @@ function enviar() {
     }
   });
 
-  // 6. Bicicletas (Apenas Cor obrigatória se a linha for preenchida)
+  // 6. Bicicletas
   const bikes = document.querySelectorAll('#containerBikes .item-bike');
   bikes.forEach((item, index) => {
     const corEl = item.querySelector('.bike-cor');
@@ -139,7 +139,7 @@ function enviar() {
     }
   });
 
-  // 7. Pets (Nome preenchido torna Raça/espécie e Porte obrigatórios)
+  // 7. Pets
   const pets = document.querySelectorAll('#containerPets .item-pet');
   pets.forEach((item, index) => {
     const nomeEl = item.querySelector('.pet-nome');
@@ -268,6 +268,14 @@ function executarEnvio(fileData, eAtualizacao) {
   const chkNovo = document.getElementById("chkMoradorNovo");
   const isMoradorNovo = chkNovo ? chkNovo.checked : false;
 
+  // Tratamento da data do morador principal (converte AAAA-MM-DD para DD/MM/AAAA se necessário ao enviar)
+  const nascInputPrincipal = document.getElementById("moradorNasc").value.trim();
+  let moradorNascFormatada = nascInputPrincipal;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(nascInputPrincipal)) {
+    const partes = nascInputPrincipal.split('-');
+    moradorNascFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+  }
+
   const dados = {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
@@ -277,7 +285,7 @@ function executarEnvio(fileData, eAtualizacao) {
     moradorCpf: document.getElementById("moradorCpf").value,
     moradorRg: document.getElementById("moradorRg").value,
     moradorOrgaoEmissor: document.getElementById("moradorOrgaoEmissor") ? document.getElementById("moradorOrgaoEmissor").value : "",
-    moradorNasc: document.getElementById("moradorNasc").value,
+    moradorNasc: moradorNascFormatada,
     moradorCelular: document.getElementById("moradorCelular").value,
     moradorTel: document.getElementById("moradorTel").value,
     moradorEmail: document.getElementById("moradorEmail").value,
@@ -445,13 +453,10 @@ function tratarMoradorNovo(isMarcado) {
   var chkMoradorNovo = document.getElementById('chkMoradorNovo');
 
   if (isMarcado) {
-    // 1. Primeiro limpa tudo
     voltarTelaInicial();  
     
-    // 2. Garante que o checkbox continue marcado após limpar
     if (chkMoradorNovo) chkMoradorNovo.checked = true;
 
-    // 3. Trava os campos de consulta por CPF
     if (cpfConsulta) {
       cpfConsulta.value = '';
       cpfConsulta.disabled = true;
@@ -466,10 +471,9 @@ function tratarMoradorNovo(isMarcado) {
 
     redefinirBotoesParaNovoCadastro();
 
-    // 4. POR ÚLTIMO: Revela a seção do tipo de residente (garantindo que não vai ser escondida depois)
     if (secTipoResidente) {
       secTipoResidente.classList.remove('hidden');
-      secTipoResidente.style.display = 'block'; // Força a exibição caso o CSS use display
+      secTipoResidente.style.display = 'block'; 
       rolarParaSecao('secTipoResidente');
     }
   } else {
