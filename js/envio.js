@@ -126,7 +126,7 @@ function enviar() {
   // 6. Bicicletas (Apenas Cor obrigatória se a linha for preenchida)
   const bikes = document.querySelectorAll('#containerBikes .item-bike');
   bikes.forEach((item, index) => {
-    const corEl = item.querySelector('.bike-cor'); // Certifique-se de que a classe do input de cor é .bike-cor
+    const corEl = item.querySelector('.bike-cor');
     const inputs = item.querySelectorAll('input');
     
     let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
@@ -154,7 +154,6 @@ function enviar() {
     const preencheuNome = nome !== "";
     const preencheuOutros = (racaEspecie !== "" && porte !== "");
 
-    // Se preencheu o nome mas deixou raça/espécie ou porte vazios
     if (preencheuNome && !preencheuOutros) {
       let label = `Pets ${index + 1} (Preencha Espécie e Raça e Porte)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
@@ -162,7 +161,6 @@ function enviar() {
       if (racaEspecie === "" && racaEspecieEl) elementosParaDestacar.push(racaEspecieEl);
       if (porte === "" && porteEl) elementosParaDestacar.push(porteEl);
     } 
-    // Caso tenha preenchido os outros campos mas esqueceu o nome
     else if (!preencheuNome && preencheuAlgum) {
       let label = `Pets ${index + 1} (Preencha o Nome)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
@@ -304,7 +302,6 @@ function executarEnvio(fileData, eAtualizacao) {
         const vinculo = g.querySelector(".oc-vinculo")?.value.trim() || "";
 
         if (nome !== "") {
-          // Converte AAAA-MM-DD para DD/MM/AAAA na hora
           let nascFormatada = nascInput;
           if (/^\d{4}-\d{2}-\d{2}$/.test(nascInput)) {
             const partes = nascInput.split('-');
@@ -477,7 +474,6 @@ function tratarMoradorNovo(isMarcado) {
 
 let gabaritoVagasCache = [];
 
-// Carrega o gabarito via fetch assim que a página abre
 document.addEventListener("DOMContentLoaded", () => {
   if (typeof WEB_APP_URL !== 'undefined') {
     fetch(WEB_APP_URL, {
@@ -498,7 +494,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Monitora alterações no campo de apartamento
   const selectApto = document.getElementById("apto");
   if (selectApto) {
     selectApto.addEventListener("change", (e) => {
@@ -520,28 +515,26 @@ function atualizarInfoVagaLocal(apto) {
     return;
   }
 
-let vagaEncontrada = null;
-for (let i = 0; i < gabaritoVagasCache.length; i++) {
-  const linha = gabaritoVagasCache[i];
-  const aptoPlanilha = String(linha[0]).trim().toLowerCase();
-  
-  if (aptoPlanilha === String(apto).trim().toLowerCase()) {
-    const andar = linha[1]; // Coluna B
-    const numero = linha[2]; // Coluna C
+  let vagaEncontrada = null;
+  for (let i = 0; i < gabaritoVagasCache.length; i++) {
+    const linha = gabaritoVagasCache[i];
+    const aptoPlanilha = String(linha[0]).trim().toLowerCase();
     
-    if (numero && andar) {
-      vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
+    if (aptoPlanilha === String(apto).trim().toLowerCase()) {
+      const andar = linha[1]; // Coluna B
+      const numero = linha[2]; // Coluna C
+      
+      if (numero && andar) {
+        vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
+      }
+      break;
     }
-    break;
   }
-}
 
-const divVaga = document.getElementById("infoVagaGaragem");
-if (divVaga) {
   if (vagaEncontrada) {
-    divVaga.innerHTML = vagaEncontrada; // Garante o uso de innerHTML
-    divVaga.style.display = "block";  // Torna a div visível
+    divVaga.innerHTML = vagaEncontrada;
+    divVaga.style.display = "block";
   } else {
-    divVaga.style.display = "none";   // Esconde se não achar
+    divVaga.style.display = "none";
   }
 }
