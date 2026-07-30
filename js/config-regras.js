@@ -24,7 +24,7 @@ const REGRAS_OBRIGATORIAS = [
   { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
   { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
   { id: "inqVigencia", nome: "Vigência do contrato" },
-  { id: "arquivoContrato", nome: "Contrato de locação" },
+  // { id: "arquivoContrato", nome: "Contrato de locação" },
   { id: "declaracao", nome: "Declaro que as informações prestadas são verdadeiras", tipo: "checkbox" }
 ];
 
@@ -44,7 +44,7 @@ const ORDEM_DESEJADA = [
   "Proprietário / Administradora",
   "Contato do proprietário / imobiliária",
   "Vigência do contrato",
-  "Contrato de locação",
+  // "Contrato de locação",
   "Caso de emergência",
   "Demais ocupantes",
   "Carros",
