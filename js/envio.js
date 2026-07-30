@@ -404,19 +404,72 @@ function redefinirBotoesParaNovoCadastro() {
   }
 }
 
+function renderizarHistoricoContratos(listaContratos) {
+  let containerHistorico = document.getElementById("containerHistoricoContratos");
+  
+  if (!containerHistorico) {
+    const inputContratoEl = document.getElementById("arquivoContrato");
+    if (inputContratoEl && inputContratoEl.parentNode) {
+      containerHistorico = document.createElement("div");
+      containerHistorico.id = "containerHistoricoContratos";
+      containerHistorico.style.marginTop = "10px";
+      containerHistorico.style.display = "flex";
+      containerHistorico.style.flexDirection = "column";
+      containerHistorico.style.gap = "5px";
+      inputContratoEl.parentNode.appendChild(containerHistorico);
+    }
+  }
+
+  if (!containerHistorico) return;
+
+  containerHistorico.innerHTML = "";
+
+  if (listaContratos && listaContratos.length > 0) {
+    let titulo = document.createElement("span");
+    titulo.style.fontSize = "13px";
+    titulo.style.fontWeight = "bold";
+    titulo.style.color = "#444";
+    titulo.textContent = "Contratos / Uploads Anteriores:";
+    containerHistorico.appendChild(titulo);
+
+    listaContratos.forEach(item => {
+      let a = document.createElement("a");
+      a.href = item.url;
+      a.textContent = "📄 " + item.texto;
+      a.target = "_blank";
+      a.style.display = "inline-block";
+      a.style.padding = "6px 12px";
+      a.style.background = "#f0f2f5";
+      a.style.color = "#007bff";
+      a.style.textDecoration = "none";
+      a.style.borderRadius = "4px";
+      a.style.border = "1px solid #dcedfc";
+      a.style.fontSize = "14px";
+      a.style.width = "fit-content";
+      
+      a.onmouseover = () => a.style.background = "#e2e8f0";
+      a.onmouseout = () => a.style.background = "#f0f2f5";
+
+      containerHistorico.appendChild(a);
+    });
+  }
+}
+
 function voltarTelaInicial() {
   try {
-    // 1. Limpeza rigorosa do preview e variáveis do contrato
+    // 1. Limpeza rigorosa do preview, variáveis e histórico de contratos
     var containerPreview = document.getElementById('containerPreviewContrato');
     var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
     var inputContrato = document.getElementById('arquivoContrato');
+    var containerHistorico = document.getElementById('containerHistoricoContratos');
     
     if (containerPreview) {
       containerPreview.classList.add('hidden');
-      containerPreview.style.display = ''; // Limpa estilo inline de segurança
+      containerPreview.style.display = ''; 
     }
     if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
     if (inputContrato) inputContrato.value = '';
+    if (containerHistorico) containerHistorico.innerHTML = '';
     if (typeof arquivoContratoObjeto !== 'undefined') {
       arquivoContratoObjeto = null;
     }
@@ -438,7 +491,7 @@ function voltarTelaInicial() {
     }
     if (btnBuscarCpf) {
       btnBuscarCpf.disabled = false;
-      btnBuscarCpf.innerText = "Buscar Cadastro"; // Reseta o texto caso tenha ficado em "Buscando..."
+      btnBuscarCpf.innerText = "Buscar Cadastro"; 
     }
 
     var aptoSelect = document.getElementById('apto');
@@ -465,7 +518,7 @@ function voltarTelaInicial() {
       statusMessage.classList.add('hidden');
     }
 
-    // 3. Reseta as seções ocultando e limpando o style.display inline que o validacoes.js aplicou
+    // 3. Reseta as seções ocultando e limpando o style.display inline
     var secoesParaEsconder = [
       'secTipoResidente',
       'secApto',
@@ -477,7 +530,7 @@ function voltarTelaInicial() {
       var el = document.getElementById(id);
       if (el) {
         el.classList.add('hidden');
-        el.style.display = ''; // Remove o display: none forçado do JS de validação
+        el.style.display = ''; 
       }
     });
 
