@@ -78,15 +78,18 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS ---
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (CORRIGIDO) ---
       const containerHistorico = document.getElementById('containerHistoricoContratos');
       const listaHistorico = document.getElementById('listaHistoricoContratos');
 
       if (listaHistorico && containerHistorico) {
         listaHistorico.innerHTML = ""; 
         
-        if (d.linkContratoHistorico && d.linkContratoHistorico.trim() !== "" && d.linkContratoHistorico !== "-") {
-          const links = d.linkContratoHistorico.split('\n');
+        // Converte com segurança para string para evitar erros caso o backend retorne outro tipo de dado
+        const linkContratoStr = d.linkContratoHistorico != null ? String(d.linkContratoHistorico).trim() : "";
+        
+        if (linkContratoStr !== "" && linkContratoStr !== "-") {
+          const links = linkContratoStr.split('\n');
           
           links.forEach((link, index) => {
             const linkTrim = link.trim();
