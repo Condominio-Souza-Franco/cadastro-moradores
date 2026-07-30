@@ -575,3 +575,49 @@ function atualizarInfoVagaLocal(apto) {
     divVaga.style.display = "none";
   }
 }
+
+// --- LÓGICA DE UPLOAD E PREVIEW DO CONTRATO ---
+const inputContrato = document.getElementById('arquivoContrato');
+const containerPreview = document.getElementById('containerPreviewContrato');
+const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
+const btnRemoverContrato = document.getElementById('btnRemoverContrato');
+
+let arquivoContratoObjeto = null; // Variável que vai guardar o base64 para enviar no JSON
+
+if (inputContrato) {
+  inputContrato.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        alert("Por favor, selecione apenas arquivos no formato PDF.");
+        inputContrato.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(uploadEvent) {
+        // Extrai apenas a parte base64 pura (removendo o prefixo do DataURL)
+        const base64String = uploadEvent.target.result.split(',')[1];
+        
+        arquivoContratoObjeto = {
+          name: file.name,
+          type: file.type,
+          base64: base64String
+        };
+
+        // Exibe o preview e o botão "X"
+        nomeArquivoSpan.textContent = "📎 " + file.name;
+        containerPreview.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Botão "X" para cancelar/remover o arquivo
+  btnRemoverContrato.addEventListener('click', function() {
+    inputContrato.value = "";
+    arquivoContratoObjeto = null;
+    containerPreview.style.display = 'none';
+    nomeArquivoSpan.textContent = "";
+  });
+}
