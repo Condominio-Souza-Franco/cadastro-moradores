@@ -77,7 +77,7 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (CORRIGIDO PARA URL REAL E UM POR LINHA) ---
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (ROBUSTO) ---
       const containerHistorico = document.getElementById('containerHistoricoContratos');
       const listaHistorico = document.getElementById('listaHistoricoContratos');
 
@@ -90,21 +90,15 @@ function consultarPorCpf() {
             let textoFinal = "";
 
             if (typeof item === 'object' && item !== null) {
-              urlFinal = item.url || item.link || item.href || "";
+              urlFinal = item.url || item.link || item.href || item.text || item.texto || "";
               textoFinal = item.texto || item.text || item.titulo || `Visualizar Contrato / Aditivo ${index + 1}`;
-              
-              // Se por acaso vier invertido ou com a URL dentro da propriedade de texto
-              if (!urlFinal.startsWith('http') && typeof textoFinal === 'string' && textoFinal.startsWith('http')) {
-                let temp = urlFinal;
-                urlFinal = textoFinal;
-                textoFinal = temp;
-              }
             } else if (typeof item === 'string') {
               urlFinal = item.trim();
               textoFinal = `Visualizar Contrato / Aditivo ${index + 1}`;
             }
 
-            if (urlFinal && urlFinal.startsWith('http')) {
+            // Se encontrou qualquer conteúdo que pareça uma string válida
+            if (urlFinal && urlFinal !== "-") {
               const a = document.createElement('a');
               a.href = urlFinal;
               a.target = "_blank";
@@ -124,7 +118,7 @@ function consultarPorCpf() {
           const links = d.linkContratoHistorico.split('\n');
           links.forEach((link, index) => {
             const linkTrim = link.trim();
-            if (linkTrim.startsWith("http")) {
+            if (linkTrim !== "") {
               const a = document.createElement('a');
               a.href = linkTrim;
               a.target = "_blank";
