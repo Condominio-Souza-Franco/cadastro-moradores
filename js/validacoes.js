@@ -77,72 +77,49 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COM SUPORTE A SEPARADOR EXPLICÍTO) ---
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (LENDO LINHA ÚNICA SEPARADA POR " | ") ---
       const containerHistorico = document.getElementById('containerHistoricoContratos');
       const listaHistorico = document.getElementById('listaHistoricoContratos');
 
       if (listaHistorico && containerHistorico) {
         listaHistorico.innerHTML = ""; 
-        
-        if (Array.isArray(d.linkContratoHistorico) && d.linkContratoHistorico.length > 0) {
-          d.linkContratoHistorico.forEach((item, index) => {
-            let urlFinal = "";
-            let textoFinal = "";
 
-            if (typeof item === 'string' && item.includes('§')) {
-              const partes = item.split('§');
-              urlFinal = partes[0].trim();
-              textoFinal = partes[1] ? partes[1].trim() : `Visualizar Contrato / Aditivo ${index + 1}`;
-            } else if (typeof item === 'object' && item !== null) {
-              urlFinal = item.url || item.link || item.href || "";
-              textoFinal = item.texto || item.text || item.titulo || `Visualizar Contrato / Aditivo ${index + 1}`;
-            } else if (typeof item === 'string') {
-              urlFinal = item.trim();
-              textoFinal = `Visualizar Contrato / Aditivo ${index + 1}`;
-            }
+        let valorContratos = d.linkContratoHistorico;
+        let itensArray = [];
 
-            if (urlFinal && urlFinal !== "-") {
-              const a = document.createElement('a');
-              a.href = urlFinal;
-              a.target = "_blank";
-              a.textContent = `📄 ${textoFinal}`;
-              
-              a.style.display = "block";
-              a.style.marginBottom = "8px";
-              a.style.color = "#0d6efd";
-              a.style.textDecoration = "none";
-              
-              listaHistorico.appendChild(a);
-            }
+        // Se vier como string única contendo " | " na planilha
+        if (typeof valorContratos === 'string' && valorContratos.trim() !== "" && valorContratos !== "-") {
+          // Quebra a string onde tiver " | "
+          itensArray = valorContratos.split(' | ');
+        } else if (Array.isArray(valorContratos)) {
+          // Se já vier como array, junta tudo em uma string e quebra por " | " para garantir
+          let textoUnido = valorContratos.join(' | ');
+          itensArray = textoUnido.split(' | ');
+        }
+
+        // Filtra espaços em vazios
+        itensArray = itensArray.map(item => item.trim()).filter(item => item !== "" && item !== "-");
+
+        if (itensArray.length > 0) {
+          itensArray.forEach((urlOuTexto, index) => {
+            const a = document.createElement('a');
+            
+            // Aqui definimos que o href e o texto usam o mesmo item da lista separada por " | "
+            a.href = urlOuTexto;
+            a.target = "_blank";
+            
+            // Se o item parecer uma URL, tentamos extrair o nome ou exibir um rótulo amigável com a data/número
+            // Mas se ele for o próprio nome/link, exibimos ele formatado:
+            a.textContent = `📄 ${urlOuTexto.split('/').pop() || 'Contrato / Aditivo ' + (index + 1)}`;
+            
+            a.style.display = "block";
+            a.style.marginBottom = "8px";
+            a.style.color = "#0d6efd";
+            a.style.textDecoration = "none";
+            
+            listaHistorico.appendChild(a);
           });
-          containerHistorico.classList.remove('hidden');
-          containerHistorico.style.display = 'block';
-        } else if (typeof d.linkContratoHistorico === 'string' && d.linkContratoHistorico.trim() !== "" && d.linkContratoHistorico !== "-") {
-          const links = d.linkContratoHistorico.split('\n');
-          links.forEach((link, index) => {
-            let urlFinal = link.trim();
-            let textoFinal = `Visualizar Contrato / Aditivo ${index + 1}`;
 
-            if (urlFinal.includes('§')) {
-              const partes = urlFinal.split('§');
-              urlFinal = partes[0].trim();
-              textoFinal = partes[1] ? partes[1].trim() : textoFinal;
-            }
-
-            if (urlFinal !== "") {
-              const a = document.createElement('a');
-              a.href = urlFinal;
-              a.target = "_blank";
-              a.textContent = `📄 ${textoFinal}`;
-              
-              a.style.display = "block";
-              a.style.marginBottom = "8px";
-              a.style.color = "#0d6efd";
-              a.style.textDecoration = "none";
-              
-              listaHistorico.appendChild(a);
-            }
-          });
           containerHistorico.classList.remove('hidden');
           containerHistorico.style.display = 'block';
         } else {
