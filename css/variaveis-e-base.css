@@ -62,7 +62,7 @@ h2.subtitulo {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 .title-grupo {
