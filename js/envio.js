@@ -577,49 +577,49 @@ function atualizarInfoVagaLocal(apto) {
 }
 
 // --- LÓGICA DE UPLOAD E PREVIEW DO CONTRATO ---
-const inputContrato = document.getElementById('arquivoContrato');
-const containerPreview = document.getElementById('containerPreviewContrato');
-const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
-const btnRemoverContrato = document.getElementById('btnRemoverContrato');
+let arquivoContratoObjeto = null; // Variável global para o JSON
 
-let arquivoContratoObjeto = null;
+document.addEventListener("DOMContentLoaded", function() {
+  const inputContrato = document.getElementById('arquivoContrato');
+  const containerPreview = document.getElementById('containerPreviewContrato');
+  const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
+  const btnRemoverContrato = document.getElementById('btnRemoverContrato');
 
-if (inputContrato) {
-  inputContrato.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.type !== "application/pdf") {
-        alert("Por favor, selecione apenas arquivos no formato PDF.");
-        inputContrato.value = "";
-        return;
-      }
+  if (inputContrato) {
+    inputContrato.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.type !== "application/pdf") {
+          alert("Por favor, selecione apenas arquivos no formato PDF.");
+          inputContrato.value = "";
+          return;
+        }
 
-      const reader = new FileReader();
-      reader.onload = function(uploadEvent) {
-        const base64String = uploadEvent.target.result.split(',')[1];
-        
-        arquivoContratoObjeto = {
-          name: file.name,
-          type: file.type,
-          base64: base64String
+        const reader = new FileReader();
+        reader.onload = function(uploadEvent) {
+          const base64String = uploadEvent.target.result.split(',')[1];
+          
+          arquivoContratoObjeto = {
+            name: file.name,
+            type: file.type,
+            base64: base64String
+          };
+
+          // Define o nome e exibe a caixinha
+          nomeArquivoSpan.textContent = "📎 " + file.name;
+          containerPreview.classList.remove('hidden');
         };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
-        nomeArquivoSpan.textContent = "📎 " + file.name;
-        
-        // CORREÇÃO: Remove a classe hidden para o preview aparecer usando CSS
-        containerPreview.classList.remove('hidden'); 
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Botão "X" para cancelar/remover o arquivo
-  btnRemoverContrato.addEventListener('click', function() {
-    inputContrato.value = "";
-    arquivoContratoObjeto = null;
-    
-    // CORREÇÃO: Adiciona a classe hidden para esconder o preview via CSS
-    containerPreview.classList.add('hidden'); 
-    nomeArquivoSpan.textContent = "";
-  });
-}
+  if (btnRemoverContrato) {
+    btnRemoverContrato.addEventListener('click', function() {
+      inputContrato.value = "";
+      arquivoContratoObjeto = null;
+      containerPreview.classList.add('hidden');
+      nomeArquivoSpan.textContent = "";
+    });
+  }
+});
