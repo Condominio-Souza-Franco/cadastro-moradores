@@ -78,12 +78,45 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (CORRIGIDO) ---
-      const containerHistorico = document.getElementById('containerHistoricoContratos');
-      const listaHistorico = document.getElementById('listaHistoricoContratos');
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COM LOG DE DEPURAÇÃO) ---
+const containerHistorico = document.getElementById('containerHistoricoContratos');
+const listaHistorico = document.getElementById('listaHistoricoContratos');
 
-      if (listaHistorico && containerHistorico) {
-        listaHistorico.innerHTML = ""; 
+console.log("Valor bruto recebido do backend (d.linkContratoHistorico):", d.linkContratoHistorico);
+
+if (listaHistorico && containerHistorico) {
+  listaHistorico.innerHTML = ""; 
+  
+  const linkContratoStr = d.linkContratoHistorico != null ? String(d.linkContratoHistorico).trim() : "";
+  console.log("String tratada:", JSON.stringify(linkContratoStr));
+  
+  if (linkContratoStr !== "" && linkContratoStr !== "-") {
+    const links = linkContratoStr.split('\n');
+    
+    links.forEach((link, index) => {
+      const linkTrim = link.trim();
+      if (linkTrim.startsWith("http")) {
+        const a = document.createElement('a');
+        a.href = linkTrim;
+        a.target = "_blank";
+        a.textContent = `📄 Visualizar Contrato / Aditivo ${index + 1}`;
+        a.style.display = "block";
+        a.style.marginBottom = "4px";
+        a.style.color = "#0d6efd";
+        
+        listaHistorico.appendChild(a);
+      }
+    });
+
+    containerHistorico.classList.remove('hidden');
+    containerHistorico.style.display = 'block';
+  } else {
+    containerHistorico.classList.add('hidden');
+    containerHistorico.style.display = 'none';
+  }
+} else {
+  console.warn("Atenção: Os elementos 'containerHistoricoContratos' ou 'listaHistoricoContratos' não foram encontrados no HTML!");
+}
         
         // Converte com segurança para string para evitar erros caso o backend retorne outro tipo de dado
         const linkContratoStr = d.linkContratoHistorico != null ? String(d.linkContratoHistorico).trim() : "";
