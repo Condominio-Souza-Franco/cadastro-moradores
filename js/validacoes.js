@@ -2,7 +2,6 @@
 
 function formatarDataParaInput(dataStr) {
   if (!dataStr) return "";
-  // Como o backend já manda em AAAA-MM-DD, basta retornar o valor limpo
   return dataStr.substring(0, 10);
 }
 
@@ -78,52 +77,31 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COM LOG DE DEPURAÇÃO) ---
-const containerHistorico = document.getElementById('containerHistoricoContratos');
-const listaHistorico = document.getElementById('listaHistoricoContratos');
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COMPATÍVEL COM ARRAY E STRING) ---
+      const containerHistorico = document.getElementById('containerHistoricoContratos');
+      const listaHistorico = document.getElementById('listaHistoricoContratos');
 
-console.log("Valor bruto recebido do backend (d.linkContratoHistorico):", d.linkContratoHistorico);
-
-if (listaHistorico && containerHistorico) {
-  listaHistorico.innerHTML = ""; 
-  
-  const linkContratoStr = d.linkContratoHistorico != null ? String(d.linkContratoHistorico).trim() : "";
-  console.log("String tratada:", JSON.stringify(linkContratoStr));
-  
-  if (linkContratoStr !== "" && linkContratoStr !== "-") {
-    const links = linkContratoStr.split('\n');
-    
-    links.forEach((link, index) => {
-      const linkTrim = link.trim();
-      if (linkTrim.startsWith("http")) {
-        const a = document.createElement('a');
-        a.href = linkTrim;
-        a.target = "_blank";
-        a.textContent = `📄 Visualizar Contrato / Aditivo ${index + 1}`;
-        a.style.display = "block";
-        a.style.marginBottom = "4px";
-        a.style.color = "#0d6efd";
+      if (listaHistorico && containerHistorico) {
+        listaHistorico.innerHTML = ""; 
         
-        listaHistorico.appendChild(a);
-      }
-    });
-
-    containerHistorico.classList.remove('hidden');
-    containerHistorico.style.display = 'block';
-  } else {
-    containerHistorico.classList.add('hidden');
-    containerHistorico.style.display = 'none';
-  }
-} else {
-  console.warn("Atenção: Os elementos 'containerHistoricoContratos' ou 'listaHistoricoContratos' não foram encontrados no HTML!");
-}
-        
-        // Converte com segurança para string para evitar erros caso o backend retorne outro tipo de dado
-        const linkContratoStr = d.linkContratoHistorico != null ? String(d.linkContratoHistorico).trim() : "";
-        
-        if (linkContratoStr !== "" && linkContratoStr !== "-") {
-          const links = linkContratoStr.split('\n');
-          
+        if (Array.isArray(d.linkContratoHistorico) && d.linkContratoHistorico.length > 0) {
+          d.linkContratoHistorico.forEach((item, index) => {
+            if (item && item.url) {
+              const a = document.createElement('a');
+              a.href = item.url;
+              a.target = "_blank";
+              a.textContent = `📄 ${item.texto || "Visualizar Contrato / Aditivo " + (index + 1)}`;
+              a.style.display = "block";
+              a.style.marginBottom = "4px";
+              a.style.color = "#0d6efd";
+              a.style.textDecoration = "none";
+              listaHistorico.appendChild(a);
+            }
+          });
+          containerHistorico.classList.remove('hidden');
+          containerHistorico.style.display = 'block';
+        } else if (typeof d.linkContratoHistorico === 'string' && d.linkContratoHistorico.trim() !== "" && d.linkContratoHistorico !== "-") {
+          const links = d.linkContratoHistorico.split('\n');
           links.forEach((link, index) => {
             const linkTrim = link.trim();
             if (linkTrim.startsWith("http")) {
@@ -134,11 +112,9 @@ if (listaHistorico && containerHistorico) {
               a.style.display = "block";
               a.style.marginBottom = "4px";
               a.style.color = "#0d6efd";
-              
               listaHistorico.appendChild(a);
             }
           });
-
           containerHistorico.classList.remove('hidden');
           containerHistorico.style.display = 'block';
         } else {
