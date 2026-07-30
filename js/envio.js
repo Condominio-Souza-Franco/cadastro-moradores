@@ -582,7 +582,7 @@ const containerPreview = document.getElementById('containerPreviewContrato');
 const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
 const btnRemoverContrato = document.getElementById('btnRemoverContrato');
 
-let arquivoContratoObjeto = null; // Variável que vai guardar o base64 para enviar no JSON
+let arquivoContratoObjeto = null;
 
 if (inputContrato) {
   inputContrato.addEventListener('change', function(e) {
@@ -596,7 +596,6 @@ if (inputContrato) {
 
       const reader = new FileReader();
       reader.onload = function(uploadEvent) {
-        // Extrai apenas a parte base64 pura (removendo o prefixo do DataURL)
         const base64String = uploadEvent.target.result.split(',')[1];
         
         arquivoContratoObjeto = {
@@ -605,9 +604,10 @@ if (inputContrato) {
           base64: base64String
         };
 
-        // Exibe o preview e o botão "X"
         nomeArquivoSpan.textContent = "📎 " + file.name;
-        containerPreview.style.display = 'flex';
+        
+        // CORREÇÃO: Remove a classe hidden para o preview aparecer usando CSS
+        containerPreview.classList.remove('hidden'); 
       };
       reader.readAsDataURL(file);
     }
@@ -617,7 +617,9 @@ if (inputContrato) {
   btnRemoverContrato.addEventListener('click', function() {
     inputContrato.value = "";
     arquivoContratoObjeto = null;
-    containerPreview.style.display = 'none';
+    
+    // CORREÇÃO: Adiciona a classe hidden para esconder o preview via CSS
+    containerPreview.classList.add('hidden'); 
     nomeArquivoSpan.textContent = "";
   });
 }
