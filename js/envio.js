@@ -405,82 +405,101 @@ function redefinirBotoesParaNovoCadastro() {
 }
 
 function voltarTelaInicial() {
-  var form = document.getElementById('cadForm');
-  if (form) {
-    form.reset();
+  try {
+    // 1. Limpeza rigorosa do preview e variáveis do contrato
+    var containerPreview = document.getElementById('containerPreviewContrato');
+    var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
+    var inputContrato = document.getElementById('arquivoContrato');
+    
+    if (containerPreview) {
+      containerPreview.classList.add('hidden');
+      containerPreview.style.display = ''; // Limpa estilo inline de segurança
+    }
+    if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
+    if (inputContrato) inputContrato.value = '';
+    if (typeof arquivoContratoObjeto !== 'undefined') {
+      arquivoContratoObjeto = null;
+    }
+
+    // 2. Reseta o formulário principal
+    var form = document.getElementById('cadForm');
+    if (form) {
+      form.reset();
+    }
+
+    document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
+
+    var cpfConsulta = document.getElementById('cpfConsulta');
+    var btnBuscarCpf = document.getElementById('btnBuscarCpf');
+    
+    if (cpfConsulta) {
+      cpfConsulta.value = '';
+      cpfConsulta.disabled = false;
+    }
+    if (btnBuscarCpf) {
+      btnBuscarCpf.disabled = false;
+      btnBuscarCpf.innerText = "Buscar Cadastro"; // Reseta o texto caso tenha ficado em "Buscando..."
+    }
+
+    var aptoSelect = document.getElementById('apto');
+    if (aptoSelect) aptoSelect.value = '';
+
+    var containersDinamicos = [
+      'containerEmergencia',
+      'containerOcupantes',
+      'containerCarros',
+      'containerMotos',
+      'containerBikes',
+      'containerPets',
+      'containerPrestadores'
+    ];
+
+    containersDinamicos.forEach(function(id) {
+      var container = document.getElementById(id);
+      if (container) container.innerHTML = '';
+    });
+
+    var statusMessage = document.getElementById('statusMessage');
+    if (statusMessage) {
+      statusMessage.innerHTML = '';
+      statusMessage.classList.add('hidden');
+    }
+
+    // 3. Reseta as seções ocultando e limpando o style.display inline que o validacoes.js aplicou
+    var secoesParaEsconder = [
+      'secTipoResidente',
+      'secApto',
+      'secInquilino',
+      'secRestoFormulario'
+    ];
+
+    secoesParaEsconder.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.classList.add('hidden');
+        el.style.display = ''; // Remove o display: none forçado do JS de validação
+      }
+    });
+
+    var chkMoradorNovo = document.getElementById('chkMoradorNovo');
+    if (chkMoradorNovo) {
+      chkMoradorNovo.checked = false;
+    }
+
+    var nascConsulta = document.getElementById('nascConsulta');
+    if (nascConsulta) {
+      nascConsulta.value = '';
+      nascConsulta.disabled = false;
+    }
+
+    if (typeof redefinirBotoesParaNovoCadastro === 'function') {
+      redefinirBotoesParaNovoCadastro();
+    }
+
+  } catch (erro) {
+    console.error("Erro ao voltar para a tela inicial: ", erro);
+    window.location.reload();
   }
-
-  // --- LIMPEZA DO CONTRATO ---
-  var containerPreview = document.getElementById('containerPreviewContrato');
-  var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
-  if (containerPreview) containerPreview.classList.add('hidden');
-  if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
-  if (typeof arquivoContratoObjeto !== 'undefined') {
-    arquivoContratoObjeto = null;
-  }
-  // ---------------------------
-
-  document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
-
-  var cpfConsulta = document.getElementById('cpfConsulta');
-  var btnBuscarCpf = document.getElementById('btnBuscarCpf');
-  
-  if (cpfConsulta) {
-    cpfConsulta.value = '';
-    cpfConsulta.disabled = false;
-  }
-  if (btnBuscarCpf) {
-    btnBuscarCpf.disabled = false;
-  }
-
-  var aptoSelect = document.getElementById('apto');
-  if (aptoSelect) aptoSelect.value = '';
-
-  var containersDinamicos = [
-    'containerEmergencia',
-    'containerOcupantes',
-    'containerCarros',
-    'containerMotos',
-    'containerBikes',
-    'containerPets',
-    'containerPrestadores'
-  ];
-
-  containersDinamicos.forEach(function(id) {
-    var container = document.getElementById(id);
-    if (container) container.innerHTML = '';
-  });
-
-  var statusMessage = document.getElementById('statusMessage');
-  if (statusMessage) {
-    statusMessage.innerHTML = '';
-    statusMessage.classList.add('hidden');
-  }
-
-  var secoesParaEsconder = [
-    'secTipoResidente',
-    'secApto',
-    'secInquilino',
-    'secRestoFormulario'
-  ];
-
-  secoesParaEsconder.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
-  });
-
-  var chkMoradorNovo = document.getElementById('chkMoradorNovo');
-  if (chkMoradorNovo) {
-    chkMoradorNovo.checked = false;
-  }
-
-  var nascConsulta = document.getElementById('nascConsulta');
-  if (nascConsulta) {
-    nascConsulta.value = '';
-    nascConsulta.disabled = false;
-  }
-
-  redefinirBotoesParaNovoCadastro();
 }
 
 function tratarMoradorNovo(isMarcado) {
