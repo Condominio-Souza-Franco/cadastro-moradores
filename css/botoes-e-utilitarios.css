@@ -120,3 +120,81 @@
 .form-row > div {
   flex: 1;
 }
+
+/* Classes para o Preview do Contrato e Histórico */
+.preview-contrato-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px dashed #ccc;
+}
+
+.preview-contrato-container.hidden,
+.historico-contratos-container.hidden {
+  display: none !important;
+}
+
+#nomeArquivoSelecionado {
+  font-size: 13px;
+  color: #333;
+  word-break: break-all;
+}
+
+#btnRemoverContrato {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+#btnRemoverContrato:hover {
+  background: #c0392b;
+}
+
+.historico-contratos-container {
+  margin-top: 12px;
+}
+
+.label-historico {
+  font-size: 12px;
+  color: #666;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+#listaHistoricoContratos {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 100px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+/* Estilo opcional para os links de contratos antigos dentro do histórico */
+#listaHistoricoContratos a {
+  color: #2980b9;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
+}
+
+#listaHistoricoContratos a:hover {
+  text-decoration: underline;
+}
