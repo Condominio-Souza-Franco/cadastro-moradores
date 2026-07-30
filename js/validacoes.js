@@ -77,7 +77,7 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COMPATÍVEL COM ARRAY E STRING) ---
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (CORRIGIDO PARA UM POR LINHA) ---
       const containerHistorico = document.getElementById('containerHistoricoContratos');
       const listaHistorico = document.getElementById('listaHistoricoContratos');
 
@@ -91,10 +91,13 @@ function consultarPorCpf() {
               a.href = item.url;
               a.target = "_blank";
               a.textContent = `📄 ${item.texto || "Visualizar Contrato / Aditivo " + (index + 1)}`;
+              
+              // Garante que cada item ocupe sua própria linha com espaçamento
               a.style.display = "block";
-              a.style.marginBottom = "4px";
+              a.style.marginBottom = "8px";
               a.style.color = "#0d6efd";
               a.style.textDecoration = "none";
+              
               listaHistorico.appendChild(a);
             }
           });
@@ -109,9 +112,12 @@ function consultarPorCpf() {
               a.href = linkTrim;
               a.target = "_blank";
               a.textContent = `📄 Visualizar Contrato / Aditivo ${index + 1}`;
+              
               a.style.display = "block";
-              a.style.marginBottom = "4px";
+              a.style.marginBottom = "8px";
               a.style.color = "#0d6efd";
+              a.style.textDecoration = "none";
+              
               listaHistorico.appendChild(a);
             }
           });
