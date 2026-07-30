@@ -10,6 +10,14 @@ document.addEventListener('change', function(e) {
   }
 });
 
+function alterarTextoBotaoEnviar(novoTexto) {
+  const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+  if (btnSubmit) {
+    btnSubmit.textContent = novoTexto;
+    btnSubmit.innerText = novoTexto;
+  }
+}
+
 function enviar() {
   limpaMensagemStatus();
   
@@ -268,7 +276,7 @@ function executarEnvio(fileData, eAtualizacao) {
   const chkNovo = document.getElementById("chkMoradorNovo");
   const isMoradorNovo = chkNovo ? chkNovo.checked : false;
 
-  // Tratamento da data do morador principal (converte AAAA-MM-DD para DD/MM/AAAA se necessário ao enviar)
+  // Tratamento da data do morador principal
   const nascInputPrincipal = document.getElementById("moradorNasc").value.trim();
   let moradorNascFormatada = nascInputPrincipal;
   if (/^\d{4}-\d{2}-\d{2}$/.test(nascInputPrincipal)) {
@@ -307,7 +315,6 @@ function executarEnvio(fileData, eAtualizacao) {
     moradorTel: document.getElementById("moradorTel").value,
     moradorEmail: document.getElementById("moradorEmail").value,
     
-    // Envia o número e o andar corretos capturados do gabarito
     vagaNumero: vagaNumeroEncontrada,
     vagaAndar: vagaAndarEncontrado,
     
@@ -352,35 +359,6 @@ function executarEnvio(fileData, eAtualizacao) {
     observacoes: document.getElementById("observacoes").value,
     declaracao: document.getElementById("declaracao").checked
   };
-
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      funcao: 'processarFormulario',
-      dados: dados
-    })
-  })
-  .then(response => response.json())
-  .then(res => {
-    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
-    if (btnSubmit) btnSubmit.disabled = false;
-
-    alert(res.mensagem);
-
-    if (res.sucesso) {
-      voltarTelaInicial();
-    } else {
-      alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-    }
-  })
-  .catch(err => {
-    const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
-    if (btnSubmit) btnSubmit.disabled = false;
-
-    alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-    alert("Erro no envio: " + err);
-  });
-}
 
   fetch(WEB_APP_URL, {
     method: 'POST',
