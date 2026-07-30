@@ -149,9 +149,23 @@
         
         <label>Vigência do Contrato (Ex: 05/2026 a 05/2028) *</label>
         <input type="text" id="inqVigencia">
-
+      
         <label>Envio de cópia do contrato (PDF)</label>
         <input type="file" id="arquivoContrato" accept="application/pdf">
+      
+        <!-- Área de Preview e Botão de Cancelamento (X) -->
+        <div id="containerPreviewContrato" style="display: none; margin-top: 8px; align-items: center; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px dashed #ccc;">
+          <span id="nomeArquivoSelecionado" style="font-size: 13px; color: #333; word-break: break-all;"></span>
+          <button type="button" id="btnRemoverContrato" title="Remover arquivo" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center;">✕</button>
+        </div>
+      
+        <!-- Histórico / Uploads Anteriores -->
+        <div id="containerHistoricoContratos" style="display: none; margin-top: 12px;">
+          <label style="font-size: 12px; color: #666; font-weight: bold;">Contratos / Uploads Anteriores:</label>
+          <div id="listaHistoricoContratos" style="background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 8px; max-height: 100px; overflow-y: auto; font-size: 12px;">
+            <!-- Os links anteriores serão injetados aqui via JavaScript -->
+          </div>
+        </div>
       </div>
 
       <!-- Seções Complementares -->
