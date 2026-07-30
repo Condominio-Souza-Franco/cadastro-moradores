@@ -78,6 +78,39 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS ---
+      const containerHistorico = document.getElementById('containerHistoricoContratos');
+      const listaHistorico = document.getElementById('listaHistoricoContratos');
+
+      if (listaHistorico && containerHistorico) {
+        listaHistorico.innerHTML = ""; 
+        
+        if (d.linkContratoHistorico && d.linkContratoHistorico.trim() !== "" && d.linkContratoHistorico !== "-") {
+          const links = d.linkContratoHistorico.split('\n');
+          
+          links.forEach((link, index) => {
+            const linkTrim = link.trim();
+            if (linkTrim.startsWith("http")) {
+              const a = document.createElement('a');
+              a.href = linkTrim;
+              a.target = "_blank";
+              a.textContent = `📄 Visualizar Contrato / Aditivo ${index + 1}`;
+              a.style.display = "block";
+              a.style.marginBottom = "4px";
+              a.style.color = "#0d6efd";
+              
+              listaHistorico.appendChild(a);
+            }
+          });
+
+          containerHistorico.classList.remove('hidden');
+          containerHistorico.style.display = 'block';
+        } else {
+          containerHistorico.classList.add('hidden');
+          containerHistorico.style.display = 'none';
+        }
+      }
+
       if (document.getElementById("vagaSituacao") && d.vagaSituacao) document.getElementById("vagaSituacao").value = d.vagaSituacao;
       if (document.getElementById("vagaAptoRelacionado") && d.vagaAptoRelacionado) document.getElementById("vagaAptoRelacionado").value = d.vagaAptoRelacionado;
 
