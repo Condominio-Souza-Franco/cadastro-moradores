@@ -77,7 +77,7 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (ROBUSTO) ---
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (COM SUPORTE A SEPARADOR EXPLICÍTO) ---
       const containerHistorico = document.getElementById('containerHistoricoContratos');
       const listaHistorico = document.getElementById('listaHistoricoContratos');
 
@@ -89,15 +89,18 @@ function consultarPorCpf() {
             let urlFinal = "";
             let textoFinal = "";
 
-            if (typeof item === 'object' && item !== null) {
-              urlFinal = item.url || item.link || item.href || item.text || item.texto || "";
+            if (typeof item === 'string' && item.includes('§')) {
+              const partes = item.split('§');
+              urlFinal = partes[0].trim();
+              textoFinal = partes[1] ? partes[1].trim() : `Visualizar Contrato / Aditivo ${index + 1}`;
+            } else if (typeof item === 'object' && item !== null) {
+              urlFinal = item.url || item.link || item.href || "";
               textoFinal = item.texto || item.text || item.titulo || `Visualizar Contrato / Aditivo ${index + 1}`;
             } else if (typeof item === 'string') {
               urlFinal = item.trim();
               textoFinal = `Visualizar Contrato / Aditivo ${index + 1}`;
             }
 
-            // Se encontrou qualquer conteúdo que pareça uma string válida
             if (urlFinal && urlFinal !== "-") {
               const a = document.createElement('a');
               a.href = urlFinal;
@@ -117,12 +120,20 @@ function consultarPorCpf() {
         } else if (typeof d.linkContratoHistorico === 'string' && d.linkContratoHistorico.trim() !== "" && d.linkContratoHistorico !== "-") {
           const links = d.linkContratoHistorico.split('\n');
           links.forEach((link, index) => {
-            const linkTrim = link.trim();
-            if (linkTrim !== "") {
+            let urlFinal = link.trim();
+            let textoFinal = `Visualizar Contrato / Aditivo ${index + 1}`;
+
+            if (urlFinal.includes('§')) {
+              const partes = urlFinal.split('§');
+              urlFinal = partes[0].trim();
+              textoFinal = partes[1] ? partes[1].trim() : textoFinal;
+            }
+
+            if (urlFinal !== "") {
               const a = document.createElement('a');
-              a.href = linkTrim;
+              a.href = urlFinal;
               a.target = "_blank";
-              a.textContent = `📄 Visualizar Contrato / Aditivo ${index + 1}`;
+              a.textContent = `📄 ${textoFinal}`;
               
               a.style.display = "block";
               a.style.marginBottom = "8px";
