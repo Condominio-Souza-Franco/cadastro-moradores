@@ -410,6 +410,16 @@ function voltarTelaInicial() {
     form.reset();
   }
 
+  // --- LIMPEZA DO CONTRATO ---
+  var containerPreview = document.getElementById('containerPreviewContrato');
+  var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
+  if (containerPreview) containerPreview.classList.add('hidden');
+  if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
+  if (typeof arquivoContratoObjeto !== 'undefined') {
+    arquivoContratoObjeto = null;
+  }
+  // ---------------------------
+
   document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
 
   var cpfConsulta = document.getElementById('cpfConsulta');
