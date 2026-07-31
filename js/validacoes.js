@@ -77,55 +77,9 @@ function consultarPorCpf() {
       if (document.getElementById("inqContato")) document.getElementById("inqContato").value = d.inqContato || "";
       if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = d.inqVigencia || "";
 
-      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (LENDO LINHA ÚNICA SEPARADA POR " | ") ---
-      const containerHistorico = document.getElementById('containerHistoricoContratos');
-      const listaHistorico = document.getElementById('listaHistoricoContratos');
-
-      if (listaHistorico && containerHistorico) {
-        listaHistorico.innerHTML = ""; 
-
-        let valorContratos = d.linkContratoHistorico;
-        let itensArray = [];
-
-        // Se vier como string única contendo " | " na planilha
-        if (typeof valorContratos === 'string' && valorContratos.trim() !== "" && valorContratos !== "-") {
-          // Quebra a string onde tiver " | "
-          itensArray = valorContratos.split(' | ');
-        } else if (Array.isArray(valorContratos)) {
-          // Se já vier como array, junta tudo em uma string e quebra por " | " para garantir
-          let textoUnido = valorContratos.join(' | ');
-          itensArray = textoUnido.split(' | ');
-        }
-
-        // Filtra espaços em vazios
-        itensArray = itensArray.map(item => item.trim()).filter(item => item !== "" && item !== "-");
-
-        if (itensArray.length > 0) {
-          itensArray.forEach((urlOuTexto, index) => {
-            const a = document.createElement('a');
-            
-            // Aqui definimos que o href e o texto usam o mesmo item da lista separada por " | "
-            a.href = urlOuTexto;
-            a.target = "_blank";
-            
-            // Se o item parecer uma URL, tentamos extrair o nome ou exibir um rótulo amigável com a data/número
-            // Mas se ele for o próprio nome/link, exibimos ele formatado:
-            a.textContent = `📄 ${urlOuTexto.split('/').pop() || 'Contrato / Aditivo ' + (index + 1)}`;
-            
-            a.style.display = "block";
-            a.style.marginBottom = "8px";
-            a.style.color = "#0d6efd";
-            a.style.textDecoration = "none";
-            
-            listaHistorico.appendChild(a);
-          });
-
-          containerHistorico.classList.remove('hidden');
-          containerHistorico.style.display = 'block';
-        } else {
-          containerHistorico.classList.add('hidden');
-          containerHistorico.style.display = 'none';
-        }
+      // --- EXIBIÇÃO DO HISTÓRICO DE CONTRATOS (CHAMANDO A FUNÇÃO CENTRALIZADA) ---
+      if (typeof renderizarHistoricoContratos === 'function') {
+        renderizarHistoricoContratos(d.linkContratoHistorico || d.historicoContratos || []);
       }
 
       if (document.getElementById("vagaSituacao") && d.vagaSituacao) document.getElementById("vagaSituacao").value = d.vagaSituacao;
@@ -178,6 +132,11 @@ function consultarPorCpf() {
 
       const secResto = document.getElementById('secRestoFormulario');
       if (secResto) { secResto.classList.add('hidden'); secResto.style.display = 'none'; }
+
+      // Limpa o histórico em caso de erro na busca
+      if (typeof renderizarHistoricoContratos === 'function') {
+        renderizarHistoricoContratos([]);
+      }
 
       alterarTextoBotaoEnviar("Enviar cadastro");
       alert(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.");
