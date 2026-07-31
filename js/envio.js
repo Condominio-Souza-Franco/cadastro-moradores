@@ -327,6 +327,9 @@ function executarEnvio(fileData, eAtualizacao) {
     inqContato: document.getElementById("inqContato").value,
     inqVigencia: document.getElementById("inqVigencia").value,
     arquivoContrato: fileData,
+    
+    // ---> LINHA ADICIONADA AQUI <---
+    historicoContratos: (typeof meustHistoricoContratos !== "undefined") ? meustHistoricoContratos : [],
 
     ocupantesList: (() => {
       const grupos = document.querySelectorAll(".item-ocupante");
@@ -358,7 +361,7 @@ function executarEnvio(fileData, eAtualizacao) {
     
     observacoes: document.getElementById("observacoes").value,
     declaracao: document.getElementById("declaracao").checked
-  };
+};
 
   fetch(WEB_APP_URL, {
     method: 'POST',
