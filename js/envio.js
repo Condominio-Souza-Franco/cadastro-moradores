@@ -404,55 +404,70 @@ function redefinirBotoesParaNovoCadastro() {
   }
 }
 
+// Variável global para armazenar os contratos carregados na tela
+let meustHistoricoContratos = [];
+
 function renderizarHistoricoContratos(listaContratos) {
-  let containerHistorico = document.getElementById("containerHistoricoContratos");
-  
-  if (!containerHistorico) {
-    const inputContratoEl = document.getElementById("arquivoContrato");
-    if (inputContratoEl && inputContratoEl.parentNode) {
-      containerHistorico = document.createElement("div");
-      containerHistorico.id = "containerHistoricoContratos";
-      containerHistorico.style.marginTop = "10px";
-      containerHistorico.style.display = "flex";
-      containerHistorico.style.flexDirection = "column";
-      containerHistorico.style.gap = "5px";
-      inputContratoEl.parentNode.appendChild(containerHistorico);
-    }
+  const containerHistorico = document.getElementById("containerHistoricoContratos");
+  const listaEl = document.getElementById("listaHistoricoContratos");
+
+  if (!containerHistorico || !listaEl) return;
+
+  // Se uma nova lista for passada como parâmetro, atualiza o estado local
+  if (Array.isArray(listaContratos)) {
+    meustHistoricoContratos = [...listaContratos];
   }
 
-  if (!containerHistorico) return;
+  // Limpa apenas o conteúdo da lista, mantendo o título (<label>) intacto
+  listaEl.innerHTML = "";
 
-  containerHistorico.innerHTML = "";
+  // Se a lista estiver vazia ou não existir, garante que o contêiner fique oculto
+  if (!meustHistoricoContratos || meustHistoricoContratos.length === 0) {
+    containerHistorico.classList.add("hidden");
+    return;
+  }
 
-  if (listaContratos && listaContratos.length > 0) {
-    let titulo = document.createElement("span");
-    titulo.style.fontSize = "13px";
-    titulo.style.fontWeight = "bold";
-    titulo.style.color = "#444";
-    titulo.textContent = "Contratos / Uploads Anteriores:";
-    containerHistorico.appendChild(titulo);
+  // Remove a classe hidden para exibir o histórico na tela
+  containerHistorico.classList.remove("hidden");
 
-    listaContratos.forEach(item => {
-      let a = document.createElement("a");
-      a.href = item.url;
-      a.textContent = "📄 " + item.texto;
-      a.target = "_blank";
-      a.style.display = "inline-block";
-      a.style.padding = "6px 12px";
-      a.style.background = "#f0f2f5";
-      a.style.color = "#007bff";
-      a.style.textDecoration = "none";
-      a.style.borderRadius = "4px";
-      a.style.border = "1px solid #dcedfc";
-      a.style.fontSize = "14px";
-      a.style.width = "fit-content";
-      
-      a.onmouseover = () => a.style.background = "#e2e8f0";
-      a.onmouseout = () => a.style.background = "#f0f2f5";
+  // Renderiza cada item com seu respectivo botão de remoção
+  meustHistoricoContratos.forEach((item, index) => {
+    // 1. Contêiner da linha
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "item-historico-contrato";
 
-      containerHistorico.appendChild(a);
+    // 2. Elemento <a> com o link do contrato
+    const a = document.createElement("a");
+    a.className = "link-historico-contrato";
+    a.href = item.url;
+    a.target = "_blank";
+    a.textContent = "📄 " + item.texto;
+
+    // 3. Botão de exclusão (X)
+    const btnRemover = document.createElement("button");
+    btnRemover.type = "button";
+    btnRemover.className = "btn-remover-historico";
+    btnRemover.title = "Remover este contrato do histórico";
+    btnRemover.textContent = "✕";
+
+    // Ação ao clicar no "X"
+    btnRemover.addEventListener("click", function() {
+      removerItemHistorico(index);
     });
-  }
+
+    // Monta a estrutura da linha
+    itemDiv.appendChild(a);
+    itemDiv.appendChild(btnRemover);
+
+    // Injeta na lista do HTML
+    listaEl.appendChild(itemDiv);
+  });
+}
+
+// Função para remover o item do array e atualizar a tela
+function removerItemHistorico(index) {
+  meustHistoricoContratos.splice(index, 1);
+  renderizarHistoricoContratos(); // Re-renderiza sem o item excluído
 }
 
 function voltarTelaInicial() {
