@@ -328,7 +328,6 @@ function executarEnvio(fileData, eAtualizacao) {
     inqVigencia: document.getElementById("inqVigencia").value,
     arquivoContrato: fileData,
     
-    // ---> LINHA ADICIONADA AQUI <---
     historicoContratos: (typeof meustHistoricoContratos !== "undefined") ? meustHistoricoContratos : [],
 
     ocupantesList: (() => {
@@ -361,7 +360,7 @@ function executarEnvio(fileData, eAtualizacao) {
     
     observacoes: document.getElementById("observacoes").value,
     declaracao: document.getElementById("declaracao").checked
-};
+  };
 
   fetch(WEB_APP_URL, {
     method: 'POST',
@@ -416,28 +415,27 @@ function renderizarHistoricoContratos(listaContratos) {
 
   if (!containerHistorico || !listaEl) return;
 
-  // Atualiza o histórico local
+  // Atualiza o histórico local se for fornecida uma lista válida
   if (Array.isArray(listaContratos)) {
     meustHistoricoContratos = [...listaContratos];
   }
-
-  // Imprime no Console do Navegador (F12) para inspecionar os dados brutos recebidos
-  console.log("Histórico de contratos recebido:", meustHistoricoContratos);
 
   listaEl.innerHTML = "";
 
   if (!meustHistoricoContratos || meustHistoricoContratos.length === 0) {
     containerHistorico.classList.add("hidden");
+    containerHistorico.style.display = "none";
     return;
   }
 
   containerHistorico.classList.remove("hidden");
+  containerHistorico.style.display = "block";
 
   meustHistoricoContratos.forEach((item, index) => {
     let textoExibicao = "Contrato";
     let urlDestino = "#";
 
-    // 1. Trata se o item veio como String pura
+    // 1. Se veio como String
     if (typeof item === "string") {
       if (item === "[object Object]") {
         textoExibicao = "Contrato " + (index + 1);
@@ -447,9 +445,8 @@ function renderizarHistoricoContratos(listaContratos) {
         urlDestino = item;
       }
     } 
-    // 2. Trata se o item é um Objeto JavaScript
+    // 2. Se veio como Objeto JS
     else if (item && typeof item === "object") {
-      // Garante que o texto seja extraído corretamente e não seja [object Object]
       var txtTemp = item.texto || item.text || item.nome;
       if (txtTemp && String(txtTemp) !== "[object Object]") {
         textoExibicao = String(txtTemp);
@@ -460,23 +457,26 @@ function renderizarHistoricoContratos(listaContratos) {
       urlDestino = String(item.url || item.link || item.href || "#");
     }
 
-    // Se o texto ainda contiver a palavra [object Object], força um nome padrão amigável
     if (textoExibicao.indexOf("[object Object]") !== -1) {
       textoExibicao = "Contrato_" + (index + 1);
     }
 
-    // 1. Contêiner do item
+    // Contêiner do item
     const itemDiv = document.createElement("div");
     itemDiv.className = "item-historico-contrato";
+    itemDiv.style.marginBottom = "8px";
 
-    // 2. Link do contrato
+    // Link
     const a = document.createElement("a");
     a.className = "link-historico-contrato";
     a.href = urlDestino;
     a.target = "_blank";
     a.textContent = "📄 " + textoExibicao;
+    a.style.color = "#0d6efd";
+    a.style.textDecoration = "none";
+    a.style.marginRight = "10px";
 
-    // 3. Botão de exclusão (X)
+    // Botão de exclusão (X)
     const btnRemover = document.createElement("button");
     btnRemover.type = "button";
     btnRemover.className = "btn-remover-historico";
@@ -501,11 +501,14 @@ function removerItemHistorico(index) {
 
 function voltarTelaInicial() {
   try {
-    // 1. Limpeza rigorosa do preview, variáveis e histórico de contratos
+    // Limpa a memória global do histórico de contratos
+    meustHistoricoContratos = [];
+
     var containerPreview = document.getElementById('containerPreviewContrato');
     var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
     var inputContrato = document.getElementById('arquivoContrato');
     var containerHistorico = document.getElementById('containerHistoricoContratos');
+    var listaHistorico = document.getElementById('listaHistoricoContratos');
     
     if (containerPreview) {
       containerPreview.classList.add('hidden');
@@ -513,12 +516,15 @@ function voltarTelaInicial() {
     }
     if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
     if (inputContrato) inputContrato.value = '';
-    if (containerHistorico) containerHistorico.innerHTML = '';
+    if (listaHistorico) listaHistorico.innerHTML = '';
+    if (containerHistorico) {
+      containerHistorico.classList.add('hidden');
+      containerHistorico.style.display = 'none';
+    }
     if (typeof arquivoContratoObjeto !== 'undefined') {
       arquivoContratoObjeto = null;
     }
 
-    // 2. Reseta o formulário principal
     var form = document.getElementById('cadForm');
     if (form) {
       form.reset();
@@ -562,7 +568,6 @@ function voltarTelaInicial() {
       statusMessage.classList.add('hidden');
     }
 
-    // 3. Reseta as seções ocultando e limpando o style.display inline
     var secoesParaEsconder = [
       'secTipoResidente',
       'secApto',
@@ -703,7 +708,7 @@ function atualizarInfoVagaLocal(apto) {
 }
 
 // --- LÓGICA DE UPLOAD E PREVIEW DO CONTRATO ---
-let arquivoContratoObjeto = null; // Variável global para o JSON
+let arquivoContratoObjeto = null;
 
 document.addEventListener("DOMContentLoaded", function() {
   const inputContrato = document.getElementById('arquivoContrato');
@@ -731,7 +736,6 @@ document.addEventListener("DOMContentLoaded", function() {
             base64: base64String
           };
 
-          // Define o nome e exibe a caixinha
           nomeArquivoSpan.textContent = "📎 " + file.name;
           containerPreview.classList.remove('hidden');
         };
