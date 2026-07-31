@@ -416,35 +416,52 @@ function renderizarHistoricoContratos(listaContratos) {
 
   if (!containerHistorico || !listaEl) return;
 
-  // Se uma nova lista for passada como parâmetro, atualiza o estado local
+  // Atualiza o histórico local garantindo que seja um array
   if (Array.isArray(listaContratos)) {
     meustHistoricoContratos = [...listaContratos];
   }
 
-  // Limpa apenas o conteúdo da lista, mantendo o título (<label>) intacto
   listaEl.innerHTML = "";
 
-  // Se a lista estiver vazia ou não existir, garante que o contêiner fique oculto
   if (!meustHistoricoContratos || meustHistoricoContratos.length === 0) {
     containerHistorico.classList.add("hidden");
     return;
   }
 
-  // Remove a classe hidden para exibir o histórico na tela
   containerHistorico.classList.remove("hidden");
 
-  // Renderiza cada item com seu respectivo botão de remoção
   meustHistoricoContratos.forEach((item, index) => {
+    // TRATAMENTO DEFENSIVO: Extrai o texto e a URL mesmo se o formato do objeto variar
+    let textoExibicao = "Contrato";
+    let urlDestino = "#";
+
+    if (typeof item === "string") {
+      textoExibicao = item;
+      urlDestino = item;
+    } else if (item && typeof item === "object") {
+      // Extrai o texto do link
+      if (typeof item.texto === "string" && item.texto.trim() !== "") {
+        textoExibicao = item.texto;
+      } else if (typeof item.text === "string" && item.text.trim() !== "") {
+        textoExibicao = item.text;
+      } else {
+        textoExibicao = "Ver Contrato";
+      }
+
+      // Extrai a URL
+      urlDestino = item.url || item.link || item.href || "#";
+    }
+
     // 1. Contêiner da linha
     const itemDiv = document.createElement("div");
     itemDiv.className = "item-historico-contrato";
 
-    // 2. Elemento <a> com o link do contrato
+    // 2. Link do documento
     const a = document.createElement("a");
     a.className = "link-historico-contrato";
-    a.href = item.url;
+    a.href = urlDestino;
     a.target = "_blank";
-    a.textContent = "📄 " + item.texto;
+    a.textContent = "📄 " + textoExibicao;
 
     // 3. Botão de exclusão (X)
     const btnRemover = document.createElement("button");
@@ -453,16 +470,12 @@ function renderizarHistoricoContratos(listaContratos) {
     btnRemover.title = "Remover este contrato do histórico";
     btnRemover.textContent = "✕";
 
-    // Ação ao clicar no "X"
     btnRemover.addEventListener("click", function() {
       removerItemHistorico(index);
     });
 
-    // Monta a estrutura da linha
     itemDiv.appendChild(a);
     itemDiv.appendChild(btnRemover);
-
-    // Injeta na lista do HTML
     listaEl.appendChild(itemDiv);
   });
 }
