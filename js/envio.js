@@ -416,10 +416,13 @@ function renderizarHistoricoContratos(listaContratos) {
 
   if (!containerHistorico || !listaEl) return;
 
-  // Atualiza o histórico local garantindo que seja um array
+  // Atualiza o histórico local
   if (Array.isArray(listaContratos)) {
     meustHistoricoContratos = [...listaContratos];
   }
+
+  // Imprime no Console do Navegador (F12) para inspecionar os dados brutos recebidos
+  console.log("Histórico de contratos recebido:", meustHistoricoContratos);
 
   listaEl.innerHTML = "";
 
@@ -431,32 +434,42 @@ function renderizarHistoricoContratos(listaContratos) {
   containerHistorico.classList.remove("hidden");
 
   meustHistoricoContratos.forEach((item, index) => {
-    // TRATAMENTO DEFENSIVO: Extrai o texto e a URL mesmo se o formato do objeto variar
     let textoExibicao = "Contrato";
     let urlDestino = "#";
 
+    // 1. Trata se o item veio como String pura
     if (typeof item === "string") {
-      textoExibicao = item;
-      urlDestino = item;
-    } else if (item && typeof item === "object") {
-      // Extrai o texto do link
-      if (typeof item.texto === "string" && item.texto.trim() !== "") {
-        textoExibicao = item.texto;
-      } else if (typeof item.text === "string" && item.text.trim() !== "") {
-        textoExibicao = item.text;
+      if (item === "[object Object]") {
+        textoExibicao = "Contrato " + (index + 1);
+        urlDestino = "#";
       } else {
-        textoExibicao = "Ver Contrato";
+        textoExibicao = item;
+        urlDestino = item;
+      }
+    } 
+    // 2. Trata se o item é um Objeto JavaScript
+    else if (item && typeof item === "object") {
+      // Garante que o texto seja extraído corretamente e não seja [object Object]
+      var txtTemp = item.texto || item.text || item.nome;
+      if (txtTemp && String(txtTemp) !== "[object Object]") {
+        textoExibicao = String(txtTemp);
+      } else {
+        textoExibicao = "Contrato " + (index + 1);
       }
 
-      // Extrai a URL
-      urlDestino = item.url || item.link || item.href || "#";
+      urlDestino = String(item.url || item.link || item.href || "#");
     }
 
-    // 1. Contêiner da linha
+    // Se o texto ainda contiver a palavra [object Object], força um nome padrão amigável
+    if (textoExibicao.indexOf("[object Object]") !== -1) {
+      textoExibicao = "Contrato_" + (index + 1);
+    }
+
+    // 1. Contêiner do item
     const itemDiv = document.createElement("div");
     itemDiv.className = "item-historico-contrato";
 
-    // 2. Link do documento
+    // 2. Link do contrato
     const a = document.createElement("a");
     a.className = "link-historico-contrato";
     a.href = urlDestino;
@@ -467,7 +480,7 @@ function renderizarHistoricoContratos(listaContratos) {
     const btnRemover = document.createElement("button");
     btnRemover.type = "button";
     btnRemover.className = "btn-remover-historico";
-    btnRemover.title = "Remover este contrato do histórico";
+    btnRemover.title = "Remover este contrato";
     btnRemover.textContent = "✕";
 
     btnRemover.addEventListener("click", function() {
