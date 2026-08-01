@@ -40,6 +40,16 @@
     <a href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">CLIQUE AQUI PARA ACESSAR O KIT DE BOAS VINDAS</a>
   </p>
 
+  <div class="mobile-progress" aria-label="Progresso do formulário">
+    <div class="progress-caption">Etapas rápidas</div>
+    <div class="progress-steps">
+      <span class="progress-step active">1. Identificação</span>
+      <span class="progress-step">2. Unidade</span>
+      <span class="progress-step">3. Detalhes</span>
+      <span class="progress-step">4. Final</span>
+    </div>
+  </div>
+
 <!-- BLOCO DE CONSULTA POR CPF: busca o cadastro existente antes do formulário principal -->
   <div class="card-consulta centralizado" id="boxConsultaCpf">
     <h3>Preencha os dados abaixo para localizar seu cadastro e manter suas informações atualizadas.</h3>
@@ -142,7 +152,7 @@
      <!-- Dados Exclusivos da Locação (Inquilino) -->
       <div id="secInquilino" class="section hidden">
         <h3>Dados da Locação / Contrato</h3>
-        <p class="desc-secao">As informações abaixo ajudam o condomínio na comunicação direta com o proprietário ou imobiliária responsável em casos de manutenção estrutural ou questões contratuais.</p>
+        <p class="desc-secao">Essas informações ajudam a administração a entrar em contato com o responsável da locação.</p>
         
           <label>Nome do Proprietário / Administradora <span class="required-star">*</span></label>
         <input type="text" id="inqPropAdmin">
@@ -181,7 +191,7 @@
         
         <!-- Demais Ocupantes -->
         <div class="sub-title">Demais Ocupantes</div>
-        <p class="desc-secao">Por favor, preencha os dados solicitados abaixo para cada pessoa que reside com você. Caso more sozinho(a), você pode pular esta seção.</p>
+        <p class="desc-secao">Preencha apenas se houver outras pessoas residindo na unidade.</p>
         <div id="containerOcupantes"></div>
         <button type="button" class="btn-add" onclick="addOcupante()">+ Adicionar Ocupante</button>
 
@@ -218,11 +228,8 @@
         <!-- Seção Veículos -->
         <div class="sub-title title-grupo">Veículos</div>
         <div class="desc-secao">
-          <p>Por favor, registre os dados de todos os meios de transporte da unidade que utilizam as dependências da garagem ou bicicletário.</p>
-          <p>✅ É permitido que visitantes utilizem sua vaga de garagem <strong>somente enquanto permanecerem no prédio</strong>. Ao deixar o condomínio, o veículo também deverá ser retirado da vaga.</p>
-          <p>📌 Quando o uso da vaga for <strong>pontual</strong>, como no caso de uma visita, <strong>não é necessário cadastrar o veículo</strong>. Basta informar os dados ao porteiro no momento da entrada.</p>
-          <p>⚠️ Caso um mesmo veículo utilize a vaga de forma <strong>frequente, recorrente ou contínua</strong>, ainda que pertença a visitantes ou pessoas vinculadas à unidade, <strong>seu cadastro será obrigatório</strong>.</p>
-          <p>Caso não possua nenhum veículo, você pode avançar para a próxima seção.</p>
+          <p>Cadastre veículos que usem a vaga com frequência.</p>
+          <p>Se for visita pontual, não é preciso registrar.</p>
         </div>
 
         <!-- Carros -->
