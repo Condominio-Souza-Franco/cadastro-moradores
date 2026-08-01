@@ -154,10 +154,10 @@
           <label>Nome do Proprietário / Administradora <span class="required-star">*</span></label>
         <input type="text" id="inqPropAdmin">
         
-        <label>Contato do Proprietário / Administradora (Telefone / Celular) <span class="required-star">*</span></label>
+        <label>Contato do Proprietário / Administradora (Telefone / Celular)</label>
         <input type="text" id="inqContato">
         
-        <label>Vigência do Contrato (Ex: 05/2026 a 05/2028) <span class="required-star">*</span></label>
+        <label>Vigência do Contrato (Ex: 05/2026 a 05/2028)</label>
         <input type="text" id="inqVigencia">
       
         <label>Envio de cópia do contrato (PDF)</label>
@@ -296,6 +296,13 @@
       <button type="button" id="btnModalConfirmar" class="btn-modal btn-modal-primary">OK</button>
       <button type="button" id="btnModalCancelar" class="btn-modal btn-modal-secondary hidden">Cancelar</button>
     </div>
+  </div>
+</div>
+
+<div id="overlayProcessamento" class="overlay-processamento hidden" aria-live="polite" aria-busy="true">
+  <div class="overlay-processamento-card">
+    <div class="overlay-processamento-spinner" aria-hidden="true"></div>
+    <p id="overlayProcessamentoMensagem">Aguarde: enviando...</p>
   </div>
 </div>
 

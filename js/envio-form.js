@@ -49,6 +49,22 @@ function formatarListaCamposFaltantes(campos) {
   return `${campos.slice(0, -1).join(', ')} e ${campos[campos.length - 1]}`;
 }
 
+function setOverlayProcessamento(visivel, mensagem) {
+  const overlay = document.getElementById('overlayProcessamento');
+  const mensagemEl = document.getElementById('overlayProcessamentoMensagem');
+  if (!overlay) return;
+
+  if (mensagemEl && mensagem) {
+    mensagemEl.textContent = mensagem;
+  }
+
+  if (visivel) {
+    overlay.classList.remove('hidden');
+  } else {
+    overlay.classList.add('hidden');
+  }
+}
+
 function interpretarRespostaComoJson(response, contextoErro) {
   return response.text().then(function(texto) {
     try {
@@ -142,9 +158,7 @@ function enviar() {
 
   if (cadastroEhInquilino()) {
     [
-      { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
-      { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
-      { id: "inqVigencia", nome: "Vigência do contrato" }
+      { id: "inqPropAdmin", nome: "Proprietário / Administradora" }
     ].forEach(regra => {
       const el = document.getElementById(regra.id);
       if (el && el.offsetParent !== null) {
@@ -404,6 +418,8 @@ function enviar() {
     btnSubmit.innerText = eAtualizacao ? "Atualizando..." : "Enviando...";
   }
 
+  setOverlayProcessamento(true, eAtualizacao ? 'Aguarde: atualizando...' : 'Aguarde: enviando...');
+
   const fileInput = document.getElementById("arquivoContrato");
   const file = fileInput && fileInput.files ? fileInput.files[0] : null;
 
@@ -416,6 +432,14 @@ function enviar() {
         type: file.type
       };
       executarEnvio(fileData, eAtualizacao);
+    };
+    reader.onerror = function() {
+      const btnSubmitErro = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
+      if (btnSubmitErro) btnSubmitErro.disabled = false;
+
+      setOverlayProcessamento(false);
+      alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+      mostrarAlerta("Erro ao ler o arquivo de contrato. Tente novamente.", "Atenção");
     };
     reader.readAsDataURL(file);
   } else {
@@ -535,6 +559,8 @@ function executarEnvio(fileData, eAtualizacao) {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
 
+    setOverlayProcessamento(false);
+
     mostrarAlerta(res.mensagem, "Atenção");
 
     if (res.sucesso) {
@@ -547,6 +573,7 @@ function executarEnvio(fileData, eAtualizacao) {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
 
+    setOverlayProcessamento(false);
     alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
     mostrarAlerta("Erro no envio: " + err, "Atenção");
   });
