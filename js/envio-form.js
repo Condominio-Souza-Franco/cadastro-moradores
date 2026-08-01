@@ -185,21 +185,21 @@ function enviar() {
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
     const nomeEl = item.querySelector('.oc-nome');
-    const telEl = item.querySelector('.oc-tel');
+    const vinculoEl = item.querySelector('.oc-vinculo');
     const nome = nomeEl ? nomeEl.value.trim() : '';
-    const tel = telEl ? telEl.value.trim() : '';
+    const vinculo = vinculoEl ? vinculoEl.value.trim() : '';
 
     const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
 
-    if (preencheuAlgum && (nome === "" || tel === "")) {
+    if (preencheuAlgum && (nome === "" || vinculo === "")) {
       const camposFaltando = [];
       if (nome === "") camposFaltando.push("Nome");
-      if (tel === "") camposFaltando.push("Telefone/Celular");
+      if (vinculo === "") camposFaltando.push("Vínculo");
 
       let label = `Demais ocupantes ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
-      if (tel === "" && telEl) elementosParaDestacar.push(telEl);
+      if (vinculo === "" && vinculoEl) elementosParaDestacar.push(vinculoEl);
     }
   });
 

@@ -263,9 +263,9 @@ function preencherEmergencias(texto) {
 function addOcupante(v = {}) {
   adicionarItemDinamico('containerOcupantes', 'item-ocupante', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21987654321" class="oc-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21987654321" class="oc-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Data de nascimento</span><input type="text" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${v.nasc || ''}"></div>
-    <div><span class="input-label">Vínculo / Parentesco</span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
+    <div><span class="input-label">Vínculo / Parentesco <span class="required-star">*</span></span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
   `);
 }
 
