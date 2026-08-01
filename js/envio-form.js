@@ -173,17 +173,17 @@ function enviar() {
   const ocupantes = document.querySelectorAll('#containerOcupantes .item-ocupante');
   ocupantes.forEach((item, index) => {
     const nomeEl = item.querySelector('.oc-nome');
-    const vinculoEl = item.querySelector('.oc-vinculo');
+    const telEl = item.querySelector('.oc-tel');
     const nome = nomeEl ? nomeEl.value.trim() : '';
-    const vinculo = vinculoEl ? vinculoEl.value.trim() : '';
+    const tel = telEl ? telEl.value.trim() : '';
 
     const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
 
-    if (preencheuAlgum && (nome === "" || vinculo === "")) {
-      let label = `Demais ocupantes ${index + 1} (Preencha Nome e Vínculo)`;
+    if (preencheuAlgum && (nome === "" || tel === "")) {
+      let label = `Demais ocupantes ${index + 1} (Preencha Nome e Telefone/Celular)`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
-      if (vinculo === "" && vinculoEl) elementosParaDestacar.push(vinculoEl);
+      if (tel === "" && telEl) elementosParaDestacar.push(telEl);
     }
   });
 
