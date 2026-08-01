@@ -41,6 +41,14 @@ function alterarTextoBotaoEnviar(novoTexto) {
   }
 }
 
+function formatarListaCamposFaltantes(campos) {
+  if (!campos.length) return "";
+  if (campos.length === 1) return campos[0];
+  if (campos.length === 2) return `${campos[0]} e ${campos[1]}`;
+
+  return `${campos.slice(0, -1).join(', ')} e ${campos[campos.length - 1]}`;
+}
+
 function interpretarRespostaComoJson(response, contextoErro) {
   return response.text().then(function(texto) {
     try {
@@ -162,7 +170,11 @@ function enviar() {
     const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
 
     if (preencheuAlgum && (nome === "" || tel === "")) {
-      let label = `Caso de emergência ${index + 1} (Preencha Nome e Telefone/Celular)`;
+      const camposFaltando = [];
+      if (nome === "") camposFaltando.push("Nome");
+      if (tel === "") camposFaltando.push("Telefone/Celular");
+
+      let label = `Caso de emergência ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
       if (tel === "" && telEl) elementosParaDestacar.push(telEl);
@@ -180,7 +192,11 @@ function enviar() {
     const preencheuAlgum = Array.from(item.querySelectorAll('input, select')).some(i => i.value.trim() !== "");
 
     if (preencheuAlgum && (nome === "" || tel === "")) {
-      let label = `Demais ocupantes ${index + 1} (Preencha Nome e Telefone/Celular)`;
+      const camposFaltando = [];
+      if (nome === "") camposFaltando.push("Nome");
+      if (tel === "") camposFaltando.push("Telefone/Celular");
+
+      let label = `Demais ocupantes ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (nome === "" && nomeEl) elementosParaDestacar.push(nomeEl);
       if (tel === "" && telEl) elementosParaDestacar.push(telEl);
@@ -190,42 +206,69 @@ function enviar() {
   // 4. Carros
   const carros = document.querySelectorAll('#containerCarros .item-carro');
   carros.forEach((item, index) => {
-    const inputs = item.querySelectorAll('input');
-    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
-    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+    const marcaModeloEl = item.querySelector('.car-marca-modelo');
+    const corEl = item.querySelector('.car-cor');
+    const placaEl = item.querySelector('.car-placa');
+    const marcaModelo = marcaModeloEl ? marcaModeloEl.value.trim() : '';
+    const cor = corEl ? corEl.value.trim() : '';
+    const placa = placaEl ? placaEl.value.trim() : '';
+
+    let preencheuAlgum = (marcaModelo !== "" || cor !== "" || placa !== "");
+    let preencheuTodos = (marcaModelo !== "" && cor !== "" && placa !== "");
 
     if (preencheuAlgum && !preencheuTodos) {
-      let label = `Carros ${index + 1} (Preencha Marca e modelo, Cor e Placa)`;
+      const camposFaltando = [];
+      if (marcaModelo === "") camposFaltando.push("Marca e modelo");
+      if (cor === "") camposFaltando.push("Cor");
+      if (placa === "") camposFaltando.push("Placa");
+
+      let label = `Carros ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+      if (marcaModelo === "" && marcaModeloEl) elementosParaDestacar.push(marcaModeloEl);
+      if (cor === "" && corEl) elementosParaDestacar.push(corEl);
+      if (placa === "" && placaEl) elementosParaDestacar.push(placaEl);
     }
   });
 
   // 5. Motos
   const motos = document.querySelectorAll('#containerMotos .item-moto');
   motos.forEach((item, index) => {
-    const inputs = item.querySelectorAll('input');
-    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
-    let preencheuTodos = Array.from(inputs).every(i => i.value.trim() !== "");
+    const marcaModeloEl = item.querySelector('.moto-marca-modelo');
+    const corEl = item.querySelector('.moto-cor');
+    const placaEl = item.querySelector('.moto-placa');
+    const marcaModelo = marcaModeloEl ? marcaModeloEl.value.trim() : '';
+    const cor = corEl ? corEl.value.trim() : '';
+    const placa = placaEl ? placaEl.value.trim() : '';
+
+    let preencheuAlgum = (marcaModelo !== "" || cor !== "" || placa !== "");
+    let preencheuTodos = (marcaModelo !== "" && cor !== "" && placa !== "");
 
     if (preencheuAlgum && !preencheuTodos) {
-      let label = `Motos ${index + 1} (Preencha Marca e modelo, Cor e Placa)`;
+      const camposFaltando = [];
+      if (marcaModelo === "") camposFaltando.push("Marca e modelo");
+      if (cor === "") camposFaltando.push("Cor");
+      if (placa === "") camposFaltando.push("Placa");
+
+      let label = `Motos ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
-      inputs.forEach(i => { if (!i.value.trim()) elementosParaDestacar.push(i); });
+      if (marcaModelo === "" && marcaModeloEl) elementosParaDestacar.push(marcaModeloEl);
+      if (cor === "" && corEl) elementosParaDestacar.push(corEl);
+      if (placa === "" && placaEl) elementosParaDestacar.push(placaEl);
     }
   });
 
   // 6. Bicicletas
   const bikes = document.querySelectorAll('#containerBikes .item-bike');
   bikes.forEach((item, index) => {
+    const marcaEl = item.querySelector('.bike-marca');
     const corEl = item.querySelector('.bike-cor');
-    const inputs = item.querySelectorAll('input');
+    const marca = marcaEl ? marcaEl.value.trim() : '';
     
-    let preencheuAlgum = Array.from(inputs).some(i => i.value.trim() !== "");
+    let preencheuAlgum = (marca !== "" || (corEl ? corEl.value.trim() : '') !== "");
     let cor = corEl ? corEl.value.trim() : "";
 
     if (preencheuAlgum && cor === "") {
-      let label = `Bicicletas ${index + 1} (Preencha a cor)`;
+      let label = `Bicicletas ${index + 1}: Preencha Cor`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (corEl) elementosParaDestacar.push(corEl);
     }
@@ -247,14 +290,18 @@ function enviar() {
     const preencheuOutros = (racaEspecie !== "" && porte !== "");
 
     if (preencheuNome && !preencheuOutros) {
-      let label = `Pets ${index + 1} (Preencha Espécie e Raça e Porte)`;
+      const camposFaltando = [];
+      if (racaEspecie === "") camposFaltando.push("Espécie e raça");
+      if (porte === "") camposFaltando.push("Porte");
+
+      let label = `Pets ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       
       if (racaEspecie === "" && racaEspecieEl) elementosParaDestacar.push(racaEspecieEl);
       if (porte === "" && porteEl) elementosParaDestacar.push(porteEl);
     } 
     else if (!preencheuNome && preencheuAlgum) {
-      let label = `Pets ${index + 1} (Preencha o Nome)`;
+      let label = `Pets ${index + 1}: Preencha Nome`;
       if (!camposFaltantes.includes(label)) camposFaltantes.push(label);
       if (nomeEl) elementosParaDestacar.push(nomeEl);
     }
@@ -278,7 +325,13 @@ function enviar() {
     const preencheuTodos = (nome !== "" && servico !== "" && tel !== "" && chave !== "");
 
     if (preencheuAlgum && !preencheuTodos) {
-      let labelPrestador = `Prestador ${index + 1} (Preencha todos os campos obrigatórios: Nome, Serviço, Telefone e Chave)`;
+      const camposFaltando = [];
+      if (nome === "") camposFaltando.push("Nome");
+      if (servico === "") camposFaltando.push("Serviço");
+      if (tel === "") camposFaltando.push("Telefone");
+      if (chave === "") camposFaltando.push("se possui chave");
+
+      let labelPrestador = `Prestador ${index + 1}: Preencha ${formatarListaCamposFaltantes(camposFaltando)}`;
       if (!camposFaltantes.includes(labelPrestador)) {
         camposFaltantes.push(labelPrestador);
       }
