@@ -41,6 +41,14 @@ function alterarTextoBotaoEnviar(novoTexto) {
   }
 }
 
+function cadastroEhInquilino() {
+  const tipoResidente = document.getElementById("tipoResidente")?.value?.trim() || "";
+  const secInquilino = document.getElementById("secInquilino");
+  const secaoInquilinoVisivel = !!secInquilino && secInquilino.offsetParent !== null;
+
+  return tipoResidente === "Inquilino" && secaoInquilinoVisivel;
+}
+
 function enviar() {
   limpaMensagemStatus();
   
@@ -107,8 +115,7 @@ function enviar() {
     }
   });
 
-  const tipoResidenteSelecionado = document.getElementById("tipoResidente")?.value?.trim() || "";
-  if (tipoResidenteSelecionado === "Inquilino") {
+  if (cadastroEhInquilino()) {
     [
       { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
       { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
@@ -363,6 +370,20 @@ function executarEnvio(fileData, eAtualizacao) {
     }
   }
 
+  const dadosLocacao = cadastroEhInquilino()
+    ? {
+        inqPropAdmin: document.getElementById("inqPropAdmin").value,
+        inqContato: document.getElementById("inqContato").value,
+        inqVigencia: document.getElementById("inqVigencia").value,
+        arquivoContrato: fileData
+      }
+    : {
+        inqPropAdmin: "",
+        inqContato: "",
+        inqVigencia: "",
+        arquivoContrato: null
+      };
+
   const dados = {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
@@ -385,11 +406,8 @@ function executarEnvio(fileData, eAtualizacao) {
     vagaAptoRelacionado: document.getElementById("vagaAptoRelacionado").value,
 
     emergenciasList: coletarDadosGrupados(".item-emergencia", [".em-nome", ".em-tel", ".em-end", ".em-vinculo"]),
-    
-    inqPropAdmin: document.getElementById("inqPropAdmin").value,
-    inqContato: document.getElementById("inqContato").value,
-    inqVigencia: document.getElementById("inqVigencia").value,
-    arquivoContrato: fileData,
+
+    ...dadosLocacao,
 
     ocupantesList: (() => {
       const grupos = document.querySelectorAll(".item-ocupante");
