@@ -41,6 +41,23 @@ function alterarTextoBotaoEnviar(novoTexto) {
   }
 }
 
+function interpretarRespostaComoJson(response, contextoErro) {
+  return response.text().then(function(texto) {
+    try {
+      return JSON.parse(texto);
+    } catch (erroParse) {
+      var textoNormalizado = String(texto || "").trim();
+      var servidorRetornouHtml = textoNormalizado.startsWith("<!DOCTYPE") || textoNormalizado.startsWith("<html");
+
+      if (servidorRetornouHtml) {
+        throw new Error(contextoErro + " O servidor retornou uma página HTML em vez de JSON. Verifique se o Apps Script foi publicado/reimplantado corretamente e se não ocorreu erro interno no script.");
+      }
+
+      throw new Error(contextoErro + " Resposta inválida do servidor.");
+    }
+  });
+}
+
 function cadastroEhInquilino() {
   const tipoResidente = document.getElementById("tipoResidente")?.value?.trim() || "";
   const campoLocacaoPrincipal = document.getElementById("inqPropAdmin");
@@ -460,7 +477,7 @@ function executarEnvio(fileData, eAtualizacao) {
       dados: dados
     })
   })
-  .then(response => response.json())
+  .then(response => interpretarRespostaComoJson(response, "Erro no envio:"))
   .then(res => {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
