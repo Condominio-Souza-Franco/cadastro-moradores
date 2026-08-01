@@ -1,4 +1,4 @@
-/* LABELS, INPUTS GERAIS E ESTADOS */
+/* Labels, campos de entrada e estados visuais do formulário */
 
 label {
   display: block;
@@ -13,7 +13,35 @@ input[type="checkbox"] {
   height: 20px;
   cursor: pointer;
   vertical-align: middle;
-  margin-right: 8px; 
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.row-checkbox-morador {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px auto 0;
+  width: fit-content;
+}
+
+.checkbox-group {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.row-checkbox-morador label,
+.checkbox-group label {
+  margin: 0 !important;
+  display: inline !important;
+  font-weight: 500;
+}
+
+.row-checkbox-morador label {
+  text-align: center;
 }
 
 input[type="text"],

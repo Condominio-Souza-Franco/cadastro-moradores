@@ -1,74 +1,6 @@
 // ==========================================
-// MÁSCARA UNIFICADA (Data, CPF e RG)
+// UI DO FORMULÁRIO E GERAÇÃO DE CAMPOS DINÂMICOS
 // ==========================================
-function aplicarMascara(e) {
-  var input = e.target;
-  if (!input.classList.contains('campo-mascara')) return;
-
-  var tipo = input.getAttribute('data-mascara');
-  var valor = input.value.replace(/\D/g, "");
-
-  if (tipo === 'data') {
-    if (valor.length > 8) valor = valor.substring(0, 8);
-    if (valor.length > 4) {
-      valor = valor.substring(0, 2) + '/' + valor.substring(2, 4) + '/' + valor.substring(4);
-    } else if (valor.length > 2) {
-      valor = valor.substring(0, 2) + '/' + valor.substring(2);
-    }
-  } 
-  else if (tipo === 'cpf') {
-    if (valor.length > 11) valor = valor.substring(0, 11);
-    if (valor.length > 9) {
-      valor = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6, 9) + '-' + valor.substring(9);
-    } else if (valor.length > 6) {
-      valor = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6);
-    } else if (valor.length > 3) {
-      valor = valor.substring(0, 3) + '.' + valor.substring(3);
-    }
-  } 
-  else if (tipo === 'rg') {
-    if (valor.length > 9) valor = valor.substring(0, 9);
-    if (valor.length > 8) {
-      valor = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '-' + valor.substring(8);
-    } else if (valor.length > 5) {
-      valor = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5);
-    } else if (valor.length > 2) {
-      valor = valor.substring(0, 2) + '.' + valor.substring(2);
-    }
-  }
-
-  input.value = valor;
-}
-
-document.addEventListener('input', aplicarMascara);
-
-
-// ==========================================
-// DOM, INICIALIZAÇÕES E GERADORES DINÂMICOS
-// ==========================================
-
-window.addEventListener('DOMContentLoaded', function() {
-  popularDropdownApto();
-  popularDropdownAptos();
-  
-  const inputCpf = document.getElementById('cpfConsulta');
-  const inputNasc = document.getElementById('nascConsulta');
-
-  function dispararBuscaEnter(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      consultarPorCpf();
-    }
-  }
-
-  if (inputCpf) {
-    inputCpf.addEventListener('keydown', dispararBuscaEnter);
-  }
-
-  if (inputNasc) {
-    inputNasc.addEventListener('keydown', dispararBuscaEnter);
-  }
-});
 
 function rolarParaSecao(secaoId) {
   const elemento = document.getElementById(secaoId);
@@ -91,6 +23,34 @@ function popularDropdownAptos() {
   select.add(new Option('901', '901'));
 }
 
+function aoSelecionarApto(valor) {
+  const select = document.getElementById('apto');
+  const secResto = document.getElementById('secRestoFormulario');
+
+  if (select && valor !== undefined && valor !== null) {
+    select.value = valor;
+  }
+
+  if (select && select.value) {
+    if (secResto) {
+      secResto.classList.remove('hidden');
+      secResto.style.display = 'block';
+      rolarParaSecao('secRestoFormulario');
+    }
+
+    if (typeof addEmergencia === 'function' && document.querySelectorAll('.item-emergencia').length === 0) {
+      addEmergencia();
+    }
+
+    if (typeof atualizarInfoVagaLocal === 'function') {
+      atualizarInfoVagaLocal(select.value);
+    }
+  } else if (secResto) {
+    secResto.classList.add('hidden');
+    secResto.style.display = 'none';
+  }
+}
+
 function popularDropdownApto() {
   const select = document.getElementById('apto');
   if (!select) return;
@@ -106,27 +66,14 @@ function popularDropdownApto() {
   select.add(new Option('901', '901'));
 
   select.onchange = function() {
-    const valor = this.value;
-    const secResto = document.getElementById('secRestoFormulario');
-
-    if (valor) {
-      if (secResto) {
-        secResto.classList.remove('hidden');
-        secResto.style.display = 'block';
-        rolarParaSecao('secRestoFormulario');
-      }
-
-      if (typeof addEmergencia === 'function' && document.querySelectorAll('.item-emergencia').length === 0) {
-        addEmergencia();
-      }
-    } else {
-      if (secResto) {
-        secResto.classList.add('hidden');
-        secResto.style.display = 'none';
-      }
-    }
+    aoSelecionarApto(this.value);
   };
 }
+
+window.addEventListener('DOMContentLoaded', function() {
+  popularDropdownApto();
+  popularDropdownAptos();
+});
 
 function limparCpf(cpf) {
   if (!cpf) return "";
@@ -181,13 +128,6 @@ function tratarEscolhaTipoResidente(valor) {
       secApto.classList.add('hidden');
       secApto.style.display = 'none';
     }
-  }
-}
-
-function alterarTextoBotaoEnviar(novoTexto) {
-  const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
-  if (btnSubmit) {
-    btnSubmit.innerText = novoTexto;
   }
 }
 
@@ -339,19 +279,19 @@ function preencherPets(texto) {
   const container = document.getElementById("containerPets") || 
                     document.getElementById("containerPet") || 
                     document.getElementById("petsContainer");
-                    
+
   if (!container) return;
-  
+
   container.innerHTML = "";
   if (!texto || texto === "-" || texto.trim() === "") return;
-  
+
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
     if (p.some(item => item && item.trim() !== "")) {
-      addPet({ 
-        nome: p[0],        
-        racaEspecie: p[1], 
-        porte: p[2]        
+      addPet({
+        nome: p[0],
+        racaEspecie: p[1],
+        porte: p[2]
       });
     }
   });
@@ -377,19 +317,20 @@ function preencherPrestadores(texto) {
   if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
-    addPrestador({ 
-      nome: p[0] || '', 
-      servico: p[1] || '', 
-      tel: p[2] || '', 
-      chave: p[3] || '' 
+    addPrestador({
+      nome: p[0] || '',
+      servico: p[1] || '',
+      tel: p[2] || '',
+      chave: p[3] || ''
     });
   });
 }
 
+// Coleta os itens repetíveis em formato de texto para envio ao backend.
 function coletarDadosGrupados(selectorGroup, camposSelectors) {
   const grupos = document.querySelectorAll(selectorGroup);
   const resultado = [];
-  
+
   grupos.forEach(g => {
     const valores = camposSelectors.map(s => {
       const el = g.querySelector(s);
@@ -400,6 +341,6 @@ function coletarDadosGrupados(selectorGroup, camposSelectors) {
       resultado.push(valores.join(" | "));
     }
   });
-  
+
   return resultado.join("\n");
 }

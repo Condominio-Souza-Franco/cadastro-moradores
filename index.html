@@ -10,18 +10,20 @@
   <meta http-equiv="Expires" content="0">
   
   <!-- Estilos CSS -->
-  <link rel="stylesheet" href="css/variaveis-e-base.css">
-  <link rel="stylesheet" href="css/tipografia-e-inputs.css">
-  <link rel="stylesheet" href="css/consulta-cpf.css">
-  <link rel="stylesheet" href="css/componentes-dinamicos.css">
-  <link rel="stylesheet" href="css/botoes-e-utilitarios.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/inputs.css">
+  <link rel="stylesheet" href="css/consulta.css">
+  <link rel="stylesheet" href="css/componentes.css">
+  <link rel="stylesheet" href="css/utilitarios.css">
   <link rel="stylesheet" href="css/responsivo.css">
 
   <!-- Scripts JS -->
-  <script src="js/config-regras.js"></script>
-  <script src="js/validacoes.js"></script>
-  <script src="js/dinamicos.js"></script>
-  <script src="js/envio.js"></script>
+  <script src="js/regras.js" defer></script>
+  <script src="js/mascaras.js" defer></script>
+  <script src="js/ui-formulario.js" defer></script>
+  <script src="js/form-controle.js" defer></script>
+  <script src="js/validacoes-form.js" defer></script>
+  <script src="js/envio-form.js" defer></script>
 </head>
 <body>
 
@@ -38,19 +40,19 @@
     <a href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">TINYURL.COM/KIT-SOUZAFRANCO</a>
   </p>
 
-<!-- BLOCO DE CONSULTA POR CPF -->
+<!-- BLOCO DE CONSULTA POR CPF: busca o cadastro existente antes do formulário principal -->
   <div class="card-consulta centralizado" id="boxConsultaCpf">
     <h3>Preencha os dados abaixo para localizar seu cadastro e manter suas informações atualizadas.</h3>
     
     <div class="row-consulta" id="rowConsultaCpf">
       <!-- Grupo do CPF -->
-      <div style="display: flex; flex-direction: column; width: 100%;">
+      <div class="consulta-grupo">
         <span class="input-label-consulta">CPF</span>
         <input type="text" id="cpfConsulta" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14">
       </div>
       
       <!-- Grupo da Data de Nascimento -->
-      <div style="display: flex; flex-direction: column; width: 100%;">
+      <div class="consulta-grupo">
         <span class="input-label-consulta">Data de nascimento</span>
         <input type="text" id="nascConsulta" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10">
       </div>
@@ -65,6 +67,7 @@
   </div>
 
   <form id="cadForm">
+    <!-- FORMULÁRIO PRINCIPAL: sequência de etapas do cadastro -->
     <!-- 1. Identificação do Imóvel (Desbloqueia após CPF ou Checkbox) -->
     <div id="secTipoResidente" class="section hidden centralizado">
       <label for="tipoResidente">Qual é o seu vínculo com a unidade? *</label>
@@ -83,10 +86,10 @@
       </select>
     </div>
 
-    <!-- 3. Resto do Formulário (Desbloqueia APÓS escolher o Apartamento) -->
+    <!-- 3. Resto do Formulário (Desbloqueia após escolher o apartamento) -->
     <div id="secRestoFormulario" class="hidden">
       
-      <!-- Dados Pessoais do Morador -->
+      <!-- Dados pessoais do morador -->
       <div id="secDadosPessoais" class="section">
         <h3 id="tituloDadosPessoais">Dados do Morador Titular</h3>
   
@@ -151,11 +154,15 @@
         <input type="text" id="inqVigencia">
       
         <label>Envio de cópia do contrato (PDF)</label>
-        <input type="file" id="arquivoContrato" accept="application/pdf">
+        <div class="upload-contrato-wrapper">
+          <label for="arquivoContrato" class="upload-contrato-botao">Escolher arquivo</label>
+          <input type="file" id="arquivoContrato" class="input-upload-hidden" accept="application/pdf">
+          <span class="upload-contrato-status" id="nomeArquivoSelecionado">Nenhum arquivo selecionado</span>
+        </div>
       
         <!-- Área de Preview e Botão de Cancelamento (X) -->
         <div id="containerPreviewContrato" class="preview-contrato-container hidden">
-          <span id="nomeArquivoSelecionado"></span>
+          <span id="nomeArquivoSelecionadoPreview"></span>
           <button type="button" id="btnRemoverContrato" title="Remover arquivo">✕</button>
         </div>
       
@@ -274,6 +281,16 @@
   <div id="statusMessage" class="hidden"></div>
 </div>
 
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <h3 id="modalTitulo">Atenção</h3>
+    <p id="modalMensagem"></p>
+    <div class="modal-actions">
+      <button type="button" id="btnModalConfirmar" class="btn-modal btn-modal-primary">OK</button>
+      <button type="button" id="btnModalCancelar" class="btn-modal btn-modal-secondary hidden">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

@@ -19,6 +19,13 @@ body {
   padding: 15px;
 }
 
+/* Bloco de busca por CPF: mantém o layout horizontal/vertical com foco em legibilidade */
+.consulta-grupo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .container {
   max-width: 750px;
   margin: 0 auto;

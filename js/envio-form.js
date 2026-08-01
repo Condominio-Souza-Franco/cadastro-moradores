@@ -1,3 +1,7 @@
+// ==========================================
+// CONTROLE DE ESTADO E ENVIO DO FORMULÁRIO
+// ==========================================
+
 document.addEventListener('input', function(e) {
   if (e.target.classList.contains('input-erro-destaque')) {
     e.target.classList.remove('input-erro-destaque');
@@ -26,6 +30,19 @@ function enviar() {
 
   let camposFaltantes = [];
   let elementosParaDestacar = [];
+
+  const moradorCpfEl = document.getElementById("moradorCpf");
+  if (moradorCpfEl && moradorCpfEl.offsetParent !== null) {
+    const cpfLimpo = limparCpf(moradorCpfEl.value);
+    if (cpfLimpo.length !== 11) {
+      if (!camposFaltantes.includes("CPF deve conter 11 dígitos")) {
+        camposFaltantes.push("CPF deve conter 11 dígitos");
+      }
+      if (!elementosParaDestacar.includes(moradorCpfEl)) {
+        elementosParaDestacar.push(moradorCpfEl);
+      }
+    }
+  }
 
   // 1. Regras Padrão
   REGRAS_OBRIGATORIAS.forEach(regra => {
@@ -207,6 +224,8 @@ function enviar() {
     let indexA = ORDEM_DESEJADA.indexOf(a);
     let indexB = ORDEM_DESEJADA.indexOf(b);
 
+    if (a.includes("CPF")) indexA = ORDEM_DESEJADA.indexOf("CPF");
+    if (b.includes("CPF")) indexB = ORDEM_DESEJADA.indexOf("CPF");
     if (a.includes("Vaga alugada")) indexA = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
     if (b.includes("Vaga alugada")) indexB = ORDEM_DESEJADA.indexOf("Apartamento envolvido (Vaga de garagem)");
     if (a.includes("Caso de emergência")) indexA = ORDEM_DESEJADA.indexOf("Caso de emergência");
@@ -240,7 +259,7 @@ function enviar() {
       elementosParaDestacar[0].focus();
     }
 
-    alert("Por favor, preencha os seguintes campos obrigatórios:\n\n• " + camposFaltantes.join("\n• "));
+    mostrarAlerta("Por favor, preencha os seguintes campos obrigatórios:\n\n• " + camposFaltantes.join("\n• "), "Atenção");
     return;
   }
 
@@ -305,6 +324,7 @@ function executarEnvio(fileData, eAtualizacao) {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
     tipoResidente: document.getElementById("tipoResidente").value,
+    historicoContratos: historicoContratosCache,
     
     moradorNome: document.getElementById("moradorNome").value,
     moradorCpf: document.getElementById("moradorCpf").value,
@@ -327,8 +347,6 @@ function executarEnvio(fileData, eAtualizacao) {
     inqContato: document.getElementById("inqContato").value,
     inqVigencia: document.getElementById("inqVigencia").value,
     arquivoContrato: fileData,
-    
-    historicoContratos: (typeof meustHistoricoContratos !== "undefined") ? meustHistoricoContratos : [],
 
     ocupantesList: (() => {
       const grupos = document.querySelectorAll(".item-ocupante");
@@ -374,7 +392,7 @@ function executarEnvio(fileData, eAtualizacao) {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
 
-    alert(res.mensagem);
+    mostrarAlerta(res.mensagem, "Atenção");
 
     if (res.sucesso) {
       voltarTelaInicial();
@@ -387,369 +405,7 @@ function executarEnvio(fileData, eAtualizacao) {
     if (btnSubmit) btnSubmit.disabled = false;
 
     alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-    alert("Erro no envio: " + err);
+    mostrarAlerta("Erro no envio: " + err, "Atenção");
   });
 }
 
-function redefinirBotoesParaNovoCadastro() {
-  var btnEnviar = document.getElementById('btnEnviarForm');
-  var btnSair = document.getElementById('btnSairSemAlterar');
-
-  if (btnEnviar) {
-    btnEnviar.textContent = 'Enviar Cadastro';
-    btnEnviar.innerText = 'Enviar Cadastro';
-  }
-
-  if (btnSair) {
-    btnSair.textContent = 'Sair';
-    btnSair.innerText = 'Sair';
-  }
-}
-
-// Variável global para armazenar os contratos carregados na tela
-let meustHistoricoContratos = [];
-
-function renderizarHistoricoContratos(listaContratos) {
-  const containerHistorico = document.getElementById("containerHistoricoContratos");
-  const listaEl = document.getElementById("listaHistoricoContratos");
-
-  if (!containerHistorico || !listaEl) return;
-
-  // Atualiza o histórico local se for fornecida uma lista válida
-  if (Array.isArray(listaContratos)) {
-    meustHistoricoContratos = [...listaContratos];
-  }
-
-  listaEl.innerHTML = "";
-
-  if (!meustHistoricoContratos || meustHistoricoContratos.length === 0) {
-    containerHistorico.classList.add("hidden");
-    containerHistorico.style.display = "none";
-    return;
-  }
-
-  containerHistorico.classList.remove("hidden");
-  containerHistorico.style.display = "block";
-
-  meustHistoricoContratos.forEach((item, index) => {
-    let textoExibicao = "Contrato";
-    let urlDestino = "#";
-
-    // 1. Se veio como String
-    if (typeof item === "string") {
-      if (item === "[object Object]") {
-        textoExibicao = "Contrato " + (index + 1);
-        urlDestino = "#";
-      } else {
-        textoExibicao = item;
-        urlDestino = item;
-      }
-    } 
-    // 2. Se veio como Objeto JS
-    else if (item && typeof item === "object") {
-      var txtTemp = item.texto || item.text || item.nome;
-      if (txtTemp && String(txtTemp) !== "[object Object]") {
-        textoExibicao = String(txtTemp);
-      } else {
-        textoExibicao = "Contrato " + (index + 1);
-      }
-
-      urlDestino = String(item.url || item.link || item.href || "#");
-    }
-
-    if (textoExibicao.indexOf("[object Object]") !== -1) {
-      textoExibicao = "Contrato_" + (index + 1);
-    }
-
-    // Contêiner do item
-    const itemDiv = document.createElement("div");
-    itemDiv.className = "item-historico-contrato";
-    itemDiv.style.marginBottom = "8px";
-
-    // Link
-    const a = document.createElement("a");
-    a.className = "link-historico-contrato";
-    a.href = urlDestino;
-    a.target = "_blank";
-    a.textContent = "📄 " + textoExibicao;
-    a.style.color = "#0d6efd";
-    a.style.textDecoration = "none";
-    a.style.marginRight = "10px";
-
-    // Botão de exclusão (X)
-    const btnRemover = document.createElement("button");
-    btnRemover.type = "button";
-    btnRemover.className = "btn-remover-historico";
-    btnRemover.title = "Remover este contrato";
-    btnRemover.textContent = "✕";
-
-    btnRemover.addEventListener("click", function() {
-      removerItemHistorico(index);
-    });
-
-    itemDiv.appendChild(a);
-    itemDiv.appendChild(btnRemover);
-    listaEl.appendChild(itemDiv);
-  });
-}
-
-// Função para remover o item do array e atualizar a tela
-function removerItemHistorico(index) {
-  meustHistoricoContratos.splice(index, 1);
-  renderizarHistoricoContratos(); // Re-renderiza sem o item excluído
-}
-
-function voltarTelaInicial() {
-  try {
-    // Limpa a memória global do histórico de contratos
-    meustHistoricoContratos = [];
-
-    var containerPreview = document.getElementById('containerPreviewContrato');
-    var nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
-    var inputContrato = document.getElementById('arquivoContrato');
-    var containerHistorico = document.getElementById('containerHistoricoContratos');
-    var listaHistorico = document.getElementById('listaHistoricoContratos');
-    
-    if (containerPreview) {
-      containerPreview.classList.add('hidden');
-      containerPreview.style.display = ''; 
-    }
-    if (nomeArquivoSpan) nomeArquivoSpan.textContent = '';
-    if (inputContrato) inputContrato.value = '';
-    if (listaHistorico) listaHistorico.innerHTML = '';
-    if (containerHistorico) {
-      containerHistorico.classList.add('hidden');
-      containerHistorico.style.display = 'none';
-    }
-    if (typeof arquivoContratoObjeto !== 'undefined') {
-      arquivoContratoObjeto = null;
-    }
-
-    var form = document.getElementById('cadForm');
-    if (form) {
-      form.reset();
-    }
-
-    document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
-
-    var cpfConsulta = document.getElementById('cpfConsulta');
-    var btnBuscarCpf = document.getElementById('btnBuscarCpf');
-    
-    if (cpfConsulta) {
-      cpfConsulta.value = '';
-      cpfConsulta.disabled = false;
-    }
-    if (btnBuscarCpf) {
-      btnBuscarCpf.disabled = false;
-      btnBuscarCpf.innerText = "Buscar Cadastro"; 
-    }
-
-    var aptoSelect = document.getElementById('apto');
-    if (aptoSelect) aptoSelect.value = '';
-
-    var containersDinamicos = [
-      'containerEmergencia',
-      'containerOcupantes',
-      'containerCarros',
-      'containerMotos',
-      'containerBikes',
-      'containerPets',
-      'containerPrestadores'
-    ];
-
-    containersDinamicos.forEach(function(id) {
-      var container = document.getElementById(id);
-      if (container) container.innerHTML = '';
-    });
-
-    var statusMessage = document.getElementById('statusMessage');
-    if (statusMessage) {
-      statusMessage.innerHTML = '';
-      statusMessage.classList.add('hidden');
-    }
-
-    var secoesParaEsconder = [
-      'secTipoResidente',
-      'secApto',
-      'secInquilino',
-      'secRestoFormulario'
-    ];
-
-    secoesParaEsconder.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.classList.add('hidden');
-        el.style.display = ''; 
-      }
-    });
-
-    var chkMoradorNovo = document.getElementById('chkMoradorNovo');
-    if (chkMoradorNovo) {
-      chkMoradorNovo.checked = false;
-    }
-
-    var nascConsulta = document.getElementById('nascConsulta');
-    if (nascConsulta) {
-      nascConsulta.value = '';
-      nascConsulta.disabled = false;
-    }
-
-    if (typeof redefinirBotoesParaNovoCadastro === 'function') {
-      redefinirBotoesParaNovoCadastro();
-    }
-
-  } catch (erro) {
-    console.error("Erro ao voltar para a tela inicial: ", erro);
-    window.location.reload();
-  }
-}
-
-function tratarMoradorNovo(isMarcado) {
-  var secTipoResidente = document.getElementById('secTipoResidente');
-  var cpfConsulta = document.getElementById('cpfConsulta');
-  var nascConsulta = document.getElementById('nascConsulta');
-  var btnBuscarCpf = document.getElementById('btnBuscarCpf');
-  var chkMoradorNovo = document.getElementById('chkMoradorNovo');
-
-  if (isMarcado) {
-    voltarTelaInicial();  
-    
-    if (chkMoradorNovo) chkMoradorNovo.checked = true;
-
-    if (cpfConsulta) {
-      cpfConsulta.value = '';
-      cpfConsulta.disabled = true;
-    }
-    if (nascConsulta) {
-      nascConsulta.value = '';
-      nascConsulta.disabled = true;
-    }
-    if (btnBuscarCpf) {
-      btnBuscarCpf.disabled = true;
-    }
-
-    redefinirBotoesParaNovoCadastro();
-
-    if (secTipoResidente) {
-      secTipoResidente.classList.remove('hidden');
-      secTipoResidente.style.display = 'block'; 
-      rolarParaSecao('secTipoResidente');
-    }
-  } else {
-    voltarTelaInicial();
-  }
-}
-
-let gabaritoVagasCache = [];
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (typeof WEB_APP_URL !== 'undefined') {
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify({ funcao: 'obterTodoGabaritoVagas' })
-    })
-    .then(response => response.json())
-    .then(res => {
-      if (res && res.sucesso) {
-        gabaritoVagasCache = res.dados;
-        console.log("SUCESSO: Gabarito carregado via fetch. Total de linhas:", gabaritoVagasCache.length);
-      } else {
-        console.warn("FALHA: O servidor retornou sucesso=false ao buscar o gabarito.");
-      }
-    })
-    .catch(err => {
-      console.error("ERRO CRÍTICO ao carregar gabarito via fetch:", err);
-    });
-  }
-
-  const selectApto = document.getElementById("apto");
-  if (selectApto) {
-    selectApto.addEventListener("change", (e) => {
-      atualizarInfoVagaLocal(e.target.value);
-    });
-    selectApto.addEventListener("input", (e) => {
-      atualizarInfoVagaLocal(e.target.value);
-    });
-  }
-});
-
-function atualizarInfoVagaLocal(apto) {
-  const divVaga = document.getElementById("infoVagaGaragem");
-  if (!divVaga) return;
-
-  if (!apto || apto.trim() === "") {
-    divVaga.style.display = "none";
-    divVaga.innerText = "";
-    return;
-  }
-
-  let vagaEncontrada = null;
-  for (let i = 0; i < gabaritoVagasCache.length; i++) {
-    const linha = gabaritoVagasCache[i];
-    const aptoPlanilha = String(linha[0]).trim().toLowerCase();
-    
-    if (aptoPlanilha === String(apto).trim().toLowerCase()) {
-      const andar = linha[1]; // Coluna B
-      const numero = linha[2]; // Coluna C
-      
-      if (numero && andar) {
-        vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
-      }
-      break;
-    }
-  }
-
-  if (vagaEncontrada) {
-    divVaga.innerHTML = vagaEncontrada;
-    divVaga.style.display = "block";
-  } else {
-    divVaga.style.display = "none";
-  }
-}
-
-// --- LÓGICA DE UPLOAD E PREVIEW DO CONTRATO ---
-let arquivoContratoObjeto = null;
-
-document.addEventListener("DOMContentLoaded", function() {
-  const inputContrato = document.getElementById('arquivoContrato');
-  const containerPreview = document.getElementById('containerPreviewContrato');
-  const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
-  const btnRemoverContrato = document.getElementById('btnRemoverContrato');
-
-  if (inputContrato) {
-    inputContrato.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        if (file.type !== "application/pdf") {
-          alert("Por favor, selecione apenas arquivos no formato PDF.");
-          inputContrato.value = "";
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(uploadEvent) {
-          const base64String = uploadEvent.target.result.split(',')[1];
-          
-          arquivoContratoObjeto = {
-            name: file.name,
-            type: file.type,
-            base64: base64String
-          };
-
-          nomeArquivoSpan.textContent = "📎 " + file.name;
-          containerPreview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
-  if (btnRemoverContrato) {
-    btnRemoverContrato.addEventListener('click', function() {
-      inputContrato.value = "";
-      arquivoContratoObjeto = null;
-      containerPreview.classList.add('hidden');
-      nomeArquivoSpan.textContent = "";
-    });
-  }
-});
