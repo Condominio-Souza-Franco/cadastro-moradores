@@ -135,49 +135,6 @@ textarea {
   color: #721c24;
 }
 
-.mobile-progress {
-  background: linear-gradient(135deg, #eef6fc 0%, #f8fbfd 100%);
-  border: 1px solid #d8e8f3;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin: 0 0 18px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.progress-caption {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #4a6a83;
-  margin-bottom: 7px;
-}
-
-.progress-steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.progress-step {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 8px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid #dce7ef;
-  color: #4b5563;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.progress-step.active {
-  background: #1f5f8b;
-  border-color: #1f5f8b;
-  color: #fff;
-}
-
 .desc-secao {
   font-size: 0.8rem;
   color: #636e72;
