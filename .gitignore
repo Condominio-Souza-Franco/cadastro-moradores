@@ -1,0 +1,3 @@
+# Backend Apps Script files are maintained in a separate private project
+*.gs
+appsscript.json
