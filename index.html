@@ -70,7 +70,7 @@
     <!-- FORMULÁRIO PRINCIPAL: sequência de etapas do cadastro -->
     <!-- 1. Identificação do Imóvel (Desbloqueia após CPF ou Checkbox) -->
     <div id="secTipoResidente" class="section hidden centralizado">
-      <label for="tipoResidente">Qual é o seu vínculo com a unidade? *</label>
+      <label for="tipoResidente">Qual é o seu vínculo com a unidade? <span class="required-star">*</span></label>
       <select id="tipoResidente" onchange="tratarEscolhaTipoResidente(this.value)">
         <option value="">Selecione se é Proprietário ou Inquilino...</option>
         <option value="Proprietário">Proprietário</option>
@@ -80,7 +80,7 @@
 
     <!-- 2. Seleção de Apartamento (Desbloqueia após escolher Tipo de Residente) -->
     <div id="secApto" class="section hidden centralizado">
-      <label for="apto">Qual seu apartamento? *</label>
+      <label for="apto">Qual seu apartamento? <span class="required-star">*</span></label>
       <select id="apto" required onchange="aoSelecionarApto(this.value)">
         <option value="">Selecione...</option>
       </select>
@@ -94,17 +94,17 @@
         <h3 id="tituloDadosPessoais">Dados do Morador Titular</h3>
   
       <!-- 1. Nome Completo -->
-      <label>Nome Completo *</label>
+      <label>Nome Completo <span class="required-star">*</span></label>
       <input type="text" id="moradorNome" required>
       
       <!-- 2. Data de Nascimento -->
-      <label>Data de Nascimento *</label>
+      <label>Data de Nascimento <span class="required-star">*</span></label>
       <input type="text" id="moradorNasc" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10" required>
       
       <!-- 3. CPF | Identidade RG | Órgão Emissor (Mesma linha) -->
       <div class="form-row col-3">
         <div>
-          <label>CPF *</label>
+          <label>CPF <span class="required-star">*</span></label>
           <input type="text" id="moradorCpf" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14" required>
         </div>
         <div>
@@ -120,7 +120,7 @@
       <!-- 4. Celular | Telefone Residencial / Comercial (Mesma linha) -->
       <div class="form-row col-2">
         <div>
-          <label>Celular *</label>
+          <label>Celular <span class="required-star">*</span></label>
           <input type="tel" id="moradorCelular" placeholder="21 987654321" required>
         </div>
         <div>
@@ -144,10 +144,10 @@
         <h3>Dados da Locação / Contrato</h3>
         <p class="desc-secao">As informações abaixo ajudam o condomínio na comunicação direta com o proprietário ou imobiliária responsável em casos de manutenção estrutural ou questões contratuais.</p>
         
-        <label>Nome do Proprietário / Administradora *</label>
+          <label>Nome do Proprietário / Administradora <span class="required-star">*</span></label>
         <input type="text" id="inqPropAdmin">
         
-        <label>Contato do Proprietário / Administradora (Telefone / Celular) *</label>
+        <label>Contato do Proprietário / Administradora (Telefone / Celular) <span class="required-star">*</span></label>
         <input type="text" id="inqContato">
         
         <label>Vigência do Contrato (Ex: 05/2026 a 05/2028) *</label>
@@ -262,7 +262,7 @@
 
         <div class="checkbox-group">
           <input type="checkbox" id="declaracao" required>
-          <label for="declaracao">Declaro que as informações prestadas são verdadeiras. *</label>
+          <label for="declaracao">Declaro que as informações prestadas são verdadeiras. <span class="required-star">*</span></label>
         </div>
         <p class="desc-secao">Para quaisquer esclarecimentos ou dúvidas, favor enviar e-mail para <a href="mailto:condominiosouzafranco@gmail.com" class="email-link">condominiosouzafranco@gmail.com</a>.</p>
       </div>

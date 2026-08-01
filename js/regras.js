@@ -21,9 +21,6 @@ const REGRAS_OBRIGATORIAS = [
   // { id: "moradorEmail", nome: "E-mail" },
   { id: "vagaSituacao", nome: "Situação da vaga" },
   { id: "vagaAptoRelacionado", nome: "Apartamento envolvido (Vaga de garagem)" },
-  { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
-  { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
-  { id: "inqVigencia", nome: "Vigência do contrato" },
   // { id: "arquivoContrato", nome: "Contrato de locação" },
   { id: "declaracao", nome: "Declaro que as informações prestadas são verdadeiras", tipo: "checkbox" }
 ];

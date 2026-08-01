@@ -38,20 +38,21 @@
 
 .row-consulta button,
 #btnBuscarCpf {
-  background-color: var(--primary-color);
+  background-color: #24527a;
   color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
+  border: 2px solid #173a58;
+  padding: 11px 16px;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
   white-space: nowrap;
   width: 100% !important;
-  min-height: 42px !important;
+  min-height: 46px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
 .centralizado {

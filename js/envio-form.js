@@ -2,15 +2,34 @@
 // CONTROLE DE ESTADO E ENVIO DO FORMULÁRIO
 // ==========================================
 
+function limparDestaqueCampos() {
+  document.querySelectorAll('.input-erro-destaque').forEach(el => {
+    el.classList.remove('input-erro-destaque');
+    el.style.borderColor = '';
+    el.style.backgroundColor = '';
+  });
+}
+
+function destacarCampoObrigatorio(el) {
+  if (!el) return;
+  el.classList.add('input-erro-destaque');
+  el.style.borderColor = '#e74c3c';
+  el.style.backgroundColor = '#fdf2f2';
+}
+
 document.addEventListener('input', function(e) {
   if (e.target.classList.contains('input-erro-destaque')) {
     e.target.classList.remove('input-erro-destaque');
+    e.target.style.borderColor = '';
+    e.target.style.backgroundColor = '';
   }
 });
 
 document.addEventListener('change', function(e) {
   if (e.target.classList.contains('input-erro-destaque')) {
     e.target.classList.remove('input-erro-destaque');
+    e.target.style.borderColor = '';
+    e.target.style.backgroundColor = '';
   }
 });
 
@@ -26,20 +45,23 @@ function enviar() {
   limpaMensagemStatus();
   
   // Limpa destaques anteriores
-  document.querySelectorAll('.input-erro-destaque').forEach(el => el.classList.remove('input-erro-destaque'));
+  limparDestaqueCampos();
 
   let camposFaltantes = [];
   let elementosParaDestacar = [];
 
   const moradorCpfEl = document.getElementById("moradorCpf");
   if (moradorCpfEl && moradorCpfEl.offsetParent !== null) {
-    const cpfLimpo = limparCpf(moradorCpfEl.value);
-    if (cpfLimpo.length !== 11) {
-      if (!camposFaltantes.includes("CPF deve conter 11 dígitos")) {
-        camposFaltantes.push("CPF deve conter 11 dígitos");
-      }
-      if (!elementosParaDestacar.includes(moradorCpfEl)) {
-        elementosParaDestacar.push(moradorCpfEl);
+    const cpfInformado = (moradorCpfEl.value || "").trim();
+    if (cpfInformado !== "") {
+      const cpfLimpo = limparCpf(cpfInformado);
+      if (cpfLimpo.length !== 11) {
+        if (!camposFaltantes.includes("CPF deve conter 11 dígitos")) {
+          camposFaltantes.push("CPF deve conter 11 dígitos");
+        }
+        if (!elementosParaDestacar.includes(moradorCpfEl)) {
+          elementosParaDestacar.push(moradorCpfEl);
+        }
       }
     }
   }
@@ -57,11 +79,12 @@ function enviar() {
         
         const situacaoVal = situacaoEl && situacaoEl.value ? situacaoEl.value.trim() : "";
         const aptoRelVal = aptoRelEl && aptoRelEl.value ? aptoRelEl.value.trim() : "";
+        const situacaoDefault = "";
         
-        if ((situacaoVal !== "" && aptoRelVal === "") || (situacaoVal === "" && aptoRelVal !== "")) {
+        if ((situacaoVal !== situacaoDefault && aptoRelVal === "") || (situacaoVal === situacaoDefault && aptoRelVal !== "")) {
           estaVazio = true;
           nomeRegraPersonalizado = "Vaga alugada: preencha todos os campos";
-          if (situacaoVal === "" && situacaoEl) elementosParaDestacar.push(situacaoEl);
+          if (situacaoVal === situacaoDefault && situacaoEl) elementosParaDestacar.push(situacaoEl);
           if (aptoRelVal === "" && aptoRelEl) elementosParaDestacar.push(aptoRelEl);
         }
       } else {
@@ -83,6 +106,26 @@ function enviar() {
       }
     }
   });
+
+  const tipoResidenteSelecionado = document.getElementById("tipoResidente")?.value?.trim() || "";
+  if (tipoResidenteSelecionado === "Inquilino") {
+    [
+      { id: "inqPropAdmin", nome: "Proprietário / Administradora" },
+      { id: "inqContato", nome: "Contato do proprietário / imobiliária" },
+      { id: "inqVigencia", nome: "Vigência do contrato" }
+    ].forEach(regra => {
+      const el = document.getElementById(regra.id);
+      if (el && el.offsetParent !== null) {
+        const estaVazio = !el.value || el.value.trim() === "";
+        if (estaVazio) {
+          if (!camposFaltantes.includes(regra.nome)) {
+            camposFaltantes.push(regra.nome);
+          }
+          elementosParaDestacar.push(el);
+        }
+      }
+    });
+  }
 
   // 2. Casos de Emergência
   const emergencias = document.querySelectorAll('#containerEmergencia .item-emergencia');
@@ -251,7 +294,7 @@ function enviar() {
 
   if (camposFaltantes.length > 0) {
     elementosParaDestacar.forEach(el => {
-      if (el) el.classList.add('input-erro-destaque');
+      destacarCampoObrigatorio(el);
     });
 
     if (elementosParaDestacar.length > 0) {
@@ -259,7 +302,7 @@ function enviar() {
       elementosParaDestacar[0].focus();
     }
 
-    mostrarAlerta("Por favor, preencha os seguintes campos obrigatórios:\n\n• " + camposFaltantes.join("\n• "), "Atenção");
+    mostrarAlerta("Campos obrigatórios ainda não foram preenchidos.\n\n• " + camposFaltantes.join("\n• "), "Atenção");
     return;
   }
 

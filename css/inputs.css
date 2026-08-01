@@ -3,9 +3,9 @@
 label {
   display: block;
   font-weight: 600;
-  margin-top: 10px;
-  margin-bottom: 6px;
-  font-size: 0.95rem;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 1rem;
 }
 
 input[type="checkbox"] {
@@ -52,12 +52,12 @@ input[type="number"],
 select,
 textarea {
   width: 100% !important;
-  min-height: 42px;
-  padding: 8px 12px;
+  min-height: 46px;
+  padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   box-sizing: border-box !important;
-  font-size: 0.95rem;
+  font-size: 1rem;
   background-color: #fff;
   color: var(--text-color);
   font-family: inherit;
@@ -88,7 +88,7 @@ input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.14);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.22);
 }
 
 select option {
@@ -105,21 +105,21 @@ button:disabled {
 }
 
 .input-label {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 2px;
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 4px;
   margin-top: 6px;
-  font-weight: 500;
+  font-weight: 600;
   display: block;
   text-align: left;
 }
 
 .input-label-consulta {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 2px;
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 4px;
   margin-top: 6px;
-  font-weight: 500;
+  font-weight: 600;
   display: block;
   text-align: center;
 }
@@ -132,4 +132,25 @@ button:disabled {
 
 #nascConsulta {
   text-align: center;
+}
+
+.required-hint {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #7f8c8d;
+}
+
+.required-hint-inline {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #7f8c8d;
+}
+
+label .required-star,
+.input-label .required-star,
+.required-hint-inline .required-star {
+  color: #e74c3c;
 }
