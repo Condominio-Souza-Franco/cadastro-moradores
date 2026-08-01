@@ -149,6 +149,13 @@ function voltarTelaInicial() {
     const aptoSelect = document.getElementById('apto');
     if (aptoSelect) aptoSelect.value = '';
 
+    const tipoResidente = document.getElementById('tipoResidente');
+    if (tipoResidente) {
+      tipoResidente.value = '';
+      tipoResidente.dataset.valorAnterior = '';
+      tipoResidente.dataset.revertendo = 'false';
+    }
+
     const containersDinamicos = [
       'containerEmergencia',
       'containerOcupantes',

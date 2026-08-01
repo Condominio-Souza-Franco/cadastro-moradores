@@ -98,9 +98,25 @@ function exibirPassoTipoResidente() {
   }
 }
 
-function tratarEscolhaTipoResidente(valor) {
+function possuiDadosLocacaoPreenchidos() {
+  const camposLocacao = ['inqPropAdmin', 'inqContato', 'inqVigencia'];
+  const algumCampoPreenchido = camposLocacao.some(function(id) {
+    const campo = document.getElementById(id);
+    return !!campo && String(campo.value || '').trim() !== '';
+  });
+
+  const arquivoSelecionado = typeof arquivoContratoObjeto !== 'undefined' && !!arquivoContratoObjeto;
+  const historicoPossuiItens = typeof historicoContratosCache !== 'undefined'
+    && Array.isArray(historicoContratosCache)
+    && historicoContratosCache.length > 0;
+
+  return algumCampoPreenchido || arquivoSelecionado || historicoPossuiItens;
+}
+
+function aplicarEscolhaTipoResidente(valor) {
   const secApto = document.getElementById('secApto');
   const secInquilino = document.getElementById('secInquilino');
+  const isInquilino = valor === 'Inquilino';
 
   if (valor) {
     if (secApto) {
@@ -112,7 +128,7 @@ function tratarEscolhaTipoResidente(valor) {
     const titulo = document.getElementById('tituloDadosPessoais');
     if (titulo) titulo.innerText = `Dados do ${valor}`;
 
-    if (valor === 'Inquilino') {
+    if (isInquilino) {
       if (secInquilino) {
         secInquilino.classList.remove('hidden');
         secInquilino.style.display = 'block';
@@ -123,12 +139,87 @@ function tratarEscolhaTipoResidente(valor) {
         secInquilino.style.display = 'none';
       }
     }
+
+    atualizarCamposLocacao(isInquilino);
   } else {
     if (secApto) {
       secApto.classList.add('hidden');
       secApto.style.display = 'none';
     }
+
+    if (secInquilino) {
+      secInquilino.classList.add('hidden');
+      secInquilino.style.display = 'none';
+    }
+
+    atualizarCamposLocacao(false);
   }
+}
+
+function atualizarCamposLocacao(ativo) {
+  const camposLocacao = ['inqPropAdmin', 'inqContato', 'inqVigencia', 'arquivoContrato'];
+
+  camposLocacao.forEach(function(id) {
+    const campo = document.getElementById(id);
+    if (!campo) return;
+
+    campo.disabled = !ativo;
+
+    if (!ativo) {
+      campo.value = '';
+    }
+  });
+
+  if (!ativo) {
+    if (typeof limparHistoricoContratos === 'function') {
+      limparHistoricoContratos();
+    }
+
+    if (typeof arquivoContratoObjeto !== 'undefined') {
+      arquivoContratoObjeto = null;
+    }
+
+    const containerPreview = document.getElementById('containerPreviewContrato');
+    const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
+    const nomeArquivoPreviewSpan = document.getElementById('nomeArquivoSelecionadoPreview');
+
+    if (containerPreview) {
+      containerPreview.classList.add('hidden');
+    }
+    if (nomeArquivoSpan) {
+      nomeArquivoSpan.textContent = 'Nenhum arquivo selecionado';
+    }
+    if (nomeArquivoPreviewSpan) {
+      nomeArquivoPreviewSpan.textContent = '';
+    }
+  }
+}
+
+async function tratarEscolhaTipoResidente(valor) {
+  const tipoResidenteEl = document.getElementById('tipoResidente');
+  if (!tipoResidenteEl || tipoResidenteEl.dataset.revertendo === 'true') {
+    return;
+  }
+
+  const valorAnterior = tipoResidenteEl.dataset.valorAnterior || '';
+  const mudouDeInquilinoParaProprietario = valorAnterior === 'Inquilino' && valor === 'Proprietário';
+
+  if (mudouDeInquilinoParaProprietario && possuiDadosLocacaoPreenchidos()) {
+    const confirmouTroca = await confirmarAcao(
+      'Os dados da locação e o histórico de contratos serão apagados ao trocar o cadastro para proprietário. Deseja continuar?',
+      'Atenção'
+    );
+
+    if (!confirmouTroca) {
+      tipoResidenteEl.dataset.revertendo = 'true';
+      tipoResidenteEl.value = valorAnterior;
+      tipoResidenteEl.dataset.revertendo = 'false';
+      return;
+    }
+  }
+
+  aplicarEscolhaTipoResidente(valor);
+  tipoResidenteEl.dataset.valorAnterior = valor;
 }
 
 function adicionarItemDinamico(containerId, classeGrupo, htmlCampos) {

@@ -43,10 +43,10 @@ function alterarTextoBotaoEnviar(novoTexto) {
 
 function cadastroEhInquilino() {
   const tipoResidente = document.getElementById("tipoResidente")?.value?.trim() || "";
-  const secInquilino = document.getElementById("secInquilino");
-  const secaoInquilinoVisivel = !!secInquilino && secInquilino.offsetParent !== null;
+  const campoLocacaoPrincipal = document.getElementById("inqPropAdmin");
+  const camposLocacaoAtivos = !!campoLocacaoPrincipal && !campoLocacaoPrincipal.disabled;
 
-  return tipoResidente === "Inquilino" && secaoInquilinoVisivel;
+  return tipoResidente === "Inquilino" && camposLocacaoAtivos;
 }
 
 function enviar() {
@@ -270,6 +270,18 @@ function enviar() {
   });
 
   // Ordenação
+  if (!cadastroEhInquilino()) {
+    camposFaltantes = camposFaltantes.filter(nome => {
+      return nome !== "Proprietário / Administradora"
+        && nome !== "Contato do proprietário / imobiliária"
+        && nome !== "Vigência do contrato";
+    });
+
+    elementosParaDestacar = elementosParaDestacar.filter(el => {
+      return !["inqPropAdmin", "inqContato", "inqVigencia", "arquivoContrato"].includes(el.id);
+    });
+  }
+
   camposFaltantes.sort((a, b) => {
     let indexA = ORDEM_DESEJADA.indexOf(a);
     let indexB = ORDEM_DESEJADA.indexOf(b);
@@ -388,7 +400,7 @@ function executarEnvio(fileData, eAtualizacao) {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
     tipoResidente: document.getElementById("tipoResidente").value,
-    historicoContratos: historicoContratosCache,
+    historicoContratos: cadastroEhInquilino() ? historicoContratosCache : [],
     
     moradorNome: document.getElementById("moradorNome").value,
     moradorCpf: document.getElementById("moradorCpf").value,
