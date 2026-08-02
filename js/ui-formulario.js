@@ -243,7 +243,7 @@ function removerItem(btn) {
 function addEmergencia(v = {}) {
   adicionarItemDinamico('containerEmergencia', 'item-emergencia', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="em-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21987654321" class="em-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="em-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Endereço</span><input type="text" placeholder="Preenche o endereço" class="em-end" value="${v.end || ''}"></div>
     <div><span class="input-label">Vínculo / Parentesco</span><input type="text" placeholder="Filho, companheiro, amigo etc" class="em-vinculo" value="${v.vinculo || ''}"></div>
   `);
@@ -263,7 +263,7 @@ function preencherEmergencias(texto) {
 function addOcupante(v = {}) {
   adicionarItemDinamico('containerOcupantes', 'item-ocupante', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21987654321" class="oc-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21999999999" class="oc-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Data de nascimento</span><input type="text" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${v.nasc || ''}"></div>
     <div><span class="input-label">Vínculo / Parentesco <span class="required-star">*</span></span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
   `);
@@ -392,7 +392,7 @@ function addPrestador(v = {}) {
   adicionarItemDinamico('containerPrestadores', 'item-prestador', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="pr-nome" value="${v.nome || ''}"></div>
     <div><span class="input-label">Serviço <span class="required-star">*</span></span><input type="text" placeholder="Ex: Diarista" class="pr-servico" value="${v.servico || ''}"></div>
-    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21987654321" class="pr-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="pr-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Possui chave? <span class="required-star">*</span></span><select class="pr-chave">
       <option value="">Selecione...</option>
       <option value="Sim" ${v.chave === 'Sim' ? 'selected' : ''}>Sim</option>
