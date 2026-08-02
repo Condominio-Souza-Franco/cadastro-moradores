@@ -38,10 +38,6 @@ function aoSelecionarApto(valor) {
       rolarParaSecao('secRestoFormulario');
     }
 
-    if (typeof addEmergencia === 'function' && document.querySelectorAll('.item-emergencia').length === 0) {
-      addEmergencia();
-    }
-
     if (typeof atualizarInfoVagaLocal === 'function') {
       atualizarInfoVagaLocal(select.value);
     }
@@ -243,7 +239,7 @@ function removerItem(btn) {
 function addEmergencia(v = {}) {
   adicionarItemDinamico('containerEmergencia', 'item-emergencia', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="em-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="em-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular <span class="required-star">*</span></span><input type="tel" placeholder="21 999999999" class="em-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Endereço</span><input type="text" placeholder="Preenche o endereço" class="em-end" value="${v.end || ''}"></div>
     <div><span class="input-label">Vínculo / Parentesco</span><input type="text" placeholder="Filho, companheiro, amigo etc" class="em-vinculo" value="${v.vinculo || ''}"></div>
   `);
@@ -253,7 +249,7 @@ function preencherEmergencias(texto) {
   const container = document.getElementById("containerEmergencia");
   if (!container) return;
   container.innerHTML = "";
-  if (!texto || texto === "-") { addEmergencia(); return; }
+  if (!texto || texto === "-") return;
   texto.split("\n").forEach(linha => {
     const p = linha.split(" | ");
     addEmergencia({ nome: p[0], tel: p[1], end: p[2], vinculo: p[3] });
@@ -263,7 +259,7 @@ function preencherEmergencias(texto) {
 function addOcupante(v = {}) {
   adicionarItemDinamico('containerOcupantes', 'item-ocupante', `
     <div><span class="input-label">Nome <span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21999999999" class="oc-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Telefone / Celular</span><input type="tel" placeholder="21 999999999" class="oc-tel" value="${v.tel || ''}"></div>
     <div><span class="input-label">Data de nascimento</span><input type="text" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${v.nasc || ''}"></div>
     <div><span class="input-label">Vínculo / Parentesco <span class="required-star">*</span></span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
   `);
