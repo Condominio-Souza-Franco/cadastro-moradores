@@ -82,6 +82,19 @@ function interpretarRespostaComoJson(response, contextoErro) {
   });
 }
 
+function normalizarHistoricoContratosParaEnvio(contratos) {
+  if (!Array.isArray(contratos)) return [];
+
+  return contratos
+    .map(function(item) {
+      if (!item) return '';
+      if (typeof item === 'string') return item.trim();
+
+      return String(item.url || item.link || item.href || '').trim();
+    })
+    .filter(Boolean);
+}
+
 function cadastroEhInquilino() {
   const tipoResidente = document.getElementById("tipoResidente")?.value?.trim() || "";
   const campoLocacaoPrincipal = document.getElementById("inqPropAdmin");
@@ -494,7 +507,7 @@ function executarEnvio(fileData, eAtualizacao) {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
     tipoResidente: document.getElementById("tipoResidente").value,
-    historicoContratos: cadastroEhInquilino() ? historicoContratosCache : [],
+    historicoContratos: cadastroEhInquilino() ? normalizarHistoricoContratosParaEnvio(historicoContratosCache) : [],
     
     moradorNome: document.getElementById("moradorNome").value,
     moradorCpf: document.getElementById("moradorCpf").value,
@@ -575,7 +588,8 @@ function executarEnvio(fileData, eAtualizacao) {
 
     setOverlayProcessamento(false);
     alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
-    mostrarAlerta("Erro no envio: " + err, "Atenção");
+    const mensagemErro = err && err.message ? err.message : String(err || 'Erro inesperado no envio.');
+    mostrarAlerta(mensagemErro, "Atenção");
   });
 }
 
