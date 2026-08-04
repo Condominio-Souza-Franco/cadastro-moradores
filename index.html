@@ -35,7 +35,7 @@
 <body>
 
 <div class="container">
-  <h1>Condomínio do Edifício Souza Franco</h1>
+  <h1>Condomínio Souza Franco</h1>
   <h2 class="subtitulo">Cadastro de moradores</h2>
   <p class="subtitle">
     Mantenha os dados da sua unidade sempre atualizados. Isso contribui para a segurança do condomínio e facilita a comunicação entre a administração e os moradores.
@@ -77,7 +77,7 @@
     <!-- FORMULÁRIO PRINCIPAL: sequência de etapas do cadastro -->
     <!-- 1. Identificação do Imóvel (Desbloqueia após CPF ou Checkbox) -->
     <div id="secTipoResidente" class="section hidden centralizado">
-      <label for="tipoResidente">Qual é o seu vínculo com a unidade? <span class="required-star">*</span></label>
+      <label for="tipoResidente">Qual é o seu vínculo com a unidade?<span class="required-star">*</span></label>
       <select id="tipoResidente" onchange="tratarEscolhaTipoResidente(this.value)">
         <option value="">Selecione se é Proprietário ou Inquilino...</option>
         <option value="Proprietário">Proprietário</option>
@@ -87,7 +87,7 @@
 
     <!-- 2. Seleção de Apartamento (Desbloqueia após escolher Tipo de Residente) -->
     <div id="secApto" class="section hidden centralizado">
-      <label for="apto">Qual seu apartamento? <span class="required-star">*</span></label>
+      <label for="apto">Qual seu apartamento?<span class="required-star">*</span></label>
       <select id="apto" required onchange="aoSelecionarApto(this.value)">
         <option value="">Selecione...</option>
       </select>
@@ -101,17 +101,17 @@
         <h3 id="tituloDadosPessoais">Dados do Morador Titular</h3>
   
       <!-- 1. Nome Completo -->
-      <label>Nome Completo <span class="required-star">*</span></label>
+      <label>Nome Completo<span class="required-star">*</span></label>
       <input type="text" id="moradorNome" required>
       
       <!-- 2. Data de Nascimento -->
-      <label>Data de Nascimento <span class="required-star">*</span></label>
+      <label>Data de Nascimento<span class="required-star">*</span></label>
       <input type="text" id="moradorNasc" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10" required>
       
       <!-- 3. CPF | Identidade RG | Órgão Emissor (Mesma linha) -->
       <div class="form-row col-3">
         <div>
-          <label>CPF <span class="required-star">*</span></label>
+          <label>CPF<span class="required-star">*</span></label>
           <input type="text" id="moradorCpf" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14" required>
         </div>
         <div>
@@ -127,11 +127,11 @@
       <!-- 4. Celular | Telefone Residencial / Comercial (Mesma linha) -->
       <div class="form-row col-2">
         <div>
-          <label>Celular <span class="required-star">*</span></label>
+          <label>Celular<span class="required-star">*</span></label>
           <input type="tel" id="moradorCelular" placeholder="21 999999999" required>
         </div>
         <div>
-          <label>Telefone Residencial / Comercial</label>
+          <label>Telefone Residencial/Comercial</label>
           <input type="tel" id="moradorTel" placeholder="21 22222222">
         </div>
       </div>
@@ -148,13 +148,13 @@
 
      <!-- Dados Exclusivos da Locação (Inquilino) -->
       <div id="secInquilino" class="section hidden">
-        <h3>Dados da Locação / Contrato</h3>
+        <h3>Dados da Locação/Contrato</h3>
         <p class="desc-secao">Essas informações ajudam a administração a entrar em contato com o responsável da locação.</p>
         
-          <label>Nome do Proprietário / Administradora <span class="required-star">*</span></label>
+          <label>Nome do Proprietário/Administradora<span class="required-star">*</span></label>
         <input type="text" id="inqPropAdmin">
         
-        <label>Contato do Proprietário / Administradora (Telefone / Celular / E-mail)</label>
+        <label>Contato do Proprietário/Administradora (Telefone/Celular/E-mail)</label>
         <input type="text" id="inqContato">
         
         <label>Vigência do Contrato</label>
