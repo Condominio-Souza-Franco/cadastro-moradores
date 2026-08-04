@@ -290,10 +290,13 @@ async function consultarPorCpf() {
     if (inputCpf) inputCpf.disabled = false;
     if (inputNasc) inputNasc.disabled = false;
 
-    const erroNormalizado = String(err && err.message ? err.message : err || '');
-    const mensagemUsuario = /load failed|failed to fetch|networkerror/i.test(erroNormalizado)
-      ? 'Falha de conexão ao consultar o cadastro. Verifique sua internet e tente novamente em alguns segundos.'
-      : `Erro técnico na busca: ${erroNormalizado || 'erro desconhecido.'}`;
+    const erroNormalizado = String(err && err.message ? err.message : err || '').trim();
+    const erroDetalhado = err && typeof err.toString === 'function'
+      ? String(err.toString()).trim()
+      : erroNormalizado;
+    const mensagemUsuario = `Erro técnico na busca: ${erroDetalhado && erroDetalhado !== '[object Object]'
+      ? erroDetalhado
+      : (erroNormalizado || 'erro desconhecido.')}`;
 
     mostrarAlerta(mensagemUsuario, "Atenção");
   } finally {

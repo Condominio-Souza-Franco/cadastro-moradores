@@ -95,6 +95,23 @@ window.confirm = function(mensagem) {
   return confirmarAcao(mensagem, 'Confirmação');
 };
 
+function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
+  const btnMoradorNovo = document.getElementById('btnMoradorNovo');
+  if (!btnMoradorNovo) return;
+
+  btnMoradorNovo.disabled = !!bloqueado;
+  btnMoradorNovo.setAttribute('aria-pressed', ativo ? 'true' : 'false');
+  btnMoradorNovo.classList.toggle('ativo', !!ativo);
+  btnMoradorNovo.classList.toggle('bloqueado', !!bloqueado);
+}
+
+function alternarMoradorNovo() {
+  const chkMoradorNovo = document.getElementById('chkMoradorNovo');
+  if (!chkMoradorNovo || chkMoradorNovo.disabled) return;
+
+  tratarMoradorNovo(!chkMoradorNovo.checked);
+}
+
 function atualizarBloqueioNovoCadastro() {
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
@@ -111,6 +128,8 @@ function atualizarBloqueioNovoCadastro() {
   if (deveBloquear) {
     chkMoradorNovo.checked = false;
   }
+
+  atualizarEstadoBotaoNovoCadastro(chkMoradorNovo.checked, deveBloquear);
 
   if (linhaMoradorNovo) {
     linhaMoradorNovo.classList.toggle('bloqueado', deveBloquear);
@@ -218,6 +237,7 @@ function voltarTelaInicial() {
     if (chkMoradorNovo) {
       chkMoradorNovo.checked = false;
     }
+    atualizarEstadoBotaoNovoCadastro(false, false);
 
     const nascConsulta = document.getElementById('nascConsulta');
     if (nascConsulta) {
@@ -247,6 +267,7 @@ function tratarMoradorNovo(isMarcado) {
     voltarTelaInicial();
 
     if (chkMoradorNovo) chkMoradorNovo.checked = true;
+    atualizarEstadoBotaoNovoCadastro(true, false);
 
     if (cpfConsulta) {
       cpfConsulta.value = '';
@@ -269,6 +290,7 @@ function tratarMoradorNovo(isMarcado) {
     }
   } else {
     voltarTelaInicial();
+    atualizarEstadoBotaoNovoCadastro(false, false);
   }
 }
 

@@ -21,9 +21,9 @@ input[type="checkbox"] {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   margin: 10px auto 0;
-  width: fit-content;
+  width: 100%;
+  max-width: 340px;
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
@@ -41,9 +41,30 @@ input[type="checkbox"] {
   font-weight: 500;
 }
 
-.row-checkbox-morador label {
-  text-align: center;
-  transition: color 0.2s ease;
+.btn-novo-cadastro {
+  border: 1px solid #173a58;
+  background: #ffffff;
+  color: #173a58;
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 46px;
+  width: 100%;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.btn-novo-cadastro:hover:not(:disabled) {
+  background: #173a58;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(23, 58, 88, 0.18);
+}
+
+.btn-novo-cadastro.ativo {
+  background: #173a58;
+  color: #ffffff;
+  border-color: #173a58;
 }
 
 .row-checkbox-morador.bloqueado {
@@ -51,14 +72,14 @@ input[type="checkbox"] {
   filter: grayscale(30%);
 }
 
-.row-checkbox-morador input[type="checkbox"]:disabled {
+.btn-novo-cadastro:disabled,
+.btn-novo-cadastro.bloqueado {
   cursor: not-allowed;
-  accent-color: #b8bec5;
-}
-
-.row-checkbox-morador input[type="checkbox"]:disabled + label {
+  background: #e6eaee;
+  border-color: #b8bec5;
   color: #7a828a;
-  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 input[type="text"],

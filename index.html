@@ -49,7 +49,7 @@
 
 <!-- BLOCO DE CONSULTA POR CPF: busca o cadastro existente antes do formulário principal -->
   <div class="card-consulta centralizado" id="boxConsultaCpf">
-    <h3>Preencha os dados abaixo para localizar seu cadastro e manter suas informações atualizadas.</h3>
+    <h3>Preencha os dados abaixo para localizar seu cadastro<br>e manter suas informações atualizadas.</h3>
     
     <div class="row-consulta" id="rowConsultaCpf">
       <!-- Grupo do CPF -->
@@ -68,8 +68,8 @@
     </div>
     
     <div class="row-checkbox-morador">
-      <input type="checkbox" id="chkMoradorNovo" onchange="tratarMoradorNovo(this.checked)">
-      <label for="chkMoradorNovo">Novo cadastro</label>
+      <input type="checkbox" id="chkMoradorNovo" onchange="tratarMoradorNovo(this.checked)" hidden>
+      <button type="button" id="btnMoradorNovo" class="btn-novo-cadastro" onclick="alternarMoradorNovo()" aria-pressed="false">+ Novo cadastro</button>
     </div>
   </div>
 
