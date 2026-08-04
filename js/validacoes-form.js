@@ -152,6 +152,10 @@ function consultarPorCpf() {
   if (inputCpf) inputCpf.disabled = true;
   if (inputNasc) inputNasc.disabled = true;
 
+  if (typeof setOverlayProcessamento === 'function') {
+    setOverlayProcessamento(true, 'Aguarde: buscando cadastro...');
+  }
+
   fetch(WEB_APP_URL, {
     method: 'POST',
     body: JSON.stringify({
@@ -162,6 +166,10 @@ function consultarPorCpf() {
   })
   .then(response => response.json())
   .then(resposta => {
+    if (typeof setOverlayProcessamento === 'function') {
+      setOverlayProcessamento(false);
+    }
+
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;
       btnBusca.disabled = false;
@@ -263,6 +271,10 @@ function consultarPorCpf() {
     }
   })
   .catch(err => {
+    if (typeof setOverlayProcessamento === 'function') {
+      setOverlayProcessamento(false);
+    }
+
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;
       btnBusca.disabled = false;
