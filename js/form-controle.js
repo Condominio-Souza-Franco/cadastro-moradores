@@ -99,6 +99,7 @@ function atualizarBloqueioNovoCadastro() {
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
   const nascConsulta = document.getElementById('nascConsulta');
+  const linhaMoradorNovo = chkMoradorNovo ? chkMoradorNovo.closest('.row-checkbox-morador') : null;
 
   if (!chkMoradorNovo || !cpfConsulta || !nascConsulta) return;
 
@@ -109,6 +110,10 @@ function atualizarBloqueioNovoCadastro() {
   chkMoradorNovo.disabled = deveBloquear;
   if (deveBloquear) {
     chkMoradorNovo.checked = false;
+  }
+
+  if (linhaMoradorNovo) {
+    linhaMoradorNovo.classList.toggle('bloqueado', deveBloquear);
   }
 }
 

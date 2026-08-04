@@ -24,6 +24,7 @@ input[type="checkbox"] {
   gap: 8px;
   margin: 10px auto 0;
   width: fit-content;
+  transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
 .checkbox-group {
@@ -42,6 +43,22 @@ input[type="checkbox"] {
 
 .row-checkbox-morador label {
   text-align: center;
+  transition: color 0.2s ease;
+}
+
+.row-checkbox-morador.bloqueado {
+  opacity: 0.7;
+  filter: grayscale(30%);
+}
+
+.row-checkbox-morador input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  accent-color: #b8bec5;
+}
+
+.row-checkbox-morador input[type="checkbox"]:disabled + label {
+  color: #7a828a;
+  cursor: not-allowed;
 }
 
 input[type="text"],

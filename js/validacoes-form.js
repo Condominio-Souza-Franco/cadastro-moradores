@@ -122,7 +122,7 @@ function atualizarIndicadorCpfEmTempoReal(campo) {
   aplicarIndicadorCpfInvalido(campo, invalido);
 }
 
-function consultarPorCpf() {
+async function consultarPorCpf() {
   limpaMensagemStatus();
   const inputCpf = document.getElementById("cpfConsulta");
   const inputNasc = document.getElementById("nascConsulta");
@@ -156,18 +156,29 @@ function consultarPorCpf() {
     setOverlayProcessamento(true, 'Aguarde: buscando cadastro...');
   }
 
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      funcao: 'buscarDadosPorCpfESeguranca',
-      cpf: cpfLimpo,
-      nascimento: nascInput
-    })
-  })
-  .then(response => response.json())
-  .then(resposta => {
-    if (typeof setOverlayProcessamento === 'function') {
-      setOverlayProcessamento(false);
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        funcao: 'buscarDadosPorCpfESeguranca',
+        cpf: cpfLimpo,
+        nascimento: nascInput
+      })
+    });
+
+    const respostaTexto = await response.text();
+    let resposta = null;
+
+    try {
+      resposta = respostaTexto ? JSON.parse(respostaTexto) : null;
+    } catch (parseError) {
+      console.error('Erro ao interpretar resposta da busca:', parseError, respostaTexto);
+      throw new Error('A resposta do servidor veio em formato inválido.');
+    }
+
+    if (!response.ok) {
+      const mensagemErroServidor = (resposta && resposta.mensagem) ? resposta.mensagem : `HTTP ${response.status}`;
+      throw new Error(mensagemErroServidor);
     }
 
     if (btnBusca) {
@@ -269,11 +280,8 @@ function consultarPorCpf() {
       alterarTextoBotaoEnviar("Enviar cadastro");
       mostrarAlerta(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.", "Atenção");
     }
-  })
-  .catch(err => {
-    if (typeof setOverlayProcessamento === 'function') {
-      setOverlayProcessamento(false);
-    }
+  } catch (err) {
+    console.error('Erro técnico na busca:', err);
 
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;
@@ -281,6 +289,16 @@ function consultarPorCpf() {
     }
     if (inputCpf) inputCpf.disabled = false;
     if (inputNasc) inputNasc.disabled = false;
-    mostrarAlerta("Erro técnico na busca: " + err, "Atenção");
-  });
+
+    const erroNormalizado = String(err && err.message ? err.message : err || '');
+    const mensagemUsuario = /load failed|failed to fetch|networkerror/i.test(erroNormalizado)
+      ? 'Falha de conexão ao consultar o cadastro. Verifique sua internet e tente novamente em alguns segundos.'
+      : `Erro técnico na busca: ${erroNormalizado || 'erro desconhecido.'}`;
+
+    mostrarAlerta(mensagemUsuario, "Atenção");
+  } finally {
+    if (typeof setOverlayProcessamento === 'function') {
+      setOverlayProcessamento(false);
+    }
+  }
 }
