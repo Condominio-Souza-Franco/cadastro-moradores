@@ -187,7 +187,7 @@ async function consultarPorCpf() {
     }
 
     if (resposta && resposta.encontrado) {
-      const d = resposta.dados;
+      const d = (resposta.dados && typeof resposta.dados === 'object') ? resposta.dados : {};
 
       if (inputCpf) {
         inputCpf.disabled = true;
