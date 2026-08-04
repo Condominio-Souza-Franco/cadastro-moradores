@@ -36,6 +36,16 @@
   text-align: center !important;
 }
 
+#cpfConsulta,
+#nascConsulta,
+#btnBuscarCpf,
+#btnMoradorNovo {
+  width: 100% !important;
+  min-height: 50px !important;
+  height: 50px !important;
+  box-sizing: border-box !important;
+}
+
 .row-consulta button,
 #btnBuscarCpf {
   background-color: #24527a;
@@ -48,7 +58,7 @@
   cursor: pointer;
   white-space: nowrap;
   width: 100% !important;
-  min-height: 46px !important;
+  min-height: 50px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;

@@ -97,19 +97,35 @@ window.confirm = function(mensagem) {
 
 function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
   const btnMoradorNovo = document.getElementById('btnMoradorNovo');
+  const btnFecharNovoCadastro = document.getElementById('btnFecharNovoCadastro');
   if (!btnMoradorNovo) return;
 
   btnMoradorNovo.disabled = !!bloqueado;
   btnMoradorNovo.setAttribute('aria-pressed', ativo ? 'true' : 'false');
   btnMoradorNovo.classList.toggle('ativo', !!ativo);
   btnMoradorNovo.classList.toggle('bloqueado', !!bloqueado);
+
+  if (btnFecharNovoCadastro) {
+    const deveExibirFechar = !!ativo;
+    btnFecharNovoCadastro.classList.toggle('hidden', !deveExibirFechar);
+    btnFecharNovoCadastro.disabled = !deveExibirFechar;
+  }
 }
 
 function alternarMoradorNovo() {
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   if (!chkMoradorNovo || chkMoradorNovo.disabled) return;
 
+  if (chkMoradorNovo.checked) return;
+
   tratarMoradorNovo(!chkMoradorNovo.checked);
+}
+
+function fecharNovoCadastro() {
+  const chkMoradorNovo = document.getElementById('chkMoradorNovo');
+  if (!chkMoradorNovo || chkMoradorNovo.disabled || !chkMoradorNovo.checked) return;
+
+  tratarMoradorNovo(false);
 }
 
 function atualizarBloqueioNovoCadastro() {
