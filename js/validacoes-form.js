@@ -39,6 +39,23 @@ document.addEventListener('DOMContentLoaded', function() {
       atualizarIndicadorCpfEmTempoReal(campo);
     });
   });
+
+  const nascConsulta = document.getElementById('nascConsulta');
+  const moradorNasc = document.getElementById('moradorNasc');
+
+  [nascConsulta, moradorNasc].forEach(function(campo) {
+    if (!campo) return;
+
+    campo.addEventListener('input', function() {
+      window.setTimeout(function() {
+        atualizarIndicadorDataEmTempoReal(campo);
+      }, 0);
+    });
+
+    campo.addEventListener('blur', function() {
+      atualizarIndicadorDataEmTempoReal(campo);
+    });
+  });
 });
 
 function formatarDataParaInput(dataStr) {
@@ -119,6 +136,14 @@ function atualizarIndicadorCpfEmTempoReal(campo) {
 
   const valorLimpo = limparCpf(campo.value || '');
   const invalido = valorLimpo.length > 0 && valorLimpo.length !== 11;
+  aplicarIndicadorCpfInvalido(campo, invalido);
+}
+
+function atualizarIndicadorDataEmTempoReal(campo) {
+  if (!campo) return;
+
+  const digitos = (campo.value || '').replace(/\D/g, '');
+  const invalido = digitos.length > 0 && campo.value.length !== 10;
   aplicarIndicadorCpfInvalido(campo, invalido);
 }
 
