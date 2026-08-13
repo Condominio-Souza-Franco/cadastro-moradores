@@ -61,7 +61,18 @@
       body: JSON.stringify({ funcao: "listarApartamentosParaAdminSimples" })
     })
       .then(function(response) {
-        return response.json();
+        return response.text().then(function(texto) {
+          var conteudo = String(texto || "").trim();
+          if (!response.ok) {
+            throw new Error("Backend indisponível (HTTP " + response.status + ").");
+          }
+
+          if (!conteudo || conteudo.charAt(0) !== "{") {
+            throw new Error("Backend não retornou JSON válido.");
+          }
+
+          return JSON.parse(conteudo);
+        });
       })
       .then(function(resposta) {
         if (resposta && resposta.sucesso && Array.isArray(resposta.itens)) {
@@ -71,11 +82,11 @@
         }
 
         popularAptosFallback();
-        setStatus("Não foi possível carregar a lista da planilha. Usando lista padrão.", "erro");
+        setStatus("Lista local carregada.", "ok");
       })
-      .catch(function() {
+      .catch(function(erro) {
         popularAptosFallback();
-        setStatus("Falha ao carregar lista da planilha. Usando lista padrão.", "erro");
+        setStatus("Backend indisponível. Lista local carregada.", "erro");
       });
   }
 
@@ -90,9 +101,63 @@
     return String(valor || "").trim();
   }
 
+  function escaparHtml(valor) {
+    return String(valor || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function normalizarCampo(valor) {
     var texto = textoLimpo(valor);
     return texto ? texto : "Não preenchido";
+  }
+
+  function normalizarTelefoneParaHref(valor) {
+    var texto = String(valor || "").trim();
+    if (!texto || /[a-z]/i.test(texto) || texto.indexOf("@") !== -1) return "";
+
+    var apenasTelefone = /^[\d\s()+\-.]+$/.test(texto);
+    if (!apenasTelefone) return "";
+
+    var digitos = texto.replace(/\D+/g, "");
+    if (digitos.length < 10 || digitos.length > 13) return "";
+
+    if (digitos.length === 10 || digitos.length === 11) {
+      return "tel:+55" + digitos;
+    }
+
+    return "tel:+" + digitos;
+  }
+
+  function renderizarTelefonesHtml(valor) {
+    var texto = textoLimpo(valor);
+    if (!texto) return "Não preenchido";
+
+    var regexTelefone = /(?:\+?\d[\d\s().\-]{8,}\d)/g;
+    var html = "";
+    var ultimoIndice = 0;
+    var encontrouTelefone = false;
+
+    texto.replace(regexTelefone, function(matched, indice) {
+      var href = normalizarTelefoneParaHref(matched);
+      if (!href) return matched;
+
+      encontrouTelefone = true;
+      html += escaparHtml(texto.slice(ultimoIndice, indice));
+      html += '<a class="campo-link-telefone" href="' + href + '">' + escaparHtml(matched) + '</a>';
+      ultimoIndice = indice + matched.length;
+      return matched;
+    });
+
+    if (!encontrouTelefone) {
+      return escaparHtml(texto);
+    }
+
+    html += escaparHtml(texto.slice(ultimoIndice));
+    return html;
   }
 
   function estaVazio(valor) {
@@ -155,7 +220,27 @@
   function campoHtml(titulo, valor) {
     var vazio = estaVazio(valor);
     var valorFinal = normalizarCampo(valor);
-    return '<div class="campo' + (vazio ? ' vazio' : '') + '"><p class="campo-titulo">' + titulo + '</p><p class="campo-valor">' + valorFinal + '</p></div>';
+    var tituloTexto = String(titulo || "");
+    var ehTelefone = /telefone|celular/i.test(tituloTexto);
+    var valorHtml = ehTelefone ? renderizarTelefonesHtml(valor) : escaparHtml(valorFinal);
+
+    return '<div class="campo' + (vazio ? ' vazio' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
+  }
+
+  function situacaoVagaHtml(situacao, aptoRelacionado) {
+    var textoSituacao = textoLimpo(situacao);
+    var textoApto = textoLimpo(aptoRelacionado);
+
+    if (!textoSituacao && !textoApto) {
+      return '<div class="campo vazio campo-frase"><p class="campo-valor">Não preenchido</p></div>';
+    }
+
+    if (!textoApto) {
+      return '<div class="campo campo-frase"><p class="campo-valor">' + escaparHtml(textoSituacao || "Não preenchido") + '</p></div>';
+    }
+
+    var base = textoSituacao ? textoSituacao.replace(/\s+o\s*$/i, "") : "Minha vaga está alugada para";
+    return '<div class="campo campo-frase"><p class="campo-valor">' + escaparHtml(base) + ' o <strong>' + escaparHtml(textoApto) + '</strong></p></div>';
   }
 
   function secaoHtml(titulo, camposHtml) {
@@ -168,7 +253,7 @@
       return new Array(quantidade).fill("");
     }
 
-    var partes = texto.split(" | ");
+    var partes = texto.split(/\s*\|\s*/);
     while (partes.length < quantidade) {
       partes.push("");
     }
@@ -198,6 +283,8 @@
     var resultado = document.getElementById("resultadoAdmin");
     if (!resultado) return;
 
+    resultado.classList.remove("vazio");
+
     var secoes = [];
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
@@ -216,28 +303,27 @@
       '<section class="secao">' +
         '<h2>Dados da unidade</h2>' +
         '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
-        registroEmBoxes("Contatos de emergência", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone", "Endereço", "Vínculo"]) +
-        registroEmBoxes("Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone", "Nascimento", "Vínculo"]) +
+          registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Endereço", "Vínculo/Parentesco"]) +
+          registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"]) +
       '</section>'
     );
 
     var ehInquilino = textoLimpo(dados.tipo) === "Inquilino";
-    secoes.push('<section class="secao ' + (ehInquilino ? '' : 'inativa compacta') + '"><h2>Locação</h2><div class="grid-campos">' + [
-      campoHtml("Proprietário/Administradora", dados.inqPropAdmin),
-      campoHtml("Contato locação", dados.inqContato),
-      campoHtml("Vigência contrato", dados.inqVigencia)
-    ].join("") + '</div></section>');
+    if (ehInquilino) {
+      secoes.push('<section class="secao"><h2>Locação</h2><div class="grid-campos">' + [
+          campoHtml("Nome do Proprietário/Administradora", dados.inqPropAdmin),
+          campoHtml("Contato do Proprietário/Administradora (Telefone/Celular/E-mail)", dados.inqContato),
+          campoHtml("Vigência do Contrato", dados.inqVigencia)
+      ].join("") + '</div></section>');
+    }
 
-    secoes.push(secaoHtml("Dados complementares", [
-      campoHtml("Situação da vaga", dados.vagaSituacao),
-    ]));
-
-    secoes.push('<section class="secao"><h2>Veículos e demais registros</h2>' +
+    secoes.push('<section class="secao"><h2>Dados complementares</h2>' +
+      situacaoVagaHtml(dados.vagaSituacao, dados.vagaAptoRelacionado) +
       registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
       registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
       registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
-      registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Raça/espécie", "Porte"]) +
-      registroEmBoxes("Prestadores", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone", "Chave", "Observação"]) +
+        registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Espécie e raça", "Porte"]) +
+      registroEmBoxes("Prestadores", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"]) +
       '<div class="subsecao"><h3>Observações</h3>' + campoHtml("Observações", dados.observacoes) + '</div>' +
       '</section>');
 
@@ -284,7 +370,18 @@
           ocorrencia: ocorrencia
         })
       }).then(function(response) {
-        return response.json();
+        return response.text().then(function(texto) {
+          var conteudo = String(texto || "").trim();
+          if (!response.ok) {
+            throw new Error("Backend indisponível (HTTP " + response.status + ").");
+          }
+
+          if (!conteudo || conteudo.charAt(0) !== "{") {
+            throw new Error("Backend não retornou JSON válido.");
+          }
+
+          return JSON.parse(conteudo);
+        });
       });
     }
 
@@ -305,6 +402,11 @@
           }
 
           setStatus(msgFinal || "Apartamento não encontrado.", "erro");
+          var resultado = document.getElementById("resultadoAdmin");
+          if (resultado) {
+            resultado.classList.add("vazio");
+            resultado.innerHTML = "";
+          }
           return;
         }
 
@@ -312,7 +414,7 @@
         renderizarDados(respostaFinal.dados || {});
       })
       .catch(function(err) {
-        setStatus("Falha ao buscar dados: " + String((err && err.message) || err || "erro desconhecido"), "erro");
+        setStatus("Backend indisponível. Não foi possível buscar os dados.", "erro");
       });
   }
 

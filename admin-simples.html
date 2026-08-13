@@ -28,7 +28,7 @@
     }
 
     .container {
-      max-width: 920px;
+      max-width: 760px;
       margin: 28px auto 40px;
       padding: 0 16px 24px;
     }
@@ -37,7 +37,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 20px;
+      padding: 14px;
       box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
     }
 
@@ -89,7 +89,8 @@
     }
 
     select {
-      min-width: 210px;
+      min-width: 128px;
+      width: 128px;
       background: #fff;
     }
 
@@ -127,8 +128,19 @@
 
     .resultado {
       min-height: 140px;
-      display: grid;
-      gap: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .resultado.vazio {
+      min-height: 0;
+      gap: 0;
+    }
+
+    .resultado.vazio .resultado-placeholder {
+      display: none;
     }
 
     .secao.inativa {
@@ -141,7 +153,7 @@
     }
 
     .secao.compacta .grid-campos {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 8px;
     }
 
@@ -157,26 +169,35 @@
       background: var(--surface-soft);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
+      padding: 12px;
+      width: fit-content;
+      max-width: 100%;
+      display: inline-flex;
+      flex-direction: column;
     }
 
     .secao h2 {
       margin: 0 0 10px;
       font-size: 1rem;
       color: var(--primary-color-soft);
+      width: 100%;
     }
 
     .grid-campos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
     }
 
     .campo {
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px;
+      padding: 8px;
+      width: fit-content;
+      max-width: min(100%, 220px);
+      flex: 0 1 auto;
     }
 
     .campo-titulo {
@@ -189,10 +210,25 @@
 
     .campo-valor {
       margin: 0;
-      white-space: pre-wrap;
+      white-space: normal;
+      overflow-wrap: anywhere;
       word-break: break-word;
       line-height: 1.35;
       font-size: 0.95rem;
+    }
+
+    .campo-frase {
+      max-width: 100%;
+      width: fit-content;
+    }
+
+    .campo-link-telefone {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    .campo-link-telefone:hover {
+      text-decoration: underline;
     }
 
     .campo.vazio .campo-valor {
@@ -216,10 +252,12 @@
 
     .registro-bloco {
       margin-top: 12px;
-      padding: 12px;
+      padding: 10px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #fff;
+      width: fit-content;
+      max-width: 100%;
     }
 
     .registro-titulo {
@@ -232,7 +270,13 @@
     }
 
     .registro-bloco .grid-campos {
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .registro-bloco .campo {
+      max-width: min(100%, 220px);
     }
 
     .registro-lista {
@@ -293,7 +337,7 @@
       </div>
 
       <div id="statusAdmin" class="status"></div>
-      <div id="resultadoAdmin" class="resultado">
+      <div id="resultadoAdmin" class="resultado vazio">
         <div class="resultado-placeholder">Nenhum dado carregado.</div>
       </div>
     </div>
