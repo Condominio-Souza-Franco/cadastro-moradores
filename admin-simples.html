@@ -39,6 +39,14 @@
       padding: 0 16px;
     }
 
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
+    }
+
     .auth-actions {
       display: flex;
       justify-content: center;
@@ -526,15 +534,17 @@
 </head>
 <body>
   <div id="authGate" class="auth-container">
-    <h1>Login administrativo</h1>
-    <p>Entre com uma Conta Google autorizada para visualizar os dados.</p>
-    <div class="auth-actions">
-      <div id="googleLoginButton"></div>
-    </div>
-    <p id="authMensagem" class="auth-mensagem"></p>
-    <div class="auth-links">
-      <a href="admin-simples.html">← página de consulta</a>
-      <a href="index.html">página de cadastro →</a>
+    <div class="auth-card">
+      <h1>Login administrativo</h1>
+      <p>Entre com uma Conta Google autorizada para visualizar os dados.</p>
+      <div class="auth-actions">
+        <div id="googleLoginButton"></div>
+      </div>
+      <p id="authMensagem" class="auth-mensagem"></p>
+      <div class="auth-links">
+        <a href="admin-simples.html">← página de consulta</a>
+        <a href="index.html">página de cadastro →</a>
+      </div>
     </div>
   </div>
 
