@@ -21,9 +21,11 @@ input[type="checkbox"] {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  position: relative;
   margin: 10px auto 0;
-  width: fit-content;
+  width: 100%;
+  max-width: 340px;
+  transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
 .checkbox-group {
@@ -40,8 +42,93 @@ input[type="checkbox"] {
   font-weight: 500;
 }
 
-.row-checkbox-morador label {
+.btn-novo-cadastro {
+  border: 1px solid #173a58;
+  background: #ffffff;
+  color: #173a58;
+  border-radius: 8px;
+  padding: 12px 46px;
+  min-height: 50px;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 700;
+  position: relative;
   text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.btn-novo-cadastro:hover:not(:disabled) {
+  background: #eef4fa;
+  color: #173a58;
+  border-color: #0f2f4a;
+  box-shadow: 0 4px 12px rgba(23, 58, 88, 0.14);
+}
+
+.btn-novo-cadastro.ativo {
+  background: #173a58;
+  color: #ffffff;
+  border-color: #173a58;
+}
+
+.btn-novo-cadastro.ativo:hover:not(:disabled) {
+  background: #173a58;
+  color: #ffffff;
+  border-color: #173a58;
+  box-shadow: none;
+}
+
+.btn-fechar-novo-cadastro {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  border: 1px solid #173a58;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #173a58;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: none;
+  z-index: 2;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-fechar-novo-cadastro:hover:not(:disabled) {
+  background: #e8f1f9;
+  border-color: #173a58;
+  color: #0f2f4a;
+}
+
+.btn-fechar-novo-cadastro:disabled {
+  opacity: 0;
+}
+
+.btn-fechar-novo-cadastro.hidden {
+  display: none !important;
+}
+
+.row-checkbox-morador.bloqueado {
+  opacity: 0.7;
+  filter: grayscale(30%);
+}
+
+.btn-novo-cadastro:disabled,
+.btn-novo-cadastro.bloqueado {
+  cursor: not-allowed;
+  background: #e6eaee;
+  border-color: #b8bec5;
+  color: #7a828a;
+  box-shadow: none;
+  transform: none;
 }
 
 input[type="text"],

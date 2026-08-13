@@ -56,9 +56,12 @@
     gap: 0;
   }
   #cpfConsulta,
-  #btnBuscarCpf {
+  #nascConsulta,
+  #btnBuscarCpf,
+  #btnMoradorNovo {
     font-size: 16px !important;
-    min-height: 46px !important;
+    height: 50px !important;
+    min-height: 50px !important;
   }
   .btn-submit,
   .btn-secondary,

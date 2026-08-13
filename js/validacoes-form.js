@@ -39,6 +39,23 @@ document.addEventListener('DOMContentLoaded', function() {
       atualizarIndicadorCpfEmTempoReal(campo);
     });
   });
+
+  const nascConsulta = document.getElementById('nascConsulta');
+  const moradorNasc = document.getElementById('moradorNasc');
+
+  [nascConsulta, moradorNasc].forEach(function(campo) {
+    if (!campo) return;
+
+    campo.addEventListener('input', function() {
+      window.setTimeout(function() {
+        atualizarIndicadorDataEmTempoReal(campo);
+      }, 0);
+    });
+
+    campo.addEventListener('blur', function() {
+      atualizarIndicadorDataEmTempoReal(campo);
+    });
+  });
 });
 
 function formatarDataParaInput(dataStr) {
@@ -122,7 +139,15 @@ function atualizarIndicadorCpfEmTempoReal(campo) {
   aplicarIndicadorCpfInvalido(campo, invalido);
 }
 
-function consultarPorCpf() {
+function atualizarIndicadorDataEmTempoReal(campo) {
+  if (!campo) return;
+
+  const digitos = (campo.value || '').replace(/\D/g, '');
+  const invalido = digitos.length > 0 && campo.value.length !== 10;
+  aplicarIndicadorCpfInvalido(campo, invalido);
+}
+
+async function consultarPorCpf() {
   limpaMensagemStatus();
   const inputCpf = document.getElementById("cpfConsulta");
   const inputNasc = document.getElementById("nascConsulta");
@@ -156,18 +181,29 @@ function consultarPorCpf() {
     setOverlayProcessamento(true, 'Aguarde: buscando cadastro...');
   }
 
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      funcao: 'buscarDadosPorCpfESeguranca',
-      cpf: cpfLimpo,
-      nascimento: nascInput
-    })
-  })
-  .then(response => response.json())
-  .then(resposta => {
-    if (typeof setOverlayProcessamento === 'function') {
-      setOverlayProcessamento(false);
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        funcao: 'buscarDadosPorCpfESeguranca',
+        cpf: cpfLimpo,
+        nascimento: nascInput
+      })
+    });
+
+    const respostaTexto = await response.text();
+    let resposta = null;
+
+    try {
+      resposta = respostaTexto ? JSON.parse(respostaTexto) : null;
+    } catch (parseError) {
+      console.error('Erro ao interpretar resposta da busca:', parseError, respostaTexto);
+      throw new Error('A resposta do servidor veio em formato inválido.');
+    }
+
+    if (!response.ok) {
+      const mensagemErroServidor = (resposta && resposta.mensagem) ? resposta.mensagem : `HTTP ${response.status}`;
+      throw new Error(mensagemErroServidor);
     }
 
     if (btnBusca) {
@@ -176,7 +212,7 @@ function consultarPorCpf() {
     }
 
     if (resposta && resposta.encontrado) {
-      const d = resposta.dados;
+      const d = (resposta.dados && typeof resposta.dados === 'object') ? resposta.dados : {};
 
       if (inputCpf) {
         inputCpf.disabled = true;
@@ -269,11 +305,8 @@ function consultarPorCpf() {
       alterarTextoBotaoEnviar("Enviar cadastro");
       mostrarAlerta(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.", "Atenção");
     }
-  })
-  .catch(err => {
-    if (typeof setOverlayProcessamento === 'function') {
-      setOverlayProcessamento(false);
-    }
+  } catch (err) {
+    console.error('Erro técnico na busca:', err);
 
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;
@@ -281,6 +314,19 @@ function consultarPorCpf() {
     }
     if (inputCpf) inputCpf.disabled = false;
     if (inputNasc) inputNasc.disabled = false;
-    mostrarAlerta("Erro técnico na busca: " + err, "Atenção");
-  });
+
+    const erroNormalizado = String(err && err.message ? err.message : err || '').trim();
+    const erroDetalhado = err && typeof err.toString === 'function'
+      ? String(err.toString()).trim()
+      : erroNormalizado;
+    const mensagemUsuario = `Erro técnico na busca: ${erroDetalhado && erroDetalhado !== '[object Object]'
+      ? erroDetalhado
+      : (erroNormalizado || 'erro desconhecido.')}`;
+
+    mostrarAlerta(mensagemUsuario, "Atenção");
+  } finally {
+    if (typeof setOverlayProcessamento === 'function') {
+      setOverlayProcessamento(false);
+    }
+  }
 }
