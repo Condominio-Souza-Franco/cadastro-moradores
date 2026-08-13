@@ -162,6 +162,23 @@
       color: var(--muted);
     }
 
+    .link-planilha-admin {
+      margin-top: -8px;
+      margin-bottom: 14px;
+      font-size: 0.92rem;
+      color: var(--primary-color-soft);
+    }
+
+    .link-planilha-admin a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-planilha-admin a:hover {
+      text-decoration: underline;
+    }
+
     .linha {
       display: flex;
       gap: 10px;
@@ -340,6 +357,16 @@
     .campo-link-telefone:focus-visible {
       outline: 2px solid rgba(31, 93, 153, 0.22);
       outline-offset: 2px;
+    }
+
+    .campo-link-endereco {
+      color: var(--accent-color);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(31, 93, 153, 0.35);
+    }
+
+    .campo-link-endereco:hover {
+      text-decoration: underline;
     }
 
     .subsecoes-lado-a-lado {
@@ -538,10 +565,13 @@
         <button type="button" id="btnSairAdmin" class="btn-sair" hidden>Sair</button>
       </div>
       <div class="topo-links">
-        <a href="index.html">Voltar para o cadastro</a>
+        <a href="admin-simples.html">← página de consulta</a>
+        <span> | </span>
+        <a href="index.html">página de cadastro →</a>
       </div>
       <h1>Consulta simples por apartamento</h1>
       <p>Selecione o apartamento para carregar todas as informações disponíveis no cadastro.</p>
+      <p class="link-planilha-admin">Acesse a planilha com todos os dados <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">clicando aqui</a>.</p>
 
       <div class="linha">
         <label for="aptoAdmin">Apartamento:</label>

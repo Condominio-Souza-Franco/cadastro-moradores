@@ -125,6 +125,25 @@
     return links.join("<br>");
   }
 
+  function renderizarEnderecosHtml(valor) {
+    var texto = textoLimpo(valor);
+    if (!texto) return "Não preenchido";
+
+    var partes = texto
+      .split(/\s*(?:\n|;|\||\bou\b)\s*/i)
+      .map(function(item) { return textoLimpo(item); })
+      .filter(function(item) { return !!item; });
+
+    if (!partes.length) {
+      return escaparHtml(texto);
+    }
+
+    return partes.map(function(endereco) {
+      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(endereco);
+      return '<a class="campo-link-endereco" href="' + href + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(endereco) + '</a>';
+    }).join("<br>");
+  }
+
   function estaVazio(valor) {
     return !textoLimpo(valor);
   }
@@ -187,7 +206,10 @@
     var valorFinal = normalizarCampo(valor);
     var tituloTexto = String(titulo || "");
     var ehTelefone = /telefone|celular/i.test(tituloTexto);
-    var valorHtml = ehTelefone ? renderizarTelefonesHtml(valor) : escaparHtml(valorFinal);
+    var ehEndereco = /endereco|endereço/i.test(tituloTexto);
+    var valorHtml = ehTelefone
+      ? renderizarTelefonesHtml(valor)
+      : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal));
 
     return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
   }
