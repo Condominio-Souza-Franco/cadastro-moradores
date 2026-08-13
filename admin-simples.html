@@ -6,51 +6,71 @@
   <title>Consulta simples por apartamento</title>
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <style>
+    :root {
+      --primary-color: #2c3e50;
+      --primary-color-soft: #3b5873;
+      --accent-color: #1f5d99;
+      --surface: #ffffff;
+      --surface-soft: #f7fafc;
+      --border: #d9e4ef;
+      --text: #243447;
+      --muted: #5f7287;
+      --ok: #0b6a2f;
+      --error: #a12622;
+    }
+
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f7fb;
-      color: #243447;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at top right, #e8f0f8 0%, #f5f8fc 38%, #f7fafc 100%);
+      color: var(--text);
     }
 
     .container {
       max-width: 920px;
-      margin: 28px auto;
+      margin: 28px auto 40px;
       padding: 0 16px 24px;
     }
 
     .card {
-      background: #ffffff;
-      border: 1px solid #d8e0ea;
-      border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(31, 45, 61, 0.08);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
     }
 
     h1 {
       margin: 0 0 8px;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
+      color: var(--primary-color);
     }
 
     p {
       margin: 0 0 16px;
-      color: #4a5f77;
+      color: var(--muted);
     }
 
     .linha {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     select, button {
-      height: 40px;
+      height: 42px;
       border-radius: 8px;
       border: 1px solid #b9c8d8;
       padding: 0 12px;
       font-size: 0.95rem;
+    }
+
+    label {
+      font-weight: 700;
+      color: var(--primary-color);
     }
 
     select {
@@ -59,11 +79,12 @@
     }
 
     button {
-      background: #1f5d99;
+      background: var(--accent-color);
       color: #fff;
       cursor: pointer;
-      border-color: #1f5d99;
+      border-color: var(--accent-color);
       font-weight: 600;
+      transition: background-color 0.2s ease;
     }
 
     button:hover {
@@ -72,28 +93,100 @@
 
     .status {
       min-height: 22px;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       font-weight: 600;
     }
 
     .status.erro {
-      color: #a12622;
+      color: var(--error);
     }
 
     .status.ok {
-      color: #0b6a2f;
+      color: var(--ok);
     }
 
     .resultado {
-      background: #f8fafc;
-      border: 1px solid #d8e0ea;
+      min-height: 140px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .resultado-placeholder {
+      background: var(--surface-soft);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      color: var(--muted);
+    }
+
+    .secao {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .secao h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--primary-color-soft);
+    }
+
+    .grid-campos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .campo {
+      background: #fff;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
+    }
+
+    .campo-titulo {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .campo-valor {
+      margin: 0;
       white-space: pre-wrap;
       word-break: break-word;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      min-height: 140px;
+      line-height: 1.35;
+      font-size: 0.95rem;
+    }
+
+    .lista-contratos {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .lista-contratos li {
+      margin-bottom: 6px;
+    }
+
+    .lista-contratos a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    .lista-contratos a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .linha {
+        align-items: stretch;
+      }
+
+      select, button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -112,7 +205,9 @@
       </div>
 
       <div id="statusAdmin" class="status"></div>
-      <div id="resultadoAdmin" class="resultado">Nenhum dado carregado.</div>
+      <div id="resultadoAdmin" class="resultado">
+        <div class="resultado-placeholder">Nenhum dado carregado.</div>
+      </div>
     </div>
   </div>
 
