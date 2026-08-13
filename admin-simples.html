@@ -41,6 +41,21 @@
       box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
     }
 
+    .topo-links {
+      margin-bottom: 12px;
+      font-size: 0.92rem;
+    }
+
+    .topo-links a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .topo-links a:hover {
+      text-decoration: underline;
+    }
+
     h1 {
       margin: 0 0 8px;
       font-size: 1.45rem;
@@ -198,6 +213,9 @@
 <body>
   <div class="container">
     <div class="card">
+      <div class="topo-links">
+        <a href="index.html">Voltar para o cadastro</a>
+      </div>
       <h1>Consulta simples por apartamento</h1>
       <p>Selecione o apartamento para carregar todas as informações disponíveis no cadastro.</p>
 
@@ -208,9 +226,6 @@
         </select>
         <button type="button" id="btnBuscarApto">Carregar dados</button>
       </div>
-      <p style="margin-top: -8px; font-size: 0.86rem; color: var(--muted);">
-        Apartamentos sem cadastro ficam desabilitados. Quando houver duplicidade, será exibido como 606 (1), 606 (2)...
-      </p>
 
       <div id="statusAdmin" class="status"></div>
       <div id="resultadoAdmin" class="resultado">

@@ -9,15 +9,11 @@
     for (var andar = 2; andar <= 8; andar++) {
       for (var pos = 1; pos <= 6; pos++) {
         var numApto = String(andar) + "0" + String(pos);
-        var option = new Option(numApto + " (sem cadastro)", "");
-        option.disabled = true;
-        select.add(option);
+        select.add(new Option(numApto, numApto + "__1"));
       }
     }
 
-    var option901 = new Option("901 (sem cadastro)", "");
-    option901.disabled = true;
-    select.add(option901);
+    select.add(new Option("901", "901__1"));
   }
 
   function popularAptosComInventario(itens) {
@@ -70,11 +66,11 @@
         }
 
         popularAptosFallback();
-        setStatus("Não foi possível carregar a lista da planilha. Verifique se a função listarApartamentosParaAdminSimples já está publicada.", "erro");
+        setStatus("Não foi possível carregar a lista da planilha. Usando lista padrão.", "erro");
       })
       .catch(function() {
         popularAptosFallback();
-        setStatus("Falha ao carregar lista de apartamentos.", "erro");
+        setStatus("Falha ao carregar lista da planilha. Usando lista padrão.", "erro");
       });
   }
 
