@@ -1,5 +1,8 @@
 (function() {
   var appInicializado = false;
+
+  // Register early so we don't miss auth events fired during DOMContentLoaded in other scripts.
+  window.addEventListener("admin-auth-success", iniciarAppAdmin);
   function popularAptosFallback() {
     var select = document.getElementById("aptoAdmin");
     if (!select) return;
@@ -441,6 +444,11 @@
       iniciarAppAdmin();
     }
 
-    window.addEventListener("admin-auth-success", iniciarAppAdmin);
+    // If session restoration already unlocked the admin area before this callback,
+    // initialize immediately to ensure apartment list is populated.
+    var adminArea = document.getElementById("adminArea");
+    if (adminArea && adminArea.hidden === false) {
+      iniciarAppAdmin();
+    }
   });
 })();
