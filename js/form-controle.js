@@ -302,6 +302,7 @@ function tratarMoradorNovo(isMarcado) {
     if (secTipoResidente) {
       secTipoResidente.classList.remove('hidden');
       secTipoResidente.style.display = 'block';
+      addEmergencia();
       rolarParaSecao('secTipoResidente');
     }
   } else {

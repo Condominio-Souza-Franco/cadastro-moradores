@@ -58,13 +58,13 @@
       <!-- Grupo do CPF -->
       <div class="consulta-grupo">
         <span class="input-label-consulta">CPF</span>
-        <input type="text" id="cpfConsulta" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14">
+        <input type="text" id="cpfConsulta" class="campo-mascara" data-mascara="cpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14">
       </div>
       
       <!-- Grupo da Data de Nascimento -->
       <div class="consulta-grupo">
         <span class="input-label-consulta">Data de nascimento</span>
-        <input type="text" id="nascConsulta" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10">
+        <input type="text" id="nascConsulta" class="campo-mascara" data-mascara="data" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10">
       </div>
       
       <button type="button" id="btnBuscarCpf" onclick="consultarPorCpf()">Buscar Cadastro</button>
@@ -110,17 +110,17 @@
       
       <!-- 2. Data de Nascimento -->
       <label>Data de Nascimento<span class="required-star">*</span></label>
-      <input type="text" id="moradorNasc" class="campo-mascara" data-mascara="data" placeholder="DD/MM/AAAA" maxlength="10" required>
+      <input type="text" id="moradorNasc" class="campo-mascara" data-mascara="data" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" required>
       
       <!-- 3. CPF | Identidade RG | Órgão Emissor (Mesma linha) -->
       <div class="form-row col-3">
         <div>
           <label>CPF<span class="required-star">*</span></label>
-          <input type="text" id="moradorCpf" class="campo-mascara" data-mascara="cpf" placeholder="000.000.000-00" maxlength="14" required>
+          <input type="text" id="moradorCpf" class="campo-mascara" data-mascara="cpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" required>
         </div>
         <div>
           <label>Identidade RG</label>
-          <input type="text" id="moradorRg" placeholder="00.000.000-0" maxlength="12">
+          <input type="text" id="moradorRg" inputmode="numeric" placeholder="00.000.000-0" maxlength="12">
         </div>
         <div>
           <label>Órgão Emissor</label>
@@ -132,11 +132,11 @@
       <div class="form-row col-2">
         <div>
           <label>Celular<span class="required-star">*</span></label>
-          <input type="tel" id="moradorCelular" placeholder="21 999999999" required>
+          <input type="tel" id="moradorCelular" inputmode="numeric" placeholder="21 999999999" required>
         </div>
         <div>
           <label>Telefone Residencial/Comercial</label>
-          <input type="tel" id="moradorTel" placeholder="21 22222222">
+          <input type="tel" id="moradorTel" inputmode="numeric" placeholder="21 22222222">
         </div>
       </div>
       
