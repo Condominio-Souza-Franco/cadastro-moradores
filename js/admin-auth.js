@@ -1,5 +1,9 @@
 (function() {
   var AUTH_STORAGE_KEY = "adminSimplesAuthUser";
+  var RELOAD_MAX_TENTATIVAS = 20;
+  var RELOAD_INTERVAL_MS = 400;
+  var timerInicializacaoLogin = null;
+  var googleInicializadoClientId = "";
 
   function textoLimpo(valor) {
     return String(valor || "").trim();
@@ -110,52 +114,85 @@
     atualizarCabecalhoUsuario(null);
   }
 
+  function montarBotaoGoogle() {
+    var btnContainer = document.getElementById("googleLoginButton");
+    if (!btnContainer || !window.google || !google.accounts || !google.accounts.id) return;
+
+    btnContainer.innerHTML = "";
+    google.accounts.id.renderButton(btnContainer, {
+      theme: "outline",
+      size: "large",
+      shape: "pill",
+      text: "signin_with",
+      width: 280
+    });
+  }
+
   function inicializarLoginGoogle(config) {
     if (!window.google || !google.accounts || !google.accounts.id) {
-      setMensagem("Falha ao carregar login Google. Recarregue a página.", "erro");
-      return;
+      return false;
     }
 
     if (!config.googleClientId) {
       setMensagem("Preencha ADMIN_AUTH_CONFIG.googleClientId em js/regras.js para ativar o login.", "erro");
-      return;
+      return true;
     }
 
-    google.accounts.id.initialize({
-      client_id: config.googleClientId,
-      callback: function(response) {
-        var payload = parseJwtPayload(response && response.credential);
-        if (!payload || !payload.email) {
-          setMensagem("Não foi possível validar o login Google.", "erro");
-          return;
+    if (googleInicializadoClientId !== config.googleClientId) {
+      google.accounts.id.initialize({
+        client_id: config.googleClientId,
+        callback: function(response) {
+          var payload = parseJwtPayload(response && response.credential);
+          if (!payload || !payload.email) {
+            setMensagem("Não foi possível validar o login Google.", "erro");
+            return;
+          }
+
+          var email = normalizarEmail(payload.email);
+          var autorizado = config.allowedEmails.length > 0 && config.allowedEmails.indexOf(email) !== -1;
+
+          if (!autorizado) {
+            limparSessao();
+            bloquearAreaAdmin();
+            setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
+            return;
+          }
+
+          var usuario = salvarSessao(payload);
+          liberarAreaAdmin(usuario);
         }
-
-        var email = normalizarEmail(payload.email);
-        var autorizado = config.allowedEmails.length > 0 && config.allowedEmails.indexOf(email) !== -1;
-
-        if (!autorizado) {
-          limparSessao();
-          bloquearAreaAdmin();
-          setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
-          return;
-        }
-
-        var usuario = salvarSessao(payload);
-        liberarAreaAdmin(usuario);
-      }
-    });
-
-    var btnContainer = document.getElementById("googleLoginButton");
-    if (btnContainer) {
-      btnContainer.innerHTML = "";
-      google.accounts.id.renderButton(btnContainer, {
-        theme: "outline",
-        size: "large",
-        shape: "pill",
-        text: "signin_with",
-        width: 280
       });
+      googleInicializadoClientId = config.googleClientId;
     }
+
+    montarBotaoGoogle();
+    return true;
+  }
+
+  function inicializarLoginGoogleComRetentativa(config) {
+    var tentativa = 0;
+
+    if (timerInicializacaoLogin) {
+      clearTimeout(timerInicializacaoLogin);
+      timerInicializacaoLogin = null;
+    }
+
+    function tentar() {
+      tentativa += 1;
+      var iniciou = inicializarLoginGoogle(config);
+      if (iniciou) {
+        return;
+      }
+
+      if (tentativa >= RELOAD_MAX_TENTATIVAS) {
+        setMensagem("Falha ao carregar login Google. Recarregue a página.", "erro");
+        return;
+      }
+
+      timerInicializacaoLogin = setTimeout(tentar, RELOAD_INTERVAL_MS);
+    }
+
+    tentar();
   }
 
   function configurarSair() {
@@ -163,12 +200,15 @@
     if (!btnSair) return;
 
     btnSair.addEventListener("click", function() {
+      var config = obterConfig();
+
       limparSessao();
       if (window.google && google.accounts && google.accounts.id) {
         google.accounts.id.disableAutoSelect();
       }
       bloquearAreaAdmin();
       setMensagem("Sessão encerrada.", "ok");
+      inicializarLoginGoogleComRetentativa(config);
       window.dispatchEvent(new CustomEvent("admin-auth-logout"));
     });
   }
@@ -186,7 +226,7 @@
       bloquearAreaAdmin();
     }
 
-    inicializarLoginGoogle(config);
+    inicializarLoginGoogleComRetentativa(config);
   }
 
   document.addEventListener("DOMContentLoaded", init);
