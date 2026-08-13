@@ -131,6 +131,20 @@
       gap: 14px;
     }
 
+    .secao.inativa {
+      opacity: 0.82;
+      filter: grayscale(1);
+    }
+
+    .secao.compacta {
+      padding: 10px 12px;
+    }
+
+    .secao.compacta .grid-campos {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
     .resultado-placeholder {
       background: var(--surface-soft);
       border: 1px dashed var(--border);
@@ -181,6 +195,51 @@
       font-size: 0.95rem;
     }
 
+    .campo.vazio .campo-valor {
+      color: #7c8a99;
+    }
+
+    .campo.vazio {
+      background: #f2f4f7;
+      border-color: #d8dee6;
+    }
+
+    .subsecao {
+      margin-top: 12px;
+    }
+
+    .subsecao h3 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: var(--primary-color-soft);
+    }
+
+    .registro-bloco {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .registro-titulo {
+      margin: 0 0 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .registro-bloco .grid-campos {
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+
+    .registro-lista {
+      display: grid;
+      gap: 10px;
+    }
+
     .lista-contratos {
       margin: 0;
       padding-left: 18px;
@@ -197,6 +256,12 @@
 
     .lista-contratos a:hover {
       text-decoration: underline;
+    }
+
+    .sem-itens {
+      color: var(--muted);
+      font-style: italic;
+      margin: 0;
     }
 
     @media (max-width: 720px) {

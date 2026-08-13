@@ -90,6 +90,15 @@
     return String(valor || "").trim();
   }
 
+  function normalizarCampo(valor) {
+    var texto = textoLimpo(valor);
+    return texto ? texto : "Não preenchido";
+  }
+
+  function estaVazio(valor) {
+    return !textoLimpo(valor);
+  }
+
   function formatarDataBr(valor) {
     var texto = textoLimpo(valor);
     if (!texto) return "";
@@ -144,12 +153,45 @@
   }
 
   function campoHtml(titulo, valor) {
-    var valorFinal = textoLimpo(valor) || "-";
-    return '<div class="campo"><p class="campo-titulo">' + titulo + '</p><p class="campo-valor">' + valorFinal + '</p></div>';
+    var vazio = estaVazio(valor);
+    var valorFinal = normalizarCampo(valor);
+    return '<div class="campo' + (vazio ? ' vazio' : '') + '"><p class="campo-titulo">' + titulo + '</p><p class="campo-valor">' + valorFinal + '</p></div>';
   }
 
   function secaoHtml(titulo, camposHtml) {
     return '<section class="secao"><h2>' + titulo + '</h2><div class="grid-campos">' + camposHtml.join("") + '</div></section>';
+  }
+
+  function extrairCamposLinha(valor, quantidade) {
+    var texto = textoLimpo(valor);
+    if (!texto) {
+      return new Array(quantidade).fill("");
+    }
+
+    var partes = texto.split(" | ");
+    while (partes.length < quantidade) {
+      partes.push("");
+    }
+    return partes.slice(0, quantidade);
+  }
+
+  function registroEmBoxes(titulo, linhas, nomesCampos) {
+    var lista = Array.isArray(linhas) ? linhas : [];
+    if (!lista.length) {
+      return '<div class="subsecao"><h3>' + titulo + '</h3><p class="sem-itens">Não preenchido</p></div>';
+    }
+
+    var html = ['<div class="subsecao"><h3>' + titulo + '</h3><div class="registro-lista">'];
+    lista.forEach(function(linha, indice) {
+      var campos = extrairCamposLinha(linha, nomesCampos.length);
+      html.push('<div class="registro-bloco"><div class="registro-titulo">' + titulo + ' ' + (indice + 1) + '</div><div class="grid-campos">');
+      nomesCampos.forEach(function(nomeCampo, idx) {
+        html.push(campoHtml(nomeCampo, campos[idx]));
+      });
+      html.push('</div></div>');
+    });
+    html.push('</div></div>');
+    return html.join('');
   }
 
   function renderizarDados(dados) {
@@ -157,8 +199,7 @@
     if (!resultado) return;
 
     var secoes = [];
-
-    secoes.push(secaoHtml("Dados da unidade", [
+    var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
       campoHtml("Nome", dados.nome),
@@ -169,26 +210,36 @@
       campoHtml("Celular", dados.celular),
       campoHtml("Telefone", dados.telFixo),
       campoHtml("E-mail", dados.email)
-    ]));
+    ];
 
-    secoes.push(secaoHtml("Locação e vaga", [
+    secoes.push(
+      '<section class="secao">' +
+        '<h2>Dados da unidade</h2>' +
+        '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
+        registroEmBoxes("Contatos de emergência", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone", "Endereço", "Vínculo"]) +
+        registroEmBoxes("Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone", "Nascimento", "Vínculo"]) +
+      '</section>'
+    );
+
+    var ehInquilino = textoLimpo(dados.tipo) === "Inquilino";
+    secoes.push('<section class="secao ' + (ehInquilino ? '' : 'inativa compacta') + '"><h2>Locação</h2><div class="grid-campos">' + [
       campoHtml("Proprietário/Administradora", dados.inqPropAdmin),
       campoHtml("Contato locação", dados.inqContato),
-      campoHtml("Vigência contrato", dados.inqVigencia),
-      campoHtml("Vaga situação", dados.vagaSituacao),
-      campoHtml("Vaga apto relacionado", dados.vagaAptoRelacionado)
-    ]));
+      campoHtml("Vigência contrato", dados.inqVigencia)
+    ].join("") + '</div></section>');
 
     secoes.push(secaoHtml("Dados complementares", [
-      campoHtml("Emergências", dados.emergencias),
-      campoHtml("Ocupantes", dados.ocupantes),
-      campoHtml("Carros", dados.carros),
-      campoHtml("Motos", dados.motos),
-      campoHtml("Bicicletas", dados.bikes),
-      campoHtml("Pets", dados.pets),
-      campoHtml("Prestadores", dados.prestadores),
-      campoHtml("Observações", dados.observacoes)
+      campoHtml("Situação da vaga", dados.vagaSituacao),
     ]));
+
+    secoes.push('<section class="secao"><h2>Veículos e demais registros</h2>' +
+      registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
+      registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
+      registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
+      registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Raça/espécie", "Porte"]) +
+      registroEmBoxes("Prestadores", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone", "Chave", "Observação"]) +
+      '<div class="subsecao"><h3>Observações</h3>' + campoHtml("Observações", dados.observacoes) + '</div>' +
+      '</section>');
 
     var historico = Array.isArray(dados.historicoContratos) ? dados.historicoContratos : [];
     if (historico.length > 0) {
