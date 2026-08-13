@@ -1,15 +1,81 @@
 (function() {
-  function popularAptos() {
+  function popularAptosFallback() {
     var select = document.getElementById("aptoAdmin");
     if (!select) return;
+
+    select.innerHTML = "";
+    select.add(new Option("Selecione...", ""));
 
     for (var andar = 2; andar <= 8; andar++) {
       for (var pos = 1; pos <= 6; pos++) {
         var numApto = String(andar) + "0" + String(pos);
-        select.add(new Option(numApto, numApto));
+        var option = new Option(numApto + " (sem cadastro)", "");
+        option.disabled = true;
+        select.add(option);
       }
     }
-    select.add(new Option("901", "901"));
+
+    var option901 = new Option("901 (sem cadastro)", "");
+    option901.disabled = true;
+    select.add(option901);
+  }
+
+  function popularAptosComInventario(itens) {
+    var select = document.getElementById("aptoAdmin");
+    if (!select) return;
+
+    select.innerHTML = "";
+    select.add(new Option("Selecione...", ""));
+
+    (Array.isArray(itens) ? itens : []).forEach(function(item) {
+      if (!item || !item.apto) return;
+
+      var total = parseInt(item.totalRegistros, 10) || 0;
+      if (total <= 0) {
+        var optionVazia = new Option(item.apto + " (sem cadastro)", "");
+        optionVazia.disabled = true;
+        select.add(optionVazia);
+        return;
+      }
+
+      var opcoes = Array.isArray(item.opcoes) ? item.opcoes : [];
+      if (opcoes.length === 0) {
+        var valorPadrao = item.apto + "__1";
+        select.add(new Option(item.apto, valorPadrao));
+        return;
+      }
+
+      opcoes.forEach(function(opcao) {
+        var ocorrencia = parseInt(opcao && opcao.ocorrencia, 10) || 1;
+        var label = String((opcao && opcao.label) || item.apto).trim();
+        var valor = item.apto + "__" + ocorrencia;
+        select.add(new Option(label, valor));
+      });
+    });
+  }
+
+  function carregarAptosDoServidor() {
+    return fetch(WEB_APP_URL, {
+      method: "POST",
+      body: JSON.stringify({ funcao: "listarApartamentosParaAdminSimples" })
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(resposta) {
+        if (resposta && resposta.sucesso && Array.isArray(resposta.itens)) {
+          popularAptosComInventario(resposta.itens);
+          setStatus("Lista de apartamentos carregada.", "ok");
+          return;
+        }
+
+        popularAptosFallback();
+        setStatus("Não foi possível carregar a lista da planilha. Verifique se a função listarApartamentosParaAdminSimples já está publicada.", "erro");
+      })
+      .catch(function() {
+        popularAptosFallback();
+        setStatus("Falha ao carregar lista de apartamentos.", "erro");
+      });
   }
 
   function setStatus(texto, tipo) {
@@ -142,10 +208,17 @@
 
   function buscarPorApartamento() {
     var select = document.getElementById("aptoAdmin");
-    var apto = select ? select.value : "";
-    if (!apto) {
+    var valorSelecionado = select ? String(select.value || "") : "";
+    if (!valorSelecionado) {
       setStatus("Selecione um apartamento.", "erro");
       return;
+    }
+
+    var partesSelecao = valorSelecionado.split("__");
+    var apto = String(partesSelecao[0] || "").trim();
+    var ocorrencia = parseInt(partesSelecao[1], 10);
+    if (isNaN(ocorrencia) || ocorrencia < 1) {
+      ocorrencia = 1;
     }
 
     setStatus("Carregando...", "");
@@ -155,7 +228,8 @@
         method: "POST",
         body: JSON.stringify({
           funcao: nomeFuncao,
-          apto: apto
+          apto: apto,
+          ocorrencia: ocorrencia
         })
       }).then(function(response) {
         return response.json();
@@ -191,7 +265,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
-    popularAptos();
+    carregarAptosDoServidor();
     var botao = document.getElementById("btnBuscarApto");
     if (botao) {
       botao.addEventListener("click", buscarPorApartamento);

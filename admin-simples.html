@@ -78,6 +78,11 @@
       background: #fff;
     }
 
+    select option:disabled {
+      color: #94a3b8;
+      background: #eef2f7;
+    }
+
     button {
       background: var(--accent-color);
       color: #fff;
@@ -203,6 +208,9 @@
         </select>
         <button type="button" id="btnBuscarApto">Carregar dados</button>
       </div>
+      <p style="margin-top: -8px; font-size: 0.86rem; color: var(--muted);">
+        Apartamentos sem cadastro ficam desabilitados. Quando houver duplicidade, será exibido como 606 (1), 606 (2)...
+      </p>
 
       <div id="statusAdmin" class="status"></div>
       <div id="resultadoAdmin" class="resultado">
