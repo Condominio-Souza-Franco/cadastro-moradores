@@ -3,7 +3,7 @@
 // ==========================================
 // CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
 // ==========================================
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx7DP7o_rlD8jnNwpyghb0_v5xYb0m8zOlUXySkHS_SfJKQnKcyP7FjKJBcwCnLIDME/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzXgpqW5TBMLrsZ6ajRQdPapO-5VIdJ8ixUTbbXb_k4BxR2Md0T22Ir2NHxlDZpS0X/exec";
 
 // ==========================================
 // REGRAS OBRIGATÓRIAS E ORDENAÇÃO
