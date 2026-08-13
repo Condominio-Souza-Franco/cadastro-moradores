@@ -33,6 +33,82 @@
       padding: 0 16px 24px;
     }
 
+    .auth-container {
+      max-width: 520px;
+      margin: 40px auto 16px;
+      padding: 0 16px;
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
+    }
+
+    .auth-label {
+      margin: 0 0 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-color-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .auth-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .auth-mensagem {
+      min-height: 18px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .auth-mensagem.erro {
+      color: var(--error);
+    }
+
+    .auth-mensagem.ok {
+      color: var(--ok);
+    }
+
+    .topo-admin {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .auth-usuario {
+      font-size: 0.86rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .btn-sair {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 0.84rem;
+      border-radius: 999px;
+      border: 1px solid #b9c8d8;
+      background: #fff;
+      color: var(--primary-color-soft);
+      cursor: pointer;
+    }
+
+    .btn-sair:hover {
+      background: #f3f7fb;
+    }
+
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -187,7 +263,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
     .campo {
@@ -198,6 +274,10 @@
       width: fit-content;
       max-width: min(100%, 220px);
       flex: 0 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-sizing: border-box;
     }
 
     .campo-titulo {
@@ -223,12 +303,35 @@
     }
 
     .campo-link-telefone {
+      display: inline-block;
       color: var(--accent-color);
+      background: rgba(31, 93, 153, 0.08);
+      border: 1px solid rgba(31, 93, 153, 0.22);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-weight: 600;
       text-decoration: none;
+      box-shadow: none;
     }
 
     .campo-link-telefone:hover {
-      text-decoration: underline;
+      background: rgba(31, 93, 153, 0.13);
+    }
+
+    .campo-link-telefone:focus-visible {
+      outline: 2px solid rgba(31, 93, 153, 0.22);
+      outline-offset: 2px;
+    }
+
+    .subsecoes-lado-a-lado {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .subsecoes-lado-a-lado .subsecao {
+      margin-top: 0;
     }
 
     .campo.vazio .campo-valor {
@@ -241,38 +344,103 @@
     }
 
     .subsecao {
-      margin-top: 12px;
+      margin-top: 8px;
     }
 
     .subsecao h3 {
-      margin: 0 0 8px;
+      margin: 0 0 4px;
       font-size: 0.95rem;
       color: var(--primary-color-soft);
     }
 
+    .linha-vaga-topo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: stretch;
+      margin-top: 2px;
+    }
+
+    .linha-vaga-topo .campo {
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .campo-vaga-principal .campo-valor {
+      font-weight: 400;
+      color: var(--primary-color-soft);
+    }
+
+    .campo-vaga-principal .campo-valor strong {
+      font-weight: 700;
+    }
+
     .registro-bloco {
-      margin-top: 12px;
-      padding: 10px;
+      margin-top: 8px;
+      padding: 8px 10px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #fff;
       width: fit-content;
       max-width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .registro-titulo {
-      margin: 0 0 10px;
+      margin: 0;
+      flex: 0 0 auto;
+      min-width: 18px;
       font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--muted);
+      line-height: 1;
     }
 
-    .registro-bloco .grid-campos {
+    .registro-conteudo {
+      min-width: 0;
+    }
+
+    .registro-conteudo .grid-campos {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      align-items: stretch;
+    }
+
+    .registro-conteudo .campo {
+      max-width: min(100%, 210px);
+      height: 100%;
+    }
+
+    .registro-conteudo .campo.campo-telefone {
+      max-width: min(100%, 170px);
+    }
+
+    .registro-conteudo .campo.campo-telefone .campo-valor {
+      line-height: 1.25;
+    }
+
+    .subsecao-emergencia .registro-conteudo .grid-campos {
+      display: grid;
+      grid-template-columns: max-content max-content max-content;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .subsecao-emergencia .registro-conteudo .grid-campos .campo {
+      max-width: 220px;
+    }
+
+    .subsecao-emergencia .registro-conteudo .grid-campos .campo:nth-child(4) {
+      grid-column: 1 / -1;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .registro-bloco .campo {
@@ -313,6 +481,14 @@
         align-items: stretch;
       }
 
+      .subsecao-emergencia .registro-conteudo .grid-campos {
+        grid-template-columns: 1fr;
+      }
+
+      .subsecao-emergencia .registro-conteudo .grid-campos .campo:nth-child(4) {
+        grid-column: auto;
+      }
+
       select, button {
         width: 100%;
       }
@@ -320,8 +496,24 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div id="authGate" class="auth-container">
+    <div class="auth-card">
+      <p class="auth-label">Area restrita ao sindico e conselho</p>
+      <h1>Login administrativo</h1>
+      <p>Entre com uma Conta Google autorizada para visualizar os dados.</p>
+      <div class="auth-actions">
+        <div id="googleLoginButton"></div>
+      </div>
+      <p id="authMensagem" class="auth-mensagem"></p>
+    </div>
+  </div>
+
+  <div id="adminArea" class="container" hidden>
     <div class="card">
+      <div class="topo-admin">
+        <div id="authUsuario" class="auth-usuario"></div>
+        <button type="button" id="btnSairAdmin" class="btn-sair" hidden>Sair</button>
+      </div>
       <div class="topo-links">
         <a href="index.html">Voltar para o cadastro</a>
       </div>
@@ -343,7 +535,9 @@
     </div>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="js/regras.js"></script>
+  <script src="js/admin-auth.js"></script>
   <script src="js/admin-simples.js"></script>
 </body>
 </html>

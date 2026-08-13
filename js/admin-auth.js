@@ -1,0 +1,193 @@
+(function() {
+  var AUTH_STORAGE_KEY = "adminSimplesAuthUser";
+
+  function textoLimpo(valor) {
+    return String(valor || "").trim();
+  }
+
+  function normalizarEmail(email) {
+    return textoLimpo(email).toLowerCase();
+  }
+
+  function parseJwtPayload(jwt) {
+    try {
+      var parts = String(jwt || "").split(".");
+      if (parts.length < 2) return null;
+      var base64Url = parts[1];
+      var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      var padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+      var json = decodeURIComponent(
+        atob(padded)
+          .split("")
+          .map(function(c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+      return JSON.parse(json);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function obterConfig() {
+    if (typeof ADMIN_AUTH_CONFIG !== "object" || !ADMIN_AUTH_CONFIG) {
+      return { googleClientId: "", allowedEmails: [] };
+    }
+
+    return {
+      googleClientId: textoLimpo(ADMIN_AUTH_CONFIG.googleClientId),
+      allowedEmails: Array.isArray(ADMIN_AUTH_CONFIG.allowedEmails)
+        ? ADMIN_AUTH_CONFIG.allowedEmails.map(normalizarEmail).filter(Boolean)
+        : []
+    };
+  }
+
+  function setMensagem(texto, tipo) {
+    var el = document.getElementById("authMensagem");
+    if (!el) return;
+    el.className = "auth-mensagem" + (tipo ? " " + tipo : "");
+    el.textContent = texto || "";
+  }
+
+  function salvarSessao(payload) {
+    var seguro = {
+      email: textoLimpo(payload.email),
+      name: textoLimpo(payload.name),
+      picture: textoLimpo(payload.picture)
+    };
+    sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(seguro));
+    return seguro;
+  }
+
+  function carregarSessao() {
+    try {
+      var bruto = sessionStorage.getItem(AUTH_STORAGE_KEY);
+      if (!bruto) return null;
+      var parsed = JSON.parse(bruto);
+      if (!parsed || !parsed.email) return null;
+      return parsed;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function limparSessao() {
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  }
+
+  function atualizarCabecalhoUsuario(usuario) {
+    var userLabel = document.getElementById("authUsuario");
+    var sairBtn = document.getElementById("btnSairAdmin");
+    if (!userLabel || !sairBtn) return;
+
+    if (usuario && usuario.email) {
+      userLabel.textContent = usuario.name ? (usuario.name + " - " + usuario.email) : usuario.email;
+      sairBtn.hidden = false;
+    } else {
+      userLabel.textContent = "";
+      sairBtn.hidden = true;
+    }
+  }
+
+  function liberarAreaAdmin(usuario) {
+    var gate = document.getElementById("authGate");
+    var area = document.getElementById("adminArea");
+    if (gate) gate.hidden = true;
+    if (area) area.hidden = false;
+
+    atualizarCabecalhoUsuario(usuario);
+    setMensagem("");
+    window.dispatchEvent(new CustomEvent("admin-auth-success", { detail: usuario || null }));
+  }
+
+  function bloquearAreaAdmin() {
+    var gate = document.getElementById("authGate");
+    var area = document.getElementById("adminArea");
+    if (gate) gate.hidden = false;
+    if (area) area.hidden = true;
+
+    atualizarCabecalhoUsuario(null);
+  }
+
+  function inicializarLoginGoogle(config) {
+    if (!window.google || !google.accounts || !google.accounts.id) {
+      setMensagem("Falha ao carregar login Google. Recarregue a página.", "erro");
+      return;
+    }
+
+    if (!config.googleClientId) {
+      setMensagem("Preencha ADMIN_AUTH_CONFIG.googleClientId em js/regras.js para ativar o login.", "erro");
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: config.googleClientId,
+      callback: function(response) {
+        var payload = parseJwtPayload(response && response.credential);
+        if (!payload || !payload.email) {
+          setMensagem("Não foi possível validar o login Google.", "erro");
+          return;
+        }
+
+        var email = normalizarEmail(payload.email);
+        var autorizado = config.allowedEmails.length > 0 && config.allowedEmails.indexOf(email) !== -1;
+
+        if (!autorizado) {
+          limparSessao();
+          bloquearAreaAdmin();
+          setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
+          return;
+        }
+
+        var usuario = salvarSessao(payload);
+        liberarAreaAdmin(usuario);
+      }
+    });
+
+    var btnContainer = document.getElementById("googleLoginButton");
+    if (btnContainer) {
+      btnContainer.innerHTML = "";
+      google.accounts.id.renderButton(btnContainer, {
+        theme: "outline",
+        size: "large",
+        shape: "pill",
+        text: "signin_with",
+        width: 280
+      });
+    }
+  }
+
+  function configurarSair() {
+    var btnSair = document.getElementById("btnSairAdmin");
+    if (!btnSair) return;
+
+    btnSair.addEventListener("click", function() {
+      limparSessao();
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
+      bloquearAreaAdmin();
+      setMensagem("Sessão encerrada.", "ok");
+      window.dispatchEvent(new CustomEvent("admin-auth-logout"));
+    });
+  }
+
+  function init() {
+    var config = obterConfig();
+
+    configurarSair();
+
+    var sessao = carregarSessao();
+    if (sessao && config.allowedEmails.indexOf(normalizarEmail(sessao.email)) !== -1) {
+      liberarAreaAdmin(sessao);
+    } else {
+      limparSessao();
+      bloquearAreaAdmin();
+    }
+
+    inicializarLoginGoogle(config);
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();

@@ -6,6 +6,24 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzXgpqW5TBMLrsZ6ajRQdPapO-5VIdJ8ixUTbbXb_k4BxR2Md0T22Ir2NHxlDZpS0X/exec";
 
 // ==========================================
+// CONFIGURAÇÃO DE ACESSO ADMIN (GOOGLE LOGIN)
+// ==========================================
+const ADMIN_AUTH_CONFIG = {
+  // Preencha com o Client ID do Google Cloud (OAuth 2.0 Web)
+  googleClientId: "924196917500-k43fsnafkct0t9e9g7agbpp6ujsul4gr.apps.googleusercontent.com",
+
+  // Lista de e-mails autorizados (pode incluir Gmail, Yahoo e outros que usem Conta Google)
+  // Exemplo: ["sindico@gmail.com", "conselheiro@yahoo.com"]
+  allowedEmails: [
+    "rtms1977@gmail.com",
+    "condominiosouzafranco@gmail.com",
+    "soniapicone@yahoo.com.br",
+    "cloviomar@yahoo.com.br",
+    "rafaelbraz7@gmail.com"
+  ]
+};
+
+// ==========================================
 // REGRAS OBRIGATÓRIAS E ORDENAÇÃO
 // ==========================================
 const REGRAS_OBRIGATORIAS = [
