@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta simples por apartamento</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fb;
+      color: #243447;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 28px auto;
+      padding: 0 16px 24px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #d8e0ea;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(31, 45, 61, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: #4a5f77;
+    }
+
+    .linha {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    select, button {
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid #b9c8d8;
+      padding: 0 12px;
+      font-size: 0.95rem;
+    }
+
+    select {
+      min-width: 210px;
+      background: #fff;
+    }
+
+    button {
+      background: #1f5d99;
+      color: #fff;
+      cursor: pointer;
+      border-color: #1f5d99;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #174a7a;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .status.erro {
+      color: #a12622;
+    }
+
+    .status.ok {
+      color: #0b6a2f;
+    }
+
+    .resultado {
+      background: #f8fafc;
+      border: 1px solid #d8e0ea;
+      border-radius: 8px;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      min-height: 140px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Consulta simples por apartamento</h1>
+      <p>Selecione o apartamento para carregar todas as informações disponíveis no cadastro.</p>
+
+      <div class="linha">
+        <label for="aptoAdmin">Apartamento:</label>
+        <select id="aptoAdmin">
+          <option value="">Selecione...</option>
+        </select>
+        <button type="button" id="btnBuscarApto">Carregar dados</button>
+      </div>
+
+      <div id="statusAdmin" class="status"></div>
+      <div id="resultadoAdmin" class="resultado">Nenhum dado carregado.</div>
+    </div>
+  </div>
+
+  <script src="js/regras.js"></script>
+  <script src="js/admin-simples.js"></script>
+</body>
+</html>
