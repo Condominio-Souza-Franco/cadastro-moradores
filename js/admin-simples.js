@@ -149,7 +149,7 @@
   }
 
   function secaoHtml(titulo, camposHtml) {
-    return '<section class="secao"><h2>' + titulo + '</h2><div class="grid-campos">' + camposHtml.join("") + "</div></section>';
+    return '<section class="secao"><h2>' + titulo + '</h2><div class="grid-campos">' + camposHtml.join("") + '</div></section>';
   }
 
   function renderizarDados(dados) {
