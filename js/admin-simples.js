@@ -51,6 +51,11 @@
   }
 
   function carregarAptosDoServidor() {
+    if (typeof WEB_APP_URL === "undefined" || !WEB_APP_URL) {
+      setStatus("URL do backend não encontrada. Usando lista padrão.", "erro");
+      return;
+    }
+
     return fetch(WEB_APP_URL, {
       method: "POST",
       body: JSON.stringify({ funcao: "listarApartamentosParaAdminSimples" })
@@ -261,6 +266,8 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
+    // Sempre popula imediatamente para nunca deixar o menu vazio.
+    popularAptosFallback();
     carregarAptosDoServidor();
     var botao = document.getElementById("btnBuscarApto");
     if (botao) {
