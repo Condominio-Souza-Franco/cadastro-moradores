@@ -84,24 +84,40 @@
 
     setStatus("Carregando...", "");
 
-    fetch(WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        funcao: "buscarDadosPorApartamentoSimples",
-        apto: apto
-      })
-    })
-      .then(function(response) {
+    function chamarFuncao(nomeFuncao) {
+      return fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          funcao: nomeFuncao,
+          apto: apto
+        })
+      }).then(function(response) {
         return response.json();
-      })
+      });
+    }
+
+    chamarFuncao("buscarDadosPorApartamentoSimples")
       .then(function(resposta) {
-        if (!resposta || !resposta.encontrado) {
-          setStatus((resposta && resposta.mensagem) || "Apartamento não encontrado.", "erro");
+        var msg = String((resposta && resposta.mensagem) || "");
+        if (msg.indexOf("Função não encontrada") !== -1) {
+          return chamarFuncao("buscarDadosPorApartamento");
+        }
+        return resposta;
+      })
+      .then(function(respostaFinal) {
+        if (!respostaFinal || !respostaFinal.encontrado) {
+          var msgFinal = String((respostaFinal && respostaFinal.mensagem) || "");
+          if (msgFinal.indexOf("Função não encontrada") !== -1) {
+            setStatus("Função de consulta por apartamento ainda não está publicada no Apps Script. Publique uma nova versão do Web App e tente novamente.", "erro");
+            return;
+          }
+
+          setStatus(msgFinal || "Apartamento não encontrado.", "erro");
           return;
         }
 
         setStatus("Dados carregados com sucesso.", "ok");
-        renderizarDados(resposta.dados || {});
+        renderizarDados(respostaFinal.dados || {});
       })
       .catch(function(err) {
         setStatus("Falha ao buscar dados: " + String((err && err.message) || err || "erro desconhecido"), "erro");
