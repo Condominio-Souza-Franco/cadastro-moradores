@@ -62,6 +62,25 @@
       margin-top: 12px;
     }
 
+    .auth-links {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+
+    .auth-links a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+
     .auth-mensagem {
       min-height: 18px;
       margin-top: 10px;
@@ -505,6 +524,10 @@
         <div id="googleLoginButton"></div>
       </div>
       <p id="authMensagem" class="auth-mensagem"></p>
+      <div class="auth-links">
+        <a href="admin-simples.html">← página de consulta</a>
+        <a href="index.html">página de cadastro →</a>
+      </div>
     </div>
   </div>
 
