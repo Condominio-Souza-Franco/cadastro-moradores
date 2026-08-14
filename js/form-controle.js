@@ -100,7 +100,7 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
   const btnFecharNovoCadastro = document.getElementById('btnFecharNovoCadastro');
   if (!btnMoradorNovo) return;
 
-  btnMoradorNovo.disabled = !!bloqueado;
+  btnMoradorNovo.disabled = false;
   btnMoradorNovo.setAttribute('aria-pressed', ativo ? 'true' : 'false');
   btnMoradorNovo.classList.toggle('ativo', !!ativo);
   btnMoradorNovo.classList.toggle('bloqueado', !!bloqueado);
@@ -114,7 +114,22 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
 
 function alternarMoradorNovo() {
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
-  if (!chkMoradorNovo || chkMoradorNovo.disabled) return;
+  const cpfConsulta = document.getElementById('cpfConsulta');
+  const nascConsulta = document.getElementById('nascConsulta');
+  const btnMoradorNovo = document.getElementById('btnMoradorNovo');
+  if (!chkMoradorNovo) return;
+
+  const botaoBloqueado = btnMoradorNovo && btnMoradorNovo.getAttribute('aria-disabled') === 'true';
+  if (chkMoradorNovo.disabled && !botaoBloqueado) return;
+
+  if (botaoBloqueado) {
+    if (cpfConsulta) cpfConsulta.value = '';
+    if (nascConsulta) nascConsulta.value = '';
+    chkMoradorNovo.disabled = false;
+    atualizarBloqueioNovoCadastro();
+    tratarMoradorNovo(true);
+    return;
+  }
 
   if (chkMoradorNovo.checked) return;
 
@@ -140,12 +155,17 @@ function atualizarBloqueioNovoCadastro() {
   const temNascDigitada = String(nascConsulta.value || '').trim() !== '';
   const deveBloquear = temCpfDigitado || temNascDigitada;
 
-  chkMoradorNovo.disabled = deveBloquear;
+  chkMoradorNovo.disabled = false;
   if (deveBloquear) {
     chkMoradorNovo.checked = false;
   }
 
   atualizarEstadoBotaoNovoCadastro(chkMoradorNovo.checked, deveBloquear);
+
+  const btnMoradorNovo = document.getElementById('btnMoradorNovo');
+  if (btnMoradorNovo) {
+    btnMoradorNovo.setAttribute('aria-disabled', deveBloquear ? 'true' : 'false');
+  }
 
   if (linhaMoradorNovo) {
     linhaMoradorNovo.classList.toggle('bloqueado', deveBloquear);

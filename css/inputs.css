@@ -123,7 +123,7 @@ input[type="checkbox"] {
 
 .btn-novo-cadastro:disabled,
 .btn-novo-cadastro.bloqueado {
-  cursor: not-allowed;
+  cursor: pointer;
   background: #e6eaee;
   border-color: #b8bec5;
   color: #7a828a;

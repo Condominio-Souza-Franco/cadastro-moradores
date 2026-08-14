@@ -319,10 +319,22 @@ button:hover {
   width: 34px;
   height: 34px;
   border-radius: 50%;
+  position: relative;
+  display: block;
+  flex: 0 0 34px;
+}
+
+.overlay-admin-spinner span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   border: 4px solid #dbeafe;
   border-right-color: #1f5f8b;
-  animation: adminOverlaySpin 0.8s linear infinite;
-  -webkit-animation: adminOverlaySpin 0.8s linear infinite;
+  border-radius: 50%;
+  animation: adminOverlaySpinnerRotation 0.8s linear infinite;
+  -webkit-animation: adminOverlaySpinnerRotation 0.8s linear infinite;
+  transform-origin: center;
 }
 
 #overlayAdminMensagem {
@@ -331,13 +343,13 @@ button:hover {
   font-weight: 700;
 }
 
-@keyframes adminOverlaySpin {
+@keyframes adminOverlaySpinnerRotation {
   to {
     transform: rotate(360deg);
   }
 }
 
-@-webkit-keyframes adminOverlaySpin {
+@-webkit-keyframes adminOverlaySpinnerRotation {
   to {
     -webkit-transform: rotate(360deg);
   }
