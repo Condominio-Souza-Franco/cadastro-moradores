@@ -50,8 +50,10 @@
   function setMensagem(texto, tipo) {
     var el = document.getElementById("authMensagem");
     if (!el) return;
+    var mensagem = textoLimpo(texto);
     el.className = "auth-mensagem" + (tipo ? " " + tipo : "");
-    el.textContent = texto || "";
+    el.textContent = mensagem;
+    el.hidden = !mensagem;
   }
 
   function salvarSessao(payload) {
