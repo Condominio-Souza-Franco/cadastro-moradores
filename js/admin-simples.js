@@ -18,6 +18,7 @@
     }
 
     select.add(new Option("901", "901__1"));
+    select.disabled = false;
   }
 
   function popularAptosComInventario(itens) {
@@ -52,9 +53,13 @@
         select.add(new Option(label, valor));
       });
     });
+
+    select.disabled = false;
   }
 
   function carregarAptosDoServidor() {
+    var select = document.getElementById("aptoAdmin");
+    if (select) select.disabled = true;
     setStatus("", "");
 
     return fetch(WEB_APP_URL, {
@@ -303,14 +308,15 @@
 
   function registroEmBoxes(titulo, linhas, nomesCampos, opcoes) {
     var lista = Array.isArray(linhas) ? linhas : [];
+    var mostrarTitulo = !opcoes || opcoes.tituloVisivel !== false;
     if (!lista.length) {
-      return '<div class="subsecao"><h3>' + titulo + '</h3><p class="sem-itens">Não preenchido</p></div>';
+      return '<div class="subsecao">' + (mostrarTitulo ? '<h3>' + titulo + '</h3>' : '') + '<p class="sem-itens">Não preenchido</p></div>';
     }
 
     var mostrarTituloNumerico = !opcoes || opcoes.tituloNumerico !== false;
     var ordemCampos = opcoes && Array.isArray(opcoes.ordemCampos) ? opcoes.ordemCampos : null;
     var subsecaoClasse = opcoes && opcoes.classeSubsecao ? String(opcoes.classeSubsecao) : '';
-    var html = ['<div class="subsecao' + (subsecaoClasse ? (' ' + subsecaoClasse) : '') + '"><h3>' + titulo + '</h3><div class="registro-lista">'];
+    var html = ['<div class="subsecao' + (subsecaoClasse ? (' ' + subsecaoClasse) : '') + '">' + (mostrarTitulo ? '<h3>' + titulo + '</h3>' : '') + '<div class="registro-lista">'];
     lista.forEach(function(linha, indice) {
       var campos = extrairCamposLinha(linha, nomesCampos.length);
       var tituloRegistro = mostrarTituloNumerico ? String(indice + 1) : (titulo + ' ' + (indice + 1));
@@ -349,12 +355,13 @@
     );
 
     secoes.push(
-      '<section class="secao secao-relacionamentos">' +
-        '<h2>Contatos e ocupantes</h2>' +
-        '<div class="subsecoes-separadas">' +
-          registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia" }) +
-          registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"]) +
-        '</div>' +
+      '<section class="secao">' +
+        '<h2>Em caso de emergência procurar por</h2>' +
+        registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia", tituloVisivel: false }) +
+      '</section>' +
+      '<section class="secao">' +
+        '<h2>Demais Ocupantes</h2>' +
+        registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"], { tituloVisivel: false }) +
       '</section>'
     );
 
