@@ -100,8 +100,8 @@
   }
 
   function setOverlayAdmin(visivel, mensagem) {
-    var overlay = document.getElementById("overlayAdmin");
-    var mensagemEl = document.getElementById("overlayAdminMensagem");
+    var overlay = document.getElementById("overlayProcessamento");
+    var mensagemEl = document.getElementById("overlayProcessamentoMensagem");
     if (!overlay || !mensagemEl) return;
 
     if (mensagem) {
