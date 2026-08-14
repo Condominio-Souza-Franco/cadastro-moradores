@@ -251,6 +251,37 @@ button:hover {
   padding: 12px;
 }
 
+.registro-cabecalho {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.data-envio {
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+}
+
+.logs-atualizacao {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.logs-atualizacao summary {
+  color: var(--accent-color);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.logs-atualizacao ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.logs-atualizacao p {
+  margin: 8px 0 0;
+}
+
 .admin-registro-card + .admin-registro-card {
   margin-top: 24px;
 }
@@ -407,10 +438,11 @@ button:hover {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   display: inline-flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .secao h2 {

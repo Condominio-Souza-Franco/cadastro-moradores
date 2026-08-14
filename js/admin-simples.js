@@ -347,7 +347,24 @@
       campoHtml("E-mail", dados.email)
     ];
 
+    var logs = Array.isArray(dados.logsAtualizacao) ? dados.logsAtualizacao : [];
+    var logsHtml = ['<details class="logs-atualizacao"><summary>Clique aqui para visualizar os logs de atualização</summary>'];
+    if (logs.length) {
+      logsHtml.push('<ul>');
+      logs.forEach(function(log) {
+        logsHtml.push('<li>' + escaparHtml(log) + '</li>');
+      });
+      logsHtml.push('</ul>');
+    } else {
+      logsHtml.push('<p><em>Não preenchido</em></p>');
+    }
+    logsHtml.push('</details>');
+
     secoes.push(
+      '<div class="registro-cabecalho">' +
+        '<div class="data-envio">Data de envio: <strong>' + escaparHtml(formatarDataBr(dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
+        logsHtml.join("") +
+      '</div>' +
       '<section class="secao">' +
         '<h2>' + tituloRegistro + '</h2>' +
         '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
@@ -358,10 +375,6 @@
       '<section class="secao">' +
         '<h2>Em caso de emergência procurar por</h2>' +
         registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia", tituloVisivel: false }) +
-      '</section>' +
-      '<section class="secao">' +
-        '<h2>Demais Ocupantes</h2>' +
-        registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"], { tituloVisivel: false }) +
       '</section>'
     );
 
@@ -402,6 +415,13 @@
       contratosHtml.push("</ul></section>");
       secoes.push(contratosHtml.join(""));
     }
+
+    secoes.push(
+      '<section class="secao">' +
+        '<h2>Demais Ocupantes</h2>' +
+        registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"], { tituloVisivel: false }) +
+      '</section>'
+    );
 
     var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + (indiceRegistro + 1) + '">Excluir cadastro</button></div>';
     return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
