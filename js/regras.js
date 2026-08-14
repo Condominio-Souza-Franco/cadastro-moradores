@@ -3,7 +3,7 @@
 // ==========================================
 // CONFIGURAÇÃO DA API (GOOGLE APPS SCRIPT)
 // ==========================================
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzXgpqW5TBMLrsZ6ajRQdPapO-5VIdJ8ixUTbbXb_k4BxR2Md0T22Ir2NHxlDZpS0X/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzkzQHhDB_Lw6vbnvWbmz3c8no6Rw2xHg9TJPD4pMfH7Ikk1ESJCL4HNBilqw8lh9b6/exec";
 
 // ==========================================
 // CONFIGURAÇÃO DE ACESSO ADMIN (GOOGLE LOGIN)
