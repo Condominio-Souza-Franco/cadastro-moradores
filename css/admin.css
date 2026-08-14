@@ -319,9 +319,10 @@ button:hover {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 3px solid #dbeafe;
-  border-top-color: #1f5f8b;
-  animation: overlaySpin 0.9s linear infinite;
+  border: 4px solid #dbeafe;
+  border-right-color: #1f5f8b;
+  animation: adminOverlaySpin 0.8s linear infinite;
+  -webkit-animation: adminOverlaySpin 0.8s linear infinite;
 }
 
 #overlayAdminMensagem {
@@ -330,9 +331,15 @@ button:hover {
   font-weight: 700;
 }
 
-@keyframes overlaySpin {
+@keyframes adminOverlaySpin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes adminOverlaySpin {
+  to {
+    -webkit-transform: rotate(360deg);
   }
 }
 
