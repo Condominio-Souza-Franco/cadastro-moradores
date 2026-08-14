@@ -195,6 +195,26 @@
     }).join("<br>");
   }
 
+  function renderizarEmailsHtml(valor) {
+    var texto = textoLimpo(valor);
+    if (!texto) return "Não preenchido";
+
+    var regexEmail = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+    var html = [];
+    var ultimoIndice = 0;
+    var correspondencia;
+
+    while ((correspondencia = regexEmail.exec(texto)) !== null) {
+      html.push(escaparHtml(texto.slice(ultimoIndice, correspondencia.index)));
+      var email = correspondencia[0];
+      html.push('<a class="campo-link-email" href="mailto:' + escaparHtml(email) + '">' + escaparHtml(email) + '</a>');
+      ultimoIndice = correspondencia.index + email.length;
+    }
+
+    html.push(escaparHtml(texto.slice(ultimoIndice)));
+    return html.join("").replace(/\n/g, "<br>");
+  }
+
   function estaVazio(valor) {
     return !textoLimpo(valor);
   }
@@ -256,11 +276,14 @@
     var vazio = estaVazio(valor);
     var valorFinal = normalizarCampo(valor);
     var tituloTexto = String(titulo || "");
+    var possuiEmail = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(String(valor || ""));
     var ehTelefone = /telefone|celular/i.test(tituloTexto);
     var ehEndereco = /endereco|endereço/i.test(tituloTexto);
-    var valorHtml = ehTelefone
+    var valorHtml = possuiEmail
+      ? renderizarEmailsHtml(valor)
+      : (ehTelefone
       ? renderizarTelefonesHtml(valor)
-      : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal));
+      : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal)));
 
     return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
   }
@@ -347,7 +370,9 @@
       campoHtml("E-mail", dados.email)
     ];
 
-    var logs = Array.isArray(dados.logsAtualizacao) ? dados.logsAtualizacao : [];
+    var logs = Array.isArray(dados.logsAtualizacao)
+      ? dados.logsAtualizacao
+      : (Array.isArray(dados.logs) ? dados.logs : []);
     var logsHtml = ['<details class="logs-atualizacao"><summary>Clique aqui para visualizar os logs de atualização</summary>'];
     if (logs.length) {
       logsHtml.push('<ul>');
@@ -362,7 +387,7 @@
 
     secoes.push(
       '<div class="registro-cabecalho">' +
-        '<div class="data-envio">Data de envio: <strong>' + escaparHtml(formatarDataBr(dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
+        '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
         logsHtml.join("") +
       '</div>' +
       '<section class="secao">' +
@@ -386,21 +411,6 @@
           campoHtml("Vigência do Contrato", dados.inqVigencia)
       ].join("") + '</div></section>');
     }
-
-    secoes.push('<section class="secao"><h2>Dados complementares</h2>' +
-      '<div class="linha-vaga-topo">' +
-        vagaPrincipalHtml(dados) +
-        situacaoVagaHtml(dados.vagaSituacao, dados.vagaAptoRelacionado) +
-      '</div>' +
-      '<div class="subsecoes-lado-a-lado">' +
-        registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
-        registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
-        registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
-      '</div>' +
-      registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Espécie e raça", "Porte"]) +
-      registroEmBoxes("Prestadores de serviço", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"]) +
-      '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
-      '</section>');
 
     var historico = Array.isArray(dados.historicoContratos) ? dados.historicoContratos : [];
     if (ehInquilino) {
@@ -428,6 +438,21 @@
         registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"], { tituloVisivel: false }) +
       '</section>'
     );
+
+    secoes.push('<section class="secao"><h2>Dados complementares</h2>' +
+      '<div class="linha-vaga-topo">' +
+        vagaPrincipalHtml(dados) +
+        situacaoVagaHtml(dados.vagaSituacao, dados.vagaAptoRelacionado) +
+      '</div>' +
+      '<div class="subsecoes-lado-a-lado">' +
+        registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
+        registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
+        registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
+      '</div>' +
+      registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Espécie e raça", "Porte"]) +
+      registroEmBoxes("Prestadores de serviço", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"]) +
+      '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
+      '</section>');
 
     var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + (indiceRegistro + 1) + '">Excluir cadastro</button></div>';
     return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';

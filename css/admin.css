@@ -511,6 +511,17 @@ button:hover {
   text-decoration: underline;
 }
 
+.campo-link-email {
+  color: var(--accent-color);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(31, 93, 153, 0.35);
+  overflow-wrap: anywhere;
+}
+
+.campo-link-email:hover {
+  text-decoration: underline;
+}
+
 .subsecoes-lado-a-lado {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
