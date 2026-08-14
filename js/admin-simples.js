@@ -197,7 +197,8 @@
     var texto = textoLimpo(valor);
     if (!texto) return "Não preenchido";
 
-    var partes = texto
+    var textoComEnderecosSeparados = texto.replace(/\s+(?=(?:rua|r\.|avenida|av\.|alameda|al\.|boulevard|blvd\.|travessa|tv\.|estrada|est\.|rodovia|rod\.|praça|pça\.|largo|beco|servidão)\b)/gi, "\n");
+    var partes = textoComEnderecosSeparados
       .split(/\s*(?:\n|;|\||\bou\b)\s*/i)
       .map(function(item) { return textoLimpo(item); })
       .filter(function(item) { return !!item; });
@@ -207,8 +208,20 @@
     }
 
     return partes.map(function(endereco) {
-      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(endereco);
-      return '<a class="campo-link-endereco" href="' + href + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(endereco) + '</a>';
+      var correspondencia = endereco.match(/^(.*?\b\d+)(\s*(?:,|-)?\s*(?:apto|apartamento|bloco|casa|fundos|sala|complemento|conjunto|cj|quadra|lote|andar|cobertura)\b[\s\S]*)$/i);
+      if (!correspondencia) {
+        correspondencia = endereco.match(/^(.*\b\d+)\s*$/);
+      }
+      if (!correspondencia) {
+        return escaparHtml(endereco);
+      }
+
+      var enderecoPrincipal = correspondencia[1].trim().replace(/[,:;\-]+$/, "").trim();
+      var complemento = correspondencia[2] || "";
+      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(enderecoPrincipal);
+      var htmlEndereco = '<a class="campo-link-endereco" href="' + href + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(enderecoPrincipal) + '</a>';
+
+      return htmlEndereco + (complemento ? escaparHtml(complemento) : "");
     }).join("<br>");
   }
 
