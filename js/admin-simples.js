@@ -403,16 +403,22 @@
       '</section>');
 
     var historico = Array.isArray(dados.historicoContratos) ? dados.historicoContratos : [];
-    if (historico.length > 0) {
-      var contratosHtml = ['<section class="secao"><h2>Contratos</h2><ul class="lista-contratos">'];
-      historico.forEach(function(item) {
-        var texto = textoLimpo(item && item.texto);
-        var url = textoLimpo(item && item.url);
-        var legenda = texto || "Contrato";
-        var conteudo = url ? '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + legenda + '</a>' : legenda;
-        contratosHtml.push("<li>" + conteudo + "</li>");
-      });
-      contratosHtml.push("</ul></section>");
+    if (ehInquilino) {
+      var contratosHtml = ['<section class="secao"><h2>Contratos</h2>'];
+      if (historico.length > 0) {
+        contratosHtml.push('<ul class="lista-contratos">');
+        historico.forEach(function(item) {
+          var texto = textoLimpo(item && item.texto);
+          var url = textoLimpo(item && item.url);
+          var legenda = texto || "Contrato";
+          var conteudo = url ? '<a href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(legenda) + '</a>' : escaparHtml(legenda);
+          contratosHtml.push("<li>" + conteudo + "</li>");
+        });
+        contratosHtml.push("</ul>");
+      } else {
+        contratosHtml.push('<p class="contratos-vazio"><em>Não preenchido</em></p>');
+      }
+      contratosHtml.push("</section>");
       secoes.push(contratosHtml.join(""));
     }
 
