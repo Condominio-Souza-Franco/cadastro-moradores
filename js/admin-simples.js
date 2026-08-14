@@ -367,9 +367,10 @@
     return html.join('');
   }
 
-  function montarHtmlRegistro(dados, indiceRegistro) {
+  function montarHtmlRegistro(dados, indiceRegistro, ocorrenciaSelecionada) {
     var secoes = [];
     var tituloRegistro = indiceRegistro > 0 ? 'Ocorrência ' + (indiceRegistro + 1) : 'Registro';
+    var ocorrenciaReal = parseInt(ocorrenciaSelecionada, 10) || (indiceRegistro + 1);
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
@@ -467,11 +468,11 @@
       '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
-    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + (indiceRegistro + 1) + '">Excluir cadastro</button></div>';
+    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + ocorrenciaReal + '">Excluir cadastro</button></div>';
     return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
   }
 
-  function renderizarDados(dados) {
+  function renderizarDados(dados, ocorrenciaSelecionada) {
     var resultado = document.getElementById("resultadoAdmin");
     if (!resultado) return;
 
@@ -479,7 +480,7 @@
 
     var lista = Array.isArray(dados) ? dados : [dados];
     resultado.innerHTML = lista.map(function(item, index) {
-      return montarHtmlRegistro(item, index);
+      return montarHtmlRegistro(item, index, ocorrenciaSelecionada);
     }).join("");
 
     resultado.querySelectorAll(".btn-excluir-cadastro").forEach(function(botao) {
@@ -598,7 +599,7 @@
         }
 
         setStatus("Dados carregados com sucesso.", "ok");
-        renderizarDados(validas);
+        renderizarDados(validas, ocorrencia);
       })
       .catch(function(err) {
         setOverlayAdmin(false);
