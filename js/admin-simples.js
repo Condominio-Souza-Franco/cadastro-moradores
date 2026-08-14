@@ -573,40 +573,16 @@
       });
     }
 
-    function obterOcorrenciasDoApartamento() {
-      var lista = [];
-      if (!select) return lista;
-      Array.from(select.options).forEach(function(option) {
-        var valor = String(option.value || "");
-        if (!valor) return;
-        var partes = valor.split("__");
-        var aptoAtual = String(partes[0] || "").trim();
-        var ocorrenciaAtual = parseInt(partes[1], 10);
-        if (aptoAtual === apto && ocorrenciaAtual >= 1) {
-          lista.push(ocorrenciaAtual);
-        }
-      });
-      return lista.sort(function(a, b) { return a - b; });
-    }
-
-    var ocorrencias = obterOcorrenciasDoApartamento();
-    var promessas = ocorrencias.length > 1
-      ? ocorrencias.map(function(occ) { return chamarFuncao("buscarDadosPorApartamentoSimples", apto, occ); })
-      : [chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)];
-
-    Promise.all(promessas)
-      .then(function(respostas) {
+    chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)
+      .then(function(respostaFinal) {
         setOverlayAdmin(false);
 
-        var validas = respostas.filter(function(resposta) {
-          return resposta && resposta.encontrado && resposta.dados;
-        }).map(function(resposta) {
-          return resposta.dados;
-        });
+        var validas = respostaFinal && respostaFinal.encontrado && respostaFinal.dados
+          ? [respostaFinal.dados]
+          : [];
 
         if (!validas.length) {
-          var primeiraResposta = respostas[0] || {};
-          var msgFinal = String((primeiraResposta && primeiraResposta.mensagem) || "");
+          var msgFinal = String((respostaFinal && respostaFinal.mensagem) || "");
           if (msgFinal.indexOf("Função não encontrada") !== -1) {
             setStatus("Função de consulta por apartamento ainda não está publicada no Apps Script. Publique uma nova versão do Web App e tente novamente.", "erro");
             return;
