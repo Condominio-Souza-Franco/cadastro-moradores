@@ -126,8 +126,14 @@
       size: "large",
       shape: "pill",
       text: "signin_with",
-      width: 280
+      width: 280,
+      locale: "pt-BR"
     });
+
+    var button = btnContainer.querySelector("button");
+    if (button && !button.textContent.trim()) {
+      button.textContent = "Fazer login...";
+    }
   }
 
   function inicializarLoginGoogle(config) {

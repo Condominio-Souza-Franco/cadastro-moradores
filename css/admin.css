@@ -39,13 +39,21 @@ body {
   padding: 18px;
   box-shadow: 0 8px 28px rgba(31, 45, 61, 0.08);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-card > * {
+  width: 100%;
 }
 
 .auth-card h1,
 .auth-card p,
 .auth-card .auth-actions,
 .auth-card .auth-mensagem,
-.auth-links {
+.auth-links,
+#googleLoginButton {
   text-align: center;
 }
 
@@ -53,6 +61,18 @@ body {
   display: flex;
   justify-content: center;
   margin-top: 12px;
+}
+
+#googleLoginButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#googleLoginButton button {
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .auth-links {
