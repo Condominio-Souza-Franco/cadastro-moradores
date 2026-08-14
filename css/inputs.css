@@ -116,19 +116,8 @@ input[type="checkbox"] {
   display: none !important;
 }
 
-.row-checkbox-morador.bloqueado {
-  opacity: 0.7;
-  filter: grayscale(30%);
-}
-
-.btn-novo-cadastro:disabled,
 .btn-novo-cadastro.bloqueado {
   cursor: pointer;
-  background: #e6eaee;
-  border-color: #b8bec5;
-  color: #7a828a;
-  box-shadow: none;
-  transform: none;
 }
 
 input[type="text"],
