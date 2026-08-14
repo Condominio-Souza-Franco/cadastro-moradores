@@ -1,5 +1,6 @@
 (function() {
   var appInicializado = false;
+  var animacaoOverlay = null;
 
   // Register early so we don't miss auth events fired during DOMContentLoaded in other scripts.
   window.addEventListener("admin-auth-success", iniciarAppAdmin);
@@ -102,6 +103,7 @@
   function setOverlayAdmin(visivel, mensagem) {
     var overlay = document.getElementById("overlayProcessamento");
     var mensagemEl = document.getElementById("overlayProcessamentoMensagem");
+    var spinner = overlay ? overlay.querySelector(".overlay-processamento-spinner") : null;
     if (!overlay || !mensagemEl) return;
 
     if (mensagem) {
@@ -110,8 +112,19 @@
 
     if (visivel) {
       overlay.classList.remove("hidden");
+      if (spinner && typeof spinner.animate === "function") {
+        if (animacaoOverlay) animacaoOverlay.cancel();
+        animacaoOverlay = spinner.animate(
+          [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
+          { duration: 900, iterations: Infinity, easing: "linear" }
+        );
+      }
     } else {
       overlay.classList.add("hidden");
+      if (animacaoOverlay) {
+        animacaoOverlay.cancel();
+        animacaoOverlay = null;
+      }
     }
   }
 
