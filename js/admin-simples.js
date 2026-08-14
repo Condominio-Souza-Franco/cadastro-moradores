@@ -211,7 +211,7 @@
     }
 
     return partes.map(function(endereco) {
-      var correspondencia = endereco.match(/^(.*?\b\d+)(\s*(?:,|-)?\s*(?:apto|apartamento|bloco|casa|fundos|sala|complemento|conjunto|cj|quadra|lote|andar|cobertura|loja)\b[\s\S]*)$/i);
+      var correspondencia = endereco.match(/^(.*?\b\d+)(\s*(?:,|-)?\s*(?:apt|apto|apartamento|bloco|casa|fundos|sala|complemento|conjunto|cj|quadra|lote|andar|cobertura|loja)\b[\s\S]*)$/i);
       if (!correspondencia) {
         correspondencia = endereco.match(/^(.*\b\d+)\s*$/);
       }
