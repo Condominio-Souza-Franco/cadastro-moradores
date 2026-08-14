@@ -241,6 +241,82 @@ button:hover {
   font-weight: 600;
 }
 
+.admin-registro-card {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+}
+
+.admin-acoes-registro {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-excluir-cadastro {
+  background: #af2b2b;
+  border-color: #af2b2b;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.btn-excluir-cadastro:hover {
+  background: #8d2323;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.overlay-admin {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10000;
+}
+
+.overlay-admin-card {
+  width: min(360px, 100%);
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.overlay-admin-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #dbeafe;
+  border-top-color: #1f5f8b;
+  animation: overlaySpin 0.9s linear infinite;
+}
+
+#overlayAdminMensagem {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+@keyframes overlaySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .status.erro {
   color: var(--error);
 }

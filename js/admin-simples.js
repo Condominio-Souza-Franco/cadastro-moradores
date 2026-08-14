@@ -55,9 +55,36 @@
   }
 
   function carregarAptosDoServidor() {
-    popularAptosFallback();
-    setStatus("Lista local carregada.", "ok");
-    return Promise.resolve();
+    setStatus("", "");
+
+    return fetch(WEB_APP_URL, {
+      method: "POST",
+      body: JSON.stringify({ funcao: "listarApartamentosParaAdminSimples" })
+    })
+      .then(function(response) {
+        return response.text().then(function(texto) {
+          var conteudo = String(texto || "").trim();
+          if (!response.ok) {
+            throw new Error("Backend indisponível (HTTP " + response.status + ").");
+          }
+          if (!conteudo || conteudo.charAt(0) !== "{") {
+            throw new Error("Backend não retornou JSON válido.");
+          }
+          return JSON.parse(conteudo);
+        });
+      })
+      .then(function(resposta) {
+        if (resposta && Array.isArray(resposta.itens) && resposta.itens.length > 0) {
+          popularAptosComInventario(resposta.itens);
+          return resposta;
+        }
+
+        popularAptosFallback();
+        return resposta;
+      })
+      .catch(function() {
+        popularAptosFallback();
+      });
   }
 
   function setStatus(texto, tipo) {
@@ -65,6 +92,18 @@
     if (!status) return;
     status.className = "status" + (tipo ? " " + tipo : "");
     status.textContent = texto || "";
+  }
+
+  function setOverlayAdmin(visivel, mensagem) {
+    var overlay = document.getElementById("overlayAdmin");
+    var mensagemEl = document.getElementById("overlayAdminMensagem");
+    if (!overlay || !mensagemEl) return;
+
+    if (mensagem) {
+      mensagemEl.textContent = mensagem;
+    }
+
+    overlay.hidden = !visivel;
   }
 
   function textoLimpo(valor) {
@@ -282,13 +321,9 @@
     return html.join('');
   }
 
-  function renderizarDados(dados) {
-    var resultado = document.getElementById("resultadoAdmin");
-    if (!resultado) return;
-
-    resultado.classList.remove("vazio");
-
+  function montarHtmlRegistro(dados, indiceRegistro) {
     var secoes = [];
+    var tituloRegistro = indiceRegistro > 0 ? 'Ocorrência ' + (indiceRegistro + 1) : 'Registro';
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
@@ -304,7 +339,7 @@
 
     secoes.push(
       '<section class="secao">' +
-        '<h2>Dados da unidade</h2>' +
+        '<h2>' + tituloRegistro + '</h2>' +
         '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
           registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia" }) +
           registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"]) +
@@ -349,7 +384,68 @@
       secoes.push(contratosHtml.join(""));
     }
 
-    resultado.innerHTML = secoes.join("");
+    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + (indiceRegistro + 1) + '">Excluir cadastro</button></div>';
+    return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
+  }
+
+  function renderizarDados(dados) {
+    var resultado = document.getElementById("resultadoAdmin");
+    if (!resultado) return;
+
+    resultado.classList.remove("vazio");
+
+    var lista = Array.isArray(dados) ? dados : [dados];
+    resultado.innerHTML = lista.map(function(item, index) {
+      return montarHtmlRegistro(item, index);
+    }).join("");
+
+    resultado.querySelectorAll(".btn-excluir-cadastro").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        var apto = botao.getAttribute("data-apto");
+        var ocorrencia = parseInt(botao.getAttribute("data-ocorrencia"), 10) || 1;
+        if (!apto) return;
+
+        var confirmar = window.confirm("Deseja realmente excluir este cadastro do apartamento " + apto + " e apagar os dados da planilha em todas as abas?");
+        if (!confirmar) return;
+
+        setOverlayAdmin(true, "Aguarde: excluindo cadastro...");
+        fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify({ funcao: "excluirCadastroPorApartamentoSimples", apto: apto, ocorrencia: ocorrencia })
+        })
+          .then(function(response) {
+            return response.text().then(function(texto) {
+              var conteudo = String(texto || "").trim();
+              if (!response.ok) throw new Error("Backend indisponível (HTTP " + response.status + ").");
+              if (!conteudo || conteudo.charAt(0) !== "{") throw new Error("Backend não retornou JSON válido.");
+              return JSON.parse(conteudo);
+            });
+          })
+          .then(function(resposta) {
+            setOverlayAdmin(false);
+            if (resposta && resposta.sucesso) {
+              setStatus("Cadastro excluído com sucesso.", "ok");
+              setTimeout(function() {
+                carregarAptosDoServidor();
+                var select = document.getElementById("aptoAdmin");
+                if (select) select.value = "";
+                resultado.innerHTML = "";
+                resultado.classList.add("vazio");
+                var placeholder = document.createElement("div");
+                placeholder.className = "resultado-placeholder";
+                placeholder.textContent = "Nenhum dado carregado.";
+                resultado.appendChild(placeholder);
+              }, 300);
+              return;
+            }
+            setStatus((resposta && resposta.mensagem) || "Não foi possível excluir o cadastro.", "erro");
+          })
+          .catch(function(err) {
+            setOverlayAdmin(false);
+            setStatus("Não foi possível excluir o cadastro.", "erro");
+          });
+      });
+    });
   }
 
   function buscarPorApartamento() {
@@ -367,15 +463,16 @@
       ocorrencia = 1;
     }
 
-    setStatus("Carregando...", "");
+    setStatus("", "");
+    setOverlayAdmin(true, "Aguarde: buscando cadastro...");
 
-    function chamarFuncao(nomeFuncao) {
+    function chamarFuncao(nomeFuncao, aptoBusca, ocorrenciaBusca) {
       return fetch(WEB_APP_URL, {
         method: "POST",
         body: JSON.stringify({
           funcao: nomeFuncao,
-          apto: apto,
-          ocorrencia: ocorrencia
+          apto: aptoBusca,
+          ocorrencia: ocorrenciaBusca
         })
       }).then(function(response) {
         return response.text().then(function(texto) {
@@ -393,17 +490,40 @@
       });
     }
 
-    chamarFuncao("buscarDadosPorApartamentoSimples")
-      .then(function(resposta) {
-        var msg = String((resposta && resposta.mensagem) || "");
-        if (msg.indexOf("Função não encontrada") !== -1) {
-          return chamarFuncao("buscarDadosPorApartamento");
+    function obterOcorrenciasDoApartamento() {
+      var lista = [];
+      if (!select) return lista;
+      Array.from(select.options).forEach(function(option) {
+        var valor = String(option.value || "");
+        if (!valor) return;
+        var partes = valor.split("__");
+        var aptoAtual = String(partes[0] || "").trim();
+        var ocorrenciaAtual = parseInt(partes[1], 10);
+        if (aptoAtual === apto && ocorrenciaAtual >= 1) {
+          lista.push(ocorrenciaAtual);
         }
-        return resposta;
-      })
-      .then(function(respostaFinal) {
-        if (!respostaFinal || !respostaFinal.encontrado) {
-          var msgFinal = String((respostaFinal && respostaFinal.mensagem) || "");
+      });
+      return lista.sort(function(a, b) { return a - b; });
+    }
+
+    var ocorrencias = obterOcorrenciasDoApartamento();
+    var promessas = ocorrencias.length > 1
+      ? ocorrencias.map(function(occ) { return chamarFuncao("buscarDadosPorApartamentoSimples", apto, occ); })
+      : [chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)];
+
+    Promise.all(promessas)
+      .then(function(respostas) {
+        setOverlayAdmin(false);
+
+        var validas = respostas.filter(function(resposta) {
+          return resposta && resposta.encontrado && resposta.dados;
+        }).map(function(resposta) {
+          return resposta.dados;
+        });
+
+        if (!validas.length) {
+          var primeiraResposta = respostas[0] || {};
+          var msgFinal = String((primeiraResposta && primeiraResposta.mensagem) || "");
           if (msgFinal.indexOf("Função não encontrada") !== -1) {
             setStatus("Função de consulta por apartamento ainda não está publicada no Apps Script. Publique uma nova versão do Web App e tente novamente.", "erro");
             return;
@@ -419,9 +539,10 @@
         }
 
         setStatus("Dados carregados com sucesso.", "ok");
-        renderizarDados(respostaFinal.dados || {});
+        renderizarDados(validas);
       })
       .catch(function(err) {
+        setOverlayAdmin(false);
         setStatus("Backend indisponível. Não foi possível buscar os dados.", "erro");
       });
   }
