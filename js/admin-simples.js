@@ -60,7 +60,11 @@
 
   function carregarAptosDoServidor() {
     var select = document.getElementById("aptoAdmin");
-    if (select) select.disabled = true;
+    if (select) {
+      select.disabled = true;
+      select.innerHTML = "";
+      select.add(new Option("Carregando...", ""));
+    }
     setStatus("", "");
 
     return fetch(WEB_APP_URL, {
