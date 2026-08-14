@@ -103,8 +103,11 @@
       mensagemEl.textContent = mensagem;
     }
 
-    overlay.hidden = !visivel;
-    overlay.classList.toggle("is-visible", visivel);
+    if (visivel) {
+      overlay.classList.remove("hidden");
+    } else {
+      overlay.classList.add("hidden");
+    }
   }
 
   function textoLimpo(valor) {
@@ -342,8 +345,10 @@
       '<section class="secao">' +
         '<h2>' + tituloRegistro + '</h2>' +
         '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
-          registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia" }) +
-          registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"]) +
+          '<div class="subsecoes-separadas">' +
+            registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia" }) +
+            registroEmBoxes("Demais Ocupantes", dados.ocupantes ? dados.ocupantes.split("\n") : [], ["Nome", "Telefone/Celular", "Data de nascimento", "Vínculo/Parentesco"]) +
+          '</div>' +
       '</section>'
     );
 
