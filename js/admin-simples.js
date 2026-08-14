@@ -197,7 +197,10 @@
     var texto = textoLimpo(valor);
     if (!texto) return "Não preenchido";
 
-    var textoComEnderecosSeparados = texto.replace(/\s+(?=(?:rua|r\.|avenida|av\.|alameda|al\.|boulevard|blvd\.|travessa|tv\.|estrada|est\.|rodovia|rod\.|praça|pça\.|largo|beco|servidão)\b)/gi, "\n");
+    var marcadoresLogradouro = "(?:rua|r\\.|avenida|av\\.|alameda|al\\.|boulevard|blvd\\.|travessa|tv\\.|estrada|est\\.|rodovia|rod\\.|praça|pça\\.|largo|beco|servidão)";
+    var textoComEnderecosSeparados = texto
+      .replace(new RegExp("\\s+e\\s+(?=" + marcadoresLogradouro + "\\b)", "gi"), "\n")
+      .replace(new RegExp("\\s+(?=" + marcadoresLogradouro + "\\b)", "gi"), "\n");
     var partes = textoComEnderecosSeparados
       .split(/\s*(?:\n|;|\||\bou\b)\s*/i)
       .map(function(item) { return textoLimpo(item); })
@@ -208,7 +211,7 @@
     }
 
     return partes.map(function(endereco) {
-      var correspondencia = endereco.match(/^(.*?\b\d+)(\s*(?:,|-)?\s*(?:apto|apartamento|bloco|casa|fundos|sala|complemento|conjunto|cj|quadra|lote|andar|cobertura)\b[\s\S]*)$/i);
+      var correspondencia = endereco.match(/^(.*?\b\d+)(\s*(?:,|-)?\s*(?:apto|apartamento|bloco|casa|fundos|sala|complemento|conjunto|cj|quadra|lote|andar|cobertura|loja)\b[\s\S]*)$/i);
       if (!correspondencia) {
         correspondencia = endereco.match(/^(.*\b\d+)\s*$/);
       }
