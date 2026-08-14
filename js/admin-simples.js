@@ -104,6 +104,7 @@
     }
 
     overlay.hidden = !visivel;
+    overlay.classList.toggle("is-visible", visivel);
   }
 
   function textoLimpo(valor) {
@@ -367,7 +368,7 @@
       '</div>' +
       registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Espécie e raça", "Porte"]) +
       registroEmBoxes("Prestadores de serviço", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"]) +
-      '<div class="subsecao"><h3>Observações</h3>' + campoHtml("Observações", dados.observacoes) + '</div>' +
+      '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
     var historico = Array.isArray(dados.historicoContratos) ? dados.historicoContratos : [];
