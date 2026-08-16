@@ -300,17 +300,40 @@ button:hover {
 
 .admin-acoes-registro {
   margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.btn-consultar-outro {
+  flex: 3;
+  background: #2c3e50;
+  border: none;
+  border-color: #2c3e50;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-consultar-outro:hover {
+  background: #1a2332;
 }
 
 .btn-excluir-cadastro {
+  flex: 1;
   display: block;
-  width: 100%;
   background: #af2b2b;
   border-color: #af2b2b;
   color: #fff;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
 }
 
 .btn-excluir-cadastro:hover {

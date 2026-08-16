@@ -489,7 +489,7 @@
       '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
-    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + ocorrenciaReal + '">Excluir cadastro</button></div>';
+    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-consultar-outro" style="width: 75%; margin-right: 10px;">Consultar outro apartamento</button><button type="button" class="btn-excluir-cadastro" style="width: 25%;" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + ocorrenciaReal + '">Excluir cadastro</button></div>';
     return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
   }
 
@@ -549,6 +549,23 @@
             setOverlayAdmin(false);
             setStatus("Não foi possível excluir o cadastro.", "erro");
           });
+      });
+    });
+
+    resultado.querySelectorAll(".btn-consultar-outro").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        // Limpa a busca retornando ao estado inicial
+        var select = document.getElementById("aptoAdmin");
+        if (select) select.value = "";
+        
+        resultado.innerHTML = "";
+        resultado.classList.add("vazio");
+        var placeholder = document.createElement("div");
+        placeholder.className = "resultado-placeholder";
+        placeholder.textContent = "Nenhum dado carregado.";
+        resultado.appendChild(placeholder);
+        
+        setStatus("", "");
       });
     });
   }
