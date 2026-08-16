@@ -323,11 +323,19 @@
   }
 
   function vagaPrincipalHtml(dados) {
-    var numero = textoLimpo(dados && dados.vagaNumero);
-    var bloco = textoLimpo(dados && dados.vagaBloco);
-    var numeroFinal = numero || '9';
-    var blocoFinal = bloco || 'G2';
-    return '<div class="campo campo-vaga-principal"><p class="campo-valor">Vaga <strong>' + escaparHtml(numeroFinal) + '</strong> no <strong>' + escaparHtml(blocoFinal) + '</strong></p></div>';
+    var vagaCompleta = textoLimpo(dados && dados.vagaNumeroAndar);
+    
+    // Se não tiver o campo novo, tenta usar os antigos para compatibilidade
+    if (!vagaCompleta) {
+      var numero = textoLimpo(dados && dados.vagaNumero);
+      var bloco = textoLimpo(dados && dados.vagaBloco);
+      var numeroFinal = numero || '9';
+      var blocoFinal = bloco || 'G2';
+      return '<div class="campo campo-vaga-principal"><p class="campo-valor">Vaga <strong>' + escaparHtml(numeroFinal) + '</strong> no <strong>' + escaparHtml(blocoFinal) + '</strong></p></div>';
+    }
+    
+    // Novo formato: "número / andar" ou apenas "número"
+    return '<div class="campo campo-vaga-principal"><p class="campo-valor">Vaga <strong>' + escaparHtml(vagaCompleta) + '</strong></p></div>';
   }
 
   function situacaoVagaHtml(situacao, aptoRelacionado) {
