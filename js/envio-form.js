@@ -577,6 +577,14 @@ function executarEnvio(fileData, eAtualizacao) {
     mostrarAlerta(res.mensagem, "Atenção");
 
     if (res.sucesso) {
+      // Dispara ordenação em background (sem bloquear o usuário)
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({ funcao: 'executarOrdenacaoAposOperacao' })
+      }).catch(function() {
+        // Silencia erros de ordenação, pois o cadastro já foi salvo com sucesso
+      });
+      
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");

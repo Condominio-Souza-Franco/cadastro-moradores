@@ -530,6 +530,15 @@
             setOverlayAdmin(false);
             if (resposta && resposta.sucesso) {
               setStatus("Cadastro excluído com sucesso.", "ok");
+              
+              // Dispara ordenação em background (sem bloquear o usuário)
+              fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ funcao: "executarOrdenacaoAposOperacao" })
+              }).catch(function() {
+                // Silencia erros de ordenação, pois o cadastro já foi excluído com sucesso
+              });
+              
               setTimeout(function() {
                 carregarAptosDoServidor();
                 var select = document.getElementById("aptoAdmin");
