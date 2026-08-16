@@ -12,15 +12,47 @@ function rolarParaSecao(secaoId) {
 function popularDropdownAptos() {
   const select = document.getElementById('vagaAptoRelacionado');
   if (!select) return;
-  select.innerHTML = '<option value="">Apto envolvido...</option>';
+  
+  select.innerHTML = '<option value="">Carregando apartamentos...</option>';
+  select.disabled = true;
 
-  for (let andar = 2; andar <= 8; andar++) {
-    for (let pos = 1; pos <= 6; pos++) {
-      const numApto = `${andar}0${pos}`;
-      select.add(new Option(numApto, numApto));
+  // Busca apartamentos do backend
+  if (typeof WEB_APP_URL !== 'undefined') {
+    fetch(WEB_APP_URL, {
+      method: 'POST',
+      payload: JSON.stringify({
+        funcao: 'obterApartamentosGabaritoVagas'
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        select.innerHTML = '<option value="">Apto envolvido...</option>';
+        
+        if (data.sucesso && Array.isArray(data.apartamentos)) {
+          data.apartamentos.forEach(apto => {
+            select.add(new Option(apto, apto));
+          });
+        }
+        
+        select.disabled = false;
+      })
+      .catch(error => {
+        console.error('Erro ao carregar apartamentos:', error);
+        select.innerHTML = '<option value="">Erro ao carregar apartamentos</option>';
+        select.disabled = false;
+      });
+  } else {
+    // Fallback para valores estáticos se WEB_APP_URL não estiver definido
+    select.innerHTML = '<option value="">Apto envolvido...</option>';
+    for (let andar = 2; andar <= 8; andar++) {
+      for (let pos = 1; pos <= 6; pos++) {
+        const numApto = `${andar}0${pos}`;
+        select.add(new Option(numApto, numApto));
+      }
     }
+    select.add(new Option('901', '901'));
+    select.disabled = false;
   }
-  select.add(new Option('901', '901'));
 }
 
 function aoSelecionarApto(valor) {
@@ -51,19 +83,52 @@ function popularDropdownApto() {
   const select = document.getElementById('apto');
   if (!select) return;
 
-  select.innerHTML = '<option value="">Selecione o apartamento...</option>';
+  select.innerHTML = '<option value="">Carregando apartamentos...</option>';
+  select.disabled = true;
 
-  for (let andar = 2; andar <= 8; andar++) {
-    for (let pos = 1; pos <= 6; pos++) {
-      const numApto = `${andar}0${pos}`;
-      select.add(new Option(numApto, numApto));
+  // Busca apartamentos do backend
+  if (typeof WEB_APP_URL !== 'undefined') {
+    fetch(WEB_APP_URL, {
+      method: 'POST',
+      payload: JSON.stringify({
+        funcao: 'obterApartamentosGabaritoVagas'
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        select.innerHTML = '<option value="">Selecione o apartamento...</option>';
+        
+        if (data.sucesso && Array.isArray(data.apartamentos)) {
+          data.apartamentos.forEach(apto => {
+            select.add(new Option(apto, apto));
+          });
+        }
+        
+        select.disabled = false;
+        select.onchange = function() {
+          aoSelecionarApto(this.value);
+        };
+      })
+      .catch(error => {
+        console.error('Erro ao carregar apartamentos:', error);
+        select.innerHTML = '<option value="">Erro ao carregar apartamentos</option>';
+        select.disabled = false;
+      });
+  } else {
+    // Fallback para valores estáticos se WEB_APP_URL não estiver definido
+    select.innerHTML = '<option value="">Selecione o apartamento...</option>';
+    for (let andar = 2; andar <= 8; andar++) {
+      for (let pos = 1; pos <= 6; pos++) {
+        const numApto = `${andar}0${pos}`;
+        select.add(new Option(numApto, numApto));
+      }
     }
+    select.add(new Option('901', '901'));
+    select.disabled = false;
+    select.onchange = function() {
+      aoSelecionarApto(this.value);
+    };
   }
-  select.add(new Option('901', '901'));
-
-  select.onchange = function() {
-    aoSelecionarApto(this.value);
-  };
 }
 
 window.addEventListener('DOMContentLoaded', function() {
