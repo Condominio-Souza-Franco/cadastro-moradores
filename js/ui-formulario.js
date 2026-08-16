@@ -20,7 +20,7 @@ function popularDropdownAptos() {
   if (typeof WEB_APP_URL !== 'undefined') {
     fetch(WEB_APP_URL, {
       method: 'POST',
-      payload: JSON.stringify({
+      body: JSON.stringify({
         funcao: 'obterApartamentosGabaritoVagas'
       })
     })
@@ -90,18 +90,22 @@ function popularDropdownApto() {
   if (typeof WEB_APP_URL !== 'undefined') {
     fetch(WEB_APP_URL, {
       method: 'POST',
-      payload: JSON.stringify({
+      body: JSON.stringify({
         funcao: 'obterApartamentosGabaritoVagas'
       })
     })
       .then(response => response.json())
       .then(data => {
+        console.log('Resposta obterApartamentosGabaritoVagas:', data);
         select.innerHTML = '<option value="">Selecione o apartamento...</option>';
         
         if (data.sucesso && Array.isArray(data.apartamentos)) {
           data.apartamentos.forEach(apto => {
             select.add(new Option(apto, apto));
           });
+          console.log('Total de apartamentos carregados:', data.apartamentos.length);
+        } else {
+          console.warn('Resposta sem sucesso ou apartamentos inválidos:', data);
         }
         
         select.disabled = false;
