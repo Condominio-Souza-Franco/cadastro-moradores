@@ -574,9 +574,8 @@ function executarEnvio(fileData, eAtualizacao) {
 
     setOverlayProcessamento(false);
 
-    mostrarAlerta(res.mensagem, "Atenção");
-
     if (res.sucesso) {
+      mostrarAlerta("", "Cadastro enviado com sucesso!");
       // Dispara ordenação em background (sem bloquear o usuário)
       fetch(WEB_APP_URL, {
         method: 'POST',

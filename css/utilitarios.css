@@ -122,17 +122,20 @@ textarea {
 }
 
 .modal-card {
-  width: min(440px, 100%);
+  width: auto;
+  max-width: 90vw;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
   padding: 20px;
+  text-align: center;
 }
 
 .modal-card h3 {
   margin: 0 0 10px;
   font-size: 1.05rem;
   color: #1f2937;
+  text-align: center;
 }
 
 .modal-card p {
@@ -140,12 +143,19 @@ textarea {
   line-height: 1.5;
   color: #374151;
   white-space: pre-line;
+  min-height: 0;
+}
+
+.modal-card p:empty {
+  display: none;
+  margin: 0;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
+  width: 100%;
 }
 
 .btn-modal {
@@ -154,6 +164,12 @@ textarea {
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
+  flex: 1;
+  min-width: 120px;
+}
+
+.modal-card .modal-actions .btn-modal:first-child:last-child {
+  width: 100%;
 }
 
 .btn-modal-primary {
