@@ -72,6 +72,14 @@
 
     atualizarIndicador();
 
+    var botaoAbrir = document.getElementById("btnAbrirFonteDados");
+    var painel = document.getElementById("fonteDadosAdmin");
+    if (botaoAbrir && painel) {
+      botaoAbrir.addEventListener("click", function() {
+        painel.hidden = !painel.hidden;
+      });
+    }
+
     document.querySelectorAll('input[name="fonteDados"]').forEach(function(radio) {
       radio.addEventListener("change", function() {
         if (!radio.checked) return;
