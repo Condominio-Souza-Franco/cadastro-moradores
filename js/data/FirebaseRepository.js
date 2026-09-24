@@ -100,22 +100,6 @@
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.
     testarConexao: function() {
       return chamarBackend("fbTestarConexao", {}, false);
-    },
-
-    // Migração única (bloco só, sem progresso granular): copia tudo de uma vez.
-    migrarPlanilha: function() {
-      return chamarBackend("fbMigrarPlanilha", {}, true);
-    },
-
-    // Migração em etapas (uma chamada por apartamento) para permitir barra de progresso real.
-    listarApartamentosParaMigrar: function() {
-      return chamarBackend("fbListarApartamentosParaMigrar", {}, true);
-    },
-    migrarApartamentoUnico: function(apto) {
-      return chamarBackend("fbMigrarApartamentoUnico", { apto: apto }, true);
-    },
-    migrarGabarito: function() {
-      return chamarBackend("fbMigrarGabarito", {}, true);
     }
   };
 })();

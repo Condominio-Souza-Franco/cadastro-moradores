@@ -329,11 +329,6 @@
     ordenarAposOperacao: function() {
       // Operação de baixo risco (ordenação em segundo plano); não bloqueia em modo leitura.
       return chamarRepositorio(window.GoogleSheetsRepository, "ordenarAposOperacao", []);
-    },
-
-    // Migração única (admin): copia o cadastro mais recente de cada apartamento do Sheets para o Firebase.
-    migrarPlanilhaParaFirebase: function() {
-      return chamarRepositorio(window.FirebaseRepository, "migrarPlanilha", []);
     }
   };
 
