@@ -6,10 +6,11 @@
 // já usado pelo GoogleSheetsRepository — o Apps Script é quem acessa o Firestore, usando uma
 // service account guardada só nas Propriedades do Script (nunca no código-fonte/frontend).
 //
-// Leitura (listar/obter apartamento/obter por CPF/excluir) já está implementada no Firestore.
-// A gravação de novo cadastro (salvarCadastro) ainda não foi migrada (envolve upload de contrato
-// em PDF, hoje feito via Google Drive) — por isso rejeita com codigoFonte "nao-implementado",
-// o que faz o DataService usar o Google Sheets automaticamente para essa operação específica.
+// Leitura (listar/obter apartamento/obter por CPF) e escrita (salvar/excluir cadastro) já
+// implementadas no Firestore. O upload do contrato em PDF continua indo para o Google Drive
+// (independente da planilha) — só o link fica salvo no documento do Firestore.
+// Relatórios/busca geral ainda não foram migrados: rejeitam com codigoFonte "nao-implementado",
+// o que faz o DataService usar o Google Sheets automaticamente só para essas operações.
 (function() {
   function criarErroFonte(codigo, mensagem) {
     var erro = new Error(mensagem);
@@ -89,7 +90,9 @@
     excluirCadastro: function(apto) {
       return chamarBackend("fbExcluirCadastro", { apto: apto }, true);
     },
-    salvarCadastro: naoImplementado("Envio de novo cadastro ainda não implementado no Firebase (upload de contrato ainda depende do Google Drive)."),
+    salvarCadastro: function(dados) {
+      return chamarBackend("fbSalvarCadastro", { dados: dados }, false);
+    },
     ordenarAposOperacao: function() {
       return Promise.resolve({ sucesso: true }); // Não existe "ordenar" no Firestore.
     },
