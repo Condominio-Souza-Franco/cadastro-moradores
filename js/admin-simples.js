@@ -669,6 +669,7 @@
   }
 
   window.adminSimplesCarregarApartamento = carregarRegistro;
+  window.setOverlayAdmin = setOverlayAdmin;
 
   function iniciarAppAdmin() {
     if (appInicializado) return;

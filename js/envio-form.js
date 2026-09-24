@@ -52,6 +52,7 @@ function formatarListaCamposFaltantes(campos) {
 function setOverlayProcessamento(visivel, mensagem) {
   const overlay = document.getElementById('overlayProcessamento');
   const mensagemEl = document.getElementById('overlayProcessamentoMensagem');
+  const spinner = overlay ? overlay.querySelector('.overlay-processamento-spinner') : null;
   if (!overlay) return;
 
   if (mensagemEl && mensagem) {
@@ -60,8 +61,19 @@ function setOverlayProcessamento(visivel, mensagem) {
 
   if (visivel) {
     overlay.classList.remove('hidden');
+    if (spinner && typeof spinner.animate === 'function') {
+      if (window.__animacaoOverlayProcessamento) window.__animacaoOverlayProcessamento.cancel();
+      window.__animacaoOverlayProcessamento = spinner.animate(
+        [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+        { duration: 900, iterations: Infinity, easing: 'linear' }
+      );
+    }
   } else {
     overlay.classList.add('hidden');
+    if (window.__animacaoOverlayProcessamento) {
+      window.__animacaoOverlayProcessamento.cancel();
+      window.__animacaoOverlayProcessamento = null;
+    }
   }
 }
 
