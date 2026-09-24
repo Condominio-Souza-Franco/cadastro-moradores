@@ -200,6 +200,15 @@ p {
   text-decoration: underline;
 }
 
+.acoes-admin {
+  margin-bottom: 14px;
+}
+
+.acoes-admin button {
+  height: auto;
+  padding: 8px 14px;
+}
+
 .linha {
   display: flex;
   gap: 10px;
