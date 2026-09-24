@@ -26,26 +26,15 @@
     }).join("");
   }
 
-  function montarCardApartamento(item) {
+  function montarCelulaApartamento(item) {
     var apto = escaparHtml(item.apto);
-    var temCadastro = !!(item.tipo || item.nome || item.celular);
-
-    if (!temCadastro) {
-      return (
-        '<div class="apto-card">' +
-          "<h2>Apto " + apto + "</h2>" +
-          '<div class="vazio">Sem cadastro</div>' +
-        "</div>"
-      );
-    }
-
     var tipo = textoOuTraco(item.tipo);
     var nome = textoOuTraco(item.nome);
     var celular = String(item.celular || "").trim();
 
     return (
-      '<div class="apto-card">' +
-        "<h2>Apto " + apto + "</h2>" +
+      '<td class="apto-cel">' +
+        '<div class="apto-titulo">Apto ' + apto + '</div>' +
         '<div class="linha-principal">' + tipo + ": " + nome + "</div>" +
         '<div class="item">Cel.: ' + (celular ? escaparHtml(celular) : "-") + "</div>" +
         '<div class="grupo">' +
@@ -60,7 +49,7 @@
           '<div class="grupo-titulo">Prestadores</div>' +
           listaPessoasHtml(item.prestadores) +
         "</div>" +
-      "</div>"
+      "</td>"
     );
   }
 
@@ -75,7 +64,23 @@
   }
 
   function montarHtmlRelatorio(apartamentos) {
-    var cards = (Array.isArray(apartamentos) ? apartamentos : []).map(montarCardApartamento).join("");
+    var lista = Array.isArray(apartamentos) ? apartamentos : [];
+    var comCadastro = lista.filter(function(item) { return item && (item.tipo || item.nome || item.celular); });
+    var semCadastro = lista.filter(function(item) { return !(item && (item.tipo || item.nome || item.celular)); });
+
+    var colunas = 4;
+    var linhasHtml = [];
+    for (var i = 0; i < comCadastro.length; i += colunas) {
+      var celulas = comCadastro.slice(i, i + colunas).map(montarCelulaApartamento);
+      while (celulas.length < colunas) {
+        celulas.push('<td class="apto-cel apto-cel-vazia"></td>');
+      }
+      linhasHtml.push("<tr>" + celulas.join("") + "</tr>");
+    }
+
+    var resumoVazios = semCadastro.length
+      ? '<div class="resumo-vazios"><strong>Sem cadastro:</strong> ' + semCadastro.map(function(item) { return escaparHtml(item.apto); }).join(", ") + "</div>"
+      : "";
 
     return (
       "<!DOCTYPE html>" +
@@ -93,14 +98,17 @@
       ".cabecalho h1 { font-size: 13pt; margin: 0 0 1mm; }" +
       ".cabecalho .subtitulo { font-size: 9.5pt; font-weight: 600; margin: 0 0 1mm; color: #333; }" +
       ".cabecalho .data-geracao { font-size: 7.5pt; color: #555; }" +
-      ".colunas { column-count: 5; column-gap: 3mm; }" +
-      ".apto-card { break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; border: 0.3pt solid #999; border-radius: 2px; padding: 1.4mm 1.8mm; margin: 0 0 1.6mm; font-size: 6.4pt; line-height: 1.2; }" +
-      ".apto-card h2 { font-size: 7.4pt; margin: 0 0 0.6mm; padding-bottom: 0.6mm; border-bottom: 0.3pt solid #ccc; }" +
-      ".apto-card .linha-principal { font-weight: bold; }" +
-      ".apto-card .grupo { margin-top: 0.9mm; }" +
-      ".apto-card .grupo-titulo { font-weight: bold; text-decoration: underline; }" +
-      ".apto-card .item { overflow-wrap: break-word; }" +
-      ".apto-card .vazio { color: #888; font-style: italic; }" +
+      ".resumo-vazios { font-size: 7.5pt; margin-bottom: 2mm; padding: 1mm 1.6mm; border: 0.3pt solid #999; }" +
+      "table { width: 100%; border-collapse: collapse; table-layout: fixed; }" +
+      ".apto-cel { width: " + Math.floor(100 / colunas) + "%; border: 0.3pt solid #999; padding: 1.4mm 1.8mm; font-size: 6.4pt; line-height: 1.2; vertical-align: top; break-inside: avoid; page-break-inside: avoid; }" +
+      ".apto-cel-vazia { border: none; }" +
+      ".apto-titulo { font-size: 7.4pt; font-weight: bold; margin: 0 0 0.6mm; padding-bottom: 0.6mm; border-bottom: 0.3pt solid #ccc; }" +
+      ".linha-principal { font-weight: bold; }" +
+      ".grupo { margin-top: 0.9mm; }" +
+      ".grupo-titulo { font-weight: bold; text-decoration: underline; }" +
+      ".item { overflow-wrap: break-word; }" +
+      ".vazio { color: #888; font-style: italic; }" +
+      "tr { break-inside: avoid; page-break-inside: avoid; }" +
       "@media print { .barra-acoes { display: none; } }" +
       "</style>" +
       "</head>" +
@@ -111,7 +119,8 @@
         '<div class="subtitulo">Relatório de Contatos por Apartamento</div>' +
         '<div class="data-geracao">Gerado em ' + formatarDataHoraAtual() + "</div>" +
       "</div>" +
-      '<div class="colunas">' + cards + "</div>" +
+      resumoVazios +
+      "<table><tbody>" + linhasHtml.join("") + "</tbody></table>" +
       "</body>" +
       "</html>"
     );

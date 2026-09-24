@@ -43,6 +43,7 @@
         <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
         <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
         <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
+        <a href="https://drive.google.com/drive/folders/1dLdxTGZhJNw6IduyJjDz_4g9u0Cwye95?usp=sharing" target="_blank" rel="noopener noreferrer">Relatório de contatos</a>
       </div>
 
       <div class="acoes-admin">
@@ -51,6 +52,18 @@
       </div>
 
       <div id="statusRelatorioPdfDrive" class="status"></div>
+
+      <div id="buscaGeralAdmin" class="card-busca">
+        <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
+        <div class="linha-busca">
+          <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
+          <button type="button" id="btnBuscaGeral">Buscar</button>
+        </div>
+        <div id="statusBuscaGeral" class="status"></div>
+        <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+      </div>
+
+      <button type="button" id="btnVoltarBusca" class="btn-voltar-busca" hidden>← Voltar para busca</button>
 
       <div class="linha">
         <label for="aptoAdmin">Apartamento:</label>
@@ -79,5 +92,6 @@
   <script src="js/admin-auth.js"></script>
   <script src="js/admin-simples.js"></script>
   <script src="js/admin-relatorio.js"></script>
+  <script src="js/admin-busca.js"></script>
 </body>
 </html>

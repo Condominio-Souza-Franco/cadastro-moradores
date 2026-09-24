@@ -587,21 +587,7 @@
     });
   }
 
-  function buscarPorApartamento() {
-    var select = document.getElementById("aptoAdmin");
-    var valorSelecionado = select ? String(select.value || "") : "";
-    if (!valorSelecionado) {
-      setStatus("Selecione um apartamento.", "erro");
-      return;
-    }
-
-    var partesSelecao = valorSelecionado.split("__");
-    var apto = String(partesSelecao[0] || "").trim();
-    var ocorrencia = parseInt(partesSelecao[1], 10);
-    if (isNaN(ocorrencia) || ocorrencia < 1) {
-      ocorrencia = 1;
-    }
-
+  function carregarRegistro(apto, ocorrencia) {
     setStatus("", "");
     setOverlayAdmin(true, "Aguarde: buscando cadastro...");
 
@@ -629,7 +615,7 @@
       });
     }
 
-    chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)
+    return chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)
       .then(function(respostaFinal) {
         setOverlayAdmin(false);
 
@@ -641,7 +627,7 @@
           var msgFinal = String((respostaFinal && respostaFinal.mensagem) || "");
           if (msgFinal.indexOf("Função não encontrada") !== -1) {
             setStatus("Função de consulta por apartamento ainda não está publicada no Apps Script. Publique uma nova versão do Web App e tente novamente.", "erro");
-            return;
+            return false;
           }
 
           setStatus(msgFinal || "Apartamento não encontrado.", "erro");
@@ -650,17 +636,39 @@
             resultado.classList.add("vazio");
             resultado.innerHTML = "";
           }
-          return;
+          return false;
         }
 
         setStatus("Dados carregados com sucesso.", "ok");
         renderizarDados(validas, ocorrencia);
+        return true;
       })
       .catch(function(err) {
         setOverlayAdmin(false);
         setStatus("Backend indisponível. Não foi possível buscar os dados.", "erro");
+        return false;
       });
   }
+
+  function buscarPorApartamento() {
+    var select = document.getElementById("aptoAdmin");
+    var valorSelecionado = select ? String(select.value || "") : "";
+    if (!valorSelecionado) {
+      setStatus("Selecione um apartamento.", "erro");
+      return;
+    }
+
+    var partesSelecao = valorSelecionado.split("__");
+    var apto = String(partesSelecao[0] || "").trim();
+    var ocorrencia = parseInt(partesSelecao[1], 10);
+    if (isNaN(ocorrencia) || ocorrencia < 1) {
+      ocorrencia = 1;
+    }
+
+    carregarRegistro(apto, ocorrencia);
+  }
+
+  window.adminSimplesCarregarApartamento = carregarRegistro;
 
   function iniciarAppAdmin() {
     if (appInicializado) return;
