@@ -167,6 +167,14 @@
           throw erroFirebase;
         }
 
+        // Operação ainda não migrada para o Firebase (ex.: gabarito, relatórios, busca):
+        // usa o Sheets normalmente, mas isso NÃO é uma falha real do Firebase — não deve
+        // acionar o indicador de contingência nem o bloqueio de escrita.
+        if (erroFirebase && erroFirebase.codigoFonte === "nao-implementado") {
+          log("operação '" + nomeMetodo + "' ainda não implementada no Firebase, usando Google Sheets (sem afetar indicador)");
+          return chamarRepositorio(window.GoogleSheetsRepository, nomeMetodo, args);
+        }
+
         log("Firebase indisponível (" + (erroFirebase && erroFirebase.codigoFonte) + "), tentando Google Sheets");
         return chamarRepositorio(window.GoogleSheetsRepository, nomeMetodo, args)
           .then(function(resultado) {
