@@ -49,6 +49,24 @@
     });
   }
 
+  function migrarPlanilha() {
+    var resultado = document.getElementById("resultadoTesteConexoes");
+    if (!resultado || !window.DataService) return;
+
+    var confirmar = window.confirm("Isso vai copiar o cadastro mais recente de cada apartamento da planilha para o Firebase, substituindo o que já estiver lá. Continuar?");
+    if (!confirmar) return;
+
+    resultado.textContent = "Migrando...";
+
+    DataService.migrarPlanilhaParaFirebase()
+      .then(function(resposta) {
+        resultado.textContent = (resposta && resposta.mensagem) || "Migração concluída.";
+      })
+      .catch(function(erro) {
+        resultado.textContent = "Erro na migração: " + ((erro && erro.message) || "erro desconhecido.");
+      });
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     if (!window.DataService) return;
 
@@ -64,6 +82,11 @@
     var botaoTestar = document.getElementById("btnTestarConexoes");
     if (botaoTestar) {
       botaoTestar.addEventListener("click", testarConexoes);
+    }
+
+    var botaoMigrar = document.getElementById("btnMigrarFirebase");
+    if (botaoMigrar) {
+      botaoMigrar.addEventListener("click", migrarPlanilha);
     }
 
     window.addEventListener("datasource-changed", atualizarIndicador);

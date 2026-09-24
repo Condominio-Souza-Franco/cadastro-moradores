@@ -196,6 +196,21 @@
           return resultado;
         })
         .catch(function(erro) {
+          // Operação ainda não migrada para o Firebase: no modo "auto" usa o Sheets normalmente
+          // (nunca no modo manual "firebase", que deve mostrar o erro em vez de trocar de fonte).
+          if (erro && erro.codigoFonte === "nao-implementado" && state.configuredSource === "auto") {
+            log("operação '" + nomeMetodo + "' ainda não implementada no Firebase, usando Google Sheets");
+            return chamarRepositorio(window.GoogleSheetsRepository, nomeMetodo, args)
+              .then(function(resultado) {
+                setActiveSource("sheets");
+                return resultado;
+              })
+              .catch(function(erroSheets) {
+                setActiveSource("none");
+                throw erroSheets;
+              });
+          }
+
           setActiveSource("none");
           throw erro;
         });
@@ -290,6 +305,11 @@
     ordenarAposOperacao: function() {
       // Operação de baixo risco (ordenação em segundo plano); não bloqueia em modo leitura.
       return chamarRepositorio(window.GoogleSheetsRepository, "ordenarAposOperacao", []);
+    },
+
+    // Migração única (admin): copia o cadastro mais recente de cada apartamento do Sheets para o Firebase.
+    migrarPlanilhaParaFirebase: function() {
+      return chamarRepositorio(window.FirebaseRepository, "migrarPlanilha", []);
     }
   };
 

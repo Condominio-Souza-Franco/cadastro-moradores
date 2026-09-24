@@ -260,6 +260,12 @@ p {
   padding: 8px 14px;
 }
 
+#btnMigrarFirebase {
+  height: auto;
+  padding: 8px 14px;
+  margin-left: 8px;
+}
+
 .resultado-teste-conexoes {
   margin-top: 10px;
   font-size: 0.9rem;

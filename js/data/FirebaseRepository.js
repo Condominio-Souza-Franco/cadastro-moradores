@@ -1,21 +1,15 @@
 // ==========================================
-// FIREBASE REPOSITORY (STUB)
+// FIREBASE REPOSITORY
 // ==========================================
-// Implementação futura da fonte de dados principal (Firestore).
-// Hoje este repositório não está configurado: todos os métodos rejeitam com
-// codigoFonte "nao-configurado", o que o DataService interpreta como
-// "fonte indisponível" (aciona fallback automático no modo "auto").
+// O navegador NÃO fala diretamente com o Firestore (evita expor dados sem Firebase Auth).
+// Em vez disso, chama o mesmo backend Apps Script (WEB_APP_URL) com o mesmo token de admin
+// já usado pelo GoogleSheetsRepository — o Apps Script é quem acessa o Firestore, usando uma
+// service account guardada só nas Propriedades do Script (nunca no código-fonte/frontend).
 //
-// COMO ATIVAR NO FUTURO:
-// 1. Crie o projeto no console do Firebase e habilite o Firestore.
-// 2. Adicione o Firebase Web SDK (via <script type="module"> + CDN, ou npm caso o projeto passe a ter build).
-//    As chaves do Web SDK (apiKey, authDomain, projectId...) são PÚBLICAS por natureza — não são segredo.
-//    A proteção real dos dados vem das Firestore Security Rules + Firebase Authentication.
-// 3. Chame firebase.initializeApp({...}) uma vez (ex.: em um novo js/firebase-config.js) e troque
-//    FIREBASE_CONFIGURADO para true assim que o app estiver inicializado corretamente.
-// 4. Implemente cada método abaixo usando o SDK do Firestore (getDocs/getDoc/addDoc/updateDoc/deleteDoc),
-//    mantendo a mesma assinatura e o mesmo formato de retorno usados pelo GoogleSheetsRepository.js,
-//    para que o DataService continue funcionando sem mudanças.
+// Leitura (listar/obter apartamento/obter por CPF/excluir) já está implementada no Firestore.
+// A gravação de novo cadastro (salvarCadastro) ainda não foi migrada (envolve upload de contrato
+// em PDF, hoje feito via Google Drive) — por isso rejeita com codigoFonte "nao-implementado",
+// o que faz o DataService usar o Google Sheets automaticamente para essa operação específica.
 (function() {
   function criarErroFonte(codigo, mensagem) {
     var erro = new Error(mensagem);
@@ -23,41 +17,91 @@
     return erro;
   }
 
-  var FIREBASE_CONFIGURADO = false;
+  function chamarBackend(funcao, payloadExtra, protegido) {
+    if (typeof WEB_APP_URL === "undefined" || !WEB_APP_URL) {
+      return Promise.reject(criarErroFonte("nao-configurado", "WEB_APP_URL não definido."));
+    }
 
-  function naoConfigurado() {
-    return Promise.reject(criarErroFonte("nao-configurado", "Firebase ainda não foi configurado neste projeto."));
+    var corpo = Object.assign({ funcao: funcao }, payloadExtra || {});
+    if (protegido && window.AdminAuth && typeof window.AdminAuth.getIdToken === "function") {
+      corpo.idToken = window.AdminAuth.getIdToken();
+    }
+
+    return fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(corpo) })
+      .then(function(response) {
+        return response.text().then(function(texto) {
+          var conteudo = String(texto || "").trim();
+
+          if (!response.ok) {
+            throw criarErroFonte("unavailable", "Backend indisponível (HTTP " + response.status + ").");
+          }
+          if (!conteudo || conteudo.charAt(0) !== "{") {
+            throw criarErroFonte("unavailable", "Backend não retornou JSON válido.");
+          }
+
+          var json = JSON.parse(conteudo);
+          if (json && json.autorizado === false) {
+            throw criarErroFonte("nao-autorizado", json.mensagem || "Não autorizado. Faça login novamente.");
+          }
+          return json;
+        });
+      })
+      .catch(function(erro) {
+        if (erro && erro.codigoFonte) throw erro;
+        throw criarErroFonte("unavailable", "Não foi possível conectar ao Firebase.");
+      });
+  }
+
+  function naoImplementado(mensagem) {
+    return function() {
+      return Promise.reject(criarErroFonte("nao-implementado", mensagem));
+    };
   }
 
   window.FirebaseRepository = {
     nome: "firebase",
 
+    // Reflete apenas se o frontend está pronto para tentar o Firebase; a checagem real das
+    // credenciais (Propriedades do Script) acontece no backend a cada chamada fb*.
     isConfigured: function() {
-      return FIREBASE_CONFIGURADO;
+      return true;
     },
 
-    // ---- Leitura ----
-    listarApartamentos: naoConfigurado,
-    obterApartamentosGabarito: naoConfigurado,
-    obterGabaritoVagasCompleto: naoConfigurado,
-    obterMoradorPorApto: naoConfigurado,
-    obterMoradorPorCpf: naoConfigurado,
-    buscarTexto: naoConfigurado,
-    gerarRelatorioApartamentos: naoConfigurado,
-    gerarRelatorioApartamentosPdfDrive: naoConfigurado,
+    // ---- Leitura (implementadas no Firestore) ----
+    listarApartamentos: function() {
+      return chamarBackend("fbListarApartamentos", {}, true);
+    },
+    obterMoradorPorApto: function(apto) {
+      return chamarBackend("fbObterMoradorPorApto", { apto: apto }, true);
+    },
+    obterMoradorPorCpf: function(cpf, nascimento) {
+      return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento }, false);
+    },
+
+    // ---- Ainda não migradas para o Firestore (fallback automático para o Sheets) ----
+    obterApartamentosGabarito: naoImplementado("Gabarito de apartamentos ainda não migrado para o Firebase."),
+    obterGabaritoVagasCompleto: naoImplementado("Gabarito de vagas ainda não migrado para o Firebase."),
+    buscarTexto: naoImplementado("Busca geral ainda não implementada no Firebase."),
+    gerarRelatorioApartamentos: naoImplementado("Relatório ainda não implementado no Firebase."),
+    gerarRelatorioApartamentosPdfDrive: naoImplementado("Geração de PDF ainda não implementada no Firebase."),
 
     // ---- Escrita ----
-    excluirCadastro: naoConfigurado,
-    salvarCadastro: naoConfigurado,
-
-    // Não existe conceito de "ordenar planilha" no Firestore; é um no-op seguro.
+    excluirCadastro: function(apto) {
+      return chamarBackend("fbExcluirCadastro", { apto: apto }, true);
+    },
+    salvarCadastro: naoImplementado("Envio de novo cadastro ainda não implementado no Firebase (upload de contrato ainda depende do Google Drive)."),
     ordenarAposOperacao: function() {
-      return Promise.resolve({ sucesso: true });
+      return Promise.resolve({ sucesso: true }); // Não existe "ordenar" no Firestore.
     },
 
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.
     testarConexao: function() {
-      return Promise.resolve({ ok: false, mensagem: "Firebase ainda não foi configurado." });
+      return chamarBackend("fbTestarConexao", {}, false);
+    },
+
+    // Migração única: copia o cadastro mais recente de cada apartamento da planilha para o Firestore.
+    migrarPlanilha: function() {
+      return chamarBackend("fbMigrarPlanilha", {}, true);
     }
   };
 })();
