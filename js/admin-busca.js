@@ -124,11 +124,25 @@
     }
 
     if (input) {
+      var timerBuscaAoDigitar = null;
       input.addEventListener("keydown", function(evento) {
         if (evento.key === "Enter") {
           evento.preventDefault();
+          clearTimeout(timerBuscaAoDigitar);
           executarBusca();
         }
+      });
+
+      // Busca em tempo real: aguarda uma pausa na digitação para não disparar a cada tecla.
+      input.addEventListener("input", function() {
+        clearTimeout(timerBuscaAoDigitar);
+        var termo = String(input.value || "").trim();
+        if (termo.length < 2) {
+          setStatusBusca("");
+          limparResultados();
+          return;
+        }
+        timerBuscaAoDigitar = setTimeout(executarBusca, 500);
       });
     }
 

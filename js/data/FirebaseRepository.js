@@ -6,11 +6,9 @@
 // já usado pelo GoogleSheetsRepository — o Apps Script é quem acessa o Firestore, usando uma
 // service account guardada só nas Propriedades do Script (nunca no código-fonte/frontend).
 //
-// Leitura (listar/obter apartamento/obter por CPF) e escrita (salvar/excluir cadastro) já
-// implementadas no Firestore. O upload do contrato em PDF continua indo para o Google Drive
-// (independente da planilha) — só o link fica salvo no documento do Firestore.
-// Relatórios/busca geral ainda não foram migrados: rejeitam com codigoFonte "nao-implementado",
-// o que faz o DataService usar o Google Sheets automaticamente só para essas operações.
+// Leitura, escrita e exclusão de cadastros, gabarito, busca geral e relatórios em PDF
+// já implementados no Firestore. O upload do contrato em PDF continua indo para o Google
+// Drive (independente da planilha) — só o link fica salvo no documento do Firestore.
 (function() {
   function criarErroFonte(codigo, mensagem) {
     var erro = new Error(mensagem);
@@ -53,12 +51,6 @@
       });
   }
 
-  function naoImplementado(mensagem) {
-    return function() {
-      return Promise.reject(criarErroFonte("nao-implementado", mensagem));
-    };
-  }
-
   window.FirebaseRepository = {
     nome: "firebase",
 
@@ -78,13 +70,21 @@
     obterMoradorPorCpf: function(cpf, nascimento) {
       return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento }, false);
     },
-
-    // ---- Ainda não migradas para o Firestore (fallback automático para o Sheets) ----
-    obterApartamentosGabarito: naoImplementado("Gabarito de apartamentos ainda não migrado para o Firebase."),
-    obterGabaritoVagasCompleto: naoImplementado("Gabarito de vagas ainda não migrado para o Firebase."),
-    buscarTexto: naoImplementado("Busca geral ainda não implementada no Firebase."),
-    gerarRelatorioApartamentos: naoImplementado("Relatório ainda não implementado no Firebase."),
-    gerarRelatorioApartamentosPdfDrive: naoImplementado("Geração de PDF ainda não implementada no Firebase."),
+    obterApartamentosGabarito: function() {
+      return chamarBackend("fbObterApartamentosGabarito", {}, false);
+    },
+    obterGabaritoVagasCompleto: function() {
+      return chamarBackend("fbObterGabaritoVagasCompleto", {}, false);
+    },
+    buscarTexto: function(termo) {
+      return chamarBackend("fbBuscarTexto", { termo: termo }, true);
+    },
+    gerarRelatorioApartamentos: function() {
+      return chamarBackend("fbGerarRelatorioApartamentos", {}, true);
+    },
+    gerarRelatorioApartamentosPdfDrive: function() {
+      return chamarBackend("fbGerarRelatorioApartamentosPdfDrive", {}, true);
+    },
 
     // ---- Escrita ----
     excluirCadastro: function(apto) {
@@ -102,9 +102,20 @@
       return chamarBackend("fbTestarConexao", {}, false);
     },
 
-    // Migração única: copia o cadastro mais recente de cada apartamento da planilha para o Firestore.
+    // Migração única (bloco só, sem progresso granular): copia tudo de uma vez.
     migrarPlanilha: function() {
       return chamarBackend("fbMigrarPlanilha", {}, true);
+    },
+
+    // Migração em etapas (uma chamada por apartamento) para permitir barra de progresso real.
+    listarApartamentosParaMigrar: function() {
+      return chamarBackend("fbListarApartamentosParaMigrar", {}, true);
+    },
+    migrarApartamentoUnico: function(apto) {
+      return chamarBackend("fbMigrarApartamentoUnico", { apto: apto }, true);
+    },
+    migrarGabarito: function() {
+      return chamarBackend("fbMigrarGabarito", {}, true);
     }
   };
 })();
