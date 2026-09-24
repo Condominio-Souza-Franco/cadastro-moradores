@@ -23,6 +23,7 @@
   var state = {
     configuredSource: "auto", // "auto" | "firebase" | "sheets"
     activeSource: "none", // "firebase" | "sheets" | "none" — fonte efetivamente usada na última leitura
+    falhaTotal: false, // true somente quando uma leitura realmente tentou e as duas fontes falharam
     lastError: null
   };
 
@@ -49,8 +50,10 @@
     }));
   }
 
-  function setActiveSource(fonte) {
-    if (state.activeSource === fonte) return;
+  function setActiveSource(fonte, falhaTotal) {
+    var mudouFalha = !!falhaTotal !== state.falhaTotal;
+    state.falhaTotal = !!falhaTotal;
+    if (state.activeSource === fonte && !mudouFalha) return;
     state.activeSource = fonte;
     dispararMudanca();
   }
@@ -141,7 +144,7 @@
           return resultado;
         })
         .catch(function(erro) {
-          setActiveSource("none");
+          setActiveSource("none", true);
           log("Firebase indisponível (modo manual, sem fallback): " + (erro && erro.codigoFonte));
           throw erro;
         });
@@ -155,7 +158,7 @@
           return resultado;
         })
         .catch(function(erro) {
-          setActiveSource("none");
+          setActiveSource("none", true);
           throw erro;
         });
     }
@@ -172,7 +175,7 @@
         if (erroFirebase && erroFirebase.codigoFonte === "permission-denied") {
           // Falha de autorização não deve ser contornada trocando de fonte.
           log("Firebase indisponível: permissão negada (sem fallback automático)");
-          setActiveSource("none");
+          setActiveSource("none", true);
           throw erroFirebase;
         }
 
@@ -192,7 +195,7 @@
             return resultado;
           })
           .catch(function(erroSheets) {
-            setActiveSource("none");
+            setActiveSource("none", true);
             throw criarErroFonte("nenhuma-fonte", "Não foi possível carregar os dados: Firebase e Google Sheets estão indisponíveis.");
           });
       });
@@ -223,12 +226,12 @@
                 return resultado;
               })
               .catch(function(erroSheets) {
-                setActiveSource("none");
+                setActiveSource("none", true);
                 throw erroSheets;
               });
           }
 
-          setActiveSource("none");
+          setActiveSource("none", true);
           throw erro;
         });
     }
@@ -240,7 +243,7 @@
         return resultado;
       })
       .catch(function(erro) {
-        setActiveSource("none");
+        setActiveSource("none", true);
         throw erro;
       });
   }
@@ -258,6 +261,10 @@
 
     getActiveSource: function() {
       return state.activeSource;
+    },
+
+    houveFalhaTotal: function() {
+      return state.falhaTotal;
     },
 
     isReadOnly: function() {

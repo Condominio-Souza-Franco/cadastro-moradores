@@ -2,14 +2,14 @@
 // PAINEL "FONTE DE DADOS" (ADMIN)
 // ==========================================
 (function() {
-  function textoIndicador(activeSource, somenteLeitura) {
+  function textoIndicador(activeSource, somenteLeitura, falhaTotal) {
     if (activeSource === "firebase") {
       return "🟢 Firebase";
     }
     if (activeSource === "sheets") {
       return somenteLeitura ? "🟡 Google Sheets — modo de contingência" : "🟡 Google Sheets";
     }
-    return "🔴 Nenhuma fonte disponível";
+    return falhaTotal ? "🔴 Nenhuma fonte disponível" : "⚪ Ainda não consultado nesta sessão";
   }
 
   function atualizarIndicador() {
@@ -20,9 +20,10 @@
     var configuredSource = DataService.getConfiguredSource();
     var activeSource = DataService.getActiveSource();
     var somenteLeitura = DataService.isReadOnly();
+    var falhaTotal = DataService.houveFalhaTotal();
 
     if (indicador) {
-      indicador.textContent = textoIndicador(activeSource, somenteLeitura);
+      indicador.textContent = textoIndicador(activeSource, somenteLeitura, falhaTotal);
     }
     if (aviso) {
       aviso.hidden = !somenteLeitura;
