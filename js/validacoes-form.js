@@ -265,6 +265,8 @@ async function consultarPorCpf() {
       alterarTextoBotaoEnviar("Atualizar cadastro");
       exibirPassoTipoResidente();
 
+      snapshotFormularioOriginal = capturarSnapshotFormulario();
+
     } else {
       if (inputCpf) inputCpf.disabled = false;
       if (inputNasc) inputNasc.disabled = false;

@@ -5,6 +5,26 @@
 let gabaritoVagasCache = [];
 let historicoContratosCache = [];
 let modalResolver = null;
+let snapshotFormularioOriginal = null;
+
+// Serializa (em ordem do DOM) todos os campos do formulário, para detectar se o usuário
+// realmente alterou algo antes de permitir o envio de uma atualização.
+function capturarSnapshotFormulario() {
+  const form = document.getElementById('cadForm');
+  if (!form) return '';
+
+  const partes = [];
+  form.querySelectorAll('input, select, textarea').forEach(function(el) {
+    if (el.type === 'file') {
+      partes.push(el.files && el.files.length ? el.files[0].name : '');
+    } else if (el.type === 'checkbox' || el.type === 'radio') {
+      partes.push(el.checked ? '1' : '0');
+    } else {
+      partes.push(String(el.value || '').trim());
+    }
+  });
+  return partes.join('\u0001');
+}
 
 function exibirModalGenerico({ titulo = 'Atenção', mensagem = '', tipo = 'alerta', textoConfirmar = 'OK', textoCancelar = 'Cancelar' }) {
   const overlay = document.getElementById('modalOverlay');
@@ -189,6 +209,8 @@ function redefinirBotoesParaNovoCadastro() {
 
 function voltarTelaInicial() {
   try {
+    snapshotFormularioOriginal = null;
+
     const containerPreview = document.getElementById('containerPreviewContrato');
     const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
     const inputContrato = document.getElementById('arquivoContrato');

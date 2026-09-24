@@ -434,6 +434,11 @@ function enviar() {
     return;
   }
 
+  if (snapshotFormularioOriginal !== null && capturarSnapshotFormulario() === snapshotFormularioOriginal) {
+    mostrarAlerta("Nenhuma alteração foi feita no cadastro. Não é necessário atualizar.", "Atenção");
+    return;
+  }
+
   const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
   const textoAtual = btnSubmit ? btnSubmit.innerText : "";
   const eAtualizacao = textoAtual.toLowerCase().includes("atualizar");
