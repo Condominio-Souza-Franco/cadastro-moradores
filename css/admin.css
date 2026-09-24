@@ -400,6 +400,7 @@ select {
 }
 
 #aptoAdmin {
+  flex: 1;
   width: auto;
   min-width: 128px;
   max-width: 100%;

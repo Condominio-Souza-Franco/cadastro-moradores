@@ -121,8 +121,17 @@
     return false;
   }
 
+  // Operações que variam muito com o tamanho da base (buscam várias subcoleções de todos os
+  // apartamentos) precisam de mais tempo antes de considerar o Firebase "indisponível".
+  var TIMEOUTS_POR_OPERACAO = {
+    buscarTexto: 20000,
+    gerarRelatorioApartamentos: 20000,
+    gerarRelatorioApartamentosPdfDrive: 25000
+  };
+
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
+    var timeoutOperacao = TIMEOUTS_POR_OPERACAO[nomeMetodo] || DATA_SOURCE_TIMEOUT;
 
     if (modo === "firebase") {
       log("modo Firebase (manual): tentando Firebase");
@@ -153,7 +162,7 @@
 
     // Modo automático: Firebase primeiro (com timeout), fallback para Sheets em falha técnica.
     log("tentando Firebase");
-    return comTimeout(chamarRepositorio(window.FirebaseRepository, nomeMetodo, args), DATA_SOURCE_TIMEOUT)
+    return comTimeout(chamarRepositorio(window.FirebaseRepository, nomeMetodo, args), timeoutOperacao)
       .then(function(resultado) {
         log("Firebase disponível");
         setActiveSource("firebase");
