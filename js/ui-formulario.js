@@ -17,14 +17,8 @@ function popularDropdownAptos() {
   select.disabled = true;
 
   // Busca apartamentos do backend
-  if (typeof WEB_APP_URL !== 'undefined') {
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        funcao: 'obterApartamentosGabaritoVagas'
-      })
-    })
-      .then(response => response.json())
+  if (typeof DataService !== 'undefined') {
+    DataService.obterApartamentosGabarito()
       .then(data => {
         select.innerHTML = '<option value="">Apto envolvido...</option>';
         
@@ -87,14 +81,8 @@ function popularDropdownApto() {
   select.disabled = true;
 
   // Busca apartamentos do backend
-  if (typeof WEB_APP_URL !== 'undefined') {
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        funcao: 'obterApartamentosGabaritoVagas'
-      })
-    })
-      .then(response => response.json())
+  if (typeof DataService !== 'undefined') {
+    DataService.obterApartamentosGabarito()
       .then(data => {
         console.log('Resposta obterApartamentosGabaritoVagas:', data);
         select.innerHTML = '<option value="">Selecione o apartamento...</option>';

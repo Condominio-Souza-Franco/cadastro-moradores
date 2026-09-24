@@ -98,22 +98,7 @@
     setStatusBusca("Buscando...", "");
     limparResultados();
 
-    fetch(WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify({ funcao: "buscarTextoNaPlanilha", termo: termo })
-    })
-      .then(function(response) {
-        return response.text().then(function(texto) {
-          var conteudo = String(texto || "").trim();
-          if (!response.ok) {
-            throw new Error("Backend indisponível (HTTP " + response.status + ").");
-          }
-          if (!conteudo || conteudo.charAt(0) !== "{") {
-            throw new Error("Backend não retornou JSON válido.");
-          }
-          return JSON.parse(conteudo);
-        });
-      })
+    DataService.buscarTexto(termo)
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) {
           setStatusBusca((resposta && resposta.mensagem) || "Não foi possível realizar a busca.", "erro");

@@ -67,22 +67,7 @@
     }
     setStatus("", "");
 
-    return fetch(WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify({ funcao: "listarApartamentosParaAdminSimples" })
-    })
-      .then(function(response) {
-        return response.text().then(function(texto) {
-          var conteudo = String(texto || "").trim();
-          if (!response.ok) {
-            throw new Error("Backend indisponível (HTTP " + response.status + ").");
-          }
-          if (!conteudo || conteudo.charAt(0) !== "{") {
-            throw new Error("Backend não retornou JSON válido.");
-          }
-          return JSON.parse(conteudo);
-        });
-      })
+    return DataService.listarApartamentos()
       .then(function(resposta) {
         if (resposta && Array.isArray(resposta.itens) && resposta.itens.length > 0) {
           popularAptosComInventario(resposta.itens);
@@ -522,31 +507,17 @@
         if (!confirmar) return;
 
         setOverlayAdmin(true, "Aguarde: excluindo cadastro...");
-        fetch(WEB_APP_URL, {
-          method: "POST",
-          body: JSON.stringify({ funcao: "excluirCadastroPorApartamentoSimples", apto: apto, ocorrencia: ocorrencia })
-        })
-          .then(function(response) {
-            return response.text().then(function(texto) {
-              var conteudo = String(texto || "").trim();
-              if (!response.ok) throw new Error("Backend indisponível (HTTP " + response.status + ").");
-              if (!conteudo || conteudo.charAt(0) !== "{") throw new Error("Backend não retornou JSON válido.");
-              return JSON.parse(conteudo);
-            });
-          })
+        DataService.excluirCadastro(apto, ocorrencia)
           .then(function(resposta) {
             setOverlayAdmin(false);
             if (resposta && resposta.sucesso) {
               setStatus("Cadastro excluído com sucesso.", "ok");
-              
+
               // Dispara ordenação em background (sem bloquear o usuário)
-              fetch(WEB_APP_URL, {
-                method: "POST",
-                body: JSON.stringify({ funcao: "executarOrdenacaoAposOperacao" })
-              }).catch(function() {
+              DataService.ordenarAposOperacao().catch(function() {
                 // Silencia erros de ordenação, pois o cadastro já foi excluído com sucesso
               });
-              
+
               setTimeout(function() {
                 carregarAptosDoServidor();
                 var select = document.getElementById("aptoAdmin");
@@ -564,7 +535,7 @@
           })
           .catch(function(err) {
             setOverlayAdmin(false);
-            setStatus("Não foi possível excluir o cadastro.", "erro");
+            setStatus((err && err.message) || "Não foi possível excluir o cadastro.", "erro");
           });
       });
     });
@@ -591,31 +562,7 @@
     setStatus("", "");
     setOverlayAdmin(true, "Aguarde: buscando cadastro...");
 
-    function chamarFuncao(nomeFuncao, aptoBusca, ocorrenciaBusca) {
-      return fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          funcao: nomeFuncao,
-          apto: aptoBusca,
-          ocorrencia: ocorrenciaBusca
-        })
-      }).then(function(response) {
-        return response.text().then(function(texto) {
-          var conteudo = String(texto || "").trim();
-          if (!response.ok) {
-            throw new Error("Backend indisponível (HTTP " + response.status + ").");
-          }
-
-          if (!conteudo || conteudo.charAt(0) !== "{") {
-            throw new Error("Backend não retornou JSON válido.");
-          }
-
-          return JSON.parse(conteudo);
-        });
-      });
-    }
-
-    return chamarFuncao("buscarDadosPorApartamentoSimples", apto, ocorrencia)
+    return DataService.obterMoradorPorApto(apto, ocorrencia)
       .then(function(respostaFinal) {
         setOverlayAdmin(false);
 
@@ -645,7 +592,7 @@
       })
       .catch(function(err) {
         setOverlayAdmin(false);
-        setStatus("Backend indisponível. Não foi possível buscar os dados.", "erro");
+        setStatus((err && err.message) || "Backend indisponível. Não foi possível buscar os dados.", "erro");
         return false;
       });
   }

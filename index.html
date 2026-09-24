@@ -26,6 +26,9 @@
 
   <!-- Scripts JS -->
   <script src="js/regras.js" defer></script>
+  <script src="js/data/FirebaseRepository.js" defer></script>
+  <script src="js/data/GoogleSheetsRepository.js" defer></script>
+  <script src="js/data/DataService.js" defer></script>
   <script src="js/mascaras.js" defer></script>
   <script src="js/ui-formulario.js" defer></script>
   <script src="js/form-controle.js" defer></script>
@@ -38,6 +41,10 @@
   <p class="link-admin-topo">
     <a href="admin.html" rel="noopener noreferrer">Acessar área da administração (restrita ao síndico e conselho)</a>
   </p>
+  <div id="avisoContingenciaPublico" class="aviso-contingencia" hidden>
+    ⚠️ <strong>Modo de contingência</strong><br>
+    Os dados estão sendo carregados do backup do Google Sheets. Novos envios estão temporariamente desativados.
+  </div>
   <h1>Condomínio Souza Franco</h1>
   <h2 class="subtitulo">Cadastro de moradores</h2>
   <p class="subtitle">

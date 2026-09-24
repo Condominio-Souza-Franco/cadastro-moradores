@@ -182,29 +182,7 @@ async function consultarPorCpf() {
   }
 
   try {
-    const response = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        funcao: 'buscarDadosPorCpfESeguranca',
-        cpf: cpfLimpo,
-        nascimento: nascInput
-      })
-    });
-
-    const respostaTexto = await response.text();
-    let resposta = null;
-
-    try {
-      resposta = respostaTexto ? JSON.parse(respostaTexto) : null;
-    } catch (parseError) {
-      console.error('Erro ao interpretar resposta da busca:', parseError, respostaTexto);
-      throw new Error('A resposta do servidor veio em formato inválido.');
-    }
-
-    if (!response.ok) {
-      const mensagemErroServidor = (resposta && resposta.mensagem) ? resposta.mensagem : `HTTP ${response.status}`;
-      throw new Error(mensagemErroServidor);
-    }
+    const resposta = await DataService.obterMoradorPorCpf(cpfLimpo, nascInput);
 
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;

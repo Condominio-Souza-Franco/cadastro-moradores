@@ -52,6 +52,24 @@
 
       <div id="statusRelatorioPdfDrive" class="status"></div>
 
+      <div id="fonteDadosAdmin" class="card-fonte-dados">
+        <h2>Fonte de dados</h2>
+        <div class="opcoes-fonte-dados">
+          <label><input type="radio" name="fonteDados" value="auto"> Automático</label>
+          <label><input type="radio" name="fonteDados" value="firebase"> Firebase</label>
+          <label><input type="radio" name="fonteDados" value="sheets"> Google Sheets</label>
+        </div>
+        <div class="indicador-fonte-atual">
+          Fonte atualmente utilizada: <span id="indicadorFonteAtual">—</span>
+        </div>
+        <div id="avisoContingenciaAdmin" class="aviso-contingencia" hidden>
+          ⚠️ <strong>Modo de contingência</strong><br>
+          Os dados estão sendo carregados do backup do Google Sheets. Alterações estão temporariamente desativadas.
+        </div>
+        <button type="button" id="btnTestarConexoes">Testar conexões</button>
+        <div id="resultadoTesteConexoes" class="resultado-teste-conexoes"></div>
+      </div>
+
       <div id="buscaGeralAdmin" class="card-busca">
         <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
         <div class="linha-busca">
@@ -89,6 +107,10 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="js/regras.js"></script>
   <script src="js/admin-auth.js"></script>
+  <script src="js/data/FirebaseRepository.js"></script>
+  <script src="js/data/GoogleSheetsRepository.js"></script>
+  <script src="js/data/DataService.js"></script>
+  <script src="js/admin-fonte-dados.js"></script>
   <script src="js/admin-simples.js"></script>
   <script src="js/admin-relatorio.js"></script>
   <script src="js/admin-busca.js"></script>

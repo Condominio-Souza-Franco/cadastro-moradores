@@ -572,14 +572,7 @@ function executarEnvio(fileData, eAtualizacao) {
     declaracao: document.getElementById("declaracao").checked
   };
 
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      funcao: 'processarFormulario',
-      dados: dados
-    })
-  })
-  .then(response => interpretarRespostaComoJson(response, "Erro no envio:"))
+  DataService.salvarCadastro(dados)
   .then(res => {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
@@ -589,10 +582,7 @@ function executarEnvio(fileData, eAtualizacao) {
     if (res.sucesso) {
       mostrarAlerta("", "Cadastro enviado com sucesso!");
       // Dispara ordenação em background (sem bloquear o usuário)
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({ funcao: 'executarOrdenacaoAposOperacao' })
-      }).catch(function() {
+      DataService.ordenarAposOperacao().catch(function() {
         // Silencia erros de ordenação, pois o cadastro já foi salvo com sucesso
       });
       

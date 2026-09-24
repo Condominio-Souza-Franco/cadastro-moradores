@@ -463,12 +463,15 @@ function exibirHistoricoContratos(contratos) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  if (typeof WEB_APP_URL !== 'undefined') {
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify({ funcao: 'obterTodoGabaritoVagas' })
-    })
-      .then(response => response.json())
+  if (typeof DataService !== 'undefined') {
+    function atualizarAvisoContingenciaPublico() {
+      const aviso = document.getElementById('avisoContingenciaPublico');
+      if (aviso) aviso.hidden = !DataService.isReadOnly();
+    }
+    atualizarAvisoContingenciaPublico();
+    window.addEventListener('datasource-changed', atualizarAvisoContingenciaPublico);
+
+    DataService.obterGabaritoVagasCompleto()
       .then(res => {
         if (res && res.sucesso) {
           gabaritoVagasCache = res.dados;

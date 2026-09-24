@@ -1,5 +1,6 @@
 (function() {
   var AUTH_STORAGE_KEY = "adminSimplesAuthUser";
+  var AUTH_TOKEN_STORAGE_KEY = "adminSimplesAuthToken";
   var RELOAD_MAX_TENTATIVAS = 20;
   var RELOAD_INTERVAL_MS = 400;
   var timerInicializacaoLogin = null;
@@ -56,13 +57,16 @@
     el.hidden = !mensagem;
   }
 
-  function salvarSessao(payload) {
+  function salvarSessao(payload, idToken) {
     var seguro = {
       email: textoLimpo(payload.email),
       name: textoLimpo(payload.name),
       picture: textoLimpo(payload.picture)
     };
     sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(seguro));
+    if (idToken) {
+      sessionStorage.setItem(AUTH_TOKEN_STORAGE_KEY, idToken);
+    }
     return seguro;
   }
 
@@ -80,6 +84,11 @@
 
   function limparSessao() {
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+  }
+
+  function obterIdToken() {
+    return sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY) || "";
   }
 
   function atualizarCabecalhoUsuario(usuario) {
@@ -166,7 +175,7 @@
             return;
           }
 
-          var usuario = salvarSessao(payload);
+          var usuario = salvarSessao(payload, response && response.credential);
           liberarAreaAdmin(usuario);
         }
       });
@@ -236,6 +245,10 @@
 
     inicializarLoginGoogleComRetentativa(config);
   }
+
+  window.AdminAuth = {
+    getIdToken: obterIdToken
+  };
 
   document.addEventListener("DOMContentLoaded", init);
 })();

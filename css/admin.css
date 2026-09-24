@@ -209,6 +209,67 @@ p {
   padding: 8px 14px;
 }
 
+.card-fonte-dados {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.card-fonte-dados h2 {
+  font-size: 1.05rem;
+  margin: 0 0 10px;
+}
+
+.opcoes-fonte-dados {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.opcoes-fonte-dados label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.indicador-fonte-atual {
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.aviso-contingencia {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid #f0c36d;
+  background: #fff8e6;
+  border-radius: 8px;
+  color: #6b4e00;
+  font-size: 0.9rem;
+}
+
+#btnTestarConexoes {
+  height: auto;
+  padding: 8px 14px;
+}
+
+.resultado-teste-conexoes {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* Modo somente leitura: esconde ações de escrita quando a fonte ativa é o Google Sheets */
+.modo-somente-leitura .btn-excluir-cadastro {
+  display: none;
+}
+
 .card-busca {
   margin-bottom: 16px;
   padding: 12px;
