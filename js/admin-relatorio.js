@@ -91,8 +91,9 @@
       ".barra-acoes button { font-size: 14px; padding: 8px 16px; cursor: pointer; }" +
       ".cabecalho { text-align: center; margin-bottom: 4mm; }" +
       ".cabecalho h1 { font-size: 13pt; margin: 0 0 1mm; }" +
+      ".cabecalho .subtitulo { font-size: 9.5pt; font-weight: 600; margin: 0 0 1mm; color: #333; }" +
       ".cabecalho .data-geracao { font-size: 7.5pt; color: #555; }" +
-      ".colunas { column-count: 4; column-gap: 3mm; }" +
+      ".colunas { column-count: 5; column-gap: 3mm; }" +
       ".apto-card { break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; border: 0.3pt solid #999; border-radius: 2px; padding: 1.4mm 1.8mm; margin: 0 0 1.6mm; font-size: 6.4pt; line-height: 1.2; }" +
       ".apto-card h2 { font-size: 7.4pt; margin: 0 0 0.6mm; padding-bottom: 0.6mm; border-bottom: 0.3pt solid #ccc; }" +
       ".apto-card .linha-principal { font-weight: bold; }" +
@@ -106,7 +107,8 @@
       "<body>" +
       '<div class="barra-acoes"><button type="button" onclick="window.print()">Imprimir / Salvar PDF</button></div>' +
       '<div class="cabecalho">' +
-        "<h1>Relatório de Contatos por Apartamento</h1>" +
+        "<h1>Condomínio Souza Franco</h1>" +
+        '<div class="subtitulo">Relatório de Contatos por Apartamento</div>' +
         '<div class="data-geracao">Gerado em ' + formatarDataHoraAtual() + "</div>" +
       "</div>" +
       '<div class="colunas">' + cards + "</div>" +
@@ -174,10 +176,61 @@
       });
   }
 
+  function setStatusDrive(texto, tipo) {
+    var status = document.getElementById("statusRelatorioPdfDrive");
+    if (!status) return;
+    status.className = "status" + (tipo ? " " + tipo : "");
+    status.innerHTML = texto || "";
+  }
+
+  function gerarRelatorioPdfNoDrive() {
+    setStatusDrive("");
+    setOverlay(true, "Aguarde: gerando PDF e salvando no Drive...");
+
+    fetch(WEB_APP_URL, {
+      method: "POST",
+      body: JSON.stringify({ funcao: "gerarRelatorioApartamentosPdfDrive" })
+    })
+      .then(function(response) {
+        return response.text().then(function(texto) {
+          var conteudo = String(texto || "").trim();
+          if (!response.ok) {
+            throw new Error("Backend indisponível (HTTP " + response.status + ").");
+          }
+          if (!conteudo || conteudo.charAt(0) !== "{") {
+            throw new Error("Backend não retornou JSON válido.");
+          }
+          return JSON.parse(conteudo);
+        });
+      })
+      .then(function(resposta) {
+        setOverlay(false);
+
+        if (!resposta || !resposta.sucesso || !resposta.url) {
+          setStatusDrive(escaparHtml((resposta && resposta.mensagem) || "Não foi possível gerar o PDF."), "erro");
+          return;
+        }
+
+        setStatusDrive(
+          'PDF gerado: <a href="' + escaparHtml(resposta.url) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(resposta.nomeArquivo) + '</a>',
+          "ok"
+        );
+      })
+      .catch(function() {
+        setOverlay(false);
+        setStatusDrive("Backend indisponível. Não foi possível gerar o relatório.", "erro");
+      });
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     var botao = document.getElementById("btnRelatorioPdf");
     if (botao) {
       botao.addEventListener("click", gerarRelatorio);
+    }
+
+    var botaoDrive = document.getElementById("btnRelatorioPdfDrive");
+    if (botaoDrive) {
+      botaoDrive.addEventListener("click", gerarRelatorioPdfNoDrive);
     }
   });
 })();
