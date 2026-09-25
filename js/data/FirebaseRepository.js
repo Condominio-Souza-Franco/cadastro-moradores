@@ -49,6 +49,10 @@
     gerarRelatorioApartamentosPdfDrive: function() {
       return chamarBackend("fbGerarRelatorioApartamentosPdfDrive", {}, true);
     },
+    // Últimas criações/edições/exclusões (mais recente primeiro).
+    listarHistorico: function(limite) {
+      return chamarBackend("fbListarHistorico", { limite: limite }, true);
+    },
 
     // ---- Escrita ----
     // "ocorrencia" evita excluir o cadastro errado quando o apartamento tem mais de um.

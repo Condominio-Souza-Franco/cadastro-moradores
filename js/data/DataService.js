@@ -332,6 +332,9 @@
     gerarRelatorioApartamentosPdfDrive: function() {
       return executarLeitura("gerarRelatorioApartamentosPdfDrive", []);
     },
+    listarHistorico: function(limite) {
+      return executarLeitura("listarHistorico", [limite]);
+    },
 
     // ---- Operações de escrita (bloqueadas quando a fonte ativa é Google Sheets) ----
     excluirCadastro: function(apto, ocorrencia) {

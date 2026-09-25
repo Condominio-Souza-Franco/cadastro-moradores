@@ -502,11 +502,10 @@ document.addEventListener('DOMContentLoaded', function() {
     atualizarAvisoContingenciaPublico();
     window.addEventListener('datasource-changed', atualizarAvisoContingenciaPublico);
 
-    DataService.obterGabaritoVagasCompleto()
+    obterGabaritoUmaVez() // mesma requisição usada pelas listas de apartamentos (ui-formulario.js)
       .then(res => {
         if (res && res.sucesso) {
           gabaritoVagasCache = res.dados;
-          console.log('SUCESSO: Gabarito carregado via fetch. Total de linhas:', gabaritoVagasCache.length);
         } else {
           console.warn('FALHA: O servidor retornou sucesso=false ao buscar o gabarito.');
         }

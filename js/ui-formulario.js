@@ -9,16 +9,46 @@ function rolarParaSecao(secaoId) {
   }
 }
 
+// O gabarito (apto, andar, vaga) é buscado UMA vez e reaproveitado pelas duas listas de
+// apartamentos e pela informação da vaga — antes eram 3 requisições ao abrir a página.
+let promessaGabarito = null;
+
+function obterGabaritoUmaVez() {
+  if (!promessaGabarito) {
+    promessaGabarito = DataService.obterGabaritoVagasCompleto().catch(function(erro) {
+      promessaGabarito = null; // permite tentar de novo numa próxima chamada
+      throw erro;
+    });
+  }
+  return promessaGabarito;
+}
+
+// Mesmo formato que a rota de lista de apartamentos devolvia: { sucesso, apartamentos: [...] }.
+function obterApartamentosDoGabarito() {
+  return obterGabaritoUmaVez().then(function(res) {
+    const vistos = {};
+    const apartamentos = [];
+    (res && res.sucesso && Array.isArray(res.dados) ? res.dados : []).forEach(function(linha) {
+      const apto = String((linha && linha[0]) || '').trim();
+      if (apto && apto !== '-' && !vistos[apto]) {
+        vistos[apto] = true;
+        apartamentos.push(apto);
+      }
+    });
+    return { sucesso: apartamentos.length > 0, apartamentos: apartamentos };
+  });
+}
+
 function popularDropdownAptos() {
   const select = document.getElementById('vagaAptoRelacionado');
   if (!select) return;
-  
+
   select.innerHTML = '<option value="">Carregando apartamentos...</option>';
   select.disabled = true;
 
   // Busca apartamentos do backend
   if (typeof DataService !== 'undefined') {
-    DataService.obterApartamentosGabarito()
+    obterApartamentosDoGabarito()
       .then(data => {
         select.innerHTML = '<option value="">Apto envolvido...</option>';
         
@@ -82,16 +112,14 @@ function popularDropdownApto() {
 
   // Busca apartamentos do backend
   if (typeof DataService !== 'undefined') {
-    DataService.obterApartamentosGabarito()
+    obterApartamentosDoGabarito()
       .then(data => {
-        console.log('Resposta obterApartamentosGabaritoVagas:', data);
         select.innerHTML = '<option value="">Selecione o apartamento...</option>';
         
         if (data.sucesso && Array.isArray(data.apartamentos)) {
           data.apartamentos.forEach(apto => {
             select.add(new Option(apto, apto));
           });
-          console.log('Total de apartamentos carregados:', data.apartamentos.length);
         } else {
           console.warn('Resposta sem sucesso ou apartamentos inválidos:', data);
         }

@@ -905,3 +905,84 @@ button:hover {
     width: 100%;
   }
 }
+
+/* ==========================================
+   ÚLTIMAS ALTERAÇÕES (seção recolhível)
+   ========================================== */
+.card-historico {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.card-historico > summary {
+  padding: 10px 14px;
+  color: var(--accent-color);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.historico-conteudo {
+  padding: 0 14px 12px;
+}
+
+.lista-historico {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista-historico li {
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.historico-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+
+.historico-tipo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.historico-tipo.criacao { color: var(--ok); }
+.historico-tipo.edicao { color: var(--accent-color); }
+.historico-tipo.exclusao { color: var(--error); }
+
+.historico-quando,
+.historico-autor,
+.historico-detalhe {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.historico-detalhe {
+  margin-top: 2px;
+}
+
+.btn-atualizar-historico {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent-color);
+  cursor: pointer;
+}
+
+.historico-conteudo .status:empty {
+  display: none;
+}

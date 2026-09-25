@@ -45,6 +45,10 @@
     gerarRelatorioApartamentosPdfDrive: function() {
       return chamarBackend("gerarRelatorioApartamentosPdfDrive", {}, true);
     },
+    // O histórico de alterações só existe no Firebase.
+    listarHistorico: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "O histórico de alterações só está disponível com o Firebase.", itens: [] });
+    },
 
     // ---- Escrita ----
     excluirCadastro: function(apto, ocorrencia) {

@@ -518,6 +518,7 @@
             setOverlayAdmin(false);
             if (resposta && resposta.sucesso) {
               setStatus("Cadastro excluído com sucesso.", "ok");
+              window.dispatchEvent(new CustomEvent("cadastro-excluido"));
 
               setTimeout(function() {
                 carregarAptosDoServidor();
