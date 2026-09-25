@@ -6,6 +6,9 @@ let gabaritoVagasCache = [];
 let historicoContratosCache = [];
 let modalResolver = null;
 let snapshotFormularioOriginal = null;
+// Cadastro carregado pela busca (id + CPF/data usados na busca). O backend exige esses dados
+// para aceitar uma atualização — sem eles, qualquer um poderia sobrescrever outro cadastro.
+let cadastroConsultado = null;
 
 // Serializa (em ordem do DOM) todos os campos do formulário, para detectar se o usuário
 // realmente alterou algo antes de permitir o envio de uma atualização.
@@ -22,6 +25,10 @@ function capturarSnapshotFormulario() {
     } else {
       partes.push(String(el.value || '').trim());
     }
+  });
+  // Remover um contrato do histórico também conta como alteração.
+  historicoContratosCache.forEach(function(item) {
+    partes.push(item && (item.url || item.link || item.href || ''));
   });
   return partes.join('\u0001');
 }
@@ -210,6 +217,7 @@ function redefinirBotoesParaNovoCadastro() {
 function voltarTelaInicial() {
   try {
     snapshotFormularioOriginal = null;
+    cadastroConsultado = null;
 
     const containerPreview = document.getElementById('containerPreviewContrato');
     const nomeArquivoSpan = document.getElementById('nomeArquivoSelecionado');
@@ -393,7 +401,8 @@ function normalizarHistoricoContratos(contratos) {
   const itens = Array.isArray(contratos) ? contratos : [];
   return itens
     .map(function(item) {
-      const url = item && (item.url || item.link || item.href || '');
+      // Só http/https: descarta links "javascript:" e similares.
+      const url = window.Utils.urlSegura(item && (item.url || item.link || item.href || ''));
       if (!url) return null;
 
       const texto = item && (item.texto || item.nome || item.label || 'Contrato anterior');

@@ -9,16 +9,18 @@
 //   "firebase" usa somente Firebase; não faz fallback; permite leitura e escrita.
 //   "sheets"   usa somente Google Sheets; somente leitura (bloqueia escrita).
 //
-// IMPORTANTE (fase de transição, enquanto o Firebase ainda não foi configurado):
-// Hoje o Firebase não está configurado (FirebaseRepository.isConfigured() === false).
-// Para não quebrar o cadastro público (que só existe via Google Sheets/Apps Script hoje),
-// no modo "auto" as ESCRITAS continuam indo para o Google Sheets normalmente enquanto o
-// Firebase não estiver configurado. Assim que o Firebase for configurado, a regra pedida
-// passa a valer integralmente: toda escrita vai para o Firebase, e o modo "sheets" (manual
-// ou por fallback automático de leitura) fica só-leitura.
+// O Firebase já está configurado (FirebaseRepository.isConfigured() === true): toda escrita
+// vai para o Firebase, e o modo "sheets" (manual ou por fallback automático de leitura) fica
+// só-leitura. Como as escritas não vão mais para a planilha, os dados do Sheets podem estar
+// desatualizados quando o fallback é usado.
+//
+// As duas fontes passam pelo MESMO Apps Script (WEB_APP_URL). O fallback só ajuda quando o
+// Firestore falha; se o Apps Script inteiro estiver fora, as duas fontes falham juntas.
 (function() {
   var STORAGE_KEY = "dataSourceMode";
-  var DATA_SOURCE_TIMEOUT = 5000; // ms — tempo máximo de espera pelo Firebase no modo automático
+  // ms — tempo máximo de espera pelo Firebase no modo automático. O Apps Script pode levar
+  // vários segundos para "acordar"; um valor baixo derrubava a sessão para somente leitura à toa.
+  var DATA_SOURCE_TIMEOUT = 15000;
 
   var state = {
     configuredSource: "auto", // "auto" | "firebase" | "sheets"
@@ -56,6 +58,17 @@
     if (state.activeSource === fonte && !mudouFalha) return;
     state.activeSource = fonte;
     dispararMudanca();
+  }
+
+  function ehErroAutorizacao(erro) {
+    var codigo = erro && erro.codigoFonte;
+    return codigo === "nao-autorizado" || codigo === "permission-denied";
+  }
+
+  // Sessão expirada não é indisponibilidade da fonte: não acende o indicador vermelho.
+  function marcarFalhaTotal(erro) {
+    if (ehErroAutorizacao(erro)) return;
+    setActiveSource("none", true);
   }
 
   function carregarPreferencia() {
@@ -144,7 +157,7 @@
           return resultado;
         })
         .catch(function(erro) {
-          setActiveSource("none", true);
+          marcarFalhaTotal(erro);
           log("Firebase indisponível (modo manual, sem fallback): " + (erro && erro.codigoFonte));
           throw erro;
         });
@@ -158,7 +171,7 @@
           return resultado;
         })
         .catch(function(erro) {
-          setActiveSource("none", true);
+          marcarFalhaTotal(erro);
           throw erro;
         });
     }
@@ -172,10 +185,10 @@
         return resultado;
       })
       .catch(function(erroFirebase) {
-        if (erroFirebase && erroFirebase.codigoFonte === "permission-denied") {
-          // Falha de autorização não deve ser contornada trocando de fonte.
-          log("Firebase indisponível: permissão negada (sem fallback automático)");
-          setActiveSource("none", true);
+        if (ehErroAutorizacao(erroFirebase)) {
+          // Falha de autorização (ex.: sessão expirada) não é indisponibilidade: não troca de
+          // fonte nem marca falha total — o usuário só precisa fazer login de novo.
+          log("Firebase: não autorizado (sem fallback automático)");
           throw erroFirebase;
         }
 
@@ -195,6 +208,7 @@
             return resultado;
           })
           .catch(function(erroSheets) {
+            if (ehErroAutorizacao(erroSheets)) throw erroSheets;
             setActiveSource("none", true);
             throw criarErroFonte("nenhuma-fonte", "Não foi possível carregar os dados: Firebase e Google Sheets estão indisponíveis.");
           });
@@ -226,12 +240,12 @@
                 return resultado;
               })
               .catch(function(erroSheets) {
-                setActiveSource("none", true);
+                marcarFalhaTotal(erroSheets);
                 throw erroSheets;
               });
           }
 
-          setActiveSource("none", true);
+          marcarFalhaTotal(erro);
           throw erro;
         });
     }
@@ -243,7 +257,7 @@
         return resultado;
       })
       .catch(function(erro) {
-        setActiveSource("none", true);
+        marcarFalhaTotal(erro);
         throw erro;
       });
   }
@@ -325,10 +339,6 @@
     },
     salvarCadastro: function(dados) {
       return executarEscrita("salvarCadastro", [dados]);
-    },
-    ordenarAposOperacao: function() {
-      // Operação de baixo risco (ordenação em segundo plano); não bloqueia em modo leitura.
-      return chamarRepositorio(window.GoogleSheetsRepository, "ordenarAposOperacao", []);
     }
   };
 

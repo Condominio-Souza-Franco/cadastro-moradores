@@ -1,12 +1,5 @@
 (function() {
-  function escaparHtml(valor) {
-    return String(valor || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+  var escaparHtml = window.Utils.escaparHtml;
 
   function setOverlay(visivel, mensagem) {
     if (typeof window.setOverlayAdmin === "function") {
@@ -35,13 +28,14 @@
       .then(function(resposta) {
         setOverlay(false);
 
-        if (!resposta || !resposta.sucesso || !resposta.url) {
+        var urlPdf = resposta ? window.Utils.urlSegura(resposta.url) : "";
+        if (!resposta || !resposta.sucesso || !urlPdf) {
           setStatusDrive(escaparHtml((resposta && resposta.mensagem) || "Não foi possível gerar o PDF."), "erro");
           return;
         }
 
         setStatusDrive(
-          'PDF gerado: <a href="' + escaparHtml(resposta.url) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(resposta.nomeArquivo) + '</a>',
+          'PDF gerado: <a href="' + escaparHtml(urlPdf) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(resposta.nomeArquivo) + '</a>',
           "ok"
         );
       })

@@ -549,10 +549,10 @@ function executarEnvio(fileData, eAtualizacao) {
       const grupos = document.querySelectorAll(".item-ocupante");
       const resultado = [];
       grupos.forEach(g => {
-        const nome = g.querySelector(".oc-nome")?.value.trim() || "";
-        const tel = g.querySelector(".oc-tel")?.value.trim() || "";
-        const nascInput = g.querySelector(".oc-nasc")?.value.trim() || "";
-        const vinculo = g.querySelector(".oc-vinculo")?.value.trim() || "";
+        const nome = limparValorLista(g.querySelector(".oc-nome")?.value);
+        const tel = limparValorLista(g.querySelector(".oc-tel")?.value);
+        const nascInput = limparValorLista(g.querySelector(".oc-nasc")?.value);
+        const vinculo = limparValorLista(g.querySelector(".oc-vinculo")?.value);
 
         if (nome !== "") {
           let nascFormatada = nascInput;
@@ -577,6 +577,13 @@ function executarEnvio(fileData, eAtualizacao) {
     declaracao: document.getElementById("declaracao").checked
   };
 
+  // Atualização: o backend só aceita se o CPF e a data usados na busca baterem com o cadastro.
+  if (!isMoradorNovo && cadastroConsultado) {
+    dados.cadastroId = cadastroConsultado.id;
+    dados.credencialCpf = cadastroConsultado.cpf;
+    dados.credencialNasc = cadastroConsultado.nasc;
+  }
+
   DataService.salvarCadastro(dados)
   .then(res => {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
@@ -585,15 +592,11 @@ function executarEnvio(fileData, eAtualizacao) {
     setOverlayProcessamento(false);
 
     if (res.sucesso) {
-      mostrarAlerta("", "Cadastro enviado com sucesso!");
-      // Dispara ordenação em background (sem bloquear o usuário)
-      DataService.ordenarAposOperacao().catch(function() {
-        // Silencia erros de ordenação, pois o cadastro já foi salvo com sucesso
-      });
-      
+      mostrarAlerta("", res.mensagem || "Cadastro enviado com sucesso!");
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+      mostrarAlerta((res && res.mensagem) || "Não foi possível enviar o cadastro. Tente novamente.", "Atenção");
     }
   })
   .catch(err => {

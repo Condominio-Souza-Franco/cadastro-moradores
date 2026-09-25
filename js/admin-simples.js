@@ -48,7 +48,8 @@
       }
 
       opcoes.forEach(function(opcao) {
-        var ocorrencia = parseInt(opcao && opcao.ocorrencia, 10) || 1;
+        // Firebase: id do cadastro (texto). Sheets (contingência): número da ocorrência.
+        var ocorrencia = textoLimpo(opcao && (opcao.id || opcao.ocorrencia)) || "1";
         var label = String((opcao && opcao.label) || item.apto).trim();
         var valor = item.apto + "__" + ocorrencia;
         select.add(new Option(label, valor));
@@ -77,8 +78,17 @@
         popularAptosFallback();
         return resposta;
       })
-      .catch(function() {
+      .catch(function(erro) {
+        if (erro && erro.codigoFonte === "nao-autorizado") {
+          // Sessão expirada: o admin-auth.js já voltou para a tela de login.
+          if (select) {
+            select.innerHTML = "";
+            select.add(new Option("Selecione...", ""));
+          }
+          return;
+        }
         popularAptosFallback();
+        setStatus("Não foi possível carregar a lista de apartamentos do servidor; exibindo a lista padrão.", "erro");
       });
   }
 
@@ -121,14 +131,7 @@
     return String(valor || "").trim();
   }
 
-  function escaparHtml(valor) {
-    return String(valor || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+  var escaparHtml = window.Utils.escaparHtml;
 
   function normalizarCampo(valor) {
     var texto = textoLimpo(valor);
@@ -384,7 +387,7 @@
   function montarHtmlRegistro(dados, indiceRegistro, ocorrenciaSelecionada) {
     var secoes = [];
     var tituloRegistro = indiceRegistro > 0 ? 'Ocorrência ' + (indiceRegistro + 1) : 'Registro';
-    var ocorrenciaReal = parseInt(ocorrenciaSelecionada, 10) || (indiceRegistro + 1);
+    var ocorrenciaReal = textoLimpo(dados.id || ocorrenciaSelecionada) || String(indiceRegistro + 1);
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
@@ -447,7 +450,8 @@
         contratosHtml.push('<ul class="lista-contratos">');
         historico.forEach(function(item) {
           var texto = textoLimpo(item && item.texto);
-          var url = textoLimpo(item && item.url);
+          // Só http/https: a URL vem do formulário público e não pode virar link "javascript:".
+          var url = window.Utils.urlSegura(item && item.url);
           var legenda = texto || "Contrato";
           var conteudo = url ? '<a href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(legenda) + '</a>' : escaparHtml(legenda);
           contratosHtml.push("<li>" + conteudo + "</li>");
@@ -482,7 +486,7 @@
       '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
-    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-consultar-outro" style="width: 75%; margin-right: 10px;">Consultar outro apartamento</button><button type="button" class="btn-excluir-cadastro" style="width: 25%;" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + ocorrenciaReal + '">Excluir cadastro</button></div>';
+    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-consultar-outro" style="width: 75%; margin-right: 10px;">Consultar outro apartamento</button><button type="button" class="btn-excluir-cadastro" style="width: 25%;" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '">Excluir cadastro</button></div>';
     return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
   }
 
@@ -500,10 +504,12 @@
     resultado.querySelectorAll(".btn-excluir-cadastro").forEach(function(botao) {
       botao.addEventListener("click", function() {
         var apto = botao.getAttribute("data-apto");
-        var ocorrencia = parseInt(botao.getAttribute("data-ocorrencia"), 10) || 1;
+        var ocorrencia = botao.getAttribute("data-ocorrencia") || "1";
+        var nome = botao.getAttribute("data-nome");
         if (!apto) return;
 
-        var confirmar = window.confirm("Deseja realmente excluir este cadastro do apartamento " + apto + " e apagar os dados da planilha em todas as abas?");
+        // Deixa claro QUAL cadastro será excluído: o apartamento pode ter outros (proprietário, inquilino...).
+        var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.");
         if (!confirmar) return;
 
         setOverlayAdmin(true, "Aguarde: excluindo cadastro...");
@@ -512,11 +518,6 @@
             setOverlayAdmin(false);
             if (resposta && resposta.sucesso) {
               setStatus("Cadastro excluído com sucesso.", "ok");
-
-              // Dispara ordenação em background (sem bloquear o usuário)
-              DataService.ordenarAposOperacao().catch(function() {
-                // Silencia erros de ordenação, pois o cadastro já foi excluído com sucesso
-              });
 
               setTimeout(function() {
                 carregarAptosDoServidor();
@@ -607,10 +608,7 @@
 
     var partesSelecao = valorSelecionado.split("__");
     var apto = String(partesSelecao[0] || "").trim();
-    var ocorrencia = parseInt(partesSelecao[1], 10);
-    if (isNaN(ocorrencia) || ocorrencia < 1) {
-      ocorrencia = 1;
-    }
+    var ocorrencia = String(partesSelecao[1] || "").trim() || "1";
 
     carregarRegistro(apto, ocorrencia);
   }
@@ -619,7 +617,11 @@
   window.setOverlayAdmin = setOverlayAdmin;
 
   function iniciarAppAdmin() {
-    if (appInicializado) return;
+    if (appInicializado) {
+      // Novo login após sessão expirada/encerrada: recarrega a lista com o token novo.
+      carregarAptosDoServidor();
+      return;
+    }
     appInicializado = true;
 
     // Mantém somente a lista local de apartamentos.

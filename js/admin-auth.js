@@ -3,7 +3,9 @@
   var AUTH_TOKEN_STORAGE_KEY = "adminSimplesAuthToken";
   var RELOAD_MAX_TENTATIVAS = 20;
   var RELOAD_INTERVAL_MS = 400;
+  var MENSAGEM_SESSAO_EXPIRADA = "Sua sessão expirou. Faça login novamente.";
   var timerInicializacaoLogin = null;
+  var timerExpiracaoSessao = null;
   var googleInicializadoClientId = "";
 
   function textoLimpo(valor) {
@@ -37,15 +39,35 @@
 
   function obterConfig() {
     if (typeof ADMIN_AUTH_CONFIG !== "object" || !ADMIN_AUTH_CONFIG) {
-      return { googleClientId: "", allowedEmails: [] };
+      return { googleClientId: "", allowedEmailHashes: [] };
     }
 
     return {
       googleClientId: textoLimpo(ADMIN_AUTH_CONFIG.googleClientId),
-      allowedEmails: Array.isArray(ADMIN_AUTH_CONFIG.allowedEmails)
-        ? ADMIN_AUTH_CONFIG.allowedEmails.map(normalizarEmail).filter(Boolean)
+      allowedEmailHashes: Array.isArray(ADMIN_AUTH_CONFIG.allowedEmailHashes)
+        ? ADMIN_AUTH_CONFIG.allowedEmailHashes.map(normalizarEmail).filter(Boolean)
         : []
     };
+  }
+
+  function hashEmail(email) {
+    if (!window.crypto || !crypto.subtle || typeof TextEncoder === "undefined") {
+      return Promise.reject(new Error("Navegador sem suporte a criptografia (é preciso abrir a página via https)."));
+    }
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalizarEmail(email)))
+      .then(function(buffer) {
+        return Array.prototype.map.call(new Uint8Array(buffer), function(byte) {
+          return ("0" + byte.toString(16)).slice(-2);
+        }).join("");
+      });
+  }
+
+  // Controla apenas o que a tela mostra; a autorização real dos dados é feita pelo backend.
+  function emailAutorizado(email, config) {
+    if (!email || !config.allowedEmailHashes.length) return Promise.resolve(false);
+    return hashEmail(email).then(function(hash) {
+      return config.allowedEmailHashes.indexOf(hash) !== -1;
+    });
   }
 
   function setMensagem(texto, tipo) {
@@ -61,13 +83,19 @@
     var seguro = {
       email: textoLimpo(payload.email),
       name: textoLimpo(payload.name),
-      picture: textoLimpo(payload.picture)
+      picture: textoLimpo(payload.picture),
+      // "exp" do token do Google, em milissegundos (o token vale ~1 hora).
+      expiraEm: (parseInt(payload.exp, 10) || 0) * 1000
     };
     sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(seguro));
     if (idToken) {
       sessionStorage.setItem(AUTH_TOKEN_STORAGE_KEY, idToken);
     }
     return seguro;
+  }
+
+  function sessaoExpirada(sessao) {
+    return !sessao || !sessao.expiraEm || Date.now() >= sessao.expiraEm;
   }
 
   function carregarSessao() {
@@ -83,6 +111,10 @@
   }
 
   function limparSessao() {
+    if (timerExpiracaoSessao) {
+      clearTimeout(timerExpiracaoSessao);
+      timerExpiracaoSessao = null;
+    }
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   }
@@ -105,6 +137,17 @@
     }
   }
 
+  // Encerra a sessão sozinho quando o token do Google expira, em vez de deixar o painel
+  // aberto com todas as consultas falhando.
+  function agendarExpiracao(usuario) {
+    if (timerExpiracaoSessao) clearTimeout(timerExpiracaoSessao);
+    var restante = usuario.expiraEm - Date.now();
+    if (restante <= 0) return;
+    timerExpiracaoSessao = setTimeout(function() {
+      encerrarSessao(MENSAGEM_SESSAO_EXPIRADA, "erro");
+    }, restante);
+  }
+
   function liberarAreaAdmin(usuario) {
     var gate = document.getElementById("authGate");
     var area = document.getElementById("adminArea");
@@ -113,6 +156,7 @@
 
     atualizarCabecalhoUsuario(usuario);
     setMensagem("");
+    agendarExpiracao(usuario);
     window.dispatchEvent(new CustomEvent("admin-auth-success", { detail: usuario || null }));
   }
 
@@ -165,18 +209,21 @@
             return;
           }
 
-          var email = normalizarEmail(payload.email);
-          var autorizado = config.allowedEmails.length > 0 && config.allowedEmails.indexOf(email) !== -1;
+          emailAutorizado(payload.email, config)
+            .then(function(autorizado) {
+              if (!autorizado) {
+                limparSessao();
+                bloquearAreaAdmin();
+                setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
+                return;
+              }
 
-          if (!autorizado) {
-            limparSessao();
-            bloquearAreaAdmin();
-            setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
-            return;
-          }
-
-          var usuario = salvarSessao(payload, response && response.credential);
-          liberarAreaAdmin(usuario);
+              var usuario = salvarSessao(payload, response && response.credential);
+              liberarAreaAdmin(usuario);
+            })
+            .catch(function(erro) {
+              setMensagem((erro && erro.message) || "Não foi possível validar o login Google.", "erro");
+            });
         }
       });
       googleInicializadoClientId = config.googleClientId;
@@ -212,21 +259,27 @@
     tentar();
   }
 
+  function encerrarSessao(mensagem, tipo) {
+    // Evita repetir o logout quando várias chamadas falham ao mesmo tempo.
+    var area = document.getElementById("adminArea");
+    if (!carregarSessao() && area && area.hidden) return;
+
+    limparSessao();
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.disableAutoSelect();
+    }
+    bloquearAreaAdmin();
+    setMensagem(mensagem, tipo);
+    inicializarLoginGoogleComRetentativa(obterConfig());
+    window.dispatchEvent(new CustomEvent("admin-auth-logout"));
+  }
+
   function configurarSair() {
     var btnSair = document.getElementById("btnSairAdmin");
     if (!btnSair) return;
 
     btnSair.addEventListener("click", function() {
-      var config = obterConfig();
-
-      limparSessao();
-      if (window.google && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect();
-      }
-      bloquearAreaAdmin();
-      setMensagem("Sessão encerrada.", "ok");
-      inicializarLoginGoogleComRetentativa(config);
-      window.dispatchEvent(new CustomEvent("admin-auth-logout"));
+      encerrarSessao("Sessão encerrada.", "ok");
     });
   }
 
@@ -235,12 +288,28 @@
 
     configurarSair();
 
+    // Disparado pelo js/data/backend.js quando o backend recusa o token (expirado ou inválido).
+    window.addEventListener("admin-auth-expired", function() {
+      encerrarSessao(MENSAGEM_SESSAO_EXPIRADA, "erro");
+    });
+
+    bloquearAreaAdmin();
+
     var sessao = carregarSessao();
-    if (sessao && config.allowedEmails.indexOf(normalizarEmail(sessao.email)) !== -1) {
-      liberarAreaAdmin(sessao);
+    if (sessao && !sessaoExpirada(sessao)) {
+      emailAutorizado(sessao.email, config)
+        .then(function(autorizado) {
+          if (autorizado) {
+            liberarAreaAdmin(sessao);
+          } else {
+            limparSessao();
+          }
+        })
+        .catch(function() {
+          limparSessao();
+        });
     } else {
       limparSessao();
-      bloquearAreaAdmin();
     }
 
     inicializarLoginGoogleComRetentativa(config);

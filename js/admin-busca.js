@@ -1,12 +1,5 @@
 (function() {
-  function escaparHtml(valor) {
-    return String(valor || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+  var escaparHtml = window.Utils.escaparHtml;
 
   function setStatusBusca(texto, tipo) {
     var status = document.getElementById("statusBuscaGeral");
@@ -64,7 +57,10 @@
     }
 
     container.innerHTML = resultados.map(function(item, indice) {
-      var titulo = "Apto " + escaparHtml(item.apto) + (item.ocorrencia > 1 ? " (ocorrência " + item.ocorrencia + ")" : "");
+      // Firebase envia "label" (apto + nome, e o tipo quando há mais de um cadastro no apto).
+      var titulo = item.label
+        ? "Apto " + escaparHtml(item.label)
+        : "Apto " + escaparHtml(item.apto) + (parseInt(item.ocorrencia, 10) > 1 ? " (ocorrência " + escaparHtml(item.ocorrencia) + ")" : "");
       var achados = Array.isArray(item.achados) ? item.achados : [];
       var listaAchados = achados.map(function(a) { return "<li>" + escaparHtml(a) + "</li>"; }).join("");
 
@@ -72,7 +68,7 @@
         '<div class="resultado-busca-item">' +
           '<div class="resultado-busca-titulo">' + titulo + "</div>" +
           "<ul>" + listaAchados + "</ul>" +
-          '<button type="button" class="btn-carregar-resultado" data-apto="' + escaparHtml(item.apto) + '" data-ocorrencia="' + item.ocorrencia + '" data-indice="' + indice + '">Carregar cadastro completo</button>' +
+          '<button type="button" class="btn-carregar-resultado" data-apto="' + escaparHtml(item.apto) + '" data-ocorrencia="' + escaparHtml(item.id || item.ocorrencia || "1") + '" data-indice="' + indice + '">Carregar cadastro completo</button>' +
         "</div>"
       );
     }).join("");
@@ -80,7 +76,7 @@
     container.querySelectorAll(".btn-carregar-resultado").forEach(function(botao) {
       botao.addEventListener("click", function() {
         var apto = botao.getAttribute("data-apto");
-        var ocorrencia = parseInt(botao.getAttribute("data-ocorrencia"), 10) || 1;
+        var ocorrencia = botao.getAttribute("data-ocorrencia") || "1";
         carregarApartamentoDaBusca(apto, ocorrencia);
       });
     });
@@ -109,8 +105,8 @@
         setStatusBusca(resultados.length ? ("Encontrado(s) " + resultados.length + " apartamento(s).") : "Nenhum resultado encontrado.", resultados.length ? "ok" : "");
         renderizarResultados(resultados);
       })
-      .catch(function() {
-        setStatusBusca("Backend indisponível. Não foi possível realizar a busca.", "erro");
+      .catch(function(erro) {
+        setStatusBusca((erro && erro.message) || "Backend indisponível. Não foi possível realizar a busca.", "erro");
       });
   }
 

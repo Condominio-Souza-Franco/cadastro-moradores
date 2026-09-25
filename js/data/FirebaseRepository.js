@@ -10,45 +10,8 @@
 // já implementados no Firestore. O upload do contrato em PDF continua indo para o Google
 // Drive (independente da planilha) — só o link fica salvo no documento do Firestore.
 (function() {
-  function criarErroFonte(codigo, mensagem) {
-    var erro = new Error(mensagem);
-    erro.codigoFonte = codigo;
-    return erro;
-  }
-
   function chamarBackend(funcao, payloadExtra, protegido) {
-    if (typeof WEB_APP_URL === "undefined" || !WEB_APP_URL) {
-      return Promise.reject(criarErroFonte("nao-configurado", "WEB_APP_URL não definido."));
-    }
-
-    var corpo = Object.assign({ funcao: funcao }, payloadExtra || {});
-    if (protegido && window.AdminAuth && typeof window.AdminAuth.getIdToken === "function") {
-      corpo.idToken = window.AdminAuth.getIdToken();
-    }
-
-    return fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(corpo) })
-      .then(function(response) {
-        return response.text().then(function(texto) {
-          var conteudo = String(texto || "").trim();
-
-          if (!response.ok) {
-            throw criarErroFonte("unavailable", "Backend indisponível (HTTP " + response.status + ").");
-          }
-          if (!conteudo || conteudo.charAt(0) !== "{") {
-            throw criarErroFonte("unavailable", "Backend não retornou JSON válido.");
-          }
-
-          var json = JSON.parse(conteudo);
-          if (json && json.autorizado === false) {
-            throw criarErroFonte("nao-autorizado", json.mensagem || "Não autorizado. Faça login novamente.");
-          }
-          return json;
-        });
-      })
-      .catch(function(erro) {
-        if (erro && erro.codigoFonte) throw erro;
-        throw criarErroFonte("unavailable", "Não foi possível conectar ao Firebase.");
-      });
+    return window.Backend.chamar(funcao, payloadExtra, protegido, "Firebase");
   }
 
   window.FirebaseRepository = {
@@ -64,8 +27,9 @@
     listarApartamentos: function() {
       return chamarBackend("fbListarApartamentos", {}, true);
     },
-    obterMoradorPorApto: function(apto) {
-      return chamarBackend("fbObterMoradorPorApto", { apto: apto }, true);
+    // "ocorrencia" identifica qual cadastro abrir quando o apartamento tem mais de um.
+    obterMoradorPorApto: function(apto, ocorrencia) {
+      return chamarBackend("fbObterMoradorPorApto", { apto: apto, ocorrencia: ocorrencia }, true);
     },
     obterMoradorPorCpf: function(cpf, nascimento) {
       return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento }, false);
@@ -87,14 +51,13 @@
     },
 
     // ---- Escrita ----
-    excluirCadastro: function(apto) {
-      return chamarBackend("fbExcluirCadastro", { apto: apto }, true);
+    // "ocorrencia" evita excluir o cadastro errado quando o apartamento tem mais de um.
+    excluirCadastro: function(apto, ocorrencia) {
+      return chamarBackend("fbExcluirCadastro", { apto: apto, ocorrencia: ocorrencia }, true);
     },
+    // Novo cadastro, ou atualização com dados.cadastroId + dados.credencialCpf/credencialNasc.
     salvarCadastro: function(dados) {
       return chamarBackend("fbSalvarCadastro", { dados: dados }, false);
-    },
-    ordenarAposOperacao: function() {
-      return Promise.resolve({ sucesso: true }); // Não existe "ordenar" no Firestore.
     },
 
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.

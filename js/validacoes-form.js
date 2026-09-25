@@ -246,7 +246,9 @@ async function consultarPorCpf() {
         tratarEscolhaTipoResidente(d.tipo);
       }
 
-      const aptoSelecionado = extrairAptoComoTexto(obterValorAlternativo(d, 'apto', 'aptoRelacionado', 'aptoVaga', 'vagaAptoRelacionado'));
+      // Só o apartamento do próprio cadastro: "aptoRelacionado"/"vagaAptoRelacionado" são o
+      // apartamento da vaga alugada e não podem ser usados como apartamento do morador.
+      const aptoSelecionado = extrairAptoComoTexto(obterValorAlternativo(d, 'apto'));
 
       if (aptoSelecionado) {
         const elApto = document.getElementById("apto");
@@ -266,6 +268,7 @@ async function consultarPorCpf() {
       exibirPassoTipoResidente();
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
+      cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput };
 
     } else {
       if (inputCpf) inputCpf.disabled = false;

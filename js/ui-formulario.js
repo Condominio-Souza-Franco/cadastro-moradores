@@ -275,6 +275,18 @@ async function tratarEscolhaTipoResidente(valor) {
   tipoResidenteEl.dataset.valorAnterior = valor;
 }
 
+// Escapa valores vindos do cadastro antes de colocá-los no HTML dos campos dinâmicos.
+// Sem isso, uma aspa (") no valor cortava o texto ao recarregar e ele era regravado cortado.
+function escaparValor(valor) {
+  return window.Utils.escaparHtml(valor);
+}
+
+// Os itens repetíveis são gravados como "campo | campo" (um item por linha). Um "|" ou uma
+// quebra de linha digitados pelo morador bagunçariam essa estrutura, então são trocados aqui.
+function limparValorLista(valor) {
+  return String(valor || '').replace(/\|/g, '/').replace(/[\r\n]+/g, ' ').trim();
+}
+
 function adicionarItemDinamico(containerId, classeGrupo, htmlCampos) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -295,10 +307,10 @@ function removerItem(btn) {
 
 function addEmergencia(v = {}) {
   adicionarItemDinamico('containerEmergencia', 'item-emergencia', `
-    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="em-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone/Celular<span class="required-star">*</span></span><input type="tel" inputmode="numeric" placeholder="21 999999999" class="em-tel" value="${v.tel || ''}"></div>
-    <div><span class="input-label">Endereço</span><input type="text" placeholder="Preenche o endereço" class="em-end" value="${v.end || ''}"></div>
-    <div><span class="input-label">Vínculo/Parentesco</span><input type="text" placeholder="Filho, companheiro, amigo etc" class="em-vinculo" value="${v.vinculo || ''}"></div>
+    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="em-nome" value="${escaparValor(v.nome)}"></div>
+    <div><span class="input-label">Telefone/Celular<span class="required-star">*</span></span><input type="tel" inputmode="numeric" placeholder="21 999999999" class="em-tel" value="${escaparValor(v.tel)}"></div>
+    <div><span class="input-label">Endereço</span><input type="text" placeholder="Preenche o endereço" class="em-end" value="${escaparValor(v.end)}"></div>
+    <div><span class="input-label">Vínculo/Parentesco</span><input type="text" placeholder="Filho, companheiro, amigo etc" class="em-vinculo" value="${escaparValor(v.vinculo)}"></div>
   `);
 }
 
@@ -318,10 +330,10 @@ function preencherEmergencias(texto) {
 
 function addOcupante(v = {}) {
   adicionarItemDinamico('containerOcupantes', 'item-ocupante', `
-    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Telefone/Celular</span><input type="tel" inputmode="numeric" placeholder="21 999999999" class="oc-tel" value="${v.tel || ''}"></div>
-    <div><span class="input-label">Data de nascimento</span><input type="text" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${v.nasc || ''}"></div>
-    <div><span class="input-label">Vínculo/Parentesco<span class="required-star">*</span></span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${v.vinculo || ''}"></div>
+    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="oc-nome" value="${escaparValor(v.nome)}"></div>
+    <div><span class="input-label">Telefone/Celular</span><input type="tel" inputmode="numeric" placeholder="21 999999999" class="oc-tel" value="${escaparValor(v.tel)}"></div>
+    <div><span class="input-label">Data de nascimento</span><input type="text" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" class="oc-nasc campo-mascara" data-mascara="data" value="${escaparValor(v.nasc)}"></div>
+    <div><span class="input-label">Vínculo/Parentesco<span class="required-star">*</span></span><input type="text" placeholder="Filho, companheiro, amigo etc" class="oc-vinculo" value="${escaparValor(v.vinculo)}"></div>
   `);
 }
 
@@ -339,9 +351,9 @@ function preencherOcupantes(texto) {
 function addCarro(v = {}) {
   adicionarItemDinamico('containerCarros', 'item-carro', `
     <div class="dynamic-row-veiculo">
-      <div class="campo-50"><span class="input-label">Marca e modelo<span class="required-star">*</span></span><input type="text" placeholder="Ex: Toyota Corolla" class="car-marca-modelo" value="${v.marcaModelo || ''}"></div>
-      <div class="campo-25"><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Prata" class="car-cor" value="${v.cor || ''}"></div>
-      <div class="campo-25"><span class="input-label">Placa<span class="required-star">*</span></span><input type="text" placeholder="Ex: SJP-4K82" class="car-placa" value="${v.placa || ''}"></div>
+      <div class="campo-50"><span class="input-label">Marca e modelo<span class="required-star">*</span></span><input type="text" placeholder="Ex: Toyota Corolla" class="car-marca-modelo" value="${escaparValor(v.marcaModelo)}"></div>
+      <div class="campo-25"><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Prata" class="car-cor" value="${escaparValor(v.cor)}"></div>
+      <div class="campo-25"><span class="input-label">Placa<span class="required-star">*</span></span><input type="text" placeholder="Ex: SJP-4K82" class="car-placa" value="${escaparValor(v.placa)}"></div>
     </div>
   `);
 }
@@ -360,9 +372,9 @@ function preencherCarros(texto) {
 function addMoto(v = {}) {
   adicionarItemDinamico('containerMotos', 'item-moto', `
     <div class="dynamic-row-veiculo">
-      <div class="campo-50"><span class="input-label">Marca e modelo<span class="required-star">*</span></span><input type="text" placeholder="Ex: Honda CG 160 Titan" class="moto-marca-modelo" value="${v.marcaModelo || ''}"></div>
-      <div class="campo-25"><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Azul" class="moto-cor" value="${v.cor || ''}"></div>
-      <div class="campo-25"><span class="input-label">Placa<span class="required-star">*</span></span><input type="text" placeholder="Ex: QMV-7H31" class="moto-placa" value="${v.placa || ''}"></div>
+      <div class="campo-50"><span class="input-label">Marca e modelo<span class="required-star">*</span></span><input type="text" placeholder="Ex: Honda CG 160 Titan" class="moto-marca-modelo" value="${escaparValor(v.marcaModelo)}"></div>
+      <div class="campo-25"><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Azul" class="moto-cor" value="${escaparValor(v.cor)}"></div>
+      <div class="campo-25"><span class="input-label">Placa<span class="required-star">*</span></span><input type="text" placeholder="Ex: QMV-7H31" class="moto-placa" value="${escaparValor(v.placa)}"></div>
     </div>
   `);
 }
@@ -380,8 +392,8 @@ function preencherMotos(texto) {
 
 function addBike(v = {}) {
   adicionarItemDinamico('containerBikes', 'item-bike', `
-    <div><span class="input-label">Marca</span><input type="text" placeholder="Ex: Caloi" class="bike-marca" value="${v.marca || ''}"></div>
-    <div><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Vermelha" class="bike-cor" value="${v.cor || ''}"></div>
+    <div><span class="input-label">Marca</span><input type="text" placeholder="Ex: Caloi" class="bike-marca" value="${escaparValor(v.marca)}"></div>
+    <div><span class="input-label">Cor<span class="required-star">*</span></span><input type="text" placeholder="Ex: Vermelha" class="bike-cor" value="${escaparValor(v.cor)}"></div>
   `);
 }
 
@@ -401,7 +413,7 @@ function addPet(v = {}) {
     <div class="pet-linha-principal">
       <div>
         <span class="input-label">Nome<span class="required-star">*</span></span>
-        <input type="text" placeholder="Preencha o nome" class="pet-nome" value="${v.nome || ''}">
+        <input type="text" placeholder="Preencha o nome" class="pet-nome" value="${escaparValor(v.nome)}">
       </div>
       <div>
         <span class="input-label">Porte<span class="required-star">*</span></span>
@@ -416,7 +428,7 @@ function addPet(v = {}) {
     <div class="pet-linha-inferior">
       <div>
         <span class="input-label">Espécie e raça<span class="required-star">*</span></span>
-        <input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${v.racaEspecie || ''}">
+        <input type="text" placeholder="Ex: Cachorro Beagle" class="pet-raca-especie" value="${escaparValor(v.racaEspecie)}">
       </div>
     </div>
   `);
@@ -446,9 +458,9 @@ function preencherPets(texto) {
 
 function addPrestador(v = {}) {
   adicionarItemDinamico('containerPrestadores', 'item-prestador', `
-    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="pr-nome" value="${v.nome || ''}"></div>
-    <div><span class="input-label">Serviço<span class="required-star">*</span></span><input type="text" placeholder="Ex: Diarista" class="pr-servico" value="${v.servico || ''}"></div>
-    <div><span class="input-label">Telefone/Celular<span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="pr-tel" value="${v.tel || ''}"></div>
+    <div><span class="input-label">Nome<span class="required-star">*</span></span><input type="text" placeholder="Preencha o nome" class="pr-nome" value="${escaparValor(v.nome)}"></div>
+    <div><span class="input-label">Serviço<span class="required-star">*</span></span><input type="text" placeholder="Ex: Diarista" class="pr-servico" value="${escaparValor(v.servico)}"></div>
+    <div><span class="input-label">Telefone/Celular<span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="pr-tel" value="${escaparValor(v.tel)}"></div>
     <div><span class="input-label">Possui chave?<span class="required-star">*</span></span><select class="pr-chave">
       <option value="">Selecione...</option>
       <option value="Sim" ${v.chave === 'Sim' ? 'selected' : ''}>Sim</option>
@@ -481,7 +493,7 @@ function coletarDadosGrupados(selectorGroup, camposSelectors) {
   grupos.forEach(g => {
     const valores = camposSelectors.map(s => {
       const el = g.querySelector(s);
-      return el ? el.value.trim() : "";
+      return el ? limparValorLista(el.value) : "";
     });
 
     if (valores[0] !== "") {
