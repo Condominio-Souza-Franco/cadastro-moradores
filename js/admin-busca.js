@@ -63,11 +63,9 @@
   function carregarApartamentoDaBusca(apto, ocorrencia) {
     if (typeof window.adminSimplesCarregarApartamento !== "function") return;
 
-    window.adminSimplesCarregarApartamento(apto, ocorrencia).then(function(sucesso) {
-      if (sucesso) {
-        mostrarSecaoBusca(false);
-      }
-    });
+    // O cadastro abre no painel "Consulta por apartamento", que vai para o topo; a busca continua
+    // aberta embaixo, com os resultados, para abrir outro.
+    window.adminSimplesCarregarApartamento(apto, ocorrencia);
   }
 
   function renderizarResultados(resultados) {

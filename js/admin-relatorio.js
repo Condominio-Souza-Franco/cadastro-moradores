@@ -25,7 +25,7 @@
     var data = new Date(iso);
     if (isNaN(data.getTime())) return "";
     function dois(n) { return String(n).padStart(2, "0"); }
-    return dois(data.getDate()) + "/" + dois(data.getMonth() + 1) + "/" + data.getFullYear() + " às " +
+    return dois(data.getDate()) + "/" + dois(data.getMonth() + 1) + "/" + data.getFullYear() + " " +
       dois(data.getHours()) + ":" + dois(data.getMinutes());
   }
 
@@ -38,7 +38,7 @@
       partes.push("Ainda não foi gerado.");
     } else {
       partes.push('<a class="link-mais-recente" href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
-        "📄 Mais recente: " + escaparHtml(formatarDataHora(info.geradoEm)) + " — abrir PDF</a>");
+        "📄 PDF mais recente · " + escaparHtml(formatarDataHora(info.geradoEm)) + "</a>");
     }
     if (atualizando) partes.push('<span class="aviso-atualizando">Atualizando com a última alteração...</span>');
     setHtml(id, partes.join(" "), atualizando ? "atualizando" : "");

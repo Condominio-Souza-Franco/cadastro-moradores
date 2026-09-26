@@ -111,13 +111,14 @@ body {
   color: var(--ok);
 }
 
+/* 1ª linha: nome e e-mail à esquerda, "Dados" e "Sair" à direita, sem quebrar linha. */
 .topo-admin {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: nowrap;
 }
 
 .topo-admin-acoes {
@@ -127,15 +128,20 @@ body {
 }
 
 .auth-usuario {
-  font-size: 0.86rem;
+  min-width: 0;
+  font-size: 0.72rem;
   color: var(--muted);
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-sair {
-  height: 32px;
-  padding: 0 10px;
-  font-size: 0.84rem;
+  height: 26px;
+  padding: 0 9px;
+  font-size: 0.72rem;
+  flex-shrink: 0;
   border-radius: 999px;
   border: 1px solid #b9c8d8;
   background: #fff;
@@ -1205,11 +1211,15 @@ button:hover {
 /* Link do PDF mais recente: o texto todo é o link, em destaque. */
 .situacao-relatorio .link-mais-recente {
   display: inline-block;
-  padding: 7px 12px;
+  max-width: 100%;
+  padding: 6px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border: 1px solid var(--accent-color);
   border-radius: 8px;
   background: var(--surface);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-decoration: none;
 }
@@ -1281,3 +1291,126 @@ button:hover {
 }
 
 .historico-tipo.mudouse { color: #8a6d3b; }
+
+/* ==========================================
+   MENU E PAINÉIS DO ADMIN (js/admin-paineis.js)
+   ========================================== */
+.topo-links {
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+
+.menu-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.menu-admin button {
+  width: 100%;
+  height: auto;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--accent-color);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.menu-admin button.ativo {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+.paineis-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paineis-admin:has(.painel-admin:not([hidden])) {
+  margin-bottom: 12px;
+}
+
+.painel-admin {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(20, 40, 60, 0.06);
+}
+
+.painel-admin[hidden] {
+  display: none !important;
+}
+
+.painel-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.painel-topo h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--primary-color);
+}
+
+.btn-fechar-painel {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.btn-fechar-painel:hover {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.painel-admin .link-planilha-admin,
+.painel-admin .relatorios-admin {
+  margin: 0;
+}
+
+.painel-admin .card-busca {
+  margin: 0;
+}
+
+/* No celular, "button { width: 100% }" não vale para os botões pequenos do topo e o × dos painéis. */
+.topo-admin-acoes .btn-sair,
+.painel-topo .btn-fechar-painel {
+  width: auto;
+}
+
+.painel-topo .btn-fechar-painel {
+  width: 30px;
+}
+
+.topo-links a {
+  font-size: 0.8rem;
+}
+
+.situacao-relatorio .link-mais-recente {
+  box-sizing: border-box;
+  font-size: 0.78rem;
+}
+
+.situacao-relatorio .link-mais-recente {
+  padding: 6px 8px;
+  font-size: 0.76rem;
+}

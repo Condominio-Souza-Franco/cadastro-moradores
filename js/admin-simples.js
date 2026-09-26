@@ -633,6 +633,8 @@
   }
 
   function carregarRegistro(apto, ocorrencia) {
+    // O cadastro aparece no painel "Consulta por apartamento" (abre e vai para o topo).
+    if (window.AdminPaineis) window.AdminPaineis.abrir("painelConsulta");
     setStatus("", "");
     setOverlayAdmin(true, "Aguarde: buscando cadastro...");
 

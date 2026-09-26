@@ -60,50 +60,100 @@
 
       <div id="conteudoPrincipalAdmin">
         <div class="topo-links">
-          <a href="https://condominio-souza-franco.github.io/cadastro-moradores/index.html">← voltar para cadastro</a>
-        </div>
-        <h1>Consulta por apartamento</h1>
-        <p>Selecione o apartamento para carregar todas as informações disponíveis no cadastro.</p>
-        <div class="link-planilha-admin">
-          <strong>Links úteis:</strong>
-          <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
-          <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
-          <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
+          <a href="https://condominio-souza-franco.github.io/cadastro-moradores/index.html">← voltar para a página inicial</a>
         </div>
 
-        <!-- Dois relatórios em PDF, com conteúdos que não se repetem. São gerados sozinhos depois de
-             cada alteração cadastral; aqui fica o link do mais recente (js/admin-relatorio.js). -->
-        <div class="relatorios-admin">
-          <div class="relatorio-item">
-            <div class="relatorio-titulo">Relatório de contatos</div>
-            <p class="descricao-acao">
-              <strong>Para a administração.</strong> Um quadro por apartamento: responsável e contato,
-              contatos de emergência, ocupantes, prestadores (com chave ou não) e pets.
-              Não traz veículos. Fica na pasta "Relatório de contatos" do Drive.
-            </p>
-            <div id="situacaoRelatorioContatos" class="situacao-relatorio">Carregando...</div>
-            <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1dLdxTGZhJNw6IduyJjDz_4g9u0Cwye95?usp=sharing" target="_blank" rel="noopener noreferrer">Backups de Relatórios de Contatos</a>
-          </div>
+        <!-- Menu: cada botão abre/fecha o seu painel (js/admin-paineis.js). Nenhum é prioridade:
+             o último aberto aparece em cima dos outros, e cada painel tem um × para fechar. -->
+        <nav class="menu-admin" aria-label="Seções da administração">
+          <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
+          <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
+          <button type="button" data-painel="painelConsulta" aria-pressed="false">Consulta por apartamento</button>
+          <button type="button" data-painel="painelBusca" aria-pressed="false">Busca geral</button>
+        </nav>
 
-          <div class="relatorio-item">
-            <div class="relatorio-titulo">Lista de veículos</div>
-            <p class="descricao-acao">
-              <strong>Para a portaria.</strong> Todos os carros e motos por apartamento, com a vaga que ocupam
-              (apto, vaga, tipo, modelo, cor e placa), os apartamentos sem veículo com a sua vaga e, no fim,
-              o mapa da garagem (G1 e G2) com os veículos desenhados em cada vaga.
-              Fica na pasta "Relatório de veículos" do Drive.
-            </p>
-            <div id="situacaoListaVeiculos" class="situacao-relatorio">Carregando...</div>
-            <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1ZHTUh1wWCMGOsHfhnqTOXyUbqnz97KGF?usp=sharing" target="_blank" rel="noopener noreferrer">Backups das Listas de veículos</a>
-          </div>
+        <div id="paineisAdmin" class="paineis-admin">
+          <section id="painelLinks" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Links úteis</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <div class="link-planilha-admin">
+              <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
+              <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
+              <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
+            </div>
+          </section>
 
-          <p class="descricao-acao relatorios-nota">
-            Os dois são atualizados sozinhos a cada alteração cadastral (um PDF novo só quando algo neles muda)
-            e vão em anexo no e-mail de alterações. Consideram só quem mora no prédio: cadastros marcados
-            como "mudou-se" ficam de fora.
-          </p>
+          <section id="painelRelatorios" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Relatórios</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <!-- Dois relatórios em PDF, com conteúdos que não se repetem. São gerados sozinhos depois de
+                 cada alteração cadastral; aqui fica o link do mais recente (js/admin-relatorio.js). -->
+            <div class="relatorios-admin">
+              <div class="relatorio-item">
+                <div class="relatorio-titulo">Relatório de contatos</div>
+                <p class="descricao-acao">
+                  <strong>Para a administração.</strong> Um quadro por apartamento: responsável e contato,
+                  contatos de emergência, ocupantes, prestadores (com chave ou não) e pets.
+                  Não traz veículos. Fica na pasta "Relatório de contatos" do Drive.
+                </p>
+                <div id="situacaoRelatorioContatos" class="situacao-relatorio">Carregando...</div>
+                <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1dLdxTGZhJNw6IduyJjDz_4g9u0Cwye95?usp=sharing" target="_blank" rel="noopener noreferrer">Backups de Relatórios de Contatos</a>
+              </div>
+
+              <div class="relatorio-item">
+                <div class="relatorio-titulo">Lista de veículos</div>
+                <p class="descricao-acao">
+                  <strong>Para a portaria.</strong> Todos os carros e motos por apartamento, com a vaga que ocupam
+                  (apto, vaga, tipo, modelo, cor e placa), os apartamentos sem veículo com a sua vaga e, no fim,
+                  o mapa da garagem (G1 e G2) com os veículos desenhados em cada vaga.
+                  Fica na pasta "Relatório de veículos" do Drive.
+                </p>
+                <div id="situacaoListaVeiculos" class="situacao-relatorio">Carregando...</div>
+                <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1ZHTUh1wWCMGOsHfhnqTOXyUbqnz97KGF?usp=sharing" target="_blank" rel="noopener noreferrer">Backups das Listas de veículos</a>
+              </div>
+
+              <p class="descricao-acao relatorios-nota">
+                Os dois são atualizados sozinhos a cada alteração cadastral (um PDF novo só quando algo neles muda)
+                e vão em anexo no e-mail de alterações. Consideram só quem mora no prédio: cadastros marcados
+                como "mudou-se" ficam de fora.
+              </p>
+            </div>
+          </section>
+
+          <section id="painelConsulta" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Consulta por apartamento</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <p>Selecione o apartamento para carregar todas as informações disponíveis no cadastro.</p>
+            <div class="linha">
+              <label for="aptoAdmin">Apartamento:</label>
+              <select id="aptoAdmin">
+                <option value="">Selecione...</option>
+              </select>
+              <button type="button" id="btnBuscarApto">Carregar dados</button>
+            </div>
+
+            <div id="statusAdmin" class="status"></div>
+            <div id="resultadoAdmin" class="resultado vazio">
+              <div class="resultado-placeholder">Nenhum dado carregado.</div>
+            </div>
+          </section>
+
+          <section id="painelBusca" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Busca geral</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <div id="buscaGeralAdmin" class="card-busca">
+              <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
+              <div class="linha-busca">
+                <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
+                <div class="campo-busca">
+                  <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
+                  <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
+                </div>
+                <button type="button" id="btnBuscaGeral">Buscar</button>
+              </div>
+              <div id="statusBuscaGeral" class="status"></div>
+              <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+            </div>
+          </section>
         </div>
 
+        <!-- Home do admin: sempre visível embaixo do menu. -->
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
           <summary>Últimas alterações cadastrais</summary>
@@ -116,35 +166,6 @@
             </div>
           </div>
         </details>
-
-        <div id="buscaGeralAdmin" class="card-busca">
-          <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
-          <div class="linha-busca">
-            <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
-            <div class="campo-busca">
-              <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
-              <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
-            </div>
-            <button type="button" id="btnBuscaGeral">Buscar</button>
-          </div>
-          <div id="statusBuscaGeral" class="status"></div>
-          <div id="resultadosBuscaGeral" class="resultados-busca"></div>
-        </div>
-
-        <button type="button" id="btnVoltarBusca" class="btn-voltar-busca" hidden>← Voltar para busca</button>
-
-        <div class="linha">
-          <label for="aptoAdmin">Apartamento:</label>
-          <select id="aptoAdmin">
-            <option value="">Selecione...</option>
-          </select>
-          <button type="button" id="btnBuscarApto">Carregar dados</button>
-        </div>
-
-        <div id="statusAdmin" class="status"></div>
-        <div id="resultadoAdmin" class="resultado vazio">
-          <div class="resultado-placeholder">Nenhum dado carregado.</div>
-        </div>
       </div>
     </div>
   </div>
@@ -157,17 +178,18 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926f"></script>
-  <script src="js/utils.js?v=20260926f"></script>
-  <script src="js/data/backend.js?v=20260926f"></script>
-  <script src="js/admin-auth.js?v=20260926f"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926f"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926f"></script>
-  <script src="js/data/DataService.js?v=20260926f"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926f"></script>
-  <script src="js/admin-simples.js?v=20260926f"></script>
-  <script src="js/admin-relatorio.js?v=20260926f"></script>
-  <script src="js/admin-busca.js?v=20260926f"></script>
-  <script src="js/admin-historico.js?v=20260926f"></script>
+  <script src="js/regras.js?v=20260926g"></script>
+  <script src="js/utils.js?v=20260926g"></script>
+  <script src="js/data/backend.js?v=20260926g"></script>
+  <script src="js/admin-auth.js?v=20260926g"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926g"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926g"></script>
+  <script src="js/data/DataService.js?v=20260926g"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926g"></script>
+  <script src="js/admin-simples.js?v=20260926g"></script>
+  <script src="js/admin-relatorio.js?v=20260926g"></script>
+  <script src="js/admin-busca.js?v=20260926g"></script>
+  <script src="js/admin-historico.js?v=20260926g"></script>
+  <script src="js/admin-paineis.js?v=20260926g"></script>
 </body>
 </html>
