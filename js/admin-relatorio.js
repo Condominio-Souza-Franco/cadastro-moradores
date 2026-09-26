@@ -1,48 +1,23 @@
 // ==========================================
 // RELATÓRIOS EM PDF (ADMIN): contatos e lista de veículos
 // ==========================================
-// Cada relatório tem um botão, uma área de status (resultado da última geração nesta sessão) e
-// uma "situação": quando foi gerado pela última vez e se está desatualizado — houve alguma
-// alteração cadastral depois disso. A situação é carregada ao entrar no painel e depois de
-// cada geração ou alteração.
+// Os PDFs são gerados sozinhos no backend depois de cada alteração cadastral (só quando o
+// conteúdo muda). Aqui só mostramos o mais recente de cada um. Logo depois de uma alteração,
+// a geração ainda está rodando em segundo plano: mostramos "atualizando" e consultamos de novo.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
+  var ESPERA_ATUALIZANDO_MS = 20000;
+  var MAX_TENTATIVAS = 6;
 
   var RELATORIOS = {
-    contatos: {
-      botao: "btnRelatorioPdfDrive",
-      status: "statusRelatorioPdfDrive",
-      situacao: "situacaoRelatorioContatos",
-      gerar: function() { return DataService.gerarRelatorioApartamentosPdfDrive(); },
-      aguarde: "Aguarde: gerando o relatório de contatos e salvando no Drive...",
-      nome: "relatório de contatos"
-    },
-    veiculos: {
-      botao: "btnListaVeiculosPdf",
-      status: "statusListaVeiculos",
-      situacao: "situacaoListaVeiculos",
-      gerar: function() { return DataService.gerarListaVeiculosPdfDrive(); },
-      aguarde: "Aguarde: gerando a lista de veículos e salvando no Drive...",
-      nome: "lista de veículos"
-    }
+    contatos: "situacaoRelatorioContatos",
+    veiculos: "situacaoListaVeiculos"
   };
-
-  function setOverlay(visivel, mensagem) {
-    if (typeof window.setOverlayAdmin === "function") {
-      window.setOverlayAdmin(visivel, mensagem);
-      return;
-    }
-    var overlay = document.getElementById("overlayProcessamento");
-    var mensagemEl = document.getElementById("overlayProcessamentoMensagem");
-    if (!overlay) return;
-    if (mensagemEl && mensagem) mensagemEl.textContent = mensagem;
-    overlay.classList.toggle("hidden", !visivel);
-  }
 
   function setHtml(id, html, classe) {
     var el = document.getElementById(id);
     if (!el) return;
-    if (classe !== undefined) el.className = classe;
+    el.className = "situacao-relatorio" + (classe ? " " + classe : "");
     el.innerHTML = html || "";
   }
 
@@ -54,73 +29,59 @@
       dois(data.getHours()) + ":" + dois(data.getMinutes());
   }
 
-  // "Último gerado em 26/09/2026 às 10:32 (abrir)" + aviso de desatualizado, se for o caso.
-  function mostrarSituacao(config, info) {
-    if (!info) {
-      setHtml(config.situacao, "", "situacao-relatorio");
-      return;
-    }
+  // "Mais recente: 26/09/2026 às 10:32 — abrir PDF" (+ "atualizando..." se for o caso).
+  function mostrarSituacao(id, info, atualizando) {
+    if (!info) return setHtml(id, "");
     var partes = [];
-    if (info.nunca) {
-      partes.push("Ainda não foi gerado nenhum PDF.");
+    var url = window.Utils.urlSegura(info.url);
+    if (info.nunca || !url) {
+      partes.push("Ainda não foi gerado.");
     } else {
-      var url = window.Utils.urlSegura(info.url);
-      partes.push("Último gerado em " + escaparHtml(formatarDataHora(info.geradoEm)) +
-        (url ? ' (<a href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">abrir</a>)' : "") + ".");
+      partes.push("Mais recente: " + escaparHtml(formatarDataHora(info.geradoEm)) +
+        ' — <a href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">abrir PDF</a>');
     }
-    if (info.datado && !info.nunca) {
-      partes.push('<span class="aviso-datado">⚠️ Desatualizado: houve alterações cadastrais depois dele. Gere um novo antes de usar.</span>');
-    }
-    setHtml(config.situacao, partes.join(" "), "situacao-relatorio" + (info.datado && !info.nunca ? " datado" : ""));
+    if (atualizando) partes.push('<span class="aviso-atualizando">Atualizando com a última alteração...</span>');
+    setHtml(id, partes.join(" "), atualizando ? "atualizando" : "");
   }
 
-  var carregandoSituacao = false;
+  var carregando = false;
+  var tentativas = 0;
+  var timer = null;
+
   function carregarSituacao() {
-    if (carregandoSituacao || !window.DataService || typeof DataService.situacaoRelatorios !== "function") return;
-    carregandoSituacao = true;
+    if (carregando || !window.DataService || typeof DataService.situacaoRelatorios !== "function") return;
+    carregando = true;
+    clearTimeout(timer);
     DataService.situacaoRelatorios()
       .then(function(resposta) {
-        if (!resposta || !resposta.sucesso) return;
-        mostrarSituacao(RELATORIOS.contatos, resposta.contatos);
-        mostrarSituacao(RELATORIOS.veiculos, resposta.veiculos);
-      })
-      .catch(function() { /* sem a situação, os botões continuam funcionando */ })
-      .then(function() { carregandoSituacao = false; });
-  }
-
-  function gerar(config) {
-    setHtml(config.status, "", "status");
-    setOverlay(true, config.aguarde);
-
-    config.gerar()
-      .then(function(resposta) {
-        setOverlay(false);
-        var urlPdf = resposta ? window.Utils.urlSegura(resposta.url) : "";
-        if (!resposta || !resposta.sucesso || !urlPdf) {
-          setHtml(config.status, escaparHtml((resposta && resposta.mensagem) || "Não foi possível gerar o PDF."), "status erro");
+        if (!resposta || !resposta.sucesso) {
+          Object.keys(RELATORIOS).forEach(function(k) {
+            setHtml(RELATORIOS[k], escaparHtml((resposta && resposta.mensagem) || "Não foi possível verificar o relatório."), "erro");
+          });
           return;
         }
-        setHtml(config.status,
-          'PDF gerado: <a href="' + escaparHtml(urlPdf) + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(resposta.nomeArquivo) + "</a>",
-          "status ok");
-        carregarSituacao();
+        Object.keys(RELATORIOS).forEach(function(k) { mostrarSituacao(RELATORIOS[k], resposta[k], resposta.atualizando); });
+        // Ainda gerando em segundo plano: consulta de novo daqui a pouco.
+        if (resposta.atualizando && tentativas < MAX_TENTATIVAS) {
+          tentativas++;
+          timer = setTimeout(carregarSituacao, ESPERA_ATUALIZANDO_MS);
+        }
       })
-      .catch(function(erro) {
-        setOverlay(false);
-        setHtml(config.status, escaparHtml((erro && erro.message) || "Backend indisponível. Não foi possível gerar o " + config.nome + "."), "status erro");
-      });
+      .catch(function() {
+        Object.keys(RELATORIOS).forEach(function(k) { setHtml(RELATORIOS[k], "Não foi possível verificar o relatório.", "erro"); });
+      })
+      .then(function() { carregando = false; });
+  }
+
+  function recomecar() {
+    tentativas = 0;
+    // Dá tempo para a execução em segundo plano começar antes de consultar.
+    clearTimeout(timer);
+    timer = setTimeout(carregarSituacao, 3000);
   }
 
   // Registrado cedo: o login pode liberar o painel antes do DOMContentLoaded deste script.
-  window.addEventListener("admin-auth-success", carregarSituacao);
-  window.addEventListener("cadastro-excluido", carregarSituacao);
-  window.addEventListener("cadastro-alterado", carregarSituacao);
-
-  document.addEventListener("DOMContentLoaded", function() {
-    Object.keys(RELATORIOS).forEach(function(chave) {
-      var config = RELATORIOS[chave];
-      var botao = document.getElementById(config.botao);
-      if (botao) botao.addEventListener("click", function() { gerar(config); });
-    });
-  });
+  window.addEventListener("admin-auth-success", function() { tentativas = 0; carregarSituacao(); });
+  window.addEventListener("cadastro-excluido", recomecar);
+  window.addEventListener("cadastro-alterado", recomecar);
 })();

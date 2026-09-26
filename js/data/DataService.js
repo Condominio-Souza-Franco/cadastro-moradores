@@ -352,6 +352,9 @@
     salvarCadastroAdmin: function(dados) {
       return executarEscrita("salvarCadastroAdmin", [dados]);
     },
+    excluirHistorico: function(id) {
+      return executarEscrita("excluirHistorico", [id]);
+    },
     definirSituacaoCadastro: function(apto, ocorrencia, situacao) {
       return executarEscrita("definirSituacaoCadastro", [apto, ocorrencia, situacao]);
     }

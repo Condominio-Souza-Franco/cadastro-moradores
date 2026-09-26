@@ -72,32 +72,33 @@
           <a href="https://drive.google.com/drive/folders/1dLdxTGZhJNw6IduyJjDz_4g9u0Cwye95?usp=sharing" target="_blank" rel="noopener noreferrer">Backups de Relatórios de Contatos</a>
         </div>
 
-        <!-- Dois relatórios em PDF, com conteúdos que não se repetem. O aviso de "desatualizado"
-             aparece quando houve alteração cadastral depois do último PDF gerado (js/admin-relatorio.js). -->
+        <!-- Dois relatórios em PDF, com conteúdos que não se repetem. São gerados sozinhos depois de
+             cada alteração cadastral; aqui fica o link do mais recente (js/admin-relatorio.js). -->
         <div class="relatorios-admin">
           <div class="relatorio-item">
-            <button type="button" id="btnRelatorioPdfDrive">Gerar relatório de contatos (PDF)</button>
+            <div class="relatorio-titulo">Relatório de contatos</div>
             <p class="descricao-acao">
               <strong>Para a administração.</strong> Um quadro por apartamento: responsável e contato, vaga,
               contatos de emergência, ocupantes, prestadores (com chave ou não) e pets.
-              Não traz veículos. Salvo na pasta "Relatório de contatos" do Drive.
+              Não traz veículos. Fica na pasta "Relatório de contatos" do Drive.
             </p>
-            <div id="situacaoRelatorioContatos" class="situacao-relatorio"></div>
-            <div id="statusRelatorioPdfDrive" class="status"></div>
+            <div id="situacaoRelatorioContatos" class="situacao-relatorio">Carregando...</div>
           </div>
 
           <div class="relatorio-item">
-            <button type="button" id="btnListaVeiculosPdf">Gerar lista de veículos (PDF)</button>
+            <div class="relatorio-titulo">Lista de veículos</div>
             <p class="descricao-acao">
-              <strong>Para a portaria.</strong> Todos os carros e motos, ordenados por apartamento: apto, tipo,
-              modelo, cor e placa. Salvo na pasta "Relatório de veículos" do Drive.
+              <strong>Para a portaria.</strong> Todos os carros e motos por apartamento, com a vaga que ocupam
+              (apto, vaga, tipo, modelo, cor e placa), e os apartamentos sem veículo com a sua vaga.
+              Fica na pasta "Relatório de veículos" do Drive.
             </p>
-            <div id="situacaoListaVeiculos" class="situacao-relatorio"></div>
-            <div id="statusListaVeiculos" class="status"></div>
+            <div id="situacaoListaVeiculos" class="situacao-relatorio">Carregando...</div>
           </div>
 
           <p class="descricao-acao relatorios-nota">
-            Os dois consideram só quem mora no prédio: cadastros marcados como "mudou-se" ficam de fora.
+            Os dois são atualizados sozinhos a cada alteração cadastral (um PDF novo só quando algo neles muda)
+            e vão em anexo no e-mail de alterações. Consideram só quem mora no prédio: cadastros marcados
+            como "mudou-se" ficam de fora.
           </p>
         </div>
 
@@ -107,7 +108,10 @@
           <div class="historico-conteudo">
             <div id="statusHistorico" class="status"></div>
             <ol id="listaHistorico" class="lista-historico"></ol>
-            <button type="button" id="btnAtualizarHistorico" class="btn-atualizar-historico">Atualizar</button>
+            <div class="historico-acoes">
+              <button type="button" id="btnMaisHistorico" class="btn-atualizar-historico" hidden>Mostrar mais 5</button>
+              <button type="button" id="btnAtualizarHistorico" class="btn-atualizar-historico">Atualizar</button>
+            </div>
           </div>
         </details>
 
@@ -151,17 +155,17 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926d"></script>
-  <script src="js/utils.js?v=20260926d"></script>
-  <script src="js/data/backend.js?v=20260926d"></script>
-  <script src="js/admin-auth.js?v=20260926d"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926d"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926d"></script>
-  <script src="js/data/DataService.js?v=20260926d"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926d"></script>
-  <script src="js/admin-simples.js?v=20260926d"></script>
-  <script src="js/admin-relatorio.js?v=20260926d"></script>
-  <script src="js/admin-busca.js?v=20260926d"></script>
-  <script src="js/admin-historico.js?v=20260926d"></script>
+  <script src="js/regras.js?v=20260926e"></script>
+  <script src="js/utils.js?v=20260926e"></script>
+  <script src="js/data/backend.js?v=20260926e"></script>
+  <script src="js/admin-auth.js?v=20260926e"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926e"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926e"></script>
+  <script src="js/data/DataService.js?v=20260926e"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926e"></script>
+  <script src="js/admin-simples.js?v=20260926e"></script>
+  <script src="js/admin-relatorio.js?v=20260926e"></script>
+  <script src="js/admin-busca.js?v=20260926e"></script>
+  <script src="js/admin-historico.js?v=20260926e"></script>
 </body>
 </html>

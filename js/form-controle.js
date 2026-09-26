@@ -361,9 +361,26 @@ function tratarMoradorNovo(isMarcado) {
   }
 }
 
+// Link "Clique aqui" do formulário: abre o mapa da garagem com a vaga do apto pintada
+// (mapa-vaga.html). Sem vaga conhecida, abre o mapa dos dois andares sem destaque.
+function atualizarLinkMapaVaga(apto, andar, numero) {
+  const link = document.getElementById('linkMapaVaga');
+  const texto = document.getElementById('textoLinkMapaVaga');
+  if (!link) return;
+  if (apto && andar && numero) {
+    const params = new URLSearchParams({ apto: String(apto).trim(), andar: String(andar).trim(), vaga: String(numero).trim() });
+    link.href = 'mapa-vaga.html?' + params.toString();
+    if (texto) texto.textContent = ' (com a sua vaga pintada — dá para salvar em PDF)';
+  } else {
+    link.href = 'mapa-vaga.html';
+    if (texto) texto.textContent = '';
+  }
+}
+
 function atualizarInfoVagaLocal(apto) {
   const divVaga = document.getElementById('infoVagaGaragem');
   if (!divVaga) return;
+  atualizarLinkMapaVaga(null);
 
   if (!apto || apto.trim() === '') {
     divVaga.style.display = 'none';
@@ -382,6 +399,7 @@ function atualizarInfoVagaLocal(apto) {
 
       if (numero && andar) {
         vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
+        atualizarLinkMapaVaga(apto, andar, numero);
       }
       break;
     }

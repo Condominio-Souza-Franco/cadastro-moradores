@@ -74,6 +74,10 @@
     salvarCadastroAdmin: function(dados) {
       return chamarBackend("fbAdminSalvarCadastro", { dados: dados }, true);
     },
+    // Apaga uma entrada das "Últimas alterações cadastrais" (só administração).
+    excluirHistorico: function(id) {
+      return chamarBackend("fbExcluirHistorico", { id: id }, true);
+    },
     // situacao: "mudou-se" ou "ativo" (só administração).
     definirSituacaoCadastro: function(apto, ocorrencia, situacao) {
       return chamarBackend("fbDefinirSituacaoCadastro", { apto: apto, ocorrencia: ocorrencia, situacao: situacao }, true);
