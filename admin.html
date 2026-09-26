@@ -74,19 +74,40 @@
 
         <div class="acoes-admin">
           <button type="button" id="btnRelatorioPdfDrive">Gerar relatório de contatos (PDF)</button>
+          <p class="descricao-acao">
+            Gera um PDF com todos os apartamentos: responsável e contato, vaga, contatos de emergência,
+            ocupantes, prestadores (com chave ou não), carros, motos e pets. O arquivo fica salvo na
+            pasta "Relatório de contatos" do Drive.
+          </p>
         </div>
 
         <div id="statusRelatorioPdfDrive" class="status"></div>
 
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
-          <summary>Últimas alterações</summary>
+          <summary>Últimas alterações cadastrais</summary>
           <div class="historico-conteudo">
             <div id="statusHistorico" class="status"></div>
             <ol id="listaHistorico" class="lista-historico"></ol>
             <button type="button" id="btnAtualizarHistorico" class="btn-atualizar-historico">Atualizar</button>
           </div>
         </details>
+
+        <div id="buscaGeralAdmin" class="card-busca">
+          <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
+          <div class="linha-busca">
+            <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
+            <div class="campo-busca">
+              <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
+              <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
+            </div>
+            <button type="button" id="btnBuscaGeral">Buscar</button>
+          </div>
+          <div id="statusBuscaGeral" class="status"></div>
+          <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+        </div>
+
+        <button type="button" id="btnVoltarBusca" class="btn-voltar-busca" hidden>← Voltar para busca</button>
 
         <div class="linha">
           <label for="aptoAdmin">Apartamento:</label>
@@ -95,21 +116,6 @@
           </select>
           <button type="button" id="btnBuscarApto">Carregar dados</button>
         </div>
-
-        <div id="buscaGeralAdmin" class="card-busca">
-          <label for="buscaGeralInput">Buscar em toda a planilha (nome, carro, pet, prestador...):</label>
-          <div class="linha-busca">
-            <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
-            <button type="button" id="btnBuscaGeral">Buscar</button>
-          </div>
-          <div class="busca-resultado-area">
-            <button type="button" id="btnFecharBusca" class="btn-fechar" aria-label="Fechar resultados da busca" title="Fechar" hidden>&times;</button>
-            <div id="statusBuscaGeral" class="status"></div>
-            <div id="resultadosBuscaGeral" class="resultados-busca"></div>
-          </div>
-        </div>
-
-        <button type="button" id="btnVoltarBusca" class="btn-voltar-busca" hidden>← Voltar para busca</button>
 
         <div id="statusAdmin" class="status"></div>
         <div id="resultadoAdmin" class="resultado vazio">
@@ -127,17 +133,17 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926a"></script>
-  <script src="js/utils.js?v=20260926a"></script>
-  <script src="js/data/backend.js?v=20260926a"></script>
-  <script src="js/admin-auth.js?v=20260926a"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926a"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926a"></script>
-  <script src="js/data/DataService.js?v=20260926a"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926a"></script>
-  <script src="js/admin-simples.js?v=20260926a"></script>
-  <script src="js/admin-relatorio.js?v=20260926a"></script>
-  <script src="js/admin-busca.js?v=20260926a"></script>
-  <script src="js/admin-historico.js?v=20260926a"></script>
+  <script src="js/regras.js?v=20260926b"></script>
+  <script src="js/utils.js?v=20260926b"></script>
+  <script src="js/data/backend.js?v=20260926b"></script>
+  <script src="js/admin-auth.js?v=20260926b"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926b"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926b"></script>
+  <script src="js/data/DataService.js?v=20260926b"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926b"></script>
+  <script src="js/admin-simples.js?v=20260926b"></script>
+  <script src="js/admin-relatorio.js?v=20260926b"></script>
+  <script src="js/admin-busca.js?v=20260926b"></script>
+  <script src="js/admin-historico.js?v=20260926b"></script>
 </body>
 </html>

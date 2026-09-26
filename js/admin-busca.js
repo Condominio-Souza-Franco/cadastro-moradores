@@ -13,16 +13,27 @@
     if (container) container.innerHTML = "";
   }
 
-  function mostrarBotaoFechar(mostrar) {
+  // O × dentro do campo aparece quando há algo digitado ou algum resultado/mensagem na tela.
+  function atualizarBotaoLimpar() {
     var botao = document.getElementById("btnFecharBusca");
-    if (botao) botao.hidden = !mostrar;
+    var input = document.getElementById("buscaGeralInput");
+    var status = document.getElementById("statusBuscaGeral");
+    var resultados = document.getElementById("resultadosBuscaGeral");
+    if (!botao) return;
+    var temAlgo = (input && input.value.trim()) || (status && status.textContent) || (resultados && resultados.innerHTML);
+    botao.hidden = !temAlgo;
   }
 
-  // × da busca: some com a mensagem e os resultados (o termo digitado continua no campo).
-  function fecharResultados() {
+  // × da busca: limpa o termo, a mensagem e os resultados, e devolve o foco ao campo.
+  function limparBusca() {
+    var input = document.getElementById("buscaGeralInput");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
     limparResultados();
     setStatusBusca("", "");
-    mostrarBotaoFechar(false);
+    atualizarBotaoLimpar();
   }
 
   function mostrarSecaoBusca(mostrar) {
@@ -105,7 +116,6 @@
 
     setStatusBusca("Buscando...", "");
     limparResultados();
-    mostrarBotaoFechar(false);
 
     DataService.buscarTexto(termo)
       .then(function(resposta) {
@@ -121,9 +131,7 @@
       .catch(function(erro) {
         setStatusBusca((erro && erro.message) || "Backend indisponível. Não foi possível realizar a busca.", "erro");
       })
-      .then(function() {
-        mostrarBotaoFechar(true);
-      });
+      .then(atualizarBotaoLimpar);
   }
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -140,8 +148,11 @@
         if (evento.key === "Enter") {
           evento.preventDefault();
           executarBusca();
+        } else if (evento.key === "Escape") {
+          limparBusca();
         }
       });
+      input.addEventListener("input", atualizarBotaoLimpar);
     }
 
     if (botaoVoltar) {
@@ -153,7 +164,7 @@
 
     var botaoFechar = document.getElementById("btnFecharBusca");
     if (botaoFechar) {
-      botaoFechar.addEventListener("click", fecharResultados);
+      botaoFechar.addEventListener("click", limparBusca);
     }
 
     // Cadastro fechado (× do card ou "Consultar outro apartamento"): a busca volta a aparecer.

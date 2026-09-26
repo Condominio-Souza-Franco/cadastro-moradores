@@ -990,13 +990,8 @@ button:hover {
 /* ==========================================
    BOTÃO FECHAR (×) — resultados da busca e cadastro carregado
    ========================================== */
-.busca-resultado-area,
 .admin-registro-card {
   position: relative;
-}
-
-.busca-resultado-area .status:not(:empty) {
-  padding-right: 40px; /* não passar por baixo do × */
 }
 
 .btn-fechar {
@@ -1033,4 +1028,68 @@ button:hover {
 
 .admin-registro-card > .registro-cabecalho {
   padding-right: 40px;
+}
+
+/* ==========================================
+   DESCRIÇÃO DO RELATÓRIO, CAMPO DE BUSCA COM × E ESPAÇOS VAZIOS
+   ========================================== */
+.descricao-acao {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Mensagens e listas vazias não ocupam espaço (antes deixavam um vão no fim da caixa de busca). */
+#statusRelatorioPdfDrive:empty,
+.card-busca .status:empty,
+.card-busca .resultados-busca:empty {
+  display: none;
+}
+
+.card-busca .status {
+  margin: 10px 0 0;
+}
+
+.campo-busca {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.linha-busca > button {
+  flex-shrink: 0;
+}
+
+.linha-busca .campo-busca input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding-right: 40px; /* espaço para o × */
+}
+
+.btn-limpar-busca {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.btn-limpar-busca:hover,
+.btn-limpar-busca:focus-visible {
+  background: var(--surface-soft);
+  color: var(--error);
 }
