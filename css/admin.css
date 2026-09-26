@@ -1202,6 +1202,30 @@ button:hover {
   color: var(--accent-color);
 }
 
+/* Link do PDF mais recente: o texto todo é o link, em destaque. */
+.situacao-relatorio .link-mais-recente {
+  display: inline-block;
+  padding: 7px 12px;
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.situacao-relatorio .link-mais-recente:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.link-backups-relatorio {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--accent-color);
+}
+
 .relatorio-titulo {
   font-weight: 700;
   color: var(--text);

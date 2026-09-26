@@ -37,8 +37,8 @@
     if (info.nunca || !url) {
       partes.push("Ainda não foi gerado.");
     } else {
-      partes.push("Mais recente: " + escaparHtml(formatarDataHora(info.geradoEm)) +
-        ' — <a href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">abrir PDF</a>');
+      partes.push('<a class="link-mais-recente" href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
+        "📄 Mais recente: " + escaparHtml(formatarDataHora(info.geradoEm)) + " — abrir PDF</a>");
     }
     if (atualizando) partes.push('<span class="aviso-atualizando">Atualizando com a última alteração...</span>');
     setHtml(id, partes.join(" "), atualizando ? "atualizando" : "");
