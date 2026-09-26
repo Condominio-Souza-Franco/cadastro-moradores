@@ -1671,3 +1671,48 @@ html {
   padding: 6px 8px;
   font-size: 0.82rem;
 }
+
+/* Fonte menor em "Últimas alterações cadastrais" e na página "Dados" (fonte de dados). */
+.card-historico > summary {
+  font-size: 0.88rem;
+}
+
+.lista-historico li {
+  font-size: 0.8rem;
+}
+
+.historico-tipo {
+  font-size: 0.65rem;
+}
+
+.historico-quando,
+.historico-autor,
+.historico-detalhe {
+  font-size: 0.75rem;
+}
+
+.btn-atualizar-historico {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+.card-fonte-dados {
+  font-size: 0.82rem;
+}
+
+.card-fonte-dados h2 {
+  font-size: 0.95rem;
+}
+
+.opcoes-fonte-dados,
+.opcoes-fonte-dados label,
+.indicador-fonte-atual,
+.aviso-contingencia,
+.resultado-teste-conexoes {
+  font-size: 0.82rem;
+}
+
+#btnTestarConexoes {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
