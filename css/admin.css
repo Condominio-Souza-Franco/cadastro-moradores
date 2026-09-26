@@ -1414,3 +1414,85 @@ button:hover {
   padding: 6px 8px;
   font-size: 0.76rem;
 }
+
+/* ==========================================
+   CADASTRO DENTRO DO PAINEL (celular)
+   ========================================== */
+/* O .resultado é flex com align-items: flex-start, que deixava o card do cadastro crescer até a
+   largura "natural" do conteúdo e vazar do painel. Aqui tudo fica limitado à largura do painel. */
+#resultadoAdmin > * {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#resultadoAdmin .secao,
+#resultadoAdmin .subsecao,
+#resultadoAdmin .registro-lista,
+#resultadoAdmin .registro-item,
+#resultadoAdmin .registro-conteudo,
+#resultadoAdmin .grid-campos {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#resultadoAdmin .secao {
+  display: flex;
+}
+
+#resultadoAdmin .registro-lista {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#resultadoAdmin .registro-item {
+  width: auto;
+}
+
+@media (max-width: 600px) {
+  /* Contatos de emergência: em vez de 3 colunas fixas, os campos quebram linha. */
+  .subsecao-emergencia .registro-conteudo .grid-campos {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #resultadoAdmin .admin-registro-card {
+    padding: 10px;
+  }
+
+  #resultadoAdmin .secao {
+    padding: 10px;
+  }
+
+  .campo-titulo {
+    font-size: 0.7rem;
+  }
+}
+
+/* Ações do cadastro (Consultar outro / Editar / Mudou-se / Excluir): quebram linha; no celular, 2 por linha. */
+.admin-acoes-registro {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .admin-acoes-registro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .admin-acoes-registro button {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    white-space: normal;
+  }
+}
+
+.admin-registro-card > .registro-cabecalho {
+  box-sizing: border-box;
+}
