@@ -335,6 +335,12 @@
     listarHistorico: function(limite) {
       return executarLeitura("listarHistorico", [limite]);
     },
+    gerarListaVeiculosPdfDrive: function() {
+      return executarLeitura("gerarListaVeiculosPdfDrive", []);
+    },
+    situacaoRelatorios: function() {
+      return executarLeitura("situacaoRelatorios", []);
+    },
 
     // ---- Operações de escrita (bloqueadas quando a fonte ativa é Google Sheets) ----
     excluirCadastro: function(apto, ocorrencia) {
@@ -345,6 +351,9 @@
     },
     salvarCadastroAdmin: function(dados) {
       return executarEscrita("salvarCadastroAdmin", [dados]);
+    },
+    definirSituacaoCadastro: function(apto, ocorrencia, situacao) {
+      return executarEscrita("definirSituacaoCadastro", [apto, ocorrencia, situacao]);
     }
   };
 

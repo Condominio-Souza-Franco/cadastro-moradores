@@ -416,6 +416,19 @@
     }
     logsHtml.push('</details>');
 
+    // Cadastro de quem saiu do prédio: continua consultável, com o aviso no topo.
+    var mudouSe = dados.situacao === "mudou-se";
+    if (mudouSe) {
+      var quando = formatarDataBr(dados.situacaoEm);
+      secoes.push(
+        '<div class="aviso-mudou-se"><strong>Mudou-se</strong>' +
+          (quando ? " em " + escaparHtml(quando) : "") +
+          (dados.situacaoPor ? " — marcado por " + escaparHtml(dados.situacaoPor) : "") +
+          ". Este cadastro não aparece nos relatórios, na planilha nem na consulta por CPF do formulário." +
+        "</div>"
+      );
+    }
+
     secoes.push(
       '<div class="registro-cabecalho">' +
         '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
@@ -491,10 +504,18 @@
     var urlEditar = dados.id
       ? "index.html?editar=" + encodeURIComponent(dados.id) + "&apto=" + encodeURIComponent(dados.apto || "")
       : "";
+    var atributosCadastro = ' data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '"';
+    // "Mudou-se" (ou "Reativar") no lugar de excluir quando o morador sai do prédio: o cadastro
+    // e o histórico ficam guardados. Só com o Firebase (precisa do id do cadastro).
+    var btnSituacao = dados.id
+      ? '<button type="button" class="btn-situacao-cadastro' + (mudouSe ? " reativar" : "") + '"' + atributosCadastro +
+          ' data-situacao="' + (mudouSe ? "ativo" : "mudou-se") + '">' + (mudouSe ? "Reativar" : "Mudou-se") + "</button>"
+      : "";
     var btnExcluir = '<div class="admin-acoes-registro">' +
       '<button type="button" class="btn-consultar-outro">Consultar outro apartamento</button>' +
       (urlEditar ? '<a class="btn-editar-cadastro" href="' + escaparHtml(urlEditar) + '">Editar cadastro</a>' : "") +
-      '<button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '">Excluir cadastro</button>' +
+      btnSituacao +
+      '<button type="button" class="btn-excluir-cadastro"' + atributosCadastro + '>Excluir cadastro</button>' +
     '</div>';
     var btnFechar = '<button type="button" class="btn-fechar btn-fechar-registro" aria-label="Fechar cadastro" title="Fechar">&times;</button>';
     return '<div class="admin-registro-card">' + btnFechar + secoes.join("") + btnExcluir + '</div>';
@@ -519,7 +540,7 @@
         if (!apto) return;
 
         // Deixa claro QUAL cadastro será excluído: o apartamento pode ter outros (proprietário, inquilino...).
-        var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.");
+        var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.\n\nSe o morador saiu do prédio, prefira \"Mudou-se\": o cadastro e o histórico ficam guardados. Excluir apaga tudo.");
         if (!confirmar) return;
 
         setOverlayAdmin(true, "Aguarde: excluindo cadastro...");
@@ -548,6 +569,45 @@
           .catch(function(err) {
             setOverlayAdmin(false);
             setStatus((err && err.message) || "Não foi possível excluir o cadastro.", "erro");
+          });
+      });
+    });
+
+    // "Mudou-se" / "Reativar": muda a situação, reabre o cadastro e atualiza a lista de apartamentos.
+    resultado.querySelectorAll(".btn-situacao-cadastro").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        var apto = botao.getAttribute("data-apto");
+        var ocorrencia = botao.getAttribute("data-ocorrencia");
+        var nome = botao.getAttribute("data-nome");
+        var situacao = botao.getAttribute("data-situacao");
+        var marcandoMudouSe = situacao === "mudou-se";
+
+        var pergunta = marcandoMudouSe
+          ? "Marcar o cadastro " + (nome ? "de " + nome + " " : "") + "(apto " + apto + ") como \"mudou-se\"?\n\n" +
+            "Ele sai dos relatórios, da planilha e da consulta por CPF do formulário, mas continua guardado aqui e pode ser reativado."
+          : "Reativar o cadastro " + (nome ? "de " + nome + " " : "") + "(apto " + apto + ")? Ele volta aos relatórios, à planilha e à consulta por CPF.";
+        if (!window.confirm(pergunta)) return;
+
+        setOverlayAdmin(true, marcandoMudouSe ? "Aguarde: marcando \"mudou-se\"..." : "Aguarde: reativando cadastro...");
+        DataService.definirSituacaoCadastro(apto, ocorrencia, situacao)
+          .then(function(resposta) {
+            setOverlayAdmin(false);
+            if (!resposta || !resposta.sucesso) {
+              setStatus((resposta && resposta.mensagem) || "Não foi possível alterar a situação do cadastro.", "erro");
+              return;
+            }
+            window.dispatchEvent(new CustomEvent("cadastro-alterado"));
+            carregarAptosDoServidor().then(function() {
+              var select = document.getElementById("aptoAdmin");
+              if (select) select.value = apto + "__" + ocorrencia;
+            });
+            carregarRegistro(apto, ocorrencia).then(function() {
+              setStatus(resposta.mensagem || "Situação atualizada.", "ok");
+            });
+          })
+          .catch(function(err) {
+            setOverlayAdmin(false);
+            setStatus((err && err.message) || "Não foi possível alterar a situação do cadastro.", "erro");
           });
       });
     });

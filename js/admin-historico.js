@@ -9,7 +9,7 @@
   var carregado = false;
   var carregando = false;
 
-  var CLASSE_TIPO = { "criação": "criacao", "edição": "edicao", "exclusão": "exclusao" };
+  var CLASSE_TIPO = { "criação": "criacao", "edição": "edicao", "exclusão": "exclusao", "mudou-se": "mudouse", "reativação": "criacao" };
 
   function setStatus(texto, tipo) {
     var status = document.getElementById("statusHistorico");
@@ -81,9 +81,11 @@
     if (botao) botao.addEventListener("click", carregar);
 
     // Depois de excluir um cadastro, a lista aberta se atualiza; fechada, recarrega ao abrir.
-    window.addEventListener("cadastro-excluido", function() {
+    function recarregarSeAberto() {
       carregado = false;
       if (secao.open) carregar();
-    });
+    }
+    window.addEventListener("cadastro-excluido", recarregarSeAberto);
+    window.addEventListener("cadastro-alterado", recarregarSeAberto);
   });
 })();

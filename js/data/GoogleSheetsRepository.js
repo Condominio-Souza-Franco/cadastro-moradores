@@ -45,9 +45,18 @@
     gerarRelatorioApartamentosPdfDrive: function() {
       return chamarBackend("gerarRelatorioApartamentosPdfDrive", {}, true);
     },
-    // O histórico de alterações só existe no Firebase.
+    // O histórico de alterações, a lista de veículos e a situação dos relatórios só existem no Firebase.
     listarHistorico: function() {
       return Promise.resolve({ sucesso: false, mensagem: "O histórico de alterações só está disponível com o Firebase.", itens: [] });
+    },
+    gerarListaVeiculosPdfDrive: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "A lista de veículos só está disponível com o Firebase." });
+    },
+    situacaoRelatorios: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "Indisponível no modo de contingência." });
+    },
+    definirSituacaoCadastro: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
     },
 
     // ---- Escrita ----

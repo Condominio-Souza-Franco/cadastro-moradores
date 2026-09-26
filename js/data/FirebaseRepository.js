@@ -53,6 +53,13 @@
     listarHistorico: function(limite) {
       return chamarBackend("fbListarHistorico", { limite: limite }, true);
     },
+    gerarListaVeiculosPdfDrive: function() {
+      return chamarBackend("fbGerarListaVeiculosPdfDrive", {}, true);
+    },
+    // Último PDF gerado de cada relatório e se ele está desatualizado ("datado").
+    situacaoRelatorios: function() {
+      return chamarBackend("fbSituacaoRelatorios", {}, true);
+    },
 
     // ---- Escrita ----
     // "ocorrencia" evita excluir o cadastro errado quando o apartamento tem mais de um.
@@ -66,6 +73,10 @@
     // Edição de um cadastro existente pela administração (exige o login do admin).
     salvarCadastroAdmin: function(dados) {
       return chamarBackend("fbAdminSalvarCadastro", { dados: dados }, true);
+    },
+    // situacao: "mudou-se" ou "ativo" (só administração).
+    definirSituacaoCadastro: function(apto, ocorrencia, situacao) {
+      return chamarBackend("fbDefinirSituacaoCadastro", { apto: apto, ocorrencia: ocorrencia, situacao: situacao }, true);
     },
 
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.

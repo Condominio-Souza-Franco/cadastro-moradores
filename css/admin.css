@@ -279,7 +279,8 @@ p {
 
 /* Modo somente leitura: esconde ações de escrita quando a fonte ativa é o Google Sheets */
 .modo-somente-leitura .btn-excluir-cadastro,
-.modo-somente-leitura .btn-editar-cadastro {
+.modo-somente-leitura .btn-editar-cadastro,
+.modo-somente-leitura .btn-situacao-cadastro {
   display: none;
 }
 
@@ -1043,6 +1044,8 @@ button:hover {
 
 /* Mensagens e listas vazias não ocupam espaço (antes deixavam um vão no fim da caixa de busca). */
 #statusRelatorioPdfDrive:empty,
+#statusListaVeiculos:empty,
+.situacao-relatorio:empty,
 .card-busca .status:empty,
 .card-busca .resultados-busca:empty {
   display: none;
@@ -1115,3 +1118,95 @@ button:hover {
 .btn-editar-cadastro:hover {
   background: #174a7a;
 }
+
+/* ==========================================
+   RELATÓRIOS (contatos e veículos)
+   ========================================== */
+.relatorios-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.relatorio-item {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.relatorio-item button {
+  height: auto;
+  padding: 8px 14px;
+}
+
+.relatorio-item .status {
+  margin: 8px 0 0;
+}
+
+.relatorios-nota {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.situacao-relatorio {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.situacao-relatorio a {
+  color: var(--accent-color);
+}
+
+.aviso-datado {
+  display: block;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border: 1px solid #f0c36d;
+  border-radius: 6px;
+  background: #fff8e6;
+  color: #6b4e00;
+  font-weight: 600;
+}
+
+/* ==========================================
+   MUDOU-SE / REATIVAR
+   ========================================== */
+.aviso-mudou-se {
+  margin: 0 40px 12px 0;
+  padding: 10px 12px;
+  border: 1px solid #d9c6a5;
+  border-left: 5px solid #8a6d3b;
+  border-radius: 8px;
+  background: #fbf6ee;
+  color: #5b4726;
+  font-size: 0.9rem;
+}
+
+.btn-situacao-cadastro {
+  flex: 1;
+  background: #8a6d3b;
+  border-color: #8a6d3b;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-situacao-cadastro:hover {
+  background: #6f5730;
+}
+
+.btn-situacao-cadastro.reativar {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+
+.btn-situacao-cadastro.reativar:hover {
+  background: #084f23;
+}
+
+.historico-tipo.mudouse { color: #8a6d3b; }
