@@ -5,6 +5,8 @@
 // Carrega ao abrir a página pela primeira vez. Cada linha é conferida com o desenho da garagem
 // (os SVGs em mapas/, onde cada vaga é um <g data-vaga>): avisa quando a vaga não existe no
 // desenho, é do condomínio ou já está com outro apto — mas deixa salvar mesmo assim.
+// Modo "Mapa": o mesmo gabarito desenhado na planta; tocar numa vaga abre um seletor de apto.
+// Tabela e mapa editam as mesmas linhas, e o "Salvar alterações" vale para os dois.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
   var GARAGENS = ["G1", "G2"];
@@ -15,6 +17,10 @@
   var desenho = null;      // { "G1": { "17": { condominio, desativada }, ... }, "G2": {...} }
   var carregado = false;
   var carregando = false;
+  var svgs = {};           // texto dos SVGs de cada garagem (modo mapa)
+  var modo = "tabela";
+  var garagemMapa = "G1";
+  var vagaEditada = null;  // número da vaga aberta no editor do mapa ("14", "1/2"...)
 
   function setStatus(texto, tipo) {
     var el = document.getElementById("statusGabarito");
@@ -36,9 +42,10 @@
       return fetch("mapas/mapa-garagem-" + g + ".svg", { cache: "no-cache" })
         .then(function(r) { return r.ok ? r.text() : ""; })
         .catch(function() { return ""; });
-    })).then(function(svgs) {
+    })).then(function(textos) {
       var mapa = {};
-      svgs.forEach(function(svg, i) {
+      textos.forEach(function(svg, i) {
+        svgs[GARAGENS[i]] = svg;
         var vagas = {};
         if (svg) {
           var doc = new DOMParser().parseFromString(svg, "image/svg+xml");
@@ -109,6 +116,117 @@
       "</div>";
     }).join("") || '<p class="sem-itens">Nenhuma vaga no gabarito.</p>';
     atualizarBotoes();
+    if (modo === "mapa") renderizarMapa();
+  }
+
+  // ---------- Modo mapa ----------
+  // Números do gabarito que correspondem a uma vaga do desenho ("1/2" do G2 = vagas 1 e 2).
+  function numerosDaVaga(garagem, vagaDesenho) {
+    return garagem === "G2" && vagaDesenho === "1/2" ? ["1", "2"] : [vagaDesenho];
+  }
+
+  function indicesDaVaga(garagem, vagaDesenho) {
+    var numeros = numerosDaVaga(garagem, vagaDesenho);
+    var indices = [];
+    linhas.forEach(function(l, i) { if (l.garagem === garagem && numeros.indexOf(l.vaga) !== -1) indices.push(i); });
+    return indices;
+  }
+
+  function criarTextoSvg(g, texto, y, tamanho, cor) {
+    var rect = g.querySelector("rect");
+    var el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    el.setAttribute("x", Number(rect.getAttribute("x")) + Number(rect.getAttribute("width")) / 2);
+    el.setAttribute("y", y);
+    el.setAttribute("text-anchor", "middle");
+    el.setAttribute("font-size", tamanho);
+    el.setAttribute("font-weight", "bold");
+    el.setAttribute("fill", cor);
+    el.textContent = texto;
+    g.appendChild(el);
+  }
+
+  function renderizarMapa() {
+    var container = document.getElementById("mapaGabarito");
+    if (!container) return;
+    if (!svgs[garagemMapa]) {
+      container.innerHTML = '<p class="sem-itens">Não foi possível carregar o desenho do ' + garagemMapa + ".</p>";
+      return;
+    }
+    container.innerHTML = svgs[garagemMapa];
+    container.querySelectorAll("g[data-vaga]").forEach(function(g) {
+      var n = g.getAttribute("data-vaga");
+      var indices = indicesDaVaga(garagemMapa, n);
+      var aptosDaVaga = indices.map(function(i) { return linhas[i].apto; })
+        .filter(function(a, i, lista) { return a && lista.indexOf(a) === i; });
+      var comAviso = indices.some(function(i) { return avisosDaLinha(linhas[i], i).length; });
+
+      // Troca o apto escrito no desenho pelo do gabarito atual (que é o que vale).
+      g.querySelectorAll("text[data-campo]").forEach(function(t) { t.remove(); });
+      var rect = g.querySelector("rect");
+      var meio = Number(rect.getAttribute("y")) + Number(rect.getAttribute("height")) / 2 + 12;
+      if (aptosDaVaga.length) {
+        criarTextoSvg(g, aptosDaVaga.join(" / "), meio, aptosDaVaga.length > 1 ? 28 : 40, "#1d2b3a");
+      } else {
+        var condominio = (g.getAttribute("class") || "").indexOf("condominio") !== -1;
+        criarTextoSvg(g, condominio ? "CONDOMÍNIO" : "livre", meio, 22, condominio ? "#4a6b8a" : "#9aa5b1");
+      }
+      g.classList.toggle("com-aviso", comAviso);
+      g.classList.toggle("selecionada", n === vagaEditada);
+    });
+  }
+
+  function abrirEditorVaga(n) {
+    vagaEditada = n;
+    var indices = indicesDaVaga(garagemMapa, n);
+    var atual = indices.length ? linhas[indices[0]].apto : "";
+    document.getElementById("editorVagaTitulo").textContent = "Vaga " + n + " · " + garagemMapa;
+    document.getElementById("editorVagaApto").innerHTML = '<option value="">— livre —</option>' + aptos.map(function(a) {
+      return '<option value="' + escaparHtml(a) + '"' + (a === atual ? " selected" : "") + ">" + escaparHtml(a) + "</option>";
+    }).join("");
+    var noDesenho = vagaNoDesenho(garagemMapa, numerosDaVaga(garagemMapa, n)[0]);
+    var avisos = [];
+    if (noDesenho && noDesenho.desativada) avisos.push("No desenho, esta vaga está desativada.");
+    else if (noDesenho && noDesenho.condominio) avisos.push("No desenho, esta vaga é do condomínio.");
+    indices.forEach(function(i) {
+      avisosDaLinha(linhas[i], i).forEach(function(a) { if (avisos.indexOf(a.texto) === -1 && !/do condomínio|desativada/.test(a.texto)) avisos.push(a.texto); });
+    });
+    document.getElementById("editorVagaAvisos").innerHTML = avisos.map(function(a) { return '<span class="aviso">⚠️ ' + escaparHtml(a) + "</span>"; }).join("");
+    document.getElementById("editorVagaMapa").hidden = false;
+    renderizarMapa();
+  }
+
+  function fecharEditorVaga() {
+    vagaEditada = null;
+    document.getElementById("editorVagaMapa").hidden = true;
+    renderizarMapa();
+  }
+
+  // Dá a vaga ao apto escolhido (ou deixa livre): tira quem estava nela e acrescenta a linha nova.
+  function aplicarEditorVaga() {
+    if (vagaEditada === null) return;
+    var apto = document.getElementById("editorVagaApto").value;
+    var remover = indicesDaVaga(garagemMapa, vagaEditada);
+    linhas = linhas.filter(function(l, i) { return remover.indexOf(i) === -1; });
+    if (apto) {
+      numerosDaVaga(garagemMapa, vagaEditada).forEach(function(v) {
+        linhas.push({ apto: apto, garagem: garagemMapa, vaga: v });
+      });
+    }
+    ordenar();
+    vagaEditada = null;
+    document.getElementById("editorVagaMapa").hidden = true;
+    renderizar();
+  }
+
+  function trocarModo(novo) {
+    modo = novo;
+    document.querySelectorAll(".gabarito-modos [data-modo]").forEach(function(b) {
+      b.classList.toggle("ativo", b.getAttribute("data-modo") === novo);
+    });
+    document.getElementById("modoTabelaGabarito").hidden = novo !== "tabela";
+    document.getElementById("modoMapaGabarito").hidden = novo !== "mapa";
+    document.getElementById("btnAdicionarVagaGabarito").hidden = novo !== "tabela";
+    if (novo === "mapa") renderizarMapa();
   }
 
   function haAlteracoes() {
@@ -255,5 +373,22 @@
       }
     });
     document.getElementById("btnSalvarGabarito").addEventListener("click", salvar);
+
+    document.querySelectorAll(".gabarito-modos [data-modo]").forEach(function(b) {
+      b.addEventListener("click", function() { trocarModo(b.getAttribute("data-modo")); });
+    });
+    document.querySelectorAll(".gabarito-garagens [data-garagem]").forEach(function(b) {
+      b.addEventListener("click", function() {
+        garagemMapa = b.getAttribute("data-garagem");
+        document.querySelectorAll(".gabarito-garagens [data-garagem]").forEach(function(o) { o.classList.toggle("ativo", o === b); });
+        fecharEditorVaga();
+      });
+    });
+    document.getElementById("mapaGabarito").addEventListener("click", function(e) {
+      var g = e.target.closest && e.target.closest("g[data-vaga]");
+      if (g) abrirEditorVaga(g.getAttribute("data-vaga"));
+    });
+    document.getElementById("editorVagaAplicar").addEventListener("click", aplicarEditorVaga);
+    document.getElementById("editorVagaCancelar").addEventListener("click", fecharEditorVaga);
   });
 })();

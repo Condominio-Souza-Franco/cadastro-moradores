@@ -159,9 +159,31 @@
               Uma linha por vaga. Salvar grava no banco de dados e na aba "Gabarito" da planilha. Se a vaga não
               bater com o desenho da garagem, aparece um aviso (dá para salvar mesmo assim).
             </p>
+            <div class="gabarito-modos" role="tablist">
+              <button type="button" data-modo="tabela" class="ativo" role="tab">Tabela</button>
+              <button type="button" data-modo="mapa" role="tab">Mapa</button>
+            </div>
             <div id="statusGabarito" class="status"></div>
-            <div class="gabarito-cabecalho" aria-hidden="true"><span>Apto</span><span>Garagem</span><span>Vaga</span><span></span></div>
-            <div id="tabelaGabarito" class="tabela-gabarito"></div>
+            <div id="modoTabelaGabarito">
+              <div class="gabarito-cabecalho" aria-hidden="true"><span>Apto</span><span>Garagem</span><span>Vaga</span><span></span></div>
+              <div id="tabelaGabarito" class="tabela-gabarito"></div>
+            </div>
+            <!-- Modo mapa: toque numa vaga para escolher o apto (js/admin-gabarito.js). -->
+            <div id="modoMapaGabarito" hidden>
+              <div class="gabarito-garagens">
+                <button type="button" data-garagem="G1" class="ativo">G1</button>
+                <button type="button" data-garagem="G2">G2</button>
+              </div>
+              <div id="editorVagaMapa" class="editor-vaga-mapa" hidden>
+                <strong id="editorVagaTitulo"></strong>
+                <select id="editorVagaApto" aria-label="Apartamento desta vaga"></select>
+                <button type="button" id="editorVagaAplicar">Aplicar</button>
+                <button type="button" id="editorVagaCancelar" class="btn-secundario">Cancelar</button>
+                <div id="editorVagaAvisos" class="gabarito-avisos"></div>
+              </div>
+              <div id="mapaGabarito" class="mapa-gabarito"></div>
+              <p class="descricao-acao">Toque numa vaga para escolher o apartamento. Vagas com aviso ficam com contorno vermelho.</p>
+            </div>
             <div class="gabarito-acoes">
               <button type="button" id="btnAdicionarVagaGabarito" class="btn-secundario">+ Adicionar vaga</button>
               <button type="button" id="btnDesfazerGabarito" class="btn-secundario">Desfazer</button>
@@ -195,19 +217,19 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926k"></script>
-  <script src="js/utils.js?v=20260926k"></script>
-  <script src="js/data/backend.js?v=20260926k"></script>
-  <script src="js/admin-auth.js?v=20260926k"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926k"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926k"></script>
-  <script src="js/data/DataService.js?v=20260926k"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926k"></script>
-  <script src="js/admin-simples.js?v=20260926k"></script>
-  <script src="js/admin-relatorio.js?v=20260926k"></script>
-  <script src="js/admin-busca.js?v=20260926k"></script>
-  <script src="js/admin-historico.js?v=20260926k"></script>
-  <script src="js/admin-gabarito.js?v=20260926k"></script>
-  <script src="js/admin-paineis.js?v=20260926k"></script>
+  <script src="js/regras.js?v=20260926l"></script>
+  <script src="js/utils.js?v=20260926l"></script>
+  <script src="js/data/backend.js?v=20260926l"></script>
+  <script src="js/admin-auth.js?v=20260926l"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926l"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926l"></script>
+  <script src="js/data/DataService.js?v=20260926l"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926l"></script>
+  <script src="js/admin-simples.js?v=20260926l"></script>
+  <script src="js/admin-relatorio.js?v=20260926l"></script>
+  <script src="js/admin-busca.js?v=20260926l"></script>
+  <script src="js/admin-historico.js?v=20260926l"></script>
+  <script src="js/admin-gabarito.js?v=20260926l"></script>
+  <script src="js/admin-paineis.js?v=20260926l"></script>
 </body>
 </html>

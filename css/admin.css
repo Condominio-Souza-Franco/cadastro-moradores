@@ -1823,3 +1823,123 @@ html {
   opacity: 0.5;
   cursor: default;
 }
+
+/* Gabarito: alternância Tabela / Mapa e o mapa clicável */
+.gabarito-modos,
+.gabarito-garagens {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 6px;
+}
+
+.gabarito-modos button,
+.gabarito-garagens button {
+  width: auto;
+  height: auto;
+  min-height: 30px;
+  padding: 4px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-color);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gabarito-modos button.ativo,
+.gabarito-garagens button.ativo {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+#modoMapaGabarito[hidden],
+#modoTabelaGabarito[hidden],
+#btnAdicionarVagaGabarito[hidden],
+.editor-vaga-mapa[hidden] {
+  display: none !important;
+}
+
+.mapa-gabarito svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mapa-gabarito g[data-vaga] {
+  cursor: pointer;
+}
+
+.mapa-gabarito g[data-vaga]:hover rect {
+  fill: #fff3e0 !important;
+}
+
+.mapa-gabarito g.com-aviso rect {
+  stroke: #c62828 !important;
+  stroke-width: 6 !important;
+}
+
+.mapa-gabarito g.selecionada rect {
+  fill: #ffd180 !important;
+  stroke: #e65100 !important;
+  stroke-width: 7 !important;
+}
+
+.editor-vaga-mapa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  padding: 8px;
+  border: 1px solid #e65100;
+  border-radius: 8px;
+  background: #fff8f0;
+}
+
+.editor-vaga-mapa select {
+  flex: 1 1 110px;
+  width: auto;
+  min-width: 0;
+  height: 32px;
+  font-size: 0.85rem;
+}
+
+.editor-vaga-mapa button {
+  width: auto;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+}
+
+.editor-vaga-mapa .btn-secundario {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-color);
+}
+
+.editor-vaga-mapa .gabarito-avisos {
+  flex-basis: 100%;
+}
+
+/* No celular o mapa fica maior que a tela (rola para o lado), para dar para tocar nas vagas. */
+@media (max-width: 600px) {
+  .mapa-gabarito {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mapa-gabarito svg {
+    width: 680px;
+    max-width: none;
+  }
+}
+
+/* O editor da vaga fica grudado no topo da tela enquanto se rola o mapa. */
+.editor-vaga-mapa {
+  position: sticky;
+  top: 6px;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(20, 40, 60, 0.15);
+}
