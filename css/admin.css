@@ -1943,3 +1943,55 @@ html {
   z-index: 5;
   box-shadow: 0 4px 12px rgba(20, 40, 60, 0.15);
 }
+
+/* Busca geral: sem caixa, fonte no padrão das outras páginas e nada quebrando linha. */
+.painel-topo h2 {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitulo-painel {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+#painelBusca .card-busca {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+#painelBusca .linha-busca {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#painelBusca .campo-busca,
+#painelBusca .linha-busca > button {
+  width: 100%;
+}
+
+#painelBusca input,
+#painelBusca .linha-busca > button {
+  height: 36px;
+  min-height: 36px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+#painelBusca input {
+  width: 100%;
+  text-overflow: ellipsis;
+}
+
+#painelBusca .resultados-busca,
+#painelBusca .status {
+  font-size: 0.85rem;
+}
