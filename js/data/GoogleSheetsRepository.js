@@ -59,6 +59,9 @@
     salvarCadastro: function() {
       return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
     },
+    salvarCadastroAdmin: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
 
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.
     testarConexao: function() {

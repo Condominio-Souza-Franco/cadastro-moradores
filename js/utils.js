@@ -24,8 +24,24 @@
     }
   }
 
+  // Confere os dois dígitos verificadores do CPF (e recusa sequências como 111.111.111-11).
+  function cpfValido(valor) {
+    var cpf = String(valor || "").replace(/\D/g, "");
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+    for (var posicao = 9; posicao <= 10; posicao++) {
+      var soma = 0;
+      for (var i = 0; i < posicao; i++) {
+        soma += Number(cpf.charAt(i)) * (posicao + 1 - i);
+      }
+      var digito = (soma * 10) % 11 % 10;
+      if (digito !== Number(cpf.charAt(posicao))) return false;
+    }
+    return true;
+  }
+
   window.Utils = {
     escaparHtml: escaparHtml,
-    urlSegura: urlSegura
+    urlSegura: urlSegura,
+    cpfValido: cpfValido
   };
 })();

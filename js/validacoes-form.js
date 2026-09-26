@@ -135,7 +135,12 @@ function atualizarIndicadorCpfEmTempoReal(campo) {
   if (!campo) return;
 
   const valorLimpo = limparCpf(campo.value || '');
-  const invalido = valorLimpo.length > 0 && valorLimpo.length !== 11;
+  let invalido = valorLimpo.length > 0 && valorLimpo.length !== 11;
+  // No CPF do cadastro, também confere o dígito verificador. Na busca (cpfConsulta) não:
+  // um cadastro antigo salvo com o CPF errado ainda precisa ser encontrado para ser corrigido.
+  if (!invalido && valorLimpo.length === 11 && campo.id === 'moradorCpf') {
+    invalido = !window.Utils.cpfValido(valorLimpo);
+  }
   aplicarIndicadorCpfInvalido(campo, invalido);
 }
 
@@ -145,6 +150,74 @@ function atualizarIndicadorDataEmTempoReal(campo) {
   const digitos = (campo.value || '').replace(/\D/g, '');
   const invalido = digitos.length > 0 && campo.value.length !== 10;
   aplicarIndicadorCpfInvalido(campo, invalido);
+}
+
+// Preenche o formulário com um cadastro vindo do backend. Usado pela busca por CPF e pela
+// edição feita pela administração (js/modo-admin.js).
+function preencherFormularioComCadastro(d) {
+  if (document.getElementById("moradorNome")) document.getElementById("moradorNome").value = d.nome || "";
+  if (document.getElementById("moradorCpf")) document.getElementById("moradorCpf").value = d.cpf || "";
+  if (document.getElementById("moradorRg")) document.getElementById("moradorRg").value = d.rg || "";
+  if (document.getElementById("moradorOrgaoEmissor")) document.getElementById("moradorOrgaoEmissor").value = d.orgaoEmissor || "";
+  if (document.getElementById("moradorNasc") && d.nasc) document.getElementById("moradorNasc").value = formatarDataParaInput(d.nasc);
+  if (document.getElementById("moradorCelular")) document.getElementById("moradorCelular").value = d.celular || "";
+  if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
+  if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
+
+  if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = obterValorAlternativo(d, 'inqPropAdmin', 'proprietarioAdmin', 'admin') || "";
+  if (document.getElementById("inqContato")) document.getElementById("inqContato").value = obterValorAlternativo(d, 'inqContato', 'contatoInquilino', 'telefoneContato') || "";
+  if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = obterValorAlternativo(d, 'inqVigencia', 'vigencia') || "";
+
+  const vagaSituacao = obterValorAlternativo(d, 'vagaSituacao', 'situacaoVaga');
+  const vagaAptoRelacionado = obterValorAlternativo(d, 'vagaAptoRelacionado', 'aptoRelacionado', 'aptoVaga');
+
+  if (document.getElementById("vagaSituacao") && vagaSituacao) document.getElementById("vagaSituacao").value = vagaSituacao;
+  if (document.getElementById("vagaAptoRelacionado") && vagaAptoRelacionado) document.getElementById("vagaAptoRelacionado").value = vagaAptoRelacionado;
+
+  preencherEmergencias(normalizarTextoMultilinha(obterValorAlternativo(d, 'emergencias', 'emergenciasList', 'emergenciaList')));
+  preencherOcupantes(normalizarTextoMultilinha(obterValorAlternativo(d, 'ocupantes', 'ocupantesList', 'ocupanteList')));
+  preencherCarros(normalizarTextoMultilinha(obterValorAlternativo(d, 'carros', 'carrosList', 'carroList')));
+  preencherMotos(normalizarTextoMultilinha(obterValorAlternativo(d, 'motos', 'motosList', 'motoList')));
+  preencherBikes(normalizarTextoMultilinha(obterValorAlternativo(d, 'bikes', 'bikesList', 'bikeList')));
+  preencherPets(normalizarTextoMultilinha(obterValorAlternativo(d, 'pets', 'petsList', 'petList')));
+  preencherPrestadores(normalizarTextoMultilinha(obterValorAlternativo(d, 'prestadores', 'prestadoresList', 'prestadorList')));
+
+  if (document.getElementById("observacoes")) document.getElementById("observacoes").value = d.observacoes || "";
+
+  const historicoContratos = Array.isArray(d.linkContratoHistorico) && d.linkContratoHistorico.length > 0
+    ? d.linkContratoHistorico
+    : (Array.isArray(d.historicoContratos) ? d.historicoContratos : []);
+
+  if (typeof exibirHistoricoContratos === 'function') {
+    exibirHistoricoContratos(historicoContratos);
+  }
+
+  if (d.tipo) {
+    const elTipo = document.getElementById("tipoResidente");
+    if (elTipo) elTipo.value = d.tipo;
+    tratarEscolhaTipoResidente(d.tipo);
+  }
+
+  // Só o apartamento do próprio cadastro: "aptoRelacionado"/"vagaAptoRelacionado" são o
+  // apartamento da vaga alugada e não podem ser usados como apartamento do morador.
+  const aptoSelecionado = extrairAptoComoTexto(obterValorAlternativo(d, 'apto'));
+
+  if (aptoSelecionado) {
+    const elApto = document.getElementById("apto");
+    if (elApto) {
+      elApto.value = aptoSelecionado;
+      var evt = document.createEvent("HTMLEvents");
+      evt.initEvent("change", false, true);
+      elApto.dispatchEvent(evt);
+    }
+    
+    if (typeof atualizarInfoVagaLocal === 'function') {
+      atualizarInfoVagaLocal(aptoSelecionado);
+    }
+  }
+
+  alterarTextoBotaoEnviar("Atualizar cadastro");
+  exibirPassoTipoResidente();
 }
 
 async function consultarPorCpf() {
@@ -203,69 +276,7 @@ async function consultarPorCpf() {
         btnBusca.disabled = true; 
       }
 
-      if (document.getElementById("moradorNome")) document.getElementById("moradorNome").value = d.nome || "";
-      if (document.getElementById("moradorCpf")) document.getElementById("moradorCpf").value = d.cpf || "";
-      if (document.getElementById("moradorRg")) document.getElementById("moradorRg").value = d.rg || "";
-      if (document.getElementById("moradorOrgaoEmissor")) document.getElementById("moradorOrgaoEmissor").value = d.orgaoEmissor || "";
-      if (document.getElementById("moradorNasc") && d.nasc) document.getElementById("moradorNasc").value = formatarDataParaInput(d.nasc);
-      if (document.getElementById("moradorCelular")) document.getElementById("moradorCelular").value = d.celular || "";
-      if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
-      if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
-
-      if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = obterValorAlternativo(d, 'inqPropAdmin', 'proprietarioAdmin', 'admin') || "";
-      if (document.getElementById("inqContato")) document.getElementById("inqContato").value = obterValorAlternativo(d, 'inqContato', 'contatoInquilino', 'telefoneContato') || "";
-      if (document.getElementById("inqVigencia")) document.getElementById("inqVigencia").value = obterValorAlternativo(d, 'inqVigencia', 'vigencia') || "";
-
-      const vagaSituacao = obterValorAlternativo(d, 'vagaSituacao', 'situacaoVaga');
-      const vagaAptoRelacionado = obterValorAlternativo(d, 'vagaAptoRelacionado', 'aptoRelacionado', 'aptoVaga');
-
-      if (document.getElementById("vagaSituacao") && vagaSituacao) document.getElementById("vagaSituacao").value = vagaSituacao;
-      if (document.getElementById("vagaAptoRelacionado") && vagaAptoRelacionado) document.getElementById("vagaAptoRelacionado").value = vagaAptoRelacionado;
-
-      preencherEmergencias(normalizarTextoMultilinha(obterValorAlternativo(d, 'emergencias', 'emergenciasList', 'emergenciaList')));
-      preencherOcupantes(normalizarTextoMultilinha(obterValorAlternativo(d, 'ocupantes', 'ocupantesList', 'ocupanteList')));
-      preencherCarros(normalizarTextoMultilinha(obterValorAlternativo(d, 'carros', 'carrosList', 'carroList')));
-      preencherMotos(normalizarTextoMultilinha(obterValorAlternativo(d, 'motos', 'motosList', 'motoList')));
-      preencherBikes(normalizarTextoMultilinha(obterValorAlternativo(d, 'bikes', 'bikesList', 'bikeList')));
-      preencherPets(normalizarTextoMultilinha(obterValorAlternativo(d, 'pets', 'petsList', 'petList')));
-      preencherPrestadores(normalizarTextoMultilinha(obterValorAlternativo(d, 'prestadores', 'prestadoresList', 'prestadorList')));
-
-      if (document.getElementById("observacoes")) document.getElementById("observacoes").value = d.observacoes || "";
-
-      const historicoContratos = Array.isArray(d.linkContratoHistorico) && d.linkContratoHistorico.length > 0
-        ? d.linkContratoHistorico
-        : (Array.isArray(d.historicoContratos) ? d.historicoContratos : []);
-
-      if (typeof exibirHistoricoContratos === 'function') {
-        exibirHistoricoContratos(historicoContratos);
-      }
-
-      if (d.tipo) {
-        const elTipo = document.getElementById("tipoResidente");
-        if (elTipo) elTipo.value = d.tipo;
-        tratarEscolhaTipoResidente(d.tipo);
-      }
-
-      // Só o apartamento do próprio cadastro: "aptoRelacionado"/"vagaAptoRelacionado" são o
-      // apartamento da vaga alugada e não podem ser usados como apartamento do morador.
-      const aptoSelecionado = extrairAptoComoTexto(obterValorAlternativo(d, 'apto'));
-
-      if (aptoSelecionado) {
-        const elApto = document.getElementById("apto");
-        if (elApto) {
-          elApto.value = aptoSelecionado;
-          var evt = document.createEvent("HTMLEvents");
-          evt.initEvent("change", false, true);
-          elApto.dispatchEvent(evt);
-        }
-        
-        if (typeof atualizarInfoVagaLocal === 'function') {
-          atualizarInfoVagaLocal(aptoSelecionado);
-        }
-      }
-
-      alterarTextoBotaoEnviar("Atualizar cadastro");
-      exibirPassoTipoResidente();
+      preencherFormularioComCadastro(d);
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
       cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput };

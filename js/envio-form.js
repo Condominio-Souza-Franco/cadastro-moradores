@@ -129,9 +129,12 @@ function enviar() {
     const cpfInformado = (moradorCpfEl.value || "").trim();
     if (cpfInformado !== "") {
       const cpfLimpo = limparCpf(cpfInformado);
-      if (cpfLimpo.length !== 11) {
-        if (!camposFaltantes.includes("CPF deve conter 11 dígitos")) {
-          camposFaltantes.push("CPF deve conter 11 dígitos");
+      const mensagemCpf = cpfLimpo.length !== 11
+        ? "CPF deve conter 11 dígitos"
+        : (window.Utils.cpfValido(cpfLimpo) ? "" : "CPF inválido: confira os números digitados");
+      if (mensagemCpf) {
+        if (!camposFaltantes.includes(mensagemCpf)) {
+          camposFaltantes.push(mensagemCpf);
         }
         if (!elementosParaDestacar.includes(moradorCpfEl)) {
           elementosParaDestacar.push(moradorCpfEl);
@@ -584,7 +587,11 @@ function executarEnvio(fileData, eAtualizacao) {
     dados.credencialNasc = cadastroConsultado.nasc;
   }
 
-  DataService.salvarCadastro(dados)
+  // Edição pela administração (js/modo-admin.js): rota protegida pelo login do admin.
+  const modoAdmin = window.modoAdminEdicao || null;
+  const textoBotaoOriginal = modoAdmin ? "Salvar alterações" : (eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+
+  (modoAdmin ? DataService.salvarCadastroAdmin(dados) : DataService.salvarCadastro(dados))
   .then(res => {
     const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
     if (btnSubmit) btnSubmit.disabled = false;
@@ -592,10 +599,15 @@ function executarEnvio(fileData, eAtualizacao) {
     setOverlayProcessamento(false);
 
     if (res.sucesso) {
+      if (modoAdmin) {
+        mostrarAlerta("As alterações ficaram registradas com o seu e-mail.", res.mensagem || "Cadastro atualizado com sucesso!")
+          .then(function() { window.location.href = modoAdmin.urlRetorno; });
+        return;
+      }
       mostrarAlerta("", res.mensagem || "Cadastro enviado com sucesso!");
       voltarTelaInicial();
     } else {
-      alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+      alterarTextoBotaoEnviar(textoBotaoOriginal);
       mostrarAlerta((res && res.mensagem) || "Não foi possível enviar o cadastro. Tente novamente.", "Atenção");
     }
   })
@@ -604,7 +616,7 @@ function executarEnvio(fileData, eAtualizacao) {
     if (btnSubmit) btnSubmit.disabled = false;
 
     setOverlayProcessamento(false);
-    alterarTextoBotaoEnviar(eAtualizacao ? "Atualizar cadastro" : "Enviar cadastro");
+    alterarTextoBotaoEnviar(textoBotaoOriginal);
     const mensagemErro = err && err.message ? err.message : String(err || 'Erro inesperado no envio.');
     mostrarAlerta(mensagemErro, "Atenção");
   });

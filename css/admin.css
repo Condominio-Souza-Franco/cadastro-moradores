@@ -278,7 +278,8 @@ p {
 }
 
 /* Modo somente leitura: esconde ações de escrita quando a fonte ativa é o Google Sheets */
-.modo-somente-leitura .btn-excluir-cadastro {
+.modo-somente-leitura .btn-excluir-cadastro,
+.modo-somente-leitura .btn-editar-cadastro {
   display: none;
 }
 
@@ -474,7 +475,7 @@ button:hover {
 }
 
 .btn-consultar-outro {
-  flex: 3;
+  flex: 2;
   background: #2c3e50;
   border: none;
   border-color: #2c3e50;
@@ -1092,4 +1093,25 @@ button:hover {
 .btn-limpar-busca:focus-visible {
   background: var(--surface-soft);
   color: var(--error);
+}
+
+/* Editar cadastro (abre o formulário em modo administração) */
+.btn-editar-cadastro {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn-editar-cadastro:hover {
+  background: #174a7a;
 }

@@ -422,3 +422,42 @@ textarea {
 #listaHistoricoContratos a:hover {
   text-decoration: underline;
 }
+
+/* ==========================================
+   MODO ADMINISTRAÇÃO (edição pelo painel admin — js/modo-admin.js)
+   ========================================== */
+.aviso-modo-admin {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #b9c8d8;
+  border-left: 5px solid #1f5d99;
+  border-radius: 8px;
+  background: #eef4fb;
+  color: #243447;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.aviso-modo-admin-erro {
+  margin-top: 8px;
+  color: #a12622;
+  font-weight: 600;
+}
+
+.btn-voltar-painel {
+  display: block;
+  margin-top: 10px;
+  padding: 7px 12px;
+  border: 1px solid #b9c8d8;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f5d99;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* No modo administração o formulário já vem aberto: o bloco do kit/boas-vindas sai do caminho. */
+.modo-admin .link-destaque,
+.modo-admin .subtitle {
+  display: none;
+}

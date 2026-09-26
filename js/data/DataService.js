@@ -342,6 +342,9 @@
     },
     salvarCadastro: function(dados) {
       return executarEscrita("salvarCadastro", [dados]);
+    },
+    salvarCadastroAdmin: function(dados) {
+      return executarEscrita("salvarCadastroAdmin", [dados]);
     }
   };
 

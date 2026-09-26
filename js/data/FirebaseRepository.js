@@ -63,6 +63,10 @@
     salvarCadastro: function(dados) {
       return chamarBackend("fbSalvarCadastro", { dados: dados }, false);
     },
+    // Edição de um cadastro existente pela administração (exige o login do admin).
+    salvarCadastroAdmin: function(dados) {
+      return chamarBackend("fbAdminSalvarCadastro", { dados: dados }, true);
+    },
 
     // Usado pelo botão "Testar conexões" do admin, sem alterar a fonte selecionada.
     testarConexao: function() {

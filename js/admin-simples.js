@@ -486,7 +486,16 @@
       '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
-    var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-consultar-outro" style="width: 75%; margin-right: 10px;">Consultar outro apartamento</button><button type="button" class="btn-excluir-cadastro" style="width: 25%;" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '">Excluir cadastro</button></div>';
+    // "Editar" abre o formulário do cadastro em modo administração (js/modo-admin.js).
+    // Só existe com o Firebase (precisa do id do cadastro).
+    var urlEditar = dados.id
+      ? "index.html?editar=" + encodeURIComponent(dados.id) + "&apto=" + encodeURIComponent(dados.apto || "")
+      : "";
+    var btnExcluir = '<div class="admin-acoes-registro">' +
+      '<button type="button" class="btn-consultar-outro">Consultar outro apartamento</button>' +
+      (urlEditar ? '<a class="btn-editar-cadastro" href="' + escaparHtml(urlEditar) + '">Editar cadastro</a>' : "") +
+      '<button type="button" class="btn-excluir-cadastro" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '">Excluir cadastro</button>' +
+    '</div>';
     var btnFechar = '<button type="button" class="btn-fechar btn-fechar-registro" aria-label="Fechar cadastro" title="Fechar">&times;</button>';
     return '<div class="admin-registro-card">' + btnFechar + secoes.join("") + btnExcluir + '</div>';
   }
@@ -629,10 +638,22 @@
     appInicializado = true;
 
     // Mantém somente a lista local de apartamentos.
-    carregarAptosDoServidor();
+    var listaCarregada = carregarAptosDoServidor();
     var botao = document.getElementById("btnBuscarApto");
     if (botao) {
       botao.addEventListener("click", buscarPorApartamento);
+    }
+
+    // Volta da edição pelo formulário (js/modo-admin.js): "?abrir=apto__id" reabre o cadastro.
+    var abrir = new URLSearchParams(window.location.search).get("abrir");
+    if (abrir && abrir.indexOf("__") !== -1) {
+      history.replaceState(null, "", window.location.pathname); // não reabre ao recarregar a página
+      var partes = abrir.split("__");
+      Promise.resolve(listaCarregada).then(function() {
+        var select = document.getElementById("aptoAdmin");
+        if (select) select.value = abrir;
+        carregarRegistro(partes[0], partes[1]);
+      });
     }
   }
 
