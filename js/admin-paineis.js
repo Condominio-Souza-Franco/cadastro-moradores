@@ -17,6 +17,13 @@
     botao.setAttribute("aria-pressed", aberto ? "true" : "false");
   }
 
+  // "Últimas alterações cadastrais" é a home: só aparece com todas as páginas fechadas.
+  function atualizarHome() {
+    var historico = document.getElementById("historicoAdmin");
+    if (!historico) return;
+    historico.hidden = !!document.querySelector(".painel-admin:not([hidden])");
+  }
+
   function abrir(id) {
     var painel = document.getElementById(id);
     var container = document.getElementById("paineisAdmin");
@@ -25,6 +32,7 @@
     if (container.firstElementChild !== painel) container.insertBefore(painel, container.firstElementChild);
     painel.hidden = false;
     marcarBotao(id, true);
+    atualizarHome();
   }
 
   function fechar(id) {
@@ -32,6 +40,7 @@
     if (!painel) return;
     painel.hidden = true;
     marcarBotao(id, false);
+    atualizarHome();
   }
 
   function alternar(id) {

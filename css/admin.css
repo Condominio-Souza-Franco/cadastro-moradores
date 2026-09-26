@@ -1496,3 +1496,178 @@ button:hover {
 .admin-registro-card > .registro-cabecalho {
   box-sizing: border-box;
 }
+
+/* ==========================================
+   REVISÃO DO LAYOUT: FONTE MENOR, PÁGINAS SEM CAIXA, CADASTRO "ACHATADO"
+   ========================================== */
+/* Tudo na página usa rem: baixar a base reduz a fonte de forma geral. */
+html {
+  font-size: 14px;
+}
+
+/* Páginas (painéis) sem caixa própria: só uma linha separando do menu (e entre páginas). */
+.paineis-admin {
+  gap: 0;
+}
+
+.painel-admin {
+  padding: 12px 0 14px;
+  border: 0;
+  border-top: 2px solid var(--accent-color);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.painel-topo h2 {
+  font-size: 1rem;
+}
+
+.btn-fechar-painel {
+  width: 26px;
+  height: 26px;
+  font-size: 1rem;
+}
+
+.painel-topo .btn-fechar-painel {
+  width: 26px;
+}
+
+/* Consulta por apartamento: sem o rótulo, o menu ocupa a linha toda (como o "Carregar dados"). */
+#painelConsulta .linha label {
+  display: none;
+}
+
+#painelConsulta .linha {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#painelConsulta .linha select,
+#painelConsulta .linha button {
+  width: 100%;
+  min-width: 0;
+}
+
+#painelConsulta > p {
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+/* Cadastro carregado: sem caixa em volta de caixa. Só os campos (Apartamento, Tipo, Nome...)
+   têm borda; seções são separadas por uma linha fina. */
+#resultadoAdmin {
+  gap: 6px;
+  min-height: 0;
+}
+
+#resultadoAdmin .admin-registro-card {
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#resultadoAdmin .admin-registro-card > .registro-cabecalho {
+  padding-right: 34px;
+}
+
+#resultadoAdmin .btn-fechar-registro {
+  top: 0;
+  right: 0;
+}
+
+#resultadoAdmin .data-envio {
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+#resultadoAdmin .logs-atualizacao summary {
+  font-size: 0.8rem;
+}
+
+#resultadoAdmin .secao {
+  margin-top: 10px;
+  padding: 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+
+#resultadoAdmin .secao h2 {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+#resultadoAdmin .subsecao h3 {
+  font-size: 0.82rem;
+}
+
+#resultadoAdmin .subsecoes-separadas > .subsecao,
+#resultadoAdmin .registro-item,
+#resultadoAdmin .registro-bloco {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#resultadoAdmin .registro-item + .registro-item {
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+#resultadoAdmin .grid-campos {
+  gap: 6px;
+}
+
+#resultadoAdmin .campo {
+  padding: 5px 7px;
+  border-radius: 6px;
+}
+
+#resultadoAdmin .campo-titulo {
+  margin-bottom: 2px;
+  font-size: 0.62rem;
+}
+
+#resultadoAdmin .campo-valor {
+  font-size: 0.85rem;
+}
+
+#resultadoAdmin .admin-acoes-registro {
+  margin-top: 12px;
+}
+
+/* "Últimas alterações cadastrais" é só da home: some quando alguma página está aberta. */
+.card-historico[hidden] {
+  display: none !important;
+}
+
+#resultadoAdmin .registro-bloco {
+  width: 100%;
+  margin-top: 6px;
+}
+
+#resultadoAdmin .registro-bloco + .registro-bloco {
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+#painelConsulta .linha select,
+#painelConsulta .linha button {
+  height: auto;
+  min-height: 36px;
+  font-size: 0.9rem;
+}
+
+.menu-admin button {
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 0.82rem;
+}
