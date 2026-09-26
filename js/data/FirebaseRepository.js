@@ -74,6 +74,10 @@
     salvarCadastroAdmin: function(dados) {
       return chamarBackend("fbAdminSalvarCadastro", { dados: dados }, true);
     },
+    // Grava o gabarito de vagas (Firestore + aba "Gabarito" da planilha). Só administração.
+    salvarGabarito: function(linhas) {
+      return chamarBackend("fbSalvarGabarito", { linhas: linhas }, true);
+    },
     // Apaga uma entrada das "Últimas alterações cadastrais" (só administração).
     excluirHistorico: function(id) {
       return chamarBackend("fbExcluirHistorico", { id: id }, true);

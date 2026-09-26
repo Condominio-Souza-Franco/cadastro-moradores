@@ -37,6 +37,7 @@
     painel.hidden = false;
     marcarBotao(id, true);
     atualizarHome();
+    window.dispatchEvent(new CustomEvent("painel-aberto", { detail: { id: id } }));
   }
 
   function fechar(id) {

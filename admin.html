@@ -70,6 +70,7 @@
           <button type="button" data-painel="painelBusca" aria-pressed="false">Busca geral</button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
+          <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
         </nav>
 
         <div id="paineisAdmin" class="paineis-admin">
@@ -151,6 +152,22 @@
               <div id="resultadosBuscaGeral" class="resultados-busca"></div>
             </div>
           </section>
+
+          <section id="painelGabarito" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Gabarito de vagas</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <p class="descricao-acao">
+              Uma linha por vaga. Salvar grava no banco de dados e na aba "Gabarito" da planilha. Se a vaga não
+              bater com o desenho da garagem, aparece um aviso (dá para salvar mesmo assim).
+            </p>
+            <div id="statusGabarito" class="status"></div>
+            <div class="gabarito-cabecalho" aria-hidden="true"><span>Apto</span><span>Garagem</span><span>Vaga</span><span></span></div>
+            <div id="tabelaGabarito" class="tabela-gabarito"></div>
+            <div class="gabarito-acoes">
+              <button type="button" id="btnAdicionarVagaGabarito" class="btn-secundario">+ Adicionar vaga</button>
+              <button type="button" id="btnDesfazerGabarito" class="btn-secundario">Desfazer</button>
+              <button type="button" id="btnSalvarGabarito">Salvar alterações</button>
+            </div>
+          </section>
         </div>
 
         <!-- Home do admin: sempre visível embaixo do menu. -->
@@ -178,18 +195,19 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926j"></script>
-  <script src="js/utils.js?v=20260926j"></script>
-  <script src="js/data/backend.js?v=20260926j"></script>
-  <script src="js/admin-auth.js?v=20260926j"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926j"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926j"></script>
-  <script src="js/data/DataService.js?v=20260926j"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926j"></script>
-  <script src="js/admin-simples.js?v=20260926j"></script>
-  <script src="js/admin-relatorio.js?v=20260926j"></script>
-  <script src="js/admin-busca.js?v=20260926j"></script>
-  <script src="js/admin-historico.js?v=20260926j"></script>
-  <script src="js/admin-paineis.js?v=20260926j"></script>
+  <script src="js/regras.js?v=20260926k"></script>
+  <script src="js/utils.js?v=20260926k"></script>
+  <script src="js/data/backend.js?v=20260926k"></script>
+  <script src="js/admin-auth.js?v=20260926k"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926k"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926k"></script>
+  <script src="js/data/DataService.js?v=20260926k"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926k"></script>
+  <script src="js/admin-simples.js?v=20260926k"></script>
+  <script src="js/admin-relatorio.js?v=20260926k"></script>
+  <script src="js/admin-busca.js?v=20260926k"></script>
+  <script src="js/admin-historico.js?v=20260926k"></script>
+  <script src="js/admin-gabarito.js?v=20260926k"></script>
+  <script src="js/admin-paineis.js?v=20260926k"></script>
 </body>
 </html>

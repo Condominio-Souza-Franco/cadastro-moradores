@@ -1716,3 +1716,110 @@ html {
   padding: 6px 12px;
   font-size: 0.82rem;
 }
+
+/* ==========================================
+   GABARITO DE VAGAS (js/admin-gabarito.js)
+   ========================================== */
+.gabarito-cabecalho,
+.gabarito-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 56px 28px;
+  gap: 6px;
+  align-items: center;
+}
+
+.gabarito-cabecalho {
+  margin-top: 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gabarito-linha {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gabarito-linha select,
+.gabarito-linha input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 6px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.gabarito-linha input {
+  text-align: center;
+  font-weight: 700;
+}
+
+.gabarito-linha .btn-remover-linha {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gabarito-linha .btn-remover-linha:hover {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.gabarito-avisos {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+}
+
+.gabarito-avisos .aviso {
+  color: #6b4e00;
+}
+
+.gabarito-avisos .aviso-erro {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.gabarito-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.gabarito-acoes button {
+  width: auto;
+  height: auto;
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.gabarito-acoes #btnSalvarGabarito {
+  margin-left: auto;
+}
+
+.gabarito-acoes .btn-secundario {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-color);
+}
+
+.gabarito-acoes button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

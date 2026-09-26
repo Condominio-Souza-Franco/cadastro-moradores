@@ -55,6 +55,9 @@
     situacaoRelatorios: function() {
       return Promise.resolve({ sucesso: false, mensagem: "Indisponível no modo de contingência." });
     },
+    salvarGabarito: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     excluirHistorico: function() {
       return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O histórico só está disponível com o Firebase."));
     },

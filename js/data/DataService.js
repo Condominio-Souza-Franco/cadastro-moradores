@@ -352,6 +352,10 @@
     salvarCadastroAdmin: function(dados) {
       return executarEscrita("salvarCadastroAdmin", [dados]);
     },
+    // linhas: [{ apto, garagem, vaga }] — a tabela inteira do gabarito de vagas.
+    salvarGabarito: function(linhas) {
+      return executarEscrita("salvarGabarito", [linhas]);
+    },
     excluirHistorico: function(id) {
       return executarEscrita("excluirHistorico", [id]);
     },
