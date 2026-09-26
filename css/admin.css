@@ -986,3 +986,51 @@ button:hover {
 .historico-conteudo .status:empty {
   display: none;
 }
+
+/* ==========================================
+   BOTÃO FECHAR (×) — resultados da busca e cadastro carregado
+   ========================================== */
+.busca-resultado-area,
+.admin-registro-card {
+  position: relative;
+}
+
+.busca-resultado-area .status:not(:empty) {
+  padding-right: 40px; /* não passar por baixo do × */
+}
+
+.btn-fechar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.btn-fechar:hover,
+.btn-fechar:focus-visible {
+  color: var(--error);
+  border-color: var(--error);
+  background: var(--surface);
+}
+
+.admin-registro-card > .btn-fechar {
+  top: 10px;
+  right: 10px;
+}
+
+.admin-registro-card > .registro-cabecalho {
+  padding-right: 40px;
+}

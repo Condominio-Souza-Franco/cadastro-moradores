@@ -102,8 +102,11 @@
             <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo...">
             <button type="button" id="btnBuscaGeral">Buscar</button>
           </div>
-          <div id="statusBuscaGeral" class="status"></div>
-          <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+          <div class="busca-resultado-area">
+            <button type="button" id="btnFecharBusca" class="btn-fechar" aria-label="Fechar resultados da busca" title="Fechar" hidden>&times;</button>
+            <div id="statusBuscaGeral" class="status"></div>
+            <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+          </div>
         </div>
 
         <button type="button" id="btnVoltarBusca" class="btn-voltar-busca" hidden>← Voltar para busca</button>
@@ -124,17 +127,17 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260925c"></script>
-  <script src="js/utils.js?v=20260925c"></script>
-  <script src="js/data/backend.js?v=20260925c"></script>
-  <script src="js/admin-auth.js?v=20260925c"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260925c"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260925c"></script>
-  <script src="js/data/DataService.js?v=20260925c"></script>
-  <script src="js/admin-fonte-dados.js?v=20260925c"></script>
-  <script src="js/admin-simples.js?v=20260925c"></script>
-  <script src="js/admin-relatorio.js?v=20260925c"></script>
-  <script src="js/admin-busca.js?v=20260925c"></script>
-  <script src="js/admin-historico.js?v=20260925c"></script>
+  <script src="js/regras.js?v=20260926a"></script>
+  <script src="js/utils.js?v=20260926a"></script>
+  <script src="js/data/backend.js?v=20260926a"></script>
+  <script src="js/admin-auth.js?v=20260926a"></script>
+  <script src="js/data/FirebaseRepository.js?v=20260926a"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20260926a"></script>
+  <script src="js/data/DataService.js?v=20260926a"></script>
+  <script src="js/admin-fonte-dados.js?v=20260926a"></script>
+  <script src="js/admin-simples.js?v=20260926a"></script>
+  <script src="js/admin-relatorio.js?v=20260926a"></script>
+  <script src="js/admin-busca.js?v=20260926a"></script>
+  <script src="js/admin-historico.js?v=20260926a"></script>
 </body>
 </html>

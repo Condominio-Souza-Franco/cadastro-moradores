@@ -487,7 +487,8 @@
       '</section>');
 
     var btnExcluir = '<div class="admin-acoes-registro"><button type="button" class="btn-consultar-outro" style="width: 75%; margin-right: 10px;">Consultar outro apartamento</button><button type="button" class="btn-excluir-cadastro" style="width: 25%;" data-apto="' + escaparHtml(dados.apto || "") + '" data-ocorrencia="' + escaparHtml(ocorrenciaReal) + '" data-nome="' + escaparHtml(dados.nome || "") + '">Excluir cadastro</button></div>';
-    return '<div class="admin-registro-card">' + secoes.join("") + btnExcluir + '</div>';
+    var btnFechar = '<button type="button" class="btn-fechar btn-fechar-registro" aria-label="Fechar cadastro" title="Fechar">&times;</button>';
+    return '<div class="admin-registro-card">' + btnFechar + secoes.join("") + btnExcluir + '</div>';
   }
 
   function renderizarDados(dados, ocorrenciaSelecionada) {
@@ -542,20 +543,22 @@
       });
     });
 
-    resultado.querySelectorAll(".btn-consultar-outro").forEach(function(botao) {
+    // "Consultar outro apartamento" e o × do card: fecham o cadastro e voltam ao estado inicial.
+    resultado.querySelectorAll(".btn-consultar-outro, .btn-fechar-registro").forEach(function(botao) {
       botao.addEventListener("click", function() {
-        // Limpa a busca retornando ao estado inicial
         var select = document.getElementById("aptoAdmin");
         if (select) select.value = "";
-        
+
         resultado.innerHTML = "";
         resultado.classList.add("vazio");
         var placeholder = document.createElement("div");
         placeholder.className = "resultado-placeholder";
         placeholder.textContent = "Nenhum dado carregado.";
         resultado.appendChild(placeholder);
-        
+
         setStatus("", "");
+        // Se o cadastro foi aberto pela busca, a seção de busca volta a aparecer.
+        window.dispatchEvent(new CustomEvent("registro-fechado"));
       });
     });
   }

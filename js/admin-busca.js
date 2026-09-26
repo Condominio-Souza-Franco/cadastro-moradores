@@ -13,6 +13,18 @@
     if (container) container.innerHTML = "";
   }
 
+  function mostrarBotaoFechar(mostrar) {
+    var botao = document.getElementById("btnFecharBusca");
+    if (botao) botao.hidden = !mostrar;
+  }
+
+  // × da busca: some com a mensagem e os resultados (o termo digitado continua no campo).
+  function fecharResultados() {
+    limparResultados();
+    setStatusBusca("", "");
+    mostrarBotaoFechar(false);
+  }
+
   function mostrarSecaoBusca(mostrar) {
     var secaoBusca = document.getElementById("buscaGeralAdmin");
     var botaoVoltar = document.getElementById("btnVoltarBusca");
@@ -93,6 +105,7 @@
 
     setStatusBusca("Buscando...", "");
     limparResultados();
+    mostrarBotaoFechar(false);
 
     DataService.buscarTexto(termo)
       .then(function(resposta) {
@@ -107,6 +120,9 @@
       })
       .catch(function(erro) {
         setStatusBusca((erro && erro.message) || "Backend indisponível. Não foi possível realizar a busca.", "erro");
+      })
+      .then(function() {
+        mostrarBotaoFechar(true);
       });
   }
 
@@ -134,5 +150,15 @@
         mostrarSecaoBusca(true);
       });
     }
+
+    var botaoFechar = document.getElementById("btnFecharBusca");
+    if (botaoFechar) {
+      botaoFechar.addEventListener("click", fecharResultados);
+    }
+
+    // Cadastro fechado (× do card ou "Consultar outro apartamento"): a busca volta a aparecer.
+    window.addEventListener("registro-fechado", function() {
+      mostrarSecaoBusca(true);
+    });
   });
 })();
