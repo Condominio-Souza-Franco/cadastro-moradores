@@ -2264,3 +2264,8 @@ button.pendencia-item::before {
 .pendencias-em-linha .sem-quebra {
   white-space: nowrap;
 }
+
+/* Pendências: o número vem antes do título ("9 Apartamentos sem cadastro"). */
+.grupo-pendencia > summary .contador-pendencia {
+  margin-left: 0;
+}

@@ -32,7 +32,7 @@
     lista.innerHTML = grupos.map(function(g) {
       var n = g.itens.length;
       return '<details class="grupo-pendencia' + (n ? "" : " vazio") + '">' +
-        "<summary><span>" + escaparHtml(g.titulo) + '</span><span class="contador-pendencia">' + n + "</span></summary>" +
+        '<summary><span class="contador-pendencia">' + n + "</span><span>" + escaparHtml(g.titulo) + "</span></summary>" +
         // Aptos sem cadastro (só o número, nada para abrir): lado a lado, separados por "•".
         (n && g.chave === "semCadastro"
           ? '<p class="pendencias-em-linha">' + g.itens.map(function(it) { return '<span class="sem-quebra">' + escaparHtml(it.apto) + "</span>"; }).join(" • ") + "</p>"
