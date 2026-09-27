@@ -53,6 +53,10 @@
     listarHistorico: function(limite) {
       return chamarBackend("fbListarHistorico", { limite: limite }, true);
     },
+    // O que precisa de atenção na base (aptos sem cadastro, contratos vencendo, dados faltando...).
+    listarPendencias: function() {
+      return chamarBackend("fbListarPendencias", {}, true);
+    },
     gerarListaVeiculosPdfDrive: function() {
       return chamarBackend("fbGerarListaVeiculosPdfDrive", {}, true);
     },

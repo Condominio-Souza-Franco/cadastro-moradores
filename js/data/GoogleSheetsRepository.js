@@ -49,6 +49,9 @@
     listarHistorico: function() {
       return Promise.resolve({ sucesso: false, mensagem: "O histórico de alterações só está disponível com o Firebase.", itens: [] });
     },
+    listarPendencias: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "As pendências só estão disponíveis com o Firebase.", grupos: [] });
+    },
     gerarListaVeiculosPdfDrive: function() {
       return Promise.resolve({ sucesso: false, mensagem: "A lista de veículos só está disponível com o Firebase." });
     },

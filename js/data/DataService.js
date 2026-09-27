@@ -335,6 +335,9 @@
     listarHistorico: function(limite) {
       return executarLeitura("listarHistorico", [limite]);
     },
+    listarPendencias: function() {
+      return executarLeitura("listarPendencias", []);
+    },
     gerarListaVeiculosPdfDrive: function() {
       return executarLeitura("gerarListaVeiculosPdfDrive", []);
     },

@@ -2029,3 +2029,136 @@ html {
 .menu-admin button[data-painel="painelGabarito"] {
   grid-column: span 4;
 }
+
+/* Menu com 6 botões em duas linhas cheias (grade de 12 colunas):
+   1ª: Consulta por apartamento (6) · Busca geral (3) · Pendências (3)
+   2ª: Relatórios (4) · Links úteis (3) · Gabarito de vagas (5) */
+.menu-admin {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.menu-admin button[data-painel="painelConsulta"] { grid-column: span 6; }
+.menu-admin button[data-painel="painelBusca"],
+.menu-admin button[data-painel="painelPendencias"],
+.menu-admin button[data-painel="painelLinks"] { grid-column: span 3; }
+.menu-admin button[data-painel="painelRelatorios"] { grid-column: span 4; }
+.menu-admin button[data-painel="painelGabarito"] { grid-column: span 5; }
+
+/* ==========================================
+   PENDÊNCIAS (js/admin-pendencias.js)
+   ========================================== */
+.lista-pendencias {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.grupo-pendencia {
+  border-bottom: 1px solid var(--border);
+}
+
+.grupo-pendencia > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.grupo-pendencia.vazio > summary {
+  color: var(--muted);
+  font-weight: 400;
+  cursor: default;
+  pointer-events: none;
+  list-style: none;
+}
+
+.grupo-pendencia.vazio > summary::-webkit-details-marker {
+  display: none;
+}
+
+.contador-pendencia {
+  flex-shrink: 0;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #fde7e7;
+  color: #b3261e;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.grupo-pendencia.vazio .contador-pendencia {
+  background: #e7f5ea;
+  color: #1f7a3a;
+}
+
+.grupo-pendencia ul {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.pendencia-item {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 400;
+  text-align: left;
+}
+
+button.pendencia-item {
+  cursor: pointer;
+}
+
+button.pendencia-item:hover {
+  background: var(--surface-soft);
+}
+
+.pendencia-detalhe {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+#btnAtualizarPendencias {
+  width: auto;
+}
+
+/* Ajuste fino: grade de 24 colunas para as duas linhas caberem cheias até em celular estreito.
+   1ª: Consulta (10) · Busca geral (7) · Pendências (7) — 2ª: Relatórios (7) · Links úteis (7) · Gabarito (10) */
+.menu-admin {
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+}
+
+.menu-admin button[data-painel="painelConsulta"],
+.menu-admin button[data-painel="painelGabarito"] { grid-column: span 10; }
+.menu-admin button[data-painel="painelBusca"],
+.menu-admin button[data-painel="painelPendencias"],
+.menu-admin button[data-painel="painelRelatorios"],
+.menu-admin button[data-painel="painelLinks"] { grid-column: span 7; }
+
+/* Telas estreitas: "Consulta por apto" no lugar de "Consulta por apartamento". */
+.menu-admin .rotulo-curto { display: none; }
+
+@media (max-width: 520px) {
+  .menu-admin .rotulo-longo { display: none; }
+  .menu-admin .rotulo-curto { display: inline; }
+}
+
+@media (max-width: 340px) {
+  .menu-admin button {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
