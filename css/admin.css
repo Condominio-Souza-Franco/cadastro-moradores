@@ -1989,3 +1989,43 @@ html {
 #painelBusca .status {
   font-size: 0.85rem;
 }
+
+/* Menu em duas linhas cheias: Consulta e Busca na 1ª (metade cada), os outros 3 na 2ª (um terço
+   cada). Grade de 6 colunas; nenhum botão quebra linha (a fonte encolhe em telas estreitas). */
+.menu-admin {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.menu-admin button {
+  grid-column: span 2;
+  min-width: 0;
+  padding: 6px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.68rem, 2.9vw, 0.82rem);
+}
+
+.menu-admin button[data-painel="painelConsulta"],
+.menu-admin button[data-painel="painelBusca"] {
+  grid-column: span 3;
+}
+
+/* Ajuste: grade de 10 colunas. 1ª linha 5 + 5; 2ª linha 3 + 3 + 4 (o "Gabarito de vagas" é o
+   texto mais longo), para caber sem quebrar nem cortar em celulares estreitos. */
+.menu-admin {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+.menu-admin button {
+  grid-column: span 3;
+}
+
+.menu-admin button[data-painel="painelConsulta"],
+.menu-admin button[data-painel="painelBusca"] {
+  grid-column: span 5;
+}
+
+.menu-admin button[data-painel="painelGabarito"] {
+  grid-column: span 4;
+}
