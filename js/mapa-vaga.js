@@ -7,6 +7,20 @@
 // <g id="vaga-G1-14">. "10, 25 e 26" pinta três vagas; "1 / 2" é a vaga dupla "1/2" do G2.
 (function() {
   var ANDARES = ["G1", "G2"];
+  // Tela estreita ou em pé (celular): planta girada, com o texto de pé. A impressão acompanha:
+  // retrato sai em folha A4 em pé; paisagem, em folha deitada.
+  var consultaRetrato = window.matchMedia("(max-width: 700px), (max-aspect-ratio: 1/1)");
+
+  function definirOrientacao(retrato) {
+    document.body.classList.toggle("retrato", retrato);
+    var estilo = document.getElementById("estiloPagina");
+    if (!estilo) {
+      estilo = document.createElement("style");
+      estilo.id = "estiloPagina";
+      document.head.appendChild(estilo);
+    }
+    estilo.textContent = "@page { size: A4 " + (retrato ? "portrait" : "landscape") + "; margin: 8mm; }";
+  }
 
   function parametros() {
     var p = new URLSearchParams(window.location.search);
@@ -33,7 +47,7 @@
   }
 
   function carregarAndar(andar) {
-    return fetch("mapas/mapa-garagem-" + andar + ".svg", { cache: "no-cache" })
+    return fetch("mapas/mapa-garagem-" + andar + (consultaRetrato.matches ? "-retrato" : "") + ".svg", { cache: "no-cache" })
       .then(function(r) {
         if (!r.ok) throw new Error("Não foi possível carregar o mapa do " + andar + ".");
         return r.text();
@@ -97,6 +111,7 @@
     var escapar = function(s) { return String(s).replace(/[&<>"']/g, function(c) { return "&#" + c.charCodeAt(0) + ";"; }); };
     var texto = document.getElementById("textoVaga");
     var container = document.getElementById("mapas");
+    definirOrientacao(consultaRetrato.matches);
 
     carregarGabarito().then(function(gabarito) {
       // A vaga do apto vem do gabarito atual; a da URL só vale se o gabarito não carregar.
@@ -143,5 +158,9 @@
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("btnImprimir").addEventListener("click", function() { window.print(); });
     montar();
+    // Girou o celular / mudou a largura da janela: remonta na outra orientação.
+    var aoMudar = function() { montar(); };
+    if (consultaRetrato.addEventListener) consultaRetrato.addEventListener("change", aoMudar);
+    else if (consultaRetrato.addListener) consultaRetrato.addListener(aoMudar);
   });
 })();

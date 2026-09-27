@@ -1923,17 +1923,11 @@ html {
   flex-basis: 100%;
 }
 
-/* No celular o mapa fica maior que a tela (rola para o lado), para dar para tocar nas vagas. */
-@media (max-width: 600px) {
-  .mapa-gabarito {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .mapa-gabarito svg {
-    width: 680px;
-    max-width: none;
-  }
+/* Retrato (celular): a planta girada ocupa a largura toda; o texto já vem de pé. */
+.mapa-gabarito.retrato svg {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 /* O editor da vaga fica grudado no topo da tela enquanto se rola o mapa. */

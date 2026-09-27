@@ -17,7 +17,9 @@
   var desenho = null;      // { "G1": { "17": { condominio, desativada }, ... }, "G2": {...} }
   var carregado = false;
   var carregando = false;
-  var svgs = {};           // texto dos SVGs de cada garagem (modo mapa)
+  var svgs = {};           // texto dos SVGs de cada garagem (modo mapa), "paisagem" e "retrato"
+  // Tela estreita ou em pé (celular): planta girada, com o texto de pé (mapas/*-retrato.svg).
+  var consultaRetrato = window.matchMedia("(max-width: 700px), (max-aspect-ratio: 1/1)");
   var modo = "tabela";
   var garagemMapa = "G1";
   var vagaEditada = null;  // número da vaga aberta no editor do mapa ("14", "1/2"...)
@@ -38,6 +40,13 @@
 
   // Vagas de cada garagem segundo o desenho (lidas dos próprios SVGs dos mapas).
   function carregarDesenho() {
+    // Carrega a versão retrato junto (para o modo mapa no celular); o desenho é lido da paisagem.
+    GARAGENS.forEach(function(g) {
+      fetch("mapas/mapa-garagem-" + g + "-retrato.svg", { cache: "no-cache" })
+        .then(function(r) { return r.ok ? r.text() : ""; })
+        .then(function(t) { svgs[g + "-retrato"] = t; if (modo === "mapa") renderizarMapa(); })
+        .catch(function() {});
+    });
     return Promise.all(GARAGENS.map(function(g) {
       return fetch("mapas/mapa-garagem-" + g + ".svg", { cache: "no-cache" })
         .then(function(r) { return r.ok ? r.text() : ""; })
@@ -148,11 +157,13 @@
   function renderizarMapa() {
     var container = document.getElementById("mapaGabarito");
     if (!container) return;
-    if (!svgs[garagemMapa]) {
+    var svg = (consultaRetrato.matches && svgs[garagemMapa + "-retrato"]) || svgs[garagemMapa];
+    if (!svg) {
       container.innerHTML = '<p class="sem-itens">Não foi possível carregar o desenho do ' + garagemMapa + ".</p>";
       return;
     }
-    container.innerHTML = svgs[garagemMapa];
+    container.innerHTML = svg;
+    container.classList.toggle("retrato", svg === svgs[garagemMapa + "-retrato"]);
     container.querySelectorAll("g[data-vaga]").forEach(function(g) {
       var n = g.getAttribute("data-vaga");
       var indices = indicesDaVaga(garagemMapa, n);
@@ -389,6 +400,10 @@
       if (g) abrirEditorVaga(g.getAttribute("data-vaga"));
     });
     document.getElementById("editorVagaAplicar").addEventListener("click", aplicarEditorVaga);
+    // Girou o celular / mudou a largura da janela: troca entre retrato e paisagem.
+    var aoMudarOrientacao = function() { if (modo === "mapa") renderizarMapa(); };
+    if (consultaRetrato.addEventListener) consultaRetrato.addEventListener("change", aoMudarOrientacao);
+    else if (consultaRetrato.addListener) consultaRetrato.addListener(aoMudarOrientacao);
     document.getElementById("editorVagaCancelar").addEventListener("click", fecharEditorVaga);
   });
 })();

@@ -28,6 +28,7 @@
     .folha { background: #fff; border: 1px solid var(--borda); border-radius: 10px; padding: 12px; margin-bottom: 16px; }
     .folha h2 { margin: 0 0 8px; font-size: 1rem; }
     .folha svg { display: block; width: 100%; height: auto; }
+    body.retrato .folha svg { max-width: 560px; margin: 0 auto; }
     .erro { color: #b3261e; }
 
     /* Destaque da vaga do morador */
@@ -35,7 +36,6 @@
     .vaga.destaque .num-vaga circle { fill: #e65100; }
     .vaga.destaque .apto { fill: #7a2e00; }
 
-    @page { size: A4 landscape; margin: 8mm; }
     @media print {
       body { background: #fff; }
       .acoes, .nao-imprimir { display: none !important; }
@@ -44,11 +44,12 @@
       .folha { border: 0; padding: 0; margin: 0; page-break-after: always; break-after: page; }
       .folha:last-child { page-break-after: auto; break-after: auto; }
       .folha svg { max-height: 172mm; width: auto; max-width: 100%; margin: 0 auto; }
+      body.retrato .folha svg { max-height: 262mm; }
     }
   </style>
-  <script src="js/regras.js?v=20260926m" defer></script>
-  <script src="js/data/backend.js?v=20260926m" defer></script>
-  <script src="js/mapa-vaga.js?v=20260926m" defer></script>
+  <script src="js/regras.js?v=20260926n" defer></script>
+  <script src="js/data/backend.js?v=20260926n" defer></script>
+  <script src="js/mapa-vaga.js?v=20260926n" defer></script>
 </head>
 <body>
   <header class="topo">
