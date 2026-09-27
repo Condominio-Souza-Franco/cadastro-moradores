@@ -2246,3 +2246,8 @@ button.pendencia-item::before {
 .pendencia-item.sem-link {
   padding-left: 22px;
 }
+
+/* Home: "Últimas alterações cadastrais" logo abaixo do menu. */
+#historicoAdmin {
+  margin-top: 0;
+}
