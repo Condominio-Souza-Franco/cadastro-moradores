@@ -17,7 +17,7 @@
   }
 
   function itemHtml(it) {
-    var texto = "<strong>Apto " + escaparHtml(it.apto) + "</strong>" +
+    var texto = "<strong>" + escaparHtml(it.apto) + "</strong>" +
       (it.nome ? " · " + escaparHtml(it.nome) + (it.tipo ? " (" + escaparHtml(it.tipo) + ")" : "") : "") +
       (it.detalhe ? '<span class="pendencia-detalhe">' + escaparHtml(it.detalhe) + "</span>" : "");
     return it.id

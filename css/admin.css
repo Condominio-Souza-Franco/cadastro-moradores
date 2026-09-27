@@ -2162,3 +2162,87 @@ button.pendencia-item:hover {
     padding-right: 2px;
   }
 }
+
+/* Pendências: título mais perto do conteúdo, "Atualizar" pequeno ao lado do título,
+   setinhas indicando o que abre (grupo) e o que leva ao cadastro (item). */
+#painelPendencias .painel-topo {
+  margin-bottom: 2px;
+}
+
+#painelPendencias .painel-topo h2 {
+  flex: 0 1 auto;
+}
+
+#painelPendencias .btn-fechar-painel {
+  margin-left: auto;
+}
+
+.btn-atualizar-pendencias {
+  width: auto;
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dica-pendencias {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+#statusPendencias:empty {
+  display: none;
+}
+
+.grupo-pendencia > summary {
+  list-style: none;
+  justify-content: flex-start;
+}
+
+.grupo-pendencia > summary::-webkit-details-marker {
+  display: none;
+}
+
+.grupo-pendencia > summary::before {
+  content: "▸";
+  flex-shrink: 0;
+  width: 12px;
+  color: var(--accent-color);
+  transition: transform 0.15s;
+}
+
+.grupo-pendencia[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.grupo-pendencia.vazio > summary::before {
+  color: transparent;
+}
+
+.grupo-pendencia > summary .contador-pendencia {
+  margin-left: auto;
+}
+
+button.pendencia-item {
+  position: relative;
+  padding-left: 22px;
+}
+
+button.pendencia-item::before {
+  content: "›";
+  position: absolute;
+  left: 8px;
+  top: 5px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.pendencia-item.sem-link {
+  padding-left: 22px;
+}
