@@ -29,6 +29,8 @@
     var lista = document.getElementById("listaPendencias");
     if (!lista) return;
     var total = grupos.reduce(function(s, g) { return s + g.itens.length; }, 0);
+    // Primeiro os grupos com pendência, depois os zerados (a ordem entre eles se mantém).
+    grupos = grupos.filter(function(g) { return g.itens.length; }).concat(grupos.filter(function(g) { return !g.itens.length; }));
     lista.innerHTML = grupos.map(function(g) {
       var n = g.itens.length;
       return '<details class="grupo-pendencia' + (n ? "" : " vazio") + '">' +

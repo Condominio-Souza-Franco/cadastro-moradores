@@ -116,7 +116,15 @@
     secao.addEventListener("toggle", function() {
       if (secao.open && !carregado) carregar();
     });
-    if (botao) botao.addEventListener("click", carregar);
+    // "Atualizar" fica no título (dentro do <summary>): abre o grupo (sem fechar se já estiver
+    // aberto) e recarrega. Clicar no texto só abre/fecha, como antes.
+    if (botao) botao.addEventListener("click", function(evento) {
+      evento.preventDefault();
+      evento.stopPropagation();
+      var jaAberto = secao.open;
+      secao.open = true;
+      if (jaAberto || carregado) carregar();
+    });
     if (botaoMais) botaoMais.addEventListener("click", function() {
       visiveis += POR_PAGINA;
       renderizar();

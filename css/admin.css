@@ -2269,3 +2269,56 @@ button.pendencia-item::before {
 .grupo-pendencia > summary .contador-pendencia {
   margin-left: 0;
 }
+
+/* Gabarito de vagas: menos espaço entre Tabela/Mapa e o conteúdo. */
+#statusGabarito:empty {
+  display: none;
+}
+
+#painelGabarito .descricao-acao {
+  margin-bottom: 4px;
+}
+
+#painelGabarito .gabarito-modos {
+  margin: 6px 0 4px;
+}
+
+#painelGabarito .gabarito-garagens {
+  margin: 4px 0;
+}
+
+#painelGabarito .gabarito-cabecalho {
+  margin-top: 4px;
+}
+
+/* Últimas alterações: "Atualizar" pequeno ao lado do título. */
+.card-historico > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-historico > summary::before {
+  content: "▸";
+  color: var(--accent-color);
+  transition: transform 0.15s;
+}
+
+.card-historico[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.card-historico > summary {
+  list-style: none;
+}
+
+.card-historico > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Pendências: grupo sem pendência leva um "✓" no lugar da setinha. */
+.grupo-pendencia.vazio > summary::before {
+  content: "✓";
+  color: #1f7a3a;
+  font-weight: 700;
+}
