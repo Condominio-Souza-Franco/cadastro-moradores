@@ -2251,3 +2251,16 @@ button.pendencia-item::before {
 #historicoAdmin {
   margin-top: 0;
 }
+
+.pendencias-em-linha {
+  margin: 0 0 8px;
+  padding: 0 8px 0 22px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.pendencias-em-linha .sem-quebra {
+  white-space: nowrap;
+}
