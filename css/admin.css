@@ -2835,3 +2835,15 @@ button.pendencia-item::before {
   display: block;
   overflow-wrap: anywhere;
 }
+
+/* Todo "Carregando..." em itálico. */
+.status.carregando,
+.situacao-relatorio.carregando,
+.auth-mensagem.carregando {
+  font-style: italic;
+}
+
+/* Cabeçalho Vaga/Apartamento só depois que o gabarito carregou. */
+#painelGabarito:not(.conteudo-carregado) .gabarito-cabecalho {
+  display: none;
+}
