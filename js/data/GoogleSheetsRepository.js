@@ -49,6 +49,12 @@
     listarHistorico: function() {
       return Promise.resolve({ sucesso: false, mensagem: "O histórico de alterações só está disponível com o Firebase.", itens: [] });
     },
+    obterMembros: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "Os membros só estão disponíveis com o Firebase." });
+    },
+    salvarMembros: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     listarPendencias: function() {
       return Promise.resolve({ sucesso: false, mensagem: "As pendências só estão disponíveis com o Firebase.", grupos: [] });
     },

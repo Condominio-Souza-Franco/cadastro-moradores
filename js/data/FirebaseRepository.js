@@ -53,6 +53,13 @@
     listarHistorico: function(limite) {
       return chamarBackend("fbListarHistorico", { limite: limite }, true);
     },
+    // Membros da administração (quem acessa a área restrita e com qual papel).
+    obterMembros: function() {
+      return chamarBackend("fbObterMembros", {}, true);
+    },
+    salvarMembros: function(membros) {
+      return chamarBackend("fbSalvarMembros", { membros: membros }, true);
+    },
     // O que precisa de atenção na base (aptos sem cadastro, contratos vencendo, dados faltando...).
     listarPendencias: function() {
       return chamarBackend("fbListarPendencias", {}, true);

@@ -13,7 +13,7 @@
   var carregado = false;
   var carregando = false;
 
-  var CLASSE_TIPO = { "criação": "criacao", "edição": "edicao", "exclusão": "exclusao", "mudou-se": "mudouse", "reativação": "criacao", "gabarito": "edicao" };
+  var CLASSE_TIPO = { "criação": "criacao", "edição": "edicao", "exclusão": "exclusao", "mudou-se": "mudouse", "reativação": "criacao", "gabarito": "edicao", "membros": "edicao" };
 
   function setStatus(texto, tipo) {
     var status = document.getElementById("statusHistorico");

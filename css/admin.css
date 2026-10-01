@@ -2322,3 +2322,188 @@ button.pendencia-item::before {
   color: #1f7a3a;
   font-weight: 700;
 }
+
+/* ==========================================
+   HOME (últimas alterações + busca geral), MENU COM "MEMBROS", LINKS EM LINHA
+   ========================================== */
+#homeAdmin[hidden] {
+  display: none !important;
+}
+
+.busca-home {
+  margin-top: 14px;
+}
+
+.titulo-home {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--primary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.busca-home .card-busca {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.busca-home .linha-busca {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.busca-home .campo-busca,
+.busca-home .linha-busca > button,
+.busca-home input {
+  width: 100%;
+}
+
+.busca-home input,
+.busca-home .linha-busca > button {
+  height: 36px;
+  min-height: 36px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Menu: 1ª linha Consulta (10) · Pendências (7) · Relatórios (7);
+         2ª linha Links úteis (7) · Gabarito de vagas (10) · Membros (7). */
+.menu-admin button[data-painel="painelMembros"] { grid-column: span 7; }
+
+/* Links úteis lado a lado, separados por "•". */
+.links-em-linha {
+  display: block;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.links-em-linha a {
+  display: inline;
+  white-space: nowrap;
+}
+
+.links-em-linha a + a::before {
+  content: "•";
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* Consulta por apartamento: sem espaço sobrando embaixo do campo. */
+#painelConsulta .linha {
+  margin-bottom: 0;
+}
+
+#statusAdmin:empty,
+#resultadoAdmin.vazio {
+  display: none;
+}
+
+#statusAdmin {
+  margin: 8px 0 0;
+}
+
+/* ==========================================
+   MEMBROS (js/admin-membros.js)
+   ========================================== */
+.form-membros {
+  display: flex;
+  flex-direction: column;
+}
+
+.cargo-membro {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cargo-titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.cargo-membro select,
+.cargo-membro input[type="email"] {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.cargo-membro input[type="email"]:disabled,
+.cargo-membro select:disabled {
+  background: #f2f4f7;
+  color: #556270;
+}
+
+.cargo-info {
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.cargo-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.cargo-aviso {
+  font-size: 0.75rem;
+  color: #6b4e00;
+}
+
+#statusMembros:empty {
+  display: none;
+}
+
+.membros-acoes {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.membros-acoes button {
+  width: auto;
+  height: auto;
+  min-height: 34px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.membros-acoes .btn-secundario {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-color);
+}
+
+.membros-acoes button:disabled {
+  opacity: 0.5;
+}
+
+.membros-acoes button[hidden] {
+  display: none;
+}
+
+.links-em-linha {
+  font-size: 0.82rem;
+}
+
+.links-em-linha a {
+  white-space: normal;
+}
+
+#statusMembros {
+  font-size: 0.82rem;
+}

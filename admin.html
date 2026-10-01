@@ -67,17 +67,17 @@
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
         <nav class="menu-admin" aria-label="Seções da administração">
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
-          <button type="button" data-painel="painelBusca" aria-pressed="false">Busca geral</button>
           <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências</button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
+          <button type="button" data-painel="painelMembros" aria-pressed="false">Membros</button>
         </nav>
 
         <div id="paineisAdmin" class="paineis-admin">
           <section id="painelLinks" class="painel-admin" hidden>
             <div class="painel-topo"><h2>Links úteis</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
-            <div class="link-planilha-admin">
+            <div class="link-planilha-admin links-em-linha">
               <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
               <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
               <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
@@ -137,19 +137,14 @@
             </div>
           </section>
 
-          <section id="painelBusca" class="painel-admin" hidden>
-            <div class="painel-topo"><h2>Busca geral <span class="subtitulo-painel">(nome, carro, pet, prestador...)</span></h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
-            <div id="buscaGeralAdmin" class="card-busca">
-              <div class="linha-busca">
-                <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
-                <div class="campo-busca">
-                  <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo..." aria-label="Buscar em todos os cadastros">
-                  <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
-                </div>
-                <button type="button" id="btnBuscaGeral">Buscar</button>
-              </div>
-              <div id="statusBuscaGeral" class="status"></div>
-              <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+          <section id="painelMembros" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Membros</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <p class="descricao-acao">Quem acessa a área restrita. O e-mail de acesso é o da conta Google usada no login.</p>
+            <div id="statusMembros" class="status"></div>
+            <div id="formMembros" class="form-membros"></div>
+            <div class="membros-acoes">
+              <button type="button" id="btnDesfazerMembros" class="btn-secundario">Desfazer</button>
+              <button type="button" id="btnSalvarMembros">Salvar</button>
             </div>
           </section>
 
@@ -203,7 +198,8 @@
           </section>
         </div>
 
-        <!-- Home do admin: sempre visível embaixo do menu. -->
+        <!-- Home do admin (some quando alguma página do menu está aberta). -->
+        <div id="homeAdmin" class="home-admin">
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
           <summary><span>Últimas alterações cadastrais</span><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
@@ -215,6 +211,23 @@
             </div>
           </div>
         </details>
+
+        <section class="busca-home">
+          <h2 class="titulo-home">Busca geral <span class="subtitulo-painel">(nome, carro, pet, prestador...)</span></h2>
+            <div id="buscaGeralAdmin" class="card-busca">
+              <div class="linha-busca">
+                <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
+                <div class="campo-busca">
+                  <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo..." aria-label="Buscar em todos os cadastros">
+                  <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
+                </div>
+                <button type="button" id="btnBuscaGeral">Buscar</button>
+              </div>
+              <div id="statusBuscaGeral" class="status"></div>
+              <div id="resultadosBuscaGeral" class="resultados-busca"></div>
+            </div>
+        </section>
+        </div>
       </div>
     </div>
   </div>
@@ -227,20 +240,21 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20260926u"></script>
-  <script src="js/utils.js?v=20260926u"></script>
-  <script src="js/data/backend.js?v=20260926u"></script>
-  <script src="js/admin-auth.js?v=20260926u"></script>
-  <script src="js/data/FirebaseRepository.js?v=20260926u"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20260926u"></script>
-  <script src="js/data/DataService.js?v=20260926u"></script>
-  <script src="js/admin-fonte-dados.js?v=20260926u"></script>
-  <script src="js/admin-simples.js?v=20260926u"></script>
-  <script src="js/admin-relatorio.js?v=20260926u"></script>
-  <script src="js/admin-busca.js?v=20260926u"></script>
-  <script src="js/admin-historico.js?v=20260926u"></script>
-  <script src="js/admin-pendencias.js?v=20260926u"></script>
-  <script src="js/admin-gabarito.js?v=20260926u"></script>
-  <script src="js/admin-paineis.js?v=20260926u"></script>
+  <script src="js/regras.js?v=20261001b"></script>
+  <script src="js/utils.js?v=20261001b"></script>
+  <script src="js/data/backend.js?v=20261001b"></script>
+  <script src="js/admin-auth.js?v=20261001b"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261001b"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261001b"></script>
+  <script src="js/data/DataService.js?v=20261001b"></script>
+  <script src="js/admin-fonte-dados.js?v=20261001b"></script>
+  <script src="js/admin-simples.js?v=20261001b"></script>
+  <script src="js/admin-relatorio.js?v=20261001b"></script>
+  <script src="js/admin-busca.js?v=20261001b"></script>
+  <script src="js/admin-historico.js?v=20261001b"></script>
+  <script src="js/admin-pendencias.js?v=20261001b"></script>
+  <script src="js/admin-membros.js?v=20261001b"></script>
+  <script src="js/admin-gabarito.js?v=20261001b"></script>
+  <script src="js/admin-paineis.js?v=20261001b"></script>
 </body>
 </html>

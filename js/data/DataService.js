@@ -335,6 +335,12 @@
     listarHistorico: function(limite) {
       return executarLeitura("listarHistorico", [limite]);
     },
+    obterMembros: function() {
+      return executarLeitura("obterMembros", []);
+    },
+    salvarMembros: function(membros) {
+      return executarEscrita("salvarMembros", [membros]);
+    },
     listarPendencias: function() {
       return executarLeitura("listarPendencias", []);
     },

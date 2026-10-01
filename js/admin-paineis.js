@@ -1,9 +1,9 @@
 // ==========================================
 // MENU DO ADMIN: PAINÉIS QUE ABREM E FECHAM
 // ==========================================
-// Cada botão do menu abre/fecha a sua página (Consulta por apartamento, Busca geral, Relatórios,
-// Links úteis). Só uma página fica aberta: abrir outra substitui a atual. Cada página tem um ×
-// que fecha e volta para a home ("Últimas alterações cadastrais"). Outros scripts abrem um painel com window.AdminPaineis.abrir(id) — por
+// Cada botão do menu abre/fecha a sua página (Consulta por apartamento, Pendências, Relatórios,
+// Links úteis, Gabarito de vagas, Membros). Só uma página fica aberta: abrir outra substitui a
+// atual. Cada página tem um × que fecha e volta para a home (últimas alterações + busca geral). Outros scripts abrem um painel com window.AdminPaineis.abrir(id) — por
 // exemplo, ao carregar um cadastro (a partir da busca ou ao voltar da edição).
 (function() {
   function botaoDoPainel(id) {
@@ -17,11 +17,11 @@
     botao.setAttribute("aria-pressed", aberto ? "true" : "false");
   }
 
-  // "Últimas alterações cadastrais" é a home: só aparece com todas as páginas fechadas.
+  // A home (últimas alterações + busca geral) só aparece com todas as páginas fechadas.
   function atualizarHome() {
-    var historico = document.getElementById("historicoAdmin");
-    if (!historico) return;
-    historico.hidden = !!document.querySelector(".painel-admin:not([hidden])");
+    var home = document.getElementById("homeAdmin");
+    if (!home) return;
+    home.hidden = !!document.querySelector(".painel-admin:not([hidden])");
   }
 
   function abrir(id) {

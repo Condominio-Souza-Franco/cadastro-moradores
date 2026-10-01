@@ -39,35 +39,22 @@
 
   function obterConfig() {
     if (typeof ADMIN_AUTH_CONFIG !== "object" || !ADMIN_AUTH_CONFIG) {
-      return { googleClientId: "", allowedEmailHashes: [] };
+      return { googleClientId: "" };
     }
-
-    return {
-      googleClientId: textoLimpo(ADMIN_AUTH_CONFIG.googleClientId),
-      allowedEmailHashes: Array.isArray(ADMIN_AUTH_CONFIG.allowedEmailHashes)
-        ? ADMIN_AUTH_CONFIG.allowedEmailHashes.map(normalizarEmail).filter(Boolean)
-        : []
-    };
+    return { googleClientId: textoLimpo(ADMIN_AUTH_CONFIG.googleClientId) };
   }
 
-  function hashEmail(email) {
-    if (!window.crypto || !crypto.subtle || typeof TextEncoder === "undefined") {
-      return Promise.reject(new Error("Navegador sem suporte a criptografia (é preciso abrir a página via https)."));
+  // Quem tem acesso (e com qual papel) é definido na página "Membros" e conferido pelo backend:
+  // { papel, nomePapel } ou erro com a mensagem do backend (ex.: "não está autorizado").
+  function consultarAcesso(idToken) {
+    if (!window.Backend || typeof window.Backend.chamar !== "function") {
+      return Promise.reject(new Error("Não foi possível verificar o acesso."));
     }
-    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalizarEmail(email)))
-      .then(function(buffer) {
-        return Array.prototype.map.call(new Uint8Array(buffer), function(byte) {
-          return ("0" + byte.toString(16)).slice(-2);
-        }).join("");
+    return window.Backend.chamar("fbMeuAcesso", { idToken: idToken }, false, "servidor")
+      .then(function(r) {
+        if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Este e-mail não está autorizado para a área restrita.");
+        return { papel: r.papel, nomePapel: r.nomePapel };
       });
-  }
-
-  // Controla apenas o que a tela mostra; a autorização real dos dados é feita pelo backend.
-  function emailAutorizado(email, config) {
-    if (!email || !config.allowedEmailHashes.length) return Promise.resolve(false);
-    return hashEmail(email).then(function(hash) {
-      return config.allowedEmailHashes.indexOf(hash) !== -1;
-    });
   }
 
   function setMensagem(texto, tipo) {
@@ -79,9 +66,11 @@
     el.hidden = !mensagem;
   }
 
-  function salvarSessao(payload, idToken) {
+  function salvarSessao(payload, idToken, acesso) {
     var seguro = {
       email: textoLimpo(payload.email),
+      papel: (acesso && acesso.papel) || "",
+      nomePapel: (acesso && acesso.nomePapel) || "",
       name: textoLimpo(payload.name),
       picture: textoLimpo(payload.picture),
       // "exp" do token do Google, em milissegundos (o token vale ~1 hora).
@@ -209,20 +198,16 @@
             return;
           }
 
-          emailAutorizado(payload.email, config)
-            .then(function(autorizado) {
-              if (!autorizado) {
-                limparSessao();
-                bloquearAreaAdmin();
-                setMensagem("Este e-mail não está autorizado para a área restrita.", "erro");
-                return;
-              }
-
-              var usuario = salvarSessao(payload, response && response.credential);
+          setMensagem("Verificando acesso...", "");
+          consultarAcesso(response && response.credential)
+            .then(function(acesso) {
+              var usuario = salvarSessao(payload, response && response.credential, acesso);
               liberarAreaAdmin(usuario);
             })
             .catch(function(erro) {
-              setMensagem((erro && erro.message) || "Não foi possível validar o login Google.", "erro");
+              limparSessao();
+              bloquearAreaAdmin();
+              setMensagem((erro && erro.message) || "Este e-mail não está autorizado para a área restrita.", "erro");
             });
         }
       });
@@ -297,17 +282,19 @@
 
     var sessao = carregarSessao();
     if (sessao && !sessaoExpirada(sessao)) {
-      emailAutorizado(sessao.email, config)
-        .then(function(autorizado) {
-          if (autorizado) {
+      // Sessão desta aba ainda válida: entra direto (o backend confere o acesso a cada chamada).
+      if (sessao.papel) {
+        liberarAreaAdmin(sessao);
+      } else {
+        consultarAcesso(obterIdToken())
+          .then(function(acesso) {
+            sessao.papel = acesso.papel;
+            sessao.nomePapel = acesso.nomePapel;
+            sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(sessao));
             liberarAreaAdmin(sessao);
-          } else {
-            limparSessao();
-          }
-        })
-        .catch(function() {
-          limparSessao();
-        });
+          })
+          .catch(function() { limparSessao(); });
+      }
     } else {
       limparSessao();
     }
@@ -316,7 +303,10 @@
   }
 
   window.AdminAuth = {
-    getIdToken: obterIdToken
+    getIdToken: obterIdToken,
+    // Papel de quem está logado: "condominio", "desenvolvedor", "sindico" ou "conselho".
+    getPapel: function() { var s = carregarSessao(); return (s && s.papel) || ""; },
+    getEmail: function() { var s = carregarSessao(); return (s && s.email) || ""; }
   };
 
   document.addEventListener("DOMContentLoaded", init);
