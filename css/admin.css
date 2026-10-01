@@ -2761,3 +2761,66 @@ button.pendencia-item::before {
   color: var(--primary-color) !important;
   font-weight: 700;
 }
+
+/* "Página inicial": acesa (azul) também no hover, com texto branco; ícone de casa em SVG. */
+.btn-pagina-inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-pagina-inicial.ativo:hover,
+.btn-pagina-inicial.ativo:focus {
+  background: var(--accent-color);
+  color: #fff;
+  filter: brightness(1.1);
+}
+
+.btn-pagina-inicial:not(.ativo):hover {
+  background: #eef3f8;
+  color: var(--accent-color);
+}
+
+.icone-casa {
+  flex-shrink: 0;
+}
+
+/* Gabarito: tabela Vaga | Apartamento | × (a garagem vem do G1/G2). */
+.gabarito-cabecalho,
+.gabarito-linha {
+  grid-template-columns: 56px minmax(0, 1fr) 28px;
+}
+
+.gabarito-garagens.segmentado {
+  margin: 6px 0;
+}
+
+.desenhos-originais {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.btn-restaurar-numeracao {
+  width: auto;
+  height: auto;
+  min-height: 26px;
+  padding: 3px 10px;
+  border: 1px solid #f1b8b4;
+  border-radius: 999px;
+  background: #fdecea;
+  color: #b3261e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-restaurar-numeracao:disabled {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  opacity: 0.6;
+  cursor: default;
+}

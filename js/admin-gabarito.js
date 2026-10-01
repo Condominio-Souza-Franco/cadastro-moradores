@@ -103,27 +103,63 @@
     return avisos;
   }
 
-  function opcoes(lista, selecionado, vazio) {
+  function opcoes(lista, selecionado, vazio, rotulo) {
     return '<option value="">' + vazio + "</option>" + lista.map(function(v) {
-      return '<option value="' + escaparHtml(v) + '"' + (v === selecionado ? " selected" : "") + ">" + escaparHtml(v) + "</option>";
+      return '<option value="' + escaparHtml(v) + '"' + (v === selecionado ? " selected" : "") + ">" + escaparHtml(rotulo ? rotulo(v) : v) + "</option>";
     }).join("");
+  }
+
+  // "606 · Rafael Loureiro Braz" — usa os nomes que a Consulta por apartamento já carregou
+  // (opções "apto__id" com texto "606 - Nome"). Cadastros "mudou-se" ficam de fora.
+  function nomesPorApto() {
+    var mapa = {};
+    var select = document.getElementById("aptoAdmin");
+    if (!select) return mapa;
+    Array.prototype.forEach.call(select.options, function(o) {
+      var partes = String(o.value || "").split("__");
+      if (partes.length < 2 || /mudou-se/i.test(o.text)) return;
+      var nome = String(o.text || "").replace(/^\s*[^-–]+[-–]\s*/, "").trim();
+      if (!nome) return;
+      (mapa[partes[0]] = mapa[partes[0]] || []).push(nome);
+    });
+    return mapa;
+  }
+
+  function rotuloApto(nomes) {
+    return function(apto) { return nomes[apto] ? apto + " · " + nomes[apto].join(" / ") : apto; };
+  }
+
+  // Vagas cujo número mudou em relação ao que foi carregado (vai contra o desenho original).
+  function numeracaoMudou() {
+    return linhas.some(function(l) { return l.vagaOriginal !== undefined && l.vaga !== l.vagaOriginal; });
   }
 
   function renderizar() {
     var tabela = document.getElementById("tabelaGabarito");
     if (!tabela) return;
-    tabela.innerHTML = linhas.map(function(l, i) {
+    var rotulo = rotuloApto(nomesPorApto());
+    // Só as vagas da garagem escolhida (G1/G2), da menor para a maior; vagas sem número no fim.
+    var visiveis = linhas.map(function(l, i) { return i; }).filter(function(i) {
+      return linhas[i].garagem === garagemMapa;
+    }).sort(function(a, b) {
+      var va = parseInt(linhas[a].vaga, 10), vb = parseInt(linhas[b].vaga, 10);
+      if (isNaN(va) !== isNaN(vb)) return isNaN(va) ? 1 : -1;
+      return (va - vb) || (a - b);
+    });
+    tabela.innerHTML = visiveis.map(function(i) {
+      var l = linhas[i];
       var avisos = avisosDaLinha(l, i);
       return '<div class="gabarito-linha' + (avisos.length ? " com-aviso" : "") + '" data-indice="' + i + '">' +
-        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "Apto") + "</select>" +
-        '<select data-campo="garagem" aria-label="Garagem">' + opcoes(GARAGENS, l.garagem, "—") + "</select>" +
         '<input data-campo="vaga" type="text" inputmode="numeric" maxlength="2" placeholder="nº" aria-label="Vaga" value="' + escaparHtml(l.vaga) + '">' +
+        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "Apartamento", rotulo) + "</select>" +
         '<button type="button" class="btn-remover-linha" title="Remover esta vaga" aria-label="Remover esta vaga">&times;</button>' +
         (avisos.length ? '<div class="gabarito-avisos">' + avisos.map(function(a) {
           return '<span class="' + (a.erro ? "aviso-erro" : "aviso") + '">' + (a.erro ? "⛔ " : "⚠️ ") + escaparHtml(a.texto) + "</span>";
         }).join("") + "</div>" : "") +
       "</div>";
-    }).join("") || '<p class="sem-itens">Nenhuma vaga no gabarito.</p>';
+    }).join("") || '<p class="sem-itens">Nenhuma vaga no ' + garagemMapa + ".</p>";
+    var restaurar = document.getElementById("btnRestaurarNumeracao");
+    if (restaurar) restaurar.disabled = !numeracaoMudou();
     atualizarBotoes();
     if (modo === "mapa") renderizarMapa();
   }
@@ -236,7 +272,6 @@
     });
     document.getElementById("modoTabelaGabarito").hidden = novo !== "tabela";
     document.getElementById("modoMapaGabarito").hidden = novo !== "mapa";
-    document.querySelectorAll("#painelGabarito .so-modo-tabela").forEach(function(el) { el.hidden = novo !== "tabela"; });
     document.getElementById("btnAdicionarVagaGabarito").hidden = novo !== "tabela";
     if (novo === "mapa") renderizarMapa();
   }
@@ -286,7 +321,7 @@
           if (aptos.indexOf(apto) === -1) aptos.push(apto);
           var garagem = String(d[1] || "").trim().toUpperCase();
           separarVagas(d[2]).forEach(function(v) {
-            linhas.push({ apto: apto, garagem: GARAGENS.indexOf(garagem) !== -1 ? garagem : "", vaga: v });
+            linhas.push({ apto: apto, garagem: GARAGENS.indexOf(garagem) !== -1 ? garagem : "", vaga: v, vagaOriginal: v });
           });
         });
         aptos.sort(function(a, b) {
@@ -363,7 +398,16 @@
     });
     // Os avisos são recalculados ao sair do campo (e não a cada tecla, para não perder o foco).
     tabela.addEventListener("change", function(e) {
-      if (e.target.getAttribute("data-campo")) renderizar();
+      var campo = e.target.getAttribute("data-campo");
+      if (!campo) return;
+      if (campo === "vaga") {
+        var linha = linhas[Number(e.target.closest(".gabarito-linha").getAttribute("data-indice"))];
+        if (linha && linha.vagaOriginal !== undefined && linha.vaga !== linha.vagaOriginal) {
+          window.alert("Atenção: você mudou o número da vaga " + linha.vagaOriginal + " do " + linha.garagem + " para " + (linha.vaga || "(vazio)") +
+            ".\n\nIsso vai contra o desenho original da garagem. Para desfazer, use \"Restaurar distribuição original\".");
+        }
+      }
+      renderizar();
     });
     tabela.addEventListener("click", function(e) {
       var botao = e.target.closest(".btn-remover-linha");
@@ -373,7 +417,7 @@
     });
 
     document.getElementById("btnAdicionarVagaGabarito").addEventListener("click", function() {
-      linhas.push({ apto: "", garagem: "", vaga: "" });
+      linhas.push({ apto: "", garagem: garagemMapa, vaga: "" });
       renderizar();
       var novos = tabela.querySelectorAll('.gabarito-linha select[data-campo="apto"]');
       if (novos.length) novos[novos.length - 1].focus();
@@ -394,6 +438,7 @@
         garagemMapa = b.getAttribute("data-garagem");
         document.querySelectorAll(".gabarito-garagens [data-garagem]").forEach(function(o) { o.classList.toggle("ativo", o === b); });
         fecharEditorVaga();
+        renderizar();
       });
     });
     document.getElementById("mapaGabarito").addEventListener("click", function(e) {
@@ -401,6 +446,13 @@
       if (g) abrirEditorVaga(g.getAttribute("data-vaga"));
     });
     document.getElementById("editorVagaAplicar").addEventListener("click", aplicarEditorVaga);
+    // Volta os números das vagas ao que estava carregado (mantém as trocas de apartamento).
+    document.getElementById("btnRestaurarNumeracao").addEventListener("click", function() {
+      if (!numeracaoMudou()) return;
+      linhas.forEach(function(l) { if (l.vagaOriginal !== undefined) l.vaga = l.vagaOriginal; });
+      renderizar();
+      setStatus("Números das vagas restaurados conforme o desenho original.", "ok");
+    });
     // Girou o celular / mudou a largura da janela: troca entre retrato e paisagem.
     var aoMudarOrientacao = function() { if (modo === "mapa") renderizarMapa(); };
     if (consultaRetrato.addEventListener) consultaRetrato.addEventListener("change", aoMudarOrientacao);

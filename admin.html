@@ -66,7 +66,7 @@
 
         <!-- Menu: cada botão abre/fecha a sua página (js/admin-paineis.js). Só uma página por vez:
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
-        <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true">🏠 Página inicial</button>
+        <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true"><svg class="icone-casa" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h4.5v-6h4v6h4.5V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Página inicial</span></button>
         <nav class="menu-admin" aria-label="Seções da administração">
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
           <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências</button>
@@ -168,23 +168,30 @@
               Uma linha por vaga. Salvar grava no banco de dados e na aba "Gabarito" da planilha. Se a vaga não
               bater com o desenho da garagem, aparece um aviso (dá para salvar mesmo assim).
             </p>
+            <p class="descricao-acao desenhos-originais">
+              Desenhos originais:
+              <a href="https://drive.google.com/file/d/1jbzxz5lnOqGuCeXcjhLzdphtSok3jIHv/view?usp=sharing" target="_blank" rel="noopener noreferrer">G1</a> e
+              <a href="https://drive.google.com/file/d/1uw33Qk4P9tsFEaJam1nVtTIM2kujq7R6/view?usp=sharing" target="_blank" rel="noopener noreferrer">G2</a>.
+              <button type="button" id="btnRestaurarNumeracao" class="btn-restaurar-numeracao" disabled
+                title="Volta os números das vagas ao que estava antes das suas mudanças">Restaurar distribuição original</button>
+            </p>
             <div class="gabarito-modos segmentado" role="tablist">
               <button type="button" data-modo="tabela" class="ativo" role="tab">Tabela</button>
               <button type="button" data-modo="mapa" role="tab">Mapa</button>
             </div>
+            <!-- G1/G2 vale para os dois modos (tabela e mapa). -->
+            <div class="gabarito-garagens segmentado">
+              <button type="button" data-garagem="G1" class="ativo">G1</button>
+              <button type="button" data-garagem="G2">G2</button>
+            </div>
             <div id="statusGabarito" class="status"></div>
-            <div class="acoes-50 so-modo-tabela" data-espelho="acoesGabarito"></div>
+            <div class="acoes-50" data-espelho="acoesGabarito"></div>
             <div id="modoTabelaGabarito">
-              <div class="gabarito-cabecalho" aria-hidden="true"><span>Apto</span><span>Garagem</span><span>Vaga</span><span></span></div>
+              <div class="gabarito-cabecalho" aria-hidden="true"><span>Vaga</span><span>Apartamento</span><span></span></div>
               <div id="tabelaGabarito" class="tabela-gabarito"></div>
             </div>
             <!-- Modo mapa: toque numa vaga para escolher o apto (js/admin-gabarito.js). -->
             <div id="modoMapaGabarito" hidden>
-              <div class="gabarito-garagens segmentado">
-                <button type="button" data-garagem="G1" class="ativo">G1</button>
-                <button type="button" data-garagem="G2">G2</button>
-              </div>
-              <div class="acoes-50" data-espelho="acoesGabarito"></div>
               <div id="editorVagaMapa" class="editor-vaga-mapa" hidden>
                 <strong id="editorVagaTitulo"></strong>
                 <select id="editorVagaApto" aria-label="Apartamento desta vaga"></select>
@@ -247,22 +254,22 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261001k"></script>
-  <script src="js/utils.js?v=20261001k"></script>
-  <script src="js/data/backend.js?v=20261001k"></script>
-  <script src="js/admin-auth.js?v=20261001k"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261001k"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261001k"></script>
-  <script src="js/data/DataService.js?v=20261001k"></script>
-  <script src="js/admin-fonte-dados.js?v=20261001k"></script>
-  <script src="js/admin-simples.js?v=20261001k"></script>
-  <script src="js/admin-relatorio.js?v=20261001k"></script>
-  <script src="js/admin-busca.js?v=20261001k"></script>
-  <script src="js/admin-historico.js?v=20261001k"></script>
-  <script src="js/admin-pendencias.js?v=20261001k"></script>
-  <script src="js/admin-membros.js?v=20261001k"></script>
-  <script src="js/admin-gabarito.js?v=20261001k"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261001k"></script>
-  <script src="js/admin-paineis.js?v=20261001k"></script>
+  <script src="js/regras.js?v=20261001l"></script>
+  <script src="js/utils.js?v=20261001l"></script>
+  <script src="js/data/backend.js?v=20261001l"></script>
+  <script src="js/admin-auth.js?v=20261001l"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261001l"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261001l"></script>
+  <script src="js/data/DataService.js?v=20261001l"></script>
+  <script src="js/admin-fonte-dados.js?v=20261001l"></script>
+  <script src="js/admin-simples.js?v=20261001l"></script>
+  <script src="js/admin-relatorio.js?v=20261001l"></script>
+  <script src="js/admin-busca.js?v=20261001l"></script>
+  <script src="js/admin-historico.js?v=20261001l"></script>
+  <script src="js/admin-pendencias.js?v=20261001l"></script>
+  <script src="js/admin-membros.js?v=20261001l"></script>
+  <script src="js/admin-gabarito.js?v=20261001l"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261001l"></script>
+  <script src="js/admin-paineis.js?v=20261001l"></script>
 </body>
 </html>
