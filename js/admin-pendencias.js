@@ -52,12 +52,7 @@
       var semItens = !g.itens.length;   // nada na lista: não abre (com ignorados, abre para reativar)
       return '<details class="grupo-pendencia' + (n ? "" : " zerado") + (semItens ? " vazio" : "") + '" data-chave="' + escaparHtml(g.chave) + '"' + (abertos[g.chave] ? " open" : "") + ">" +
         '<summary><span class="contador-pendencia">' + n + "</span><span>" + escaparHtml(g.titulo) + "</span></summary>" +
-        // Aptos sem cadastro (só o número, nada para abrir): lado a lado, separados por "•".
-        (semItens ? "" : g.chave === "semCadastro"
-          ? '<p class="pendencias-em-linha">' + g.itens.map(function(it) {
-              return '<label class="sem-quebra' + (it.ignorado ? " ignorada" : "") + '">' + caixaIgnorar(it) + escaparHtml(it.apto) + "</label>";
-            }).join(" • ") + "</p>"
-          : "<ul>" + g.itens.map(itemHtml).join("") + "</ul>") +
+        (semItens ? "" : "<ul>" + g.itens.map(itemHtml).join("") + "</ul>") +
       "</details>";
     }).join("");
     setStatus(total ? "" : "Nenhuma pendência. 🎉", total ? "" : "ok");

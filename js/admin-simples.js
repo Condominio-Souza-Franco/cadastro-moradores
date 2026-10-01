@@ -391,7 +391,10 @@
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
-      campoHtml("Nome", dados.nome),
+      // Etiquetas de cargo da administração ao lado do nome.
+      campoHtml("Nome", dados.nome).replace(/<\/p><\/div>$/, (dados.cargos || []).map(function(c) {
+        return ' <span class="tag-cargo">' + escaparHtml(c) + "</span>";
+      }).join("") + "</p></div>"),
       campoHtml("CPF", dados.cpf),
       campoHtml("Nascimento", formatarNascimentoComIdade(dados.nasc)),
       campoHtml("RG", dados.rg),

@@ -2600,3 +2600,18 @@ button.pendencia-item::before {
 .grupo-pendencia.vazio[open] > summary::before {
   transform: none;
 }
+
+/* Etiqueta de cargo (Síndico, Membro do conselho, Desenvolvedor) ao lado do nome na consulta. */
+.tag-cargo {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
+}
