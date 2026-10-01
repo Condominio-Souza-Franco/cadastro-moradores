@@ -2847,3 +2847,10 @@ button.pendencia-item::before {
 #painelGabarito:not(.conteudo-carregado) .gabarito-cabecalho {
   display: none;
 }
+
+/* "Nenhuma alteração registrada ainda." em fonte menor. */
+#statusHistorico.vazio {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--texto-suave, #5f7287);
+}

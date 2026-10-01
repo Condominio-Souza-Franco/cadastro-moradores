@@ -59,7 +59,7 @@
       botaoMais.hidden = restantes <= 0;
       botaoMais.textContent = "Mostrar mais " + Math.min(POR_PAGINA, Math.max(restantes, 0));
     }
-    if (carregado) setStatus(itens.length ? "" : "Nenhuma alteração registrada ainda.", "");
+    if (carregado) setStatus(itens.length ? "" : "Nenhuma alteração registrada ainda.", "vazio");
   }
 
   function carregar() {
