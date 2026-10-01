@@ -118,7 +118,14 @@
     if (!userLabel || !sairBtn) return;
 
     if (usuario && usuario.email) {
-      userLabel.textContent = usuario.name ? (usuario.name + " - " + usuario.email) : usuario.email;
+      // Nome numa linha e e-mail na de baixo, para não quebrar no meio.
+      userLabel.innerHTML = "";
+      [usuario.name, usuario.email].filter(Boolean).forEach(function(texto) {
+        var linha = document.createElement("span");
+        linha.className = "auth-usuario-linha";
+        linha.textContent = texto;
+        userLabel.appendChild(linha);
+      });
       sairBtn.hidden = false;
     } else {
       userLabel.textContent = "";

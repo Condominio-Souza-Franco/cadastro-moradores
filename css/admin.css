@@ -2830,3 +2830,8 @@ button.pendencia-item::before {
 #painelMembros:not(.conteudo-carregado) .acoes-50 {
   display: none !important;
 }
+
+.auth-usuario-linha {
+  display: block;
+  overflow-wrap: anywhere;
+}

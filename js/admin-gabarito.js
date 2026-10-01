@@ -152,7 +152,7 @@
       var avisos = avisosDaLinha(l, i);
       return '<div class="gabarito-linha' + (avisos.length ? " com-aviso" : "") + '" data-indice="' + i + '">' +
         '<input data-campo="vaga" type="text" inputmode="numeric" maxlength="2" placeholder="nº" aria-label="Vaga" value="' + escaparHtml(l.vaga) + '">' +
-        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "— Livre —", rotulo) + "</select>" +
+        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "— Condomínio —", rotulo) + "</select>" +
         (avisos.length ? '<div class="gabarito-avisos">' + avisos.map(function(a) {
           return '<span class="' + (a.erro ? "aviso-erro" : "aviso") + '">' + (a.erro ? "⛔ " : "⚠️ ") + escaparHtml(a.texto) + "</span>";
         }).join("") + "</div>" : "") +
