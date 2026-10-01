@@ -2789,7 +2789,7 @@ button.pendencia-item::before {
 /* Gabarito: tabela Vaga | Apartamento | × (a garagem vem do G1/G2). */
 .gabarito-cabecalho,
 .gabarito-linha {
-  grid-template-columns: 56px minmax(0, 1fr) 28px;
+  grid-template-columns: 56px minmax(0, 1fr);
 }
 
 .gabarito-garagens.segmentado {

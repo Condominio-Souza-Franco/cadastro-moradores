@@ -82,7 +82,8 @@
 
   function avisosDaLinha(linha, indice) {
     var avisos = [];
-    if (!linha.apto) avisos.push({ erro: true, texto: "Escolha o apartamento." });
+    // Vaga sem apartamento = vaga livre (não é erro).
+    if (!linha.apto) return avisos;
     if (!linha.garagem) avisos.push({ erro: true, texto: "Escolha a garagem." });
     if (!linha.vaga) avisos.push({ erro: true, texto: "Informe o número da vaga." });
     if (!linha.apto || !linha.garagem || !linha.vaga) return avisos;
@@ -151,8 +152,7 @@
       var avisos = avisosDaLinha(l, i);
       return '<div class="gabarito-linha' + (avisos.length ? " com-aviso" : "") + '" data-indice="' + i + '">' +
         '<input data-campo="vaga" type="text" inputmode="numeric" maxlength="2" placeholder="nº" aria-label="Vaga" value="' + escaparHtml(l.vaga) + '">' +
-        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "Apartamento", rotulo) + "</select>" +
-        '<button type="button" class="btn-remover-linha" title="Remover esta vaga" aria-label="Remover esta vaga">&times;</button>' +
+        '<select data-campo="apto" aria-label="Apartamento">' + opcoes(aptos, l.apto, "— Livre —", rotulo) + "</select>" +
         (avisos.length ? '<div class="gabarito-avisos">' + avisos.map(function(a) {
           return '<span class="' + (a.erro ? "aviso-erro" : "aviso") + '">' + (a.erro ? "⛔ " : "⚠️ ") + escaparHtml(a.texto) + "</span>";
         }).join("") + "</div>" : "") +
@@ -253,12 +253,13 @@
     if (vagaEditada === null) return;
     var apto = document.getElementById("editorVagaApto").value;
     var remover = indicesDaVaga(garagemMapa, vagaEditada);
+    var antigas = linhas.filter(function(l, i) { return remover.indexOf(i) !== -1; });
     linhas = linhas.filter(function(l, i) { return remover.indexOf(i) === -1; });
-    if (apto) {
-      numerosDaVaga(garagemMapa, vagaEditada).forEach(function(v) {
-        linhas.push({ apto: apto, garagem: garagemMapa, vaga: v });
-      });
-    }
+    // A vaga continua na tabela mesmo livre (vagas não são removidas, só ficam sem apto).
+    numerosDaVaga(garagemMapa, vagaEditada).forEach(function(v) {
+      var antiga = antigas.filter(function(l) { return l.vaga === v; })[0];
+      linhas.push({ apto: apto, garagem: garagemMapa, vaga: v, vagaOriginal: antiga ? antiga.vagaOriginal : v });
+    });
     ordenar();
     vagaEditada = null;
     document.getElementById("editorVagaMapa").hidden = true;
@@ -272,7 +273,6 @@
     });
     document.getElementById("modoTabelaGabarito").hidden = novo !== "tabela";
     document.getElementById("modoMapaGabarito").hidden = novo !== "mapa";
-    document.getElementById("btnAdicionarVagaGabarito").hidden = novo !== "tabela";
     if (novo === "mapa") renderizarMapa();
   }
 
@@ -289,7 +289,8 @@
   }
 
   function linhasParaEnviar() {
-    return linhas.filter(function(l) { return l.apto || l.garagem || l.vaga; })
+    // Vagas livres (sem apto) não vão para o banco: só as atribuídas.
+    return linhas.filter(function(l) { return l.apto; })
       .map(function(l) { return { apto: l.apto, garagem: l.garagem, vaga: l.vaga }; });
   }
 
@@ -322,6 +323,16 @@
           var garagem = String(d[1] || "").trim().toUpperCase();
           separarVagas(d[2]).forEach(function(v) {
             linhas.push({ apto: apto, garagem: GARAGENS.indexOf(garagem) !== -1 ? garagem : "", vaga: v, vagaOriginal: v });
+          });
+        });
+        // Todas as vagas do desenho aparecem na tabela; as que ninguém usa entram como livres.
+        GARAGENS.forEach(function(g) {
+          Object.keys((desenho && desenho[g]) || {}).forEach(function(vd) {
+            if (desenho[g][vd].desativada) return;
+            numerosDaVaga(g, vd).forEach(function(v) {
+              var usada = linhas.some(function(l) { return l.garagem === g && l.vaga === v; });
+              if (!usada) linhas.push({ apto: "", garagem: g, vaga: v, vagaOriginal: v });
+            });
           });
         });
         aptos.sort(function(a, b) {
@@ -408,19 +419,6 @@
         }
       }
       renderizar();
-    });
-    tabela.addEventListener("click", function(e) {
-      var botao = e.target.closest(".btn-remover-linha");
-      if (!botao) return;
-      linhas.splice(Number(botao.closest(".gabarito-linha").getAttribute("data-indice")), 1);
-      renderizar();
-    });
-
-    document.getElementById("btnAdicionarVagaGabarito").addEventListener("click", function() {
-      linhas.push({ apto: "", garagem: garagemMapa, vaga: "" });
-      renderizar();
-      var novos = tabela.querySelectorAll('.gabarito-linha select[data-campo="apto"]');
-      if (novos.length) novos[novos.length - 1].focus();
     });
     document.getElementById("btnDesfazerGabarito").addEventListener("click", function() {
       if (!haAlteracoes() || window.confirm("Descartar as alterações no gabarito?")) {
