@@ -371,9 +371,11 @@ function atualizarLinkMapaVaga(apto, andar, numero) {
     const params = new URLSearchParams({ apto: String(apto).trim(), andar: String(andar).trim(), vaga: String(numero).trim() });
     link.href = 'mapa-vaga.html?' + params.toString();
     if (texto) texto.textContent = ' (com a sua vaga pintada — dá para salvar em PDF)';
+    if (window.VagaMiniatura) window.VagaMiniatura.mostrar(apto, andar, numero);
   } else {
     link.href = 'mapa-vaga.html';
     if (texto) texto.textContent = '';
+    if (window.VagaMiniatura) window.VagaMiniatura.esconder();
   }
 }
 

@@ -170,3 +170,121 @@
 #infoVagaGaragem {
   margin-bottom: 4px;
 }
+
+/* ==========================================
+   ITENS REPETÍVEIS: botão "Excluir" embaixo, de largura inteira
+   ========================================== */
+.dynamic-group {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.btn-excluir-item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #f1b8b4;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b3261e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.btn-excluir-item:hover {
+  background: #f9d7d3;
+}
+
+/* ==========================================
+   MINIATURA DA VAGA + POPUP DO MAPA (js/vaga-miniatura.js)
+   ========================================== */
+.miniatura-vaga-container[hidden] {
+  display: none;
+}
+
+.miniatura-vaga {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 6px 0 10px;
+  padding: 6px;
+  border: 1px solid #d7dee6;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.miniatura-vaga svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.miniatura-vaga-dica {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #5f7287;
+  text-align: center;
+}
+
+.popup-mapa-vaga {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(20, 30, 40, 0.6);
+  box-sizing: border-box;
+}
+
+.popup-mapa-vaga[hidden] {
+  display: none;
+}
+
+.popup-mapa-vaga-caixa {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  max-height: 900px;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.popup-mapa-vaga-caixa iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.popup-mapa-vaga-fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #d7dee6;
+  border-radius: 50%;
+  background: #fff;
+  color: #243447;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.popup-aberto {
+  overflow: hidden;
+}

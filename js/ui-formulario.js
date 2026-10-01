@@ -324,7 +324,7 @@ function adicionarItemDinamico(containerId, classeGrupo, htmlCampos) {
     <div class="dynamic-row">
       ${htmlCampos}
     </div>
-    <button type="button" class="btn-remove-x" onclick="removerItem(this)">&times;</button>
+    <button type="button" class="btn-excluir-item" onclick="removerItem(this)">Excluir</button>
   `;
   container.appendChild(div);
 }

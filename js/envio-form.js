@@ -442,6 +442,17 @@ function enviar() {
     return;
   }
 
+  // Contato de emergência não é obrigatório, mas é importante: confirma antes de enviar sem nenhum.
+  const temEmergencia = Array.from(emergencias).some(item => {
+    const nomeEl = item.querySelector('.em-nome');
+    return nomeEl && nomeEl.value.trim() !== "";
+  });
+  if (!temEmergencia && !window.confirm("Você não informou nenhum contato para caso de emergência.\n\nDeseja enviar o cadastro assim mesmo?")) {
+    const secaoEmergencia = document.getElementById("containerEmergencia");
+    if (secaoEmergencia) secaoEmergencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
   const textoAtual = btnSubmit ? btnSubmit.innerText : "";
   const eAtualizacao = textoAtual.toLowerCase().includes("atualizar");

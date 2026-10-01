@@ -31,6 +31,8 @@
     body.retrato .folha svg { max-width: 560px; margin: 0 auto; }
     .erro { color: #b3261e; }
     .carregando { font-size: 0.8rem; color: var(--suave); }
+    body.no-popup .so-fora-do-popup { display: none !important; }
+    body.no-popup .topo { padding-right: 56px; }
 
     /* Destaque da vaga do morador */
     .vaga.destaque rect { fill: #ffd180 !important; stroke: #e65100 !important; stroke-width: 7 !important; }
@@ -48,9 +50,9 @@
       body.retrato .folha svg { max-height: 262mm; }
     }
   </style>
-  <script src="js/regras.js?v=20261001f" defer></script>
-  <script src="js/data/backend.js?v=20261001f" defer></script>
-  <script src="js/mapa-vaga.js?v=20261001f" defer></script>
+  <script src="js/regras.js?v=20261001g" defer></script>
+  <script src="js/data/backend.js?v=20261001g" defer></script>
+  <script src="js/mapa-vaga.js?v=20261001g" defer></script>
 </head>
 <body>
   <header class="topo">
@@ -60,7 +62,7 @@
     </div>
     <div class="acoes">
       <button type="button" id="btnImprimir">Salvar em PDF / imprimir</button>
-      <a href="index.html" class="nao-imprimir">Voltar ao cadastro</a>
+      <a href="index.html" class="nao-imprimir so-fora-do-popup">Voltar ao cadastro</a>
     </div>
   </header>
   <main id="mapas"></main>

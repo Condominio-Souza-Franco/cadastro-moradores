@@ -156,6 +156,8 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
+    // Aberto dentro do popup do formulário (iframe): esconde o link de voltar.
+    if (window.self !== window.top) document.body.classList.add("no-popup");
     document.getElementById("btnImprimir").addEventListener("click", function() { window.print(); });
     montar();
     // Girou o celular / mudou a largura da janela: remonta na outra orientação.
