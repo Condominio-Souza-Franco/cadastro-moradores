@@ -2916,3 +2916,10 @@ button.pendencia-item::before {
   .menu-admin button[data-painel="painelMembros"] { grid-column: span 6; }
   .menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 8; }
 }
+
+/* Aviso informativo (não é erro) em fonte pequena. */
+.status.aviso-leve {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #5f7287;
+}

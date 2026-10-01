@@ -60,7 +60,7 @@
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as notificações.");
         carregado = true;
         document.getElementById("painelNotificacoes").classList.add("conteudo-carregado");
-        setStatus(r.configurado ? "" : "Ainda não configurado: por enquanto o e-mail vai só para a lista inicial.", "");
+        setStatus(r.configurado ? "" : "Lista ainda não salva: por enquanto o e-mail vai só para quem já está marcado abaixo. Marque quem deve receber e clique em Salvar.", "aviso-leve");
         aplicar(r);
       })
       .catch(function(erro) { setStatus((erro && erro.message) || "Não foi possível carregar as notificações.", "erro"); })
