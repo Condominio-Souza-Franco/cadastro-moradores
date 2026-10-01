@@ -146,7 +146,11 @@
         membros = r.membros;
         originais = JSON.stringify(paraEnviar());
         renderizar();
-        setStatus("Salvo. O acesso à área restrita já segue esta lista.", "ok");
+        var comp = r.compartilhamento || {};
+        var extra = (comp.adicionados && comp.adicionados.length ? " Pasta do Drive compartilhada com: " + comp.adicionados.join(", ") + "." : "") +
+          (comp.removidos && comp.removidos.length ? " Acesso à pasta retirado de: " + comp.removidos.join(", ") + "." : "") +
+          (comp.falhas && comp.falhas.length ? " Não foi possível compartilhar a pasta com: " + comp.falhas.join(", ") + " (precisa ser conta Google)." : "");
+        setStatus("Salvo. O acesso à área restrita já segue esta lista." + extra, "ok");
         window.dispatchEvent(new CustomEvent("cadastro-alterado"));
       })
       .catch(function(erro) {
