@@ -447,12 +447,26 @@ function enviar() {
     const nomeEl = item.querySelector('.em-nome');
     return nomeEl && nomeEl.value.trim() !== "";
   });
-  if (!temEmergencia && !window.confirm("Você não informou nenhum contato para caso de emergência.\n\nDeseja enviar o cadastro assim mesmo?")) {
-    const secaoEmergencia = document.getElementById("containerEmergencia");
-    if (secaoEmergencia) secaoEmergencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // A confirmação desta página é uma janela própria (assíncrona): o envio só começa DEPOIS que o
+  // morador escolhe "Confirmar". Cancelar (ou fechar) não envia nada e leva até a seção.
+  if (!temEmergencia) {
+    confirmarAcao("Você não informou nenhum contato para caso de emergência.\n\nDeseja enviar o cadastro assim mesmo?", "Contato de emergência")
+      .then(function(confirmado) {
+        if (confirmado === true) {
+          prosseguirEnvio();
+          return;
+        }
+        const secaoEmergencia = document.getElementById("containerEmergencia");
+        if (secaoEmergencia) secaoEmergencia.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
     return;
   }
 
+  prosseguirEnvio();
+}
+
+// Segunda parte do envio (depois de todas as validações e confirmações).
+function prosseguirEnvio() {
   const btnSubmit = document.getElementById("btnEnviarForm") || document.querySelector("button[onclick='enviar()']");
   const textoAtual = btnSubmit ? btnSubmit.innerText : "";
   const eAtualizacao = textoAtual.toLowerCase().includes("atualizar");
