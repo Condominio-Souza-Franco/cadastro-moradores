@@ -18,10 +18,22 @@
   }
 
   // A home (últimas alterações + busca geral) só aparece com todas as páginas fechadas.
+  // O botão "Página inicial" fica aceso enquanto ela está à mostra (nenhuma página aberta).
   function atualizarHome() {
     var home = document.getElementById("homeAdmin");
-    if (!home) return;
-    home.hidden = !!document.querySelector(".painel-admin:not([hidden])");
+    var botao = document.getElementById("btnPaginaInicial");
+    var algumaAberta = !!document.querySelector(".painel-admin:not([hidden])");
+    if (home) home.hidden = algumaAberta;
+    if (botao) {
+      botao.classList.toggle("ativo", !algumaAberta);
+      botao.setAttribute("aria-pressed", algumaAberta ? "false" : "true");
+    }
+  }
+
+  // "Página inicial": fecha a página aberta e volta para a home.
+  function irParaInicio() {
+    document.querySelectorAll(".painel-admin:not([hidden])").forEach(function(p) { fechar(p.id); });
+    atualizarHome();
   }
 
   function abrir(id) {
@@ -60,6 +72,8 @@
     document.querySelectorAll(".menu-admin [data-painel]").forEach(function(botao) {
       botao.addEventListener("click", function() { alternar(botao.getAttribute("data-painel")); });
     });
+    var inicio = document.getElementById("btnPaginaInicial");
+    if (inicio) inicio.addEventListener("click", irParaInicio);
     document.querySelectorAll(".painel-admin .btn-fechar-painel").forEach(function(botao) {
       botao.addEventListener("click", function() { fechar(botao.closest(".painel-admin").id); });
     });

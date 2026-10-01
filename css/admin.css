@@ -2615,3 +2615,26 @@ button.pendencia-item::before {
   vertical-align: middle;
   white-space: nowrap;
 }
+
+/* Botão "Página inicial": linha inteira acima do menu; aceso quando a home está à mostra. */
+.btn-pagina-inicial {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 34px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--accent-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-pagina-inicial.ativo {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
