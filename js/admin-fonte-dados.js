@@ -34,6 +34,17 @@
     });
   }
 
+  // Conselho só visualiza esta página: opções e botão desabilitados.
+  function aplicarPermissaoDados() {
+    var papel = window.AdminAuth && window.AdminAuth.getPapel ? window.AdminAuth.getPapel() : "";
+    var podeEditar = papel === "sindico" || papel === "condominio" || papel === "desenvolvedor";
+    document.querySelectorAll('input[name="fonteDados"]').forEach(function(radio) { radio.disabled = !podeEditar; });
+    var botao = document.getElementById("btnTestarConexoes");
+    if (botao) botao.disabled = !podeEditar;
+    var aviso = document.getElementById("avisoSomenteLeituraDados");
+    if (aviso) aviso.hidden = podeEditar;
+  }
+
   function testarConexoes() {
     var resultado = document.getElementById("resultadoTesteConexoes");
     if (!resultado || !window.DataService) return;
@@ -61,6 +72,7 @@
     if (botaoAbrir && painel) {
       botaoAbrir.addEventListener("click", function() {
         var vaiAbrir = painel.hidden;
+        if (vaiAbrir) aplicarPermissaoDados();
         painel.hidden = !vaiAbrir;
         if (conteudoPrincipal) conteudoPrincipal.hidden = vaiAbrir;
         botaoAbrir.textContent = vaiAbrir ? "Voltar" : "Dados";
@@ -80,5 +92,6 @@
     }
 
     window.addEventListener("datasource-changed", atualizarIndicador);
+    window.addEventListener("admin-auth-success", aplicarPermissaoDados);
   });
 })();

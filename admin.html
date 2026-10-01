@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Área da administração</title>
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -42,6 +42,7 @@
 
       <div id="fonteDadosAdmin" class="card-fonte-dados" hidden>
         <h2>Fonte de dados</h2>
+        <p id="avisoSomenteLeituraDados" class="aviso-somente-leitura" hidden>Somente visualização: apenas Síndico, Condomínio e Desenvolvedor podem alterar.</p>
         <div class="opcoes-fonte-dados">
           <label><input type="radio" name="fonteDados" value="auto"> Automático</label>
           <label><input type="radio" name="fonteDados" value="firebase"> Firebase</label>
@@ -142,10 +143,11 @@
             <div class="painel-topo"><h2>Membros</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao">Quem acessa a área restrita. O e-mail de acesso é o da conta Google usada no login.</p>
             <div id="statusMembros" class="status"></div>
+            <div class="acoes-50" data-espelho="acoesMembros"></div>
             <div id="formMembros" class="form-membros"></div>
-            <div class="membros-acoes">
+            <div id="acoesMembros" class="membros-acoes acoes-50">
               <button type="button" id="btnDesfazerMembros" class="btn-secundario">Desfazer</button>
-              <button type="button" id="btnSalvarMembros">Salvar</button>
+              <button type="button" id="btnSalvarMembros">Salvar alterações</button>
             </div>
           </section>
 
@@ -166,21 +168,23 @@
               Uma linha por vaga. Salvar grava no banco de dados e na aba "Gabarito" da planilha. Se a vaga não
               bater com o desenho da garagem, aparece um aviso (dá para salvar mesmo assim).
             </p>
-            <div class="gabarito-modos" role="tablist">
+            <div class="gabarito-modos segmentado" role="tablist">
               <button type="button" data-modo="tabela" class="ativo" role="tab">Tabela</button>
               <button type="button" data-modo="mapa" role="tab">Mapa</button>
             </div>
             <div id="statusGabarito" class="status"></div>
+            <div class="acoes-50 so-modo-tabela" data-espelho="acoesGabarito"></div>
             <div id="modoTabelaGabarito">
               <div class="gabarito-cabecalho" aria-hidden="true"><span>Apto</span><span>Garagem</span><span>Vaga</span><span></span></div>
               <div id="tabelaGabarito" class="tabela-gabarito"></div>
             </div>
             <!-- Modo mapa: toque numa vaga para escolher o apto (js/admin-gabarito.js). -->
             <div id="modoMapaGabarito" hidden>
-              <div class="gabarito-garagens">
+              <div class="gabarito-garagens segmentado">
                 <button type="button" data-garagem="G1" class="ativo">G1</button>
                 <button type="button" data-garagem="G2">G2</button>
               </div>
+              <div class="acoes-50" data-espelho="acoesGabarito"></div>
               <div id="editorVagaMapa" class="editor-vaga-mapa" hidden>
                 <strong id="editorVagaTitulo"></strong>
                 <select id="editorVagaApto" aria-label="Apartamento desta vaga"></select>
@@ -193,6 +197,8 @@
             </div>
             <div class="gabarito-acoes">
               <button type="button" id="btnAdicionarVagaGabarito" class="btn-secundario">+ Adicionar vaga</button>
+            </div>
+            <div id="acoesGabarito" class="gabarito-acoes acoes-50">
               <button type="button" id="btnDesfazerGabarito" class="btn-secundario">Desfazer</button>
               <button type="button" id="btnSalvarGabarito">Salvar alterações</button>
             </div>
@@ -241,21 +247,22 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261001j"></script>
-  <script src="js/utils.js?v=20261001j"></script>
-  <script src="js/data/backend.js?v=20261001j"></script>
-  <script src="js/admin-auth.js?v=20261001j"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261001j"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261001j"></script>
-  <script src="js/data/DataService.js?v=20261001j"></script>
-  <script src="js/admin-fonte-dados.js?v=20261001j"></script>
-  <script src="js/admin-simples.js?v=20261001j"></script>
-  <script src="js/admin-relatorio.js?v=20261001j"></script>
-  <script src="js/admin-busca.js?v=20261001j"></script>
-  <script src="js/admin-historico.js?v=20261001j"></script>
-  <script src="js/admin-pendencias.js?v=20261001j"></script>
-  <script src="js/admin-membros.js?v=20261001j"></script>
-  <script src="js/admin-gabarito.js?v=20261001j"></script>
-  <script src="js/admin-paineis.js?v=20261001j"></script>
+  <script src="js/regras.js?v=20261001k"></script>
+  <script src="js/utils.js?v=20261001k"></script>
+  <script src="js/data/backend.js?v=20261001k"></script>
+  <script src="js/admin-auth.js?v=20261001k"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261001k"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261001k"></script>
+  <script src="js/data/DataService.js?v=20261001k"></script>
+  <script src="js/admin-fonte-dados.js?v=20261001k"></script>
+  <script src="js/admin-simples.js?v=20261001k"></script>
+  <script src="js/admin-relatorio.js?v=20261001k"></script>
+  <script src="js/admin-busca.js?v=20261001k"></script>
+  <script src="js/admin-historico.js?v=20261001k"></script>
+  <script src="js/admin-pendencias.js?v=20261001k"></script>
+  <script src="js/admin-membros.js?v=20261001k"></script>
+  <script src="js/admin-gabarito.js?v=20261001k"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261001k"></script>
+  <script src="js/admin-paineis.js?v=20261001k"></script>
 </body>
 </html>

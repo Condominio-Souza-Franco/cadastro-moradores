@@ -330,3 +330,18 @@ body.popup-aberto {
   width: auto;
   margin: 0;
 }
+
+/* Barra fixa no topo: o "lugar" no formulário não ocupa espaço; a página ganha espaço no topo. */
+.barra-acoes-lugar {
+  height: 0;
+  margin: 0;
+}
+
+body.com-barra-acoes {
+  padding-top: calc(var(--altura-barra-acoes, 64px) + 8px) !important;
+}
+
+.aviso-somente-leitura {
+  font-size: 0.8rem;
+  color: #6b4e00;
+}

@@ -2,9 +2,9 @@
 // BARRA FLUTUANTE COM "ATUALIZAR CADASTRO" E "SAIR"
 // ==========================================
 // Depois que o morador carrega o próprio cadastro, aparece uma barra logo acima de "Qual é o seu
-// vínculo com a unidade?" com os mesmos botões do fim do formulário, lado a lado. Ao rolar a
-// página, quando o lugar dela sai da tela, ela fica presa no topo (fixa, com a largura do
-// formulário). Some quando os botões de baixo entram na tela — não faz sentido mostrar os dois.
+// vínculo com a unidade?" com os mesmos botões do fim do formulário, lado a lado. Enquanto está
+// à mostra, fica FIXA no topo da tela (com a largura do formulário), sem rolar com o conteúdo.
+// Some quando os botões de baixo entram na tela — não faz sentido mostrar os dois.
 // Os botões da barra só "clicam" nos botões originais: a lógica de envio é a mesma.
 (function() {
   var barra, lugar, form, acoesDeBaixo;
@@ -26,6 +26,9 @@
     var mostrar = cadastroCarregado() && !noCampoDeVisao(acoesDeBaixo);
     barra.hidden = !mostrar;
     lugar.hidden = !mostrar;
+    // O espaço no topo fica enquanto o cadastro está aberto (não só enquanto a barra aparece),
+    // para a página não "pular" quando a barra some perto dos botões de baixo.
+    document.body.classList.toggle("com-barra-acoes", cadastroCarregado());
     if (!mostrar) return;
 
     var enviar = document.getElementById("btnEnviarForm");
@@ -33,18 +36,13 @@
     botaoEnviar.textContent = (enviar.textContent || "Atualizar cadastro").trim();
     botaoEnviar.disabled = enviar.disabled;
 
-    // O "lugar" guarda a altura da barra no fluxo; quando ele passa do topo, a barra fica fixa.
-    lugar.style.height = barra.offsetHeight + "px";
-    var fixa = lugar.getBoundingClientRect().top < 0;
-    barra.classList.toggle("fixa", fixa);
-    if (fixa) {
-      var r = form.getBoundingClientRect();
-      barra.style.left = r.left + "px";
-      barra.style.width = r.width + "px";
-    } else {
-      barra.style.left = "";
-      barra.style.width = "";
-    }
+    // Sempre fixa no topo da tela, alinhada ao formulário. Enquanto ela aparece, o topo da página
+    // ganha um espaço do tamanho dela, para não cobrir o começo do conteúdo.
+    barra.classList.add("fixa");
+    var r = form.getBoundingClientRect();
+    barra.style.left = r.left + "px";
+    barra.style.width = r.width + "px";
+    document.documentElement.style.setProperty("--altura-barra-acoes", barra.offsetHeight + "px");
   }
 
   document.addEventListener("DOMContentLoaded", function() {

@@ -236,6 +236,7 @@
     });
     document.getElementById("modoTabelaGabarito").hidden = novo !== "tabela";
     document.getElementById("modoMapaGabarito").hidden = novo !== "mapa";
+    document.querySelectorAll("#painelGabarito .so-modo-tabela").forEach(function(el) { el.hidden = novo !== "tabela"; });
     document.getElementById("btnAdicionarVagaGabarito").hidden = novo !== "tabela";
     if (novo === "mapa") renderizarMapa();
   }
