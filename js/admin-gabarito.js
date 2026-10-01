@@ -342,6 +342,7 @@
         ordenar();
         originais = JSON.stringify(linhasParaEnviar());
         carregado = true;
+        document.getElementById("painelGabarito").classList.add("conteudo-carregado");
         setStatus("", "");
         renderizar();
       })

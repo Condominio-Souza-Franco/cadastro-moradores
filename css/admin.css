@@ -2824,3 +2824,9 @@ button.pendencia-item::before {
   opacity: 0.6;
   cursor: default;
 }
+
+/* Desfazer/Salvar só aparecem depois que o conteúdo do painel carregou. */
+#painelGabarito:not(.conteudo-carregado) .acoes-50,
+#painelMembros:not(.conteudo-carregado) .acoes-50 {
+  display: none !important;
+}

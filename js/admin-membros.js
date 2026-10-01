@@ -127,6 +127,7 @@
         indicePapel = r.indice;
         originais = JSON.stringify(paraEnviar());
         carregado = true;
+        document.getElementById("painelMembros").classList.add("conteudo-carregado");
         var quem = r.nomePapel ? "Você está como " + r.nomePapel + (papel === "conselho" ? " (membro " + (indicePapel + 1) + ")" : "") + "." : "";
         setStatus((r.configurado ? "" : "Ainda não configurado: o acesso segue a lista inicial até o primeiro Salvar. ") + quem, "");
         renderizar();
