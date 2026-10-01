@@ -215,7 +215,7 @@
         criarTextoSvg(g, aptosDaVaga.join(" / "), meio, aptosDaVaga.length > 1 ? 28 : 40, "#1d2b3a");
       } else {
         var condominio = (g.getAttribute("class") || "").indexOf("condominio") !== -1;
-        criarTextoSvg(g, condominio ? "CONDOMÍNIO" : "livre", meio, 22, condominio ? "#4a6b8a" : "#9aa5b1");
+        criarTextoSvg(g, "CONDOMÍNIO", meio, 22, condominio ? "#4a6b8a" : "#9aa5b1");
       }
       g.classList.toggle("com-aviso", comAviso);
       g.classList.toggle("selecionada", n === vagaEditada);
@@ -227,7 +227,7 @@
     var indices = indicesDaVaga(garagemMapa, n);
     var atual = indices.length ? linhas[indices[0]].apto : "";
     document.getElementById("editorVagaTitulo").textContent = "Vaga " + n + " · " + garagemMapa;
-    document.getElementById("editorVagaApto").innerHTML = '<option value="">— livre —</option>' + aptos.map(function(a) {
+    document.getElementById("editorVagaApto").innerHTML = '<option value="">— Condomínio —</option>' + aptos.map(function(a) {
       return '<option value="' + escaparHtml(a) + '"' + (a === atual ? " selected" : "") + ">" + escaparHtml(a) + "</option>";
     }).join("");
     var noDesenho = vagaNoDesenho(garagemMapa, numerosDaVaga(garagemMapa, n)[0]);
