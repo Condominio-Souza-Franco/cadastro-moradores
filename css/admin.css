@@ -2638,3 +2638,29 @@ button.pendencia-item::before {
   border-color: var(--accent-color);
   color: #fff;
 }
+
+/* "Últimas alterações cadastrais" numa linha só, ao lado do "Atualizar". */
+.card-historico > summary {
+  flex-wrap: nowrap;
+  font-size: 0.82rem;
+}
+
+.card-historico > summary > span {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-historico > summary .btn-atualizar-pendencias {
+  flex-shrink: 0;
+}
+
+.card-historico > summary {
+  gap: 6px;
+  font-size: 0.76rem;
+}
+
+.card-historico > summary .btn-atualizar-pendencias {
+  margin-left: auto;
+}

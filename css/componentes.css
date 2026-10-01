@@ -288,3 +288,45 @@
 body.popup-aberto {
   overflow: hidden;
 }
+
+/* ==========================================
+   BARRA FLUTUANTE "ATUALIZAR CADASTRO" / "SAIR" (js/barra-acoes.js)
+   ========================================== */
+.barra-acoes-lugar {
+  margin: 0 0 12px;
+}
+
+.barra-acoes-lugar[hidden],
+.barra-acoes-flutuante[hidden] {
+  display: none;
+}
+
+.barra-acoes-flutuante {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* Presa no topo da tela enquanto o morador rola o formulário. */
+.barra-acoes-flutuante.fixa {
+  position: fixed;
+  top: 0;
+  z-index: 50;
+  padding: 8px 10px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.3);
+}
+
+.barra-acoes-flutuante .btn-submit {
+  flex: 2;
+  width: auto;
+  margin: 0;
+}
+
+.barra-acoes-flutuante .btn-secondary {
+  flex: 1;
+  width: auto;
+  margin: 0;
+}
