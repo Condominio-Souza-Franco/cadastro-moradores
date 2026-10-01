@@ -2507,3 +2507,96 @@ button.pendencia-item::before {
 #statusMembros {
   font-size: 0.82rem;
 }
+
+/* "Carregando..." pequeno e discreto em todo o admin. */
+.status.carregando,
+.situacao-relatorio.carregando,
+.auth-mensagem.carregando {
+  margin: 4px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* Links úteis: um por linha, cada um com um "•" na frente. */
+.links-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.links-lista a::before {
+  content: "•";
+  display: inline-block;
+  width: 14px;
+  color: var(--muted);
+}
+
+/* Pendências: caixinha "ignorar" na frente de cada item; ignorados ficam apagados e não contam. */
+.grupo-pendencia li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ignorar-pendencia {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  margin: 8px 0 0 4px;
+  cursor: pointer;
+}
+
+.grupo-pendencia li .pendencia-item {
+  flex: 1;
+  min-width: 0;
+  padding-left: 18px;
+}
+
+.grupo-pendencia li .pendencia-item.sem-link {
+  padding-left: 6px;
+}
+
+.grupo-pendencia li.ignorada .pendencia-item,
+.pendencias-em-linha .ignorada {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.pendencias-em-linha label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.pendencias-em-linha .ignorar-pendencia {
+  margin: 0;
+}
+
+/* Grupo zerado só porque tudo foi ignorado: ✓ verde, mas abre para poder reativar. */
+.grupo-pendencia.zerado > summary {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.grupo-pendencia.zerado > summary::before {
+  content: "✓";
+  color: #1f7a3a;
+  font-weight: 700;
+}
+
+.grupo-pendencia.zerado .contador-pendencia {
+  background: #e7f5ea;
+  color: #1f7a3a;
+}
+
+.grupo-pendencia.zerado[open] > summary::before,
+.grupo-pendencia.vazio[open] > summary::before {
+  transform: none;
+}

@@ -117,7 +117,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "");
+    setStatus("Carregando...", "carregando");
     DataService.obterMembros()
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar os membros.");

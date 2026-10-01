@@ -16,38 +16,79 @@
     el.textContent = texto || "";
   }
 
+  var grupos = [];
+
+  // Caixinha "ignorar" (primeira coisa da linha): marcada, a pendência não conta e fica apagada.
+  function caixaIgnorar(it) {
+    return '<input type="checkbox" class="ignorar-pendencia" data-chave="' + escaparHtml(it.chave || "") + '"' +
+      (it.ignorado ? " checked" : "") + ' title="Ignorar esta pendência" aria-label="Ignorar esta pendência">';
+  }
+
   function itemHtml(it) {
     var texto = "<strong>" + escaparHtml(it.apto) + "</strong>" +
       (it.nome ? " · " + escaparHtml(it.nome) + (it.tipo ? " (" + escaparHtml(it.tipo) + ")" : "") : "") +
       (it.detalhe ? '<span class="pendencia-detalhe">' + escaparHtml(it.detalhe) + "</span>" : "");
-    return it.id
-      ? '<li><button type="button" class="pendencia-item" data-apto="' + escaparHtml(it.apto) + '" data-id="' + escaparHtml(it.id) + '">' + texto + "</button></li>"
-      : '<li><span class="pendencia-item sem-link">' + texto + "</span></li>";
+    var conteudo = it.id
+      ? '<button type="button" class="pendencia-item" data-apto="' + escaparHtml(it.apto) + '" data-id="' + escaparHtml(it.id) + '">' + texto + "</button>"
+      : '<span class="pendencia-item sem-link">' + texto + "</span>";
+    return '<li class="' + (it.ignorado ? "ignorada" : "") + '">' + caixaIgnorar(it) + conteudo + "</li>";
   }
 
-  function renderizar(grupos) {
+  function ativos(g) {
+    return typeof g.ativos === "number" ? g.ativos : g.itens.filter(function(it) { return !it.ignorado; }).length;
+  }
+
+  function renderizar() {
     var lista = document.getElementById("listaPendencias");
     if (!lista) return;
-    var total = grupos.reduce(function(s, g) { return s + g.itens.length; }, 0);
-    // Primeiro os grupos com pendência, depois os zerados (a ordem entre eles se mantém).
-    grupos = grupos.filter(function(g) { return g.itens.length; }).concat(grupos.filter(function(g) { return !g.itens.length; }));
-    lista.innerHTML = grupos.map(function(g) {
-      var n = g.itens.length;
-      return '<details class="grupo-pendencia' + (n ? "" : " vazio") + '">' +
+    // Lembra quais grupos estavam abertos (ao marcar/desmarcar, a lista é redesenhada).
+    var abertos = {};
+    lista.querySelectorAll("details[open]").forEach(function(d) { abertos[d.getAttribute("data-chave")] = true; });
+    var total = grupos.reduce(function(soma, g) { return soma + ativos(g); }, 0);
+    // Primeiro os grupos com pendência (não ignorada), depois os zerados.
+    var ordenados = grupos.filter(function(g) { return ativos(g); }).concat(grupos.filter(function(g) { return !ativos(g); }));
+    lista.innerHTML = ordenados.map(function(g) {
+      var n = ativos(g);
+      var semItens = !g.itens.length;   // nada na lista: não abre (com ignorados, abre para reativar)
+      return '<details class="grupo-pendencia' + (n ? "" : " zerado") + (semItens ? " vazio" : "") + '" data-chave="' + escaparHtml(g.chave) + '"' + (abertos[g.chave] ? " open" : "") + ">" +
         '<summary><span class="contador-pendencia">' + n + "</span><span>" + escaparHtml(g.titulo) + "</span></summary>" +
         // Aptos sem cadastro (só o número, nada para abrir): lado a lado, separados por "•".
-        (n && g.chave === "semCadastro"
-          ? '<p class="pendencias-em-linha">' + g.itens.map(function(it) { return '<span class="sem-quebra">' + escaparHtml(it.apto) + "</span>"; }).join(" • ") + "</p>"
-          : (n ? "<ul>" + g.itens.map(itemHtml).join("") + "</ul>" : "")) +
+        (semItens ? "" : g.chave === "semCadastro"
+          ? '<p class="pendencias-em-linha">' + g.itens.map(function(it) {
+              return '<label class="sem-quebra' + (it.ignorado ? " ignorada" : "") + '">' + caixaIgnorar(it) + escaparHtml(it.apto) + "</label>";
+            }).join(" • ") + "</p>"
+          : "<ul>" + g.itens.map(itemHtml).join("") + "</ul>") +
       "</details>";
     }).join("");
     setStatus(total ? "" : "Nenhuma pendência. 🎉", total ? "" : "ok");
   }
 
+  // Marca/desmarca "ignorar": muda na hora na tela e grava no servidor (vale para todos os admins).
+  function alternarIgnorar(caixa) {
+    var chave = caixa.getAttribute("data-chave");
+    var ignorar = caixa.checked;
+    var item = null;
+    grupos.forEach(function(g) {
+      g.itens.forEach(function(it) { if (it.chave === chave) item = it; });
+      if (typeof g.ativos === "number") g.ativos = g.itens.filter(function(it) { return !(it.chave === chave ? ignorar : it.ignorado); }).length;
+    });
+    if (!item) return;
+    item.ignorado = ignorar;
+    renderizar();
+    DataService.ignorarPendencia(chave, ignorar)
+      .then(function(r) { if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar."); })
+      .catch(function(erro) {
+        item.ignorado = !ignorar;
+        grupos.forEach(function(g) { g.ativos = g.itens.filter(function(it) { return !it.ignorado; }).length; });
+        renderizar();
+        setStatus((erro && erro.message) || "Não foi possível salvar.", "erro");
+      });
+  }
+
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Verificando a base...", "");
+    setStatus("Carregando...", "carregando");
     DataService.listarPendencias()
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) {
@@ -55,7 +96,8 @@
           return;
         }
         carregado = true;
-        renderizar(resposta.grupos || []);
+        grupos = resposta.grupos || [];
+        renderizar();
       })
       .catch(function(erro) {
         setStatus((erro && erro.message) || "Não foi possível verificar as pendências.", "erro");
@@ -75,6 +117,10 @@
     window.addEventListener("cadastro-excluido", function() { carregado = false; });
 
     document.getElementById("btnAtualizarPendencias").addEventListener("click", carregar);
+
+    lista.addEventListener("change", function(e) {
+      if (e.target.classList && e.target.classList.contains("ignorar-pendencia")) alternarIgnorar(e.target);
+    });
 
     // Abre o cadastro na página "Consulta por apartamento".
     lista.addEventListener("click", function(e) {

@@ -268,7 +268,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando o gabarito...", "");
+    setStatus("Carregando...", "carregando");
     Promise.all([DataService.obterGabaritoVagasCompleto(), desenho ? Promise.resolve(desenho) : carregarDesenho()])
       .then(function(r) {
         var resposta = r[0];

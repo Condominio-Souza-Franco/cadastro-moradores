@@ -198,7 +198,7 @@
             return;
           }
 
-          setMensagem("Verificando acesso...", "");
+          setMensagem("Verificando acesso...", "carregando");
           consultarAcesso(response && response.credential)
             .then(function(acesso) {
               var usuario = salvarSessao(payload, response && response.credential, acesso);

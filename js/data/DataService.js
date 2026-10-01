@@ -140,10 +140,16 @@
   // Operações que variam muito com o tamanho da base (buscam várias subcoleções de todos os
   // apartamentos) precisam de mais tempo antes de considerar o Firebase "indisponível".
   var TIMEOUTS_POR_OPERACAO = {
+    listarPendencias: 45000,
+    obterMembros: 30000,
+    listarHistorico: 25000,
+    situacaoRelatorios: 25000,
     buscarTexto: 20000,
     gerarRelatorioApartamentos: 20000,
     gerarRelatorioApartamentosPdfDrive: 25000
   };
+
+  var SOMENTE_FIREBASE = ["listarPendencias", "obterMembros", "listarHistorico", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -173,6 +179,17 @@
         .catch(function(erro) {
           marcarFalhaTotal(erro);
           throw erro;
+        });
+    }
+
+    // Operações que só existem no Firebase (a planilha não tem esses dados): se o Firebase demorar
+    // ou falhar, NÃO há para onde cair — e não faz sentido entrar em modo de contingência por
+    // causa delas. Só avisa para tentar de novo.
+    if (SOMENTE_FIREBASE.indexOf(nomeMetodo) !== -1) {
+      return comTimeout(chamarRepositorio(window.FirebaseRepository, nomeMetodo, args), timeoutOperacao)
+        .catch(function(erro) {
+          if (ehErroAutorizacao(erro)) throw erro;
+          throw criarErroFonte("lento", "O servidor demorou para responder. Tente de novo em instantes.");
         });
     }
 
@@ -340,6 +357,9 @@
     },
     salvarMembros: function(membros) {
       return executarEscrita("salvarMembros", [membros]);
+    },
+    ignorarPendencia: function(chave, ignorar) {
+      return executarEscrita("ignorarPendencia", [chave, ignorar]);
     },
     listarPendencias: function() {
       return executarLeitura("listarPendencias", []);

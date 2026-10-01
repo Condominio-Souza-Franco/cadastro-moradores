@@ -61,6 +61,9 @@
       return chamarBackend("fbSalvarMembros", { membros: membros }, true);
     },
     // O que precisa de atenção na base (aptos sem cadastro, contratos vencendo, dados faltando...).
+    ignorarPendencia: function(chave, ignorar) {
+      return chamarBackend("fbIgnorarPendencia", { chave: chave, ignorar: !!ignorar }, true);
+    },
     listarPendencias: function() {
       return chamarBackend("fbListarPendencias", {}, true);
     },

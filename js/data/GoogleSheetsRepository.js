@@ -55,6 +55,9 @@
     salvarMembros: function() {
       return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
     },
+    ignorarPendencia: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     listarPendencias: function() {
       return Promise.resolve({ sucesso: false, mensagem: "As pendências só estão disponíveis com o Firebase.", grupos: [] });
     },
