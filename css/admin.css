@@ -2923,3 +2923,8 @@ button.pendencia-item::before {
   font-weight: 400;
   color: #5f7287;
 }
+
+/* Notificações: só os botões de cima (a cópia espelhada); os originais, embaixo, ficam escondidos. */
+#acoesNotificacoes {
+  display: none !important;
+}
