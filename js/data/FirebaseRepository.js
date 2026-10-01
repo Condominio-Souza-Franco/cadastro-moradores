@@ -60,6 +60,13 @@
     salvarMembros: function(membros) {
       return chamarBackend("fbSalvarMembros", { membros: membros }, true);
     },
+    // Quem recebe o e-mail com as alterações cadastrais.
+    obterNotificacoes: function() {
+      return chamarBackend("fbObterNotificacoes", {}, true);
+    },
+    salvarNotificacoes: function(destinatarios) {
+      return chamarBackend("fbSalvarNotificacoes", { destinatarios: destinatarios }, true);
+    },
     // O que precisa de atenção na base (aptos sem cadastro, contratos vencendo, dados faltando...).
     ignorarPendencia: function(chave, ignorar) {
       return chamarBackend("fbIgnorarPendencia", { chave: chave, ignorar: !!ignorar }, true);

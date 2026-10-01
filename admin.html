@@ -74,6 +74,7 @@
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
           <button type="button" data-painel="painelMembros" aria-pressed="false">Membros</button>
+          <button type="button" data-painel="painelNotificacoes" aria-pressed="false">Notificações</button>
         </nav>
 
         <div id="paineisAdmin" class="paineis-admin">
@@ -148,6 +149,46 @@
             <div id="acoesMembros" class="membros-acoes acoes-50">
               <button type="button" id="btnDesfazerMembros" class="btn-secundario">Desfazer</button>
               <button type="button" id="btnSalvarMembros">Salvar alterações</button>
+            </div>
+          </section>
+
+          <section id="painelNotificacoes" class="painel-admin" hidden>
+            <div class="painel-topo"><h2>Notificações</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <p class="descricao-acao">
+              Marque quem recebe o e-mail automático com as alterações cadastrais. A lista vem da página
+              Membros; quem sair da administração deixa de receber.
+            </p>
+            <div id="statusNotificacoes" class="status"></div>
+            <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
+            <div id="listaNotificacoes" class="lista-notificacoes"></div>
+            <div id="acoesNotificacoes" class="acoes-50">
+              <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
+              <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
+            </div>
+            <h3 class="titulo-exemplo-email">Exemplo do e-mail</h3>
+            <p class="descricao-acao">Um e-mail junta todas as alterações feitas desde o último aviso. Não traz CPF nem outros dados sensíveis.</p>
+            <div class="exemplo-email" aria-label="Exemplo do e-mail">
+              <div class="exemplo-email-cabecalho">
+                <div><span>De:</span> Cadastro de moradores</div>
+                <div><span>Assunto:</span> [Cadastro de moradores] 2 alterações cadastrais</div>
+              </div>
+              <div class="exemplo-email-corpo">
+                <p>Houve 2 alterações no cadastro de moradores:</p>
+                <div class="exemplo-email-tabela">
+                  <table>
+                    <tr><th>Quando</th><th>O quê</th><th>Apto</th><th>Cadastro</th><th>Por</th></tr>
+                    <tr><td>01/10 09:52</td><td><strong>edição</strong></td><td>Apto 302</td><td>Maria Souza (Proprietário)<div class="exemplo-detalhe">Celular, veículos</div></td><td>morador</td></tr>
+                    <tr><td>01/10 10:15</td><td><strong>criação</strong></td><td>Apto 504</td><td>João Lima (Inquilino)</td><td>morador</td></tr>
+                  </table>
+                </div>
+                <p class="exemplo-email-sub">Relatórios:</p>
+                <ul>
+                  <li><strong>Relatório de contatos:</strong> <strong class="exemplo-novo">NOVO</strong> — mudou com estas alterações. <u>Abrir PDF</u></li>
+                  <li><strong>Lista de veículos:</strong> <strong class="exemplo-novo">NOVO</strong> — mudou com estas alterações. <u>Abrir PDF</u></li>
+                </ul>
+                <p><u>Abrir o painel da administração</u></p>
+                <p class="exemplo-email-rodape">E-mail automático do cadastro de moradores do Condomínio Souza Franco.</p>
+              </div>
             </div>
           </section>
 
@@ -252,22 +293,23 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261001r"></script>
-  <script src="js/utils.js?v=20261001r"></script>
-  <script src="js/data/backend.js?v=20261001r"></script>
-  <script src="js/admin-auth.js?v=20261001r"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261001r"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261001r"></script>
-  <script src="js/data/DataService.js?v=20261001r"></script>
-  <script src="js/admin-fonte-dados.js?v=20261001r"></script>
-  <script src="js/admin-simples.js?v=20261001r"></script>
-  <script src="js/admin-relatorio.js?v=20261001r"></script>
-  <script src="js/admin-busca.js?v=20261001r"></script>
-  <script src="js/admin-historico.js?v=20261001r"></script>
-  <script src="js/admin-pendencias.js?v=20261001r"></script>
-  <script src="js/admin-membros.js?v=20261001r"></script>
-  <script src="js/admin-gabarito.js?v=20261001r"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261001r"></script>
-  <script src="js/admin-paineis.js?v=20261001r"></script>
+  <script src="js/regras.js?v=20261001s"></script>
+  <script src="js/utils.js?v=20261001s"></script>
+  <script src="js/data/backend.js?v=20261001s"></script>
+  <script src="js/admin-auth.js?v=20261001s"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261001s"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261001s"></script>
+  <script src="js/data/DataService.js?v=20261001s"></script>
+  <script src="js/admin-fonte-dados.js?v=20261001s"></script>
+  <script src="js/admin-simples.js?v=20261001s"></script>
+  <script src="js/admin-relatorio.js?v=20261001s"></script>
+  <script src="js/admin-busca.js?v=20261001s"></script>
+  <script src="js/admin-historico.js?v=20261001s"></script>
+  <script src="js/admin-pendencias.js?v=20261001s"></script>
+  <script src="js/admin-membros.js?v=20261001s"></script>
+  <script src="js/admin-notificacoes.js?v=20261001s"></script>
+  <script src="js/admin-gabarito.js?v=20261001s"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261001s"></script>
+  <script src="js/admin-paineis.js?v=20261001s"></script>
 </body>
 </html>

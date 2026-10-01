@@ -142,6 +142,7 @@
   var TIMEOUTS_POR_OPERACAO = {
     listarPendencias: 45000,
     obterMembros: 30000,
+    obterNotificacoes: 30000,
     listarHistorico: 25000,
     situacaoRelatorios: 25000,
     buscarTexto: 20000,
@@ -149,7 +150,7 @@
     gerarRelatorioApartamentosPdfDrive: 25000
   };
 
-  var SOMENTE_FIREBASE = ["listarPendencias", "obterMembros", "listarHistorico", "situacaoRelatorios"];
+  var SOMENTE_FIREBASE = ["listarPendencias", "obterMembros", "obterNotificacoes", "listarHistorico", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -357,6 +358,12 @@
     },
     salvarMembros: function(membros) {
       return executarEscrita("salvarMembros", [membros]);
+    },
+    obterNotificacoes: function() {
+      return executarLeitura("obterNotificacoes", []);
+    },
+    salvarNotificacoes: function(destinatarios) {
+      return executarEscrita("salvarNotificacoes", [destinatarios]);
     },
     ignorarPendencia: function(chave, ignorar) {
       return executarEscrita("ignorarPendencia", [chave, ignorar]);

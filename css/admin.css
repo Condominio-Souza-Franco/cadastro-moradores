@@ -2827,7 +2827,8 @@ button.pendencia-item::before {
 
 /* Desfazer/Salvar só aparecem depois que o conteúdo do painel carregou. */
 #painelGabarito:not(.conteudo-carregado) .acoes-50,
-#painelMembros:not(.conteudo-carregado) .acoes-50 {
+#painelMembros:not(.conteudo-carregado) .acoes-50,
+#painelNotificacoes:not(.conteudo-carregado) .acoes-50 {
   display: none !important;
 }
 
@@ -2854,3 +2855,32 @@ button.pendencia-item::before {
   font-weight: 400;
   color: var(--texto-suave, #5f7287);
 }
+
+/* ---------- Notificações ---------- */
+.lista-notificacoes { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.item-notificacao {
+  display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px;
+  border: 1px solid #d7e0ea; border-radius: 12px; background: #fff; cursor: pointer;
+}
+.item-notificacao input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #2f5f98; }
+.item-notificacao.travado { opacity: 0.6; cursor: default; }
+.notif-texto { display: flex; flex-direction: column; min-width: 0; }
+.notif-nome { font-weight: 600; color: #243447; }
+.notif-apto { font-weight: 400; color: #5f7287; }
+.notif-cargo { font-size: 0.8rem; color: #2f5f98; }
+.notif-email { font-size: 0.85rem; color: #5f7287; overflow-wrap: anywhere; }
+.titulo-exemplo-email { margin: 24px 0 4px; font-size: 1rem; color: #243447; }
+.exemplo-email { border: 1px solid #d7e0ea; border-radius: 12px; overflow: hidden; background: #fff; font-family: Arial, Helvetica, sans-serif; color: #243447; font-size: 13px; }
+.exemplo-email-cabecalho { background: #f3f6fa; padding: 10px 12px; border-bottom: 1px solid #d7e0ea; font-size: 12px; }
+.exemplo-email-cabecalho span { color: #5f7287; }
+.exemplo-email-corpo { padding: 4px 12px 8px; }
+.exemplo-email-tabela { overflow-x: auto; }
+.exemplo-email table { border-collapse: collapse; font-size: 12px; }
+.exemplo-email th { text-align: left; color: #5f7287; padding: 6px 8px; font-weight: 600; }
+.exemplo-email td { padding: 6px 8px; border-bottom: 1px solid #e3e8ee; vertical-align: top; }
+.exemplo-detalhe { color: #5f7287; font-size: 11px; }
+.exemplo-email-sub { margin: 14px 0 4px; }
+.exemplo-email ul { margin-top: 0; padding-left: 20px; }
+.exemplo-email u { color: #1a5fb4; }
+.exemplo-novo { color: #1f7a3a; }
+.exemplo-email-rodape { color: #8a99a8; font-size: 11px; }
