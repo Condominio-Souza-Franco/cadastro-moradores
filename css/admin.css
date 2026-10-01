@@ -2884,3 +2884,35 @@ button.pendencia-item::before {
 .exemplo-email u { color: #1a5fb4; }
 .exemplo-novo { color: #1f7a3a; }
 .exemplo-email-rodape { color: #8a99a8; font-size: 11px; }
+
+/* Menu com 7 botões, sem "viúva" (grade de 24 colunas, duas linhas cheias):
+   1ª: Consulta (10) · Pendências (7) · Relatórios (7)
+   2ª: Links úteis (5) · Gabarito de vagas (7) · Membros (5) · Notificações (7) */
+.menu-admin button[data-painel="painelLinks"],
+.menu-admin button[data-painel="painelMembros"] { grid-column: span 5; }
+.menu-admin button[data-painel="painelGabarito"],
+.menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 7; }
+
+/* Notificações: fontes no mesmo tamanho das outras páginas. */
+.item-notificacao { padding: 8px 10px; gap: 10px; }
+.item-notificacao input { width: 18px; height: 18px; }
+.notif-nome { font-size: 0.88rem; }
+.notif-cargo { font-size: 0.75rem; }
+.notif-email { font-size: 0.78rem; }
+.titulo-exemplo-email { font-size: 0.92rem; }
+.exemplo-email { font-size: 12px; }
+.exemplo-email-cabecalho { font-size: 11px; }
+.exemplo-email table { font-size: 11px; }
+.exemplo-detalhe, .exemplo-email-rodape { font-size: 10px; }
+
+/* Celular: 4 botões numa linha cortariam o texto. Fica 2 + 2 + 3, sem viúva:
+   Consulta · Pendências / Relatórios · Links úteis / Gabarito · Membros · Notificações */
+@media (max-width: 560px) {
+  .menu-admin button[data-painel="painelConsulta"],
+  .menu-admin button[data-painel="painelPendencias"],
+  .menu-admin button[data-painel="painelRelatorios"],
+  .menu-admin button[data-painel="painelLinks"] { grid-column: span 12; }
+  .menu-admin button[data-painel="painelGabarito"] { grid-column: span 10; }
+  .menu-admin button[data-painel="painelMembros"] { grid-column: span 6; }
+  .menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 8; }
+}
