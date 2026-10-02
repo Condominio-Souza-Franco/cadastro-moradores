@@ -465,6 +465,7 @@ textarea {
 /* Alerta mais estreito e com quebra de linha equilibrada (sem palavra sozinha na última linha). */
 .modal-card {
   max-width: min(90vw, 360px);
+  box-sizing: border-box;
 }
 .modal-card h3 {
   text-wrap: balance;
@@ -472,4 +473,9 @@ textarea {
 .modal-card p {
   text-wrap: pretty;
   overflow-wrap: anywhere;
+}
+
+.modal-card .modal-link {
+  font-weight: 700;
+  color: #1a5fb4;
 }

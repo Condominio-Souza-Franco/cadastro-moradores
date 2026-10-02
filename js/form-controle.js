@@ -33,7 +33,7 @@ function capturarSnapshotFormulario() {
   return partes.join('\u0001');
 }
 
-function exibirModalGenerico({ titulo = 'Atenção', mensagem = '', tipo = 'alerta', textoConfirmar = 'OK', textoCancelar = 'Cancelar' }) {
+function exibirModalGenerico({ titulo = 'Atenção', mensagem = '', tipo = 'alerta', textoConfirmar = 'OK', textoCancelar = 'Cancelar', link = null }) {
   const overlay = document.getElementById('modalOverlay');
   const tituloEl = document.getElementById('modalTitulo');
   const mensagemEl = document.getElementById('modalMensagem');
@@ -44,6 +44,17 @@ function exibirModalGenerico({ titulo = 'Atenção', mensagem = '', tipo = 'aler
 
   tituloEl.textContent = titulo;
   mensagemEl.textContent = mensagem;
+  // Link opcional no fim da mensagem (ex.: kit de boas-vindas), sempre num parágrafo próprio.
+  if (link && link.href) {
+    const a = document.createElement('a');
+    a.href = link.href;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.className = 'modal-link';
+    a.textContent = link.texto || link.href;
+    mensagemEl.appendChild(document.createTextNode(mensagem ? '\n\n' : ''));
+    mensagemEl.appendChild(a);
+  }
   btnConfirmar.textContent = textoConfirmar;
   btnCancelar.textContent = textoCancelar;
 
@@ -74,8 +85,8 @@ function fecharModalGenerico(valor) {
   }
 }
 
-function mostrarAlerta(mensagem, titulo = 'Atenção') {
-  const promise = exibirModalGenerico({ titulo, mensagem, tipo: 'alerta', textoConfirmar: 'OK' });
+function mostrarAlerta(mensagem, titulo = 'Atenção', opcoes = {}) {
+  const promise = exibirModalGenerico({ titulo, mensagem, tipo: 'alerta', textoConfirmar: 'OK', link: opcoes.link || null });
 
   const btnConfirmar = document.getElementById('btnModalConfirmar');
   if (btnConfirmar) {

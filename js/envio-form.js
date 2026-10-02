@@ -633,7 +633,8 @@ function executarEnvio(fileData, eAtualizacao) {
       const emailCopia = String(dados.moradorEmail || "").trim();
       mostrarAlerta(emailCopia
         ? "Uma cópia do cadastro em PDF também será enviada por e-mail para " + emailCopia + " em instantes."
-        : "", res.mensagem || "Cadastro enviado com sucesso!");
+        : "", res.mensagem || "Cadastro enviado com sucesso!",
+        { link: { href: "https://tinyurl.com/kit-souzafranco", texto: "Acesse o Kit de Boas-vindas do condomínio" } });
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(textoBotaoOriginal);
