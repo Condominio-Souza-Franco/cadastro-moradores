@@ -279,7 +279,7 @@ async function consultarPorCpf() {
       preencherFormularioComCadastro(d);
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
-      cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput };
+      cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "" };
 
     } else {
       if (inputCpf) inputCpf.disabled = false;

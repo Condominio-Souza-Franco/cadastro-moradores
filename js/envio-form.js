@@ -115,6 +115,17 @@ function cadastroEhInquilino() {
   return tipoResidente === "Inquilino" && camposLocacaoAtivos;
 }
 
+// "dd/MM/yyyy HH:mm:ss" do último envio do cadastro aberto, há 11 meses ou mais?
+function cadastroAntigoParaRevisao() {
+  const texto = (typeof cadastroConsultado !== "undefined" && cadastroConsultado && cadastroConsultado.dataUltimoEnvio) || "";
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(texto);
+  if (!m) return false;
+  const data = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  const limite = new Date();
+  limite.setMonth(limite.getMonth() - 11);
+  return data < limite;
+}
+
 function enviar() {
   limpaMensagemStatus();
   
@@ -437,7 +448,18 @@ function enviar() {
     return;
   }
 
-  if (snapshotFormularioOriginal !== null && capturarSnapshotFormulario() === snapshotFormularioOriginal) {
+  if (snapshotFormularioOriginal !== null && capturarSnapshotFormulario() === snapshotFormularioOriginal && !window.confirmandoSemAlteracao) {
+    // Cadastro com 11 meses ou mais (o e-mail de revisão anual pede para revisar): dá para só
+    // confirmar que está tudo certo, sem mudar nada — o envio renova a data do cadastro.
+    if (cadastroAntigoParaRevisao()) {
+      confirmarAcao("Nenhum dado foi alterado.\n\nDeseja confirmar que os dados continuam corretos? O cadastro fica registrado como revisado hoje.", "Confirmar dados")
+        .then(function(ok) {
+          if (!ok) return;
+          window.confirmandoSemAlteracao = true;
+          try { enviar(); } finally { window.confirmandoSemAlteracao = false; }
+        });
+      return;
+    }
     mostrarAlerta("Nenhuma alteração foi feita no cadastro. Não é necessário atualizar.", "Atenção");
     return;
   }
