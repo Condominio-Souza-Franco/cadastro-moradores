@@ -3025,3 +3025,10 @@ body > * {
 .bloq-tentativas { margin-top: 4px; }
 .bloq-tentativas summary { cursor: pointer; color: #2f5f98; }
 .bloq-tentativas ul { margin: 4px 0 0; padding-left: 18px; }
+
+/* Bloqueios: "Atualizar" colado ao título (como em Pendências) e textos no tamanho do restante. */
+#painelBloqueios .painel-topo h2 { flex: 0 1 auto; }
+#painelBloqueios .btn-fechar-painel { margin-left: auto; }
+#painelBloqueios .descricao-acao { font-size: 0.8rem; margin-bottom: 4px; }
+#painelBloqueios .titulo-bloqueios { font-size: 0.85rem; margin: 12px 0 4px; }
+#painelBloqueios .sem-itens { font-size: 0.8rem; }
