@@ -401,7 +401,11 @@
       campoHtml("Orgão emissor", dados.orgaoEmissor),
       campoHtml("Celular", dados.celular),
       campoHtml("Telefone", dados.telFixo),
-      campoHtml("E-mail", dados.email)
+      campoHtml("E-mail", dados.email),
+      // Código por e-mail para abrir o cadastro (opção do morador). "Sim" vem com o botão de desativar.
+      campoHtml("Código por e-mail", dados.exigirCodigo === true ? "Sim" : "Não").replace(/<\/p><\/div>$/, dados.exigirCodigo === true
+        ? ' <button type="button" class="btn-desativar-codigo" data-id="' + escaparHtml(dados.id || "") + '" data-apto="' + escaparHtml(dados.apto || "") + '">Desativar</button></p></div>'
+        : "</p></div>")
     ];
 
     var logs = Array.isArray(dados.logsAtualizacao)
@@ -435,11 +439,6 @@
     secoes.push(
       '<div class="registro-cabecalho">' +
         '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
-        // Código por e-mail para abrir o cadastro (opção do morador); a administração pode desligar.
-        (dados.exigirCodigo === true
-          ? '<div class="codigo-status">Código por e-mail para abrir o cadastro: <strong>ativado</strong> ' +
-              '<button type="button" class="btn-desativar-codigo" data-id="' + escaparHtml(dados.id || "") + '" data-apto="' + escaparHtml(dados.apto || "") + '">Desativar</button></div>'
-          : "") +
         // PDF mais recente do cadastro (pasta "Cadastros" no Drive), gerado a cada envio.
         (dados.pdfUrl
           ? '<a class="link-pdf-cadastro" href="' + escaparHtml(dados.pdfUrl) + '" target="_blank" rel="noopener noreferrer">Ver PDF do cadastro</a>'
