@@ -2975,9 +2975,13 @@ button.pendencia-item::before {
   text-decoration: none;
 }
 
-/* Rodapé (Documentação) logo depois do conteúdo. */
+/* Rodapé (Documentação) colado ao cartão principal, com um respiro curto. */
+#adminArea,
+#authGate {
+  margin-bottom: 0 !important;
+}
 .rodape-site {
-  margin-top: 12px !important;
+  margin-top: 14px !important;
 }
 
 /* Exemplo do e-mail (Notificações): é o HTML real do e-mail; fontes no tamanho do admin e tabela com rolagem. */
