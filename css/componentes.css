@@ -345,3 +345,16 @@ body.com-barra-acoes {
   font-size: 0.8rem;
   color: #6b4e00;
 }
+
+/* "Sair" com cara de botão ativo (contorno azul), para não parecer desabilitado ao lado do
+   "Atualizar cadastro" desabilitado quando nada mudou. */
+#btnSairSemAlterar,
+.barra-acoes-flutuante .barra-acao-sair {
+  background: #ffffff;
+  color: #1f5d99;
+  border: 1px solid #1f5d99;
+}
+#btnSairSemAlterar:hover,
+.barra-acoes-flutuante .barra-acao-sair:hover {
+  background: #eef4fb;
+}
