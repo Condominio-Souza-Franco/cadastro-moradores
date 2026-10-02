@@ -157,9 +157,22 @@
           <section id="painelNotificacoes" class="painel-admin" hidden>
             <div class="painel-topo"><h2>Notificações</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao">
-              Marque quem recebe o e-mail automático com as alterações cadastrais. A lista vem da página
-              Membros; quem sair da administração deixa de receber.
+              Marque quem recebe os e-mails da administração. A lista vem da página Membros; quem sair da
+              administração deixa de receber.
             </p>
+            <div class="como-funcionam-notificacoes">
+              <strong>Como funcionam os e-mails do sistema</strong>
+              <ul>
+                <li><strong>Resumo mensal</strong> (para os marcados abaixo): no dia 1 de cada mês, um e-mail com todas as
+                  alterações cadastrais do mês anterior e os links dos relatórios. Se nada mudou, não é enviado.</li>
+                <li><strong>CPF bloqueado</strong> (para os marcados abaixo): na hora, quando alguém erra 5 vezes o CPF e a
+                  data de nascimento.</li>
+                <li><strong>Morador novo ou cadastro excluído</strong> (síndico, condomínio e desenvolvedor, marcados ou não):
+                  na hora. Também entra no resumo mensal.</li>
+                <li><strong>Para o próprio morador</strong> (não depende desta lista): a cópia do cadastro em PDF a cada envio,
+                  o código para abrir o cadastro (se ele ativou) e o lembrete de revisão uma vez por ano.</li>
+              </ul>
+            </div>
             <div id="statusNotificacoes" class="status"></div>
             <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
             <div id="listaNotificacoes" class="lista-notificacoes"></div>
@@ -167,15 +180,15 @@
               <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
               <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
             </div>
-            <h3 class="titulo-exemplo-email">Exemplo do e-mail</h3>
-            <p class="descricao-acao">Um e-mail junta todas as alterações feitas desde o último aviso. Não traz CPF nem outros dados sensíveis.</p>
+            <h3 class="titulo-exemplo-email">Exemplo do resumo mensal</h3>
+            <p class="descricao-acao">Junta todas as alterações feitas desde o último resumo. Não traz CPF nem outros dados sensíveis.</p>
             <div class="exemplo-email" aria-label="Exemplo do e-mail">
               <div class="exemplo-email-cabecalho">
                 <div><span>De:</span> Cadastro de moradores Cond. Souza Franco</div>
-                <div><span>Assunto:</span> [CSF] 2 alterações cadastrais</div>
+                <div><span>Assunto:</span> [CSF] Resumo de setembro de 2026: 2 alterações cadastrais</div>
               </div>
               <div class="exemplo-email-corpo">
-                <div style="font-family:Arial,Helvetica,sans-serif;color:#243447;font-size:14px"><p>Houve 2 alterações no cadastro de moradores:</p><table style="border-collapse:collapse;font-size:13px"><tr style="text-align:left;color:#5f7287"><th style="padding:6px 8px">Quando</th><th style="padding:6px 8px">O quê</th><th style="padding:6px 8px">Apto</th><th style="padding:6px 8px">Cadastro</th><th style="padding:6px 8px">Por</th></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 09:15</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">edição</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 302</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">Maria Souza (Proprietário)<div style="color:#5f7287;font-size:12px">Alterou: Celular, Carros</div></td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 10:40</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">criação</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 504</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">João Lima (Inquilino)</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr></table><p style="margin-top:16px;margin-bottom:4px">Relatórios:</p><ul style="margin-top:0"><li><strong>Relatório de contatos:</strong> <strong style="color:#1f7a3a">NOVO</strong> — mudou com estas alterações. <a href="#">Abrir PDF</a></li><li><strong>Lista de veículos:</strong> Nada mudou nele com estas alterações. <a href="#">Abrir o mais recente</a></li></ul><p style="margin-top:16px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/admin.html">Abrir o painel da administração</a></p><p style="color:#8a99a8;font-size:12px">E-mail automático do cadastro de moradores do Condomínio Souza Franco.</p><p style="color:#8a99a8;font-size:12px;margin-top:4px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/seguranca.html" style="color:#8a99a8">Documentação: meus dados estão seguros?</a></p></div>
+                <div style="font-family:Arial,Helvetica,sans-serif;color:#243447;font-size:14px"><p>Houve 2 alterações no cadastro de moradores desde o último resumo (setembro de 2026):</p><table style="border-collapse:collapse;font-size:13px"><tr style="text-align:left;color:#5f7287"><th style="padding:6px 8px">Quando</th><th style="padding:6px 8px">O quê</th><th style="padding:6px 8px">Apto</th><th style="padding:6px 8px">Cadastro</th><th style="padding:6px 8px">Por</th></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 09:15</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">edição</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 302</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">Maria Souza (Proprietário)<div style="color:#5f7287;font-size:12px">Alterou: Celular, Carros</div></td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 10:40</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">criação</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 504</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">João Lima (Inquilino)</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr></table><p style="margin-top:16px;margin-bottom:4px">Relatórios:</p><ul style="margin-top:0"><li><strong>Relatório de contatos:</strong> <strong style="color:#1f7a3a">NOVO</strong> — mudou com estas alterações. <a href="#">Abrir PDF</a></li><li><strong>Lista de veículos:</strong> Nada mudou nele com estas alterações. <a href="#">Abrir o mais recente</a></li></ul><p style="margin-top:16px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/admin.html">Abrir o painel da administração</a></p><p style="color:#8a99a8;font-size:12px">E-mail automático do cadastro de moradores do Condomínio Souza Franco.</p><p style="color:#8a99a8;font-size:12px;margin-top:4px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/seguranca.html" style="color:#8a99a8">Documentação: meus dados estão seguros?</a></p></div>
               </div>
             </div>
           </section>
@@ -296,27 +309,27 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261002o"></script>
-  <script src="js/utils.js?v=20261002o"></script>
-  <script src="js/data/backend.js?v=20261002o"></script>
+  <script src="js/regras.js?v=20261002p"></script>
+  <script src="js/utils.js?v=20261002p"></script>
+  <script src="js/data/backend.js?v=20261002p"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261002o"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261002o"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261002o"></script>
-  <script src="js/data/DataService.js?v=20261002o"></script>
-  <script src="js/admin-fonte-dados.js?v=20261002o"></script>
-  <script src="js/admin-simples.js?v=20261002o"></script>
-  <script src="js/admin-relatorio.js?v=20261002o"></script>
-  <script src="js/admin-busca.js?v=20261002o"></script>
-  <script src="js/admin-historico.js?v=20261002o"></script>
-  <script src="js/admin-pendencias.js?v=20261002o"></script>
-  <script src="js/admin-membros.js?v=20261002o"></script>
-  <script src="js/admin-bloqueios.js?v=20261002o"></script>
-  <script src="js/admin-notificacoes.js?v=20261002o"></script>
-  <script src="js/admin-gabarito.js?v=20261002o"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261002o"></script>
-  <script src="js/admin-paineis.js?v=20261002o"></script>
+  <script src="js/admin-auth.js?v=20261002p"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261002p"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261002p"></script>
+  <script src="js/data/DataService.js?v=20261002p"></script>
+  <script src="js/admin-fonte-dados.js?v=20261002p"></script>
+  <script src="js/admin-simples.js?v=20261002p"></script>
+  <script src="js/admin-relatorio.js?v=20261002p"></script>
+  <script src="js/admin-busca.js?v=20261002p"></script>
+  <script src="js/admin-historico.js?v=20261002p"></script>
+  <script src="js/admin-pendencias.js?v=20261002p"></script>
+  <script src="js/admin-membros.js?v=20261002p"></script>
+  <script src="js/admin-bloqueios.js?v=20261002p"></script>
+  <script src="js/admin-notificacoes.js?v=20261002p"></script>
+  <script src="js/admin-gabarito.js?v=20261002p"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261002p"></script>
+  <script src="js/admin-paineis.js?v=20261002p"></script>
 </body>
 </html>

@@ -25,14 +25,15 @@
   }
 
   function itemHtml(it) {
+    // Chip "PDF" logo depois do nome (é um span dentro do botão; o clique nele abre o PDF, não o cadastro).
+    var pdf = it.pdfUrl ? ' <span class="pendencia-pdf" role="link" tabindex="0" data-url="' + escaparHtml(it.pdfUrl) + '" title="PDF mais recente do cadastro">PDF</span>' : "";
     var texto = "<strong>" + escaparHtml(it.apto) + "</strong>" +
-      (it.nome ? " · " + escaparHtml(it.nome) + (it.tipo ? " (" + escaparHtml(it.tipo) + ")" : "") : "") +
+      (it.nome ? " · " + escaparHtml(it.nome) + (it.tipo ? " (" + escaparHtml(it.tipo) + ")" : "") : "") + pdf +
       (it.detalhe ? '<span class="pendencia-detalhe">' + escaparHtml(it.detalhe) + "</span>" : "");
     var conteudo = it.id
       ? '<button type="button" class="pendencia-item" data-apto="' + escaparHtml(it.apto) + '" data-id="' + escaparHtml(it.id) + '">' + texto + "</button>"
       : '<span class="pendencia-item sem-link">' + texto + "</span>";
-    var pdf = it.pdfUrl ? '<a class="pendencia-pdf" href="' + escaparHtml(it.pdfUrl) + '" target="_blank" rel="noopener noreferrer" title="PDF mais recente do cadastro">PDF</a>' : "";
-    return '<li class="' + (it.ignorado ? "ignorada" : "") + '">' + caixaIgnorar(it) + conteudo + pdf + "</li>";
+    return '<li class="' + (it.ignorado ? "ignorada" : "") + '">' + caixaIgnorar(it) + conteudo + "</li>";
   }
 
   function ativos(g) {
@@ -120,6 +121,13 @@
 
     // Abre o cadastro na página "Consulta por apartamento".
     lista.addEventListener("click", function(e) {
+      var chip = e.target.closest(".pendencia-pdf");
+      if (chip) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(chip.getAttribute("data-url"), "_blank", "noopener");
+        return;
+      }
       var botao = e.target.closest("button.pendencia-item");
       if (!botao || typeof window.adminSimplesCarregarApartamento !== "function") return;
       var select = document.getElementById("aptoAdmin");
