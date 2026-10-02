@@ -115,7 +115,7 @@
 </head>
 <body>
 <main>
-  <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
+  <a class="voltar" id="linkVoltar" href="index.html">← voltar para o cadastro de moradores</a>
   <h1>Documentação: meus dados estão seguros?</h1>
   <p class="subtitulo">Como funciona o cadastro de moradores do Condomínio Souza Franco e como os seus dados são protegidos.</p>
 
@@ -346,6 +346,21 @@
   <p class="rodape">Condomínio Souza Franco · Cadastro de moradores</p>
 </main>
 <script>
+  // "Voltar" inteligente: volta para a página de onde a pessoa veio (área da administração, mapa da
+  // vaga ou formulário). Se veio de uma página do próprio site, usa o histórico do navegador, que
+  // devolve a página no mesmo ponto em que estava (ex.: o painel aberto no admin).
+  (function() {
+    var link = document.getElementById("linkVoltar");
+    var origem = "";
+    try { var r = new URL(document.referrer); if (r.origin === location.origin) origem = r.pathname; } catch (e) {}
+    if (!origem) return;
+    if (/admin.html$/.test(origem)) { link.href = "admin.html"; link.textContent = "← voltar para a área da administração"; }
+    else if (/mapa-vaga.html$/.test(origem)) { link.href = "mapa-vaga.html"; link.textContent = "← voltar para o mapa da vaga"; }
+    link.addEventListener("click", function(e) {
+      if (history.length > 1) { e.preventDefault(); history.back(); }
+    });
+  })();
+
   // Accordion exclusivo: abrir um tópico fecha o anterior; clicar de novo no aberto (ou no ×) fecha.
   (function() {
     var botoes = Array.prototype.slice.call(document.querySelectorAll(".menu-topicos button"));
