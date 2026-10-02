@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Meus dados estão seguros? — Cadastro de moradores</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <style>
+    :root {
+      --texto: #243447;
+      --suave: #5f7287;
+      --borda: #dcdde1;
+      --fundo: #f4f7f6;
+      --cartao: #ffffff;
+      --destaque: #2f5f98;
+      --destaque-fundo: #eef4fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    main {
+      max-width: 750px;
+      margin: 0 auto;
+      background: var(--cartao);
+      padding: 28px 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .voltar { font-size: 0.9rem; font-weight: 600; color: var(--destaque); text-decoration: none; }
+    h1 { font-size: 1.5rem; line-height: 1.3; margin: 12px 0 6px; text-wrap: balance; }
+    .subtitulo { color: var(--suave); margin: 0 0 20px; }
+    h2 { font-size: 1.12rem; margin: 30px 0 8px; padding-top: 16px; border-top: 1px solid var(--borda); text-wrap: balance; }
+    h3 { font-size: 1rem; margin: 18px 0 4px; }
+    p, li { text-wrap: pretty; }
+    ul { padding-left: 22px; }
+    li { margin: 4px 0; }
+    .resumo {
+      background: var(--destaque-fundo);
+      border-left: 4px solid var(--destaque);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+    .resumo p { margin: 8px 0; }
+    .indice { font-size: 0.92rem; }
+    .indice a { color: var(--destaque); }
+    .tecnico { font-size: 0.93rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 8px 0; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--borda); vertical-align: top; }
+    th { color: var(--suave); font-weight: 600; }
+    .tabela { overflow-x: auto; }
+    a { color: var(--destaque); }
+    .rodape { margin-top: 32px; font-size: 0.85rem; color: var(--suave); }
+    @media (max-width: 480px) {
+      main { padding: 22px 16px; }
+      h1 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
+  <h1>Documentação: meus dados estão seguros?</h1>
+  <p class="subtitulo">Como funciona o cadastro de moradores do Condomínio Souza Franco e como os seus dados são protegidos.</p>
+
+  <div class="resumo">
+    <p><strong>Em poucas palavras:</strong> os dados que você informa no formulário ficam guardados em serviços do Google
+      (Firebase, Planilhas e Drive), na conta Google do responsável pelo sistema. Só a administração do condomínio — síndico,
+      conselho, a conta do condomínio e o desenvolvedor — consegue ver todos os cadastros, e para isso precisa entrar com
+      uma conta Google autorizada.</p>
+    <p>Para ver ou atualizar o próprio cadastro, o morador informa o CPF e a data de nascimento. Os dados não são vendidos
+      nem repassados a terceiros, e existem cópias de segurança para que nada se perca.</p>
+    <p>Nenhum sistema é 100% seguro. Abaixo explicamos o que foi feito, o que isso protege e quais são os limites.</p>
+  </div>
+
+  <p class="indice">Nesta página:
+    <a href="#dados">Quais dados</a> ·
+    <a href="#onde">Onde ficam</a> ·
+    <a href="#quem">Quem acessa</a> ·
+    <a href="#morador">Acesso do morador</a> ·
+    <a href="#copias">Cópias de segurança</a> ·
+    <a href="#emails">E-mails</a> ·
+    <a href="#limites">Limites</a> ·
+    <a href="#ia">Uso de IA</a> ·
+    <a href="#contato">Contato</a>
+  </p>
+
+  <h2 id="dados">Quais dados são coletados e para quê</h2>
+  <p>Nome, CPF, data de nascimento, RG, telefones e e-mail do morador; ocupantes do apartamento; contatos de emergência;
+    veículos e vaga de garagem; bicicletas; animais de estimação; prestadores de serviço; e, para inquilinos, dados da
+    locação e a cópia do contrato.</p>
+  <p>Esses dados são usados pela administração do condomínio para identificar os moradores, cuidar da segurança e do
+    controle de acesso, organizar a garagem e entrar em contato em caso de emergência.</p>
+
+  <h2 id="onde">Onde os dados ficam guardados</h2>
+  <p>O sistema usa serviços de empresas conhecidas, cada um com uma função:</p>
+  <div class="tabela">
+    <table>
+      <tr><th>Serviço</th><th>Para que é usado</th></tr>
+      <tr><td><strong>Google Firebase</strong> (Cloud Firestore)</td><td>Banco de dados principal, onde ficam os cadastros.</td></tr>
+      <tr><td><strong>Google Apps Script</strong></td><td>O "servidor" do sistema: recebe os pedidos do formulário, confere as permissões e lê ou grava no banco de dados.</td></tr>
+      <tr><td><strong>Google Planilhas e Google Drive</strong></td><td>Cópia de segurança dos dados, relatórios em PDF, o PDF de cada cadastro e as cópias dos contratos de locação.</td></tr>
+      <tr><td><strong>Gmail</strong> (pelo Apps Script)</td><td>Envio dos e-mails automáticos do sistema.</td></tr>
+      <tr><td><strong>GitHub Pages</strong></td><td>Hospeda as páginas do site (o formulário e a área da administração). Só o código do site fica lá — nenhum dado de morador.</td></tr>
+    </table>
+  </div>
+  <p>A conexão entre o seu navegador e o sistema é criptografada (HTTPS). Os serviços do Google também guardam os dados
+    criptografados nos seus servidores, conforme as políticas do próprio Google.</p>
+
+  <h2 id="quem">Quem tem acesso aos cadastros</h2>
+  <p>Só quem está cadastrado na página <strong>Membros</strong> da área da administração:</p>
+  <ul>
+    <li>a conta de e-mail do condomínio;</li>
+    <li>o síndico;</li>
+    <li>até três membros do conselho;</li>
+    <li>o desenvolvedor do sistema.</li>
+  </ul>
+  <p>Para entrar, a pessoa faz login com a conta Google. O sistema confere com o próprio Google se o login é verdadeiro e
+    se o e-mail está na lista de membros. Quem não está na lista não vê nada.</p>
+  <p>Cada papel tem permissões diferentes. Por exemplo, o síndico não pode trocar quem é o síndico, e cada membro do
+    conselho só pode alterar o próprio e-mail de acesso. Quando alguém sai da lista de membros, perde o acesso.</p>
+  <p>Toda alteração feita pela administração fica registrada com o e-mail de quem fez, no histórico do próprio
+    cadastro e no painel "Últimas alterações".</p>
+
+  <h2 id="morador">Como o morador acessa o próprio cadastro</h2>
+  <p>Para abrir e atualizar o próprio cadastro, o morador informa o <strong>CPF</strong> e a <strong>data de
+    nascimento</strong>. Os dois precisam conferir com o mesmo cadastro.</p>
+  <p>Para dificultar tentativas de adivinhação, depois de 5 tentativas erradas para o mesmo CPF, as consultas desse
+    CPF ficam bloqueadas por 15 minutos.</p>
+  <p>Depois de cada envio, o sistema manda para o e-mail informado no formulário uma cópia do cadastro em PDF, para
+    conferência.</p>
+
+  <h2 id="copias">Cópias de segurança e histórico</h2>
+  <ul>
+    <li>A cada alteração, o sistema faz automaticamente uma cópia completa dos dados (um arquivo técnico e uma cópia da
+      planilha) numa pasta do Google Drive da administração.</li>
+    <li>Ficam guardadas todas as cópias dos últimos 30 dias e, das mais antigas, uma por mês. As que sobram vão para
+      uma pasta "Lixeira", e a exclusão definitiva é feita manualmente pela administração.</li>
+    <li>Cada cadastro tem um PDF com a versão mais recente, e as versões anteriores ficam numa subpasta de backup.</li>
+    <li>Se o banco de dados principal ficar fora do ar, o sistema passa a ler a planilha de cópia, só para consulta. Nesse
+      modo não é possível alterar dados, para evitar que as informações fiquem diferentes entre os dois lugares.</li>
+  </ul>
+
+  <h2 id="emails">E-mails enviados pelo sistema</h2>
+  <ul>
+    <li><strong>Para a administração:</strong> um aviso com as alterações feitas nos cadastros. Esse e-mail não traz CPF
+      nem outros documentos — só o que mudou e quem mudou. Quem recebe é escolhido na página "Notificações".</li>
+    <li><strong>Para o morador:</strong> a cópia do próprio cadastro em PDF, enviada ao e-mail informado no formulário.
+      Esse anexo contém dados pessoais, por isso vale guardá-lo com cuidado.</li>
+  </ul>
+
+  <h2 id="limites">O que esta proteção não cobre</h2>
+  <p>Para ser transparente sobre os limites:</p>
+  <ul>
+    <li>Quem souber o CPF e a data de nascimento de um morador consegue abrir o cadastro dele. São dados que nem
+      sempre são secretos; o bloqueio após 5 tentativas reduz o risco, mas não o elimina.</li>
+    <li>Os membros da administração conseguem ver, baixar e imprimir os dados. O sistema registra as alterações, mas
+      não consegue impedir o que alguém autorizado faz com uma cópia.</li>
+    <li>A segurança também depende das contas Google dos membros. Recomenda-se usar senha forte e verificação em duas
+      etapas.</li>
+    <li>Os dados dependem da disponibilidade e da segurança dos serviços do Google, que estão fora do controle do
+      condomínio.</li>
+  </ul>
+
+  <h2 id="ia">Desenvolvimento com auxílio de inteligência artificial</h2>
+  <p>Este sistema foi desenvolvido com o auxílio de inteligência artificial, usando o <strong>Claude</strong>, da
+    Anthropic. A IA participou do processo de desenvolvimento — escrevendo e revisando código, testando e ajustando o
+    sistema — sempre sob a supervisão e as decisões do desenvolvedor responsável.</p>
+  <p>Durante o desenvolvimento e a manutenção, a IA trabalhou com o código e, em algumas tarefas, com arquivos do
+    sistema. O sistema em funcionamento não envia dados de moradores para nenhuma inteligência artificial.</p>
+
+  <h2 id="tecnico" class="tecnico">Detalhes técnicos</h2>
+  <div class="tecnico">
+    <ul>
+      <li>O navegador nunca acessa o banco de dados diretamente: todas as leituras e gravações passam pelo Apps Script,
+        que usa uma credencial de conta de serviço guardada nas propriedades do script, e não no código do site.</li>
+      <li>O login da administração usa o "Fazer login com o Google". O token recebido é validado no servidor pelo
+        Google (assinatura, emissor, validade e aplicativo de destino) antes de qualquer operação restrita.</li>
+      <li>As permissões de cada papel são conferidas no servidor, não só na tela.</li>
+      <li>Os campos digitados são validados e tratados antes de ser gravados ou exibidos.</li>
+      <li>A pasta do sistema no Google Drive é compartilhada como "leitor" com os e-mails da página Membros. Quem sai
+        da lista perde esse acesso, se ele tiver sido dado pelo próprio sistema.</li>
+    </ul>
+  </div>
+
+  <h2 id="contato">Dúvidas, correção ou exclusão de dados</h2>
+  <p>Para esclarecer dúvidas, consultar, corrigir ou pedir a exclusão dos seus dados, escreva para
+    <a href="mailto:condominiosouzafranco@gmail.com">condominiosouzafranco@gmail.com</a>.</p>
+
+  <p class="rodape">Condomínio Souza Franco · Cadastro de moradores</p>
+</main>
+</body>
+</html>
