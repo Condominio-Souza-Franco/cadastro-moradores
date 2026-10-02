@@ -31,7 +31,8 @@
     var conteudo = it.id
       ? '<button type="button" class="pendencia-item" data-apto="' + escaparHtml(it.apto) + '" data-id="' + escaparHtml(it.id) + '">' + texto + "</button>"
       : '<span class="pendencia-item sem-link">' + texto + "</span>";
-    return '<li class="' + (it.ignorado ? "ignorada" : "") + '">' + caixaIgnorar(it) + conteudo + "</li>";
+    var pdf = it.pdfUrl ? '<a class="pendencia-pdf" href="' + escaparHtml(it.pdfUrl) + '" target="_blank" rel="noopener noreferrer" title="PDF mais recente do cadastro">PDF</a>' : "";
+    return '<li class="' + (it.ignorado ? "ignorada" : "") + '">' + caixaIgnorar(it) + conteudo + pdf + "</li>";
   }
 
   function ativos(g) {

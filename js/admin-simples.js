@@ -435,6 +435,10 @@
     secoes.push(
       '<div class="registro-cabecalho">' +
         '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
+        // PDF mais recente do cadastro (pasta "Cadastros" no Drive), gerado a cada envio.
+        (dados.pdfUrl
+          ? '<a class="link-pdf-cadastro" href="' + escaparHtml(dados.pdfUrl) + '" target="_blank" rel="noopener noreferrer">Ver PDF do cadastro</a>'
+          : '<div class="sem-pdf-cadastro">PDF do cadastro: será gerado no próximo envio ou atualização.</div>') +
         logsHtml.join("") +
       '</div>' +
       '<section class="secao">' +

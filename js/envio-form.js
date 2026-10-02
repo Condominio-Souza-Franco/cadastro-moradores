@@ -625,11 +625,15 @@ function executarEnvio(fileData, eAtualizacao) {
 
     if (res.sucesso) {
       if (modoAdmin) {
-        mostrarAlerta("As alterações ficaram registradas com o seu e-mail.", res.mensagem || "Cadastro atualizado com sucesso!")
+        mostrarAlerta("As alterações ficaram registradas com o seu e-mail. Uma cópia do cadastro em PDF também será enviada para o seu e-mail em instantes.", res.mensagem || "Cadastro atualizado com sucesso!")
           .then(function() { window.location.href = modoAdmin.urlRetorno; });
         return;
       }
-      mostrarAlerta("", res.mensagem || "Cadastro enviado com sucesso!");
+      // O PDF do cadastro é gerado em segundo plano e mandado para o e-mail informado no formulário.
+      const emailCopia = String(dados.moradorEmail || "").trim();
+      mostrarAlerta(emailCopia
+        ? "Uma cópia do cadastro em PDF também será enviada por e-mail para " + emailCopia + " em instantes."
+        : "", res.mensagem || "Cadastro enviado com sucesso!");
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(textoBotaoOriginal);
