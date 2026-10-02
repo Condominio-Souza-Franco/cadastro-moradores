@@ -2975,20 +2975,9 @@ button.pendencia-item::before {
   text-decoration: none;
 }
 
-/* Rodapé (Documentação) sempre no fim da tela, mesmo com pouco conteúdo. */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-body > * {
-  width: 100%;
-  box-sizing: border-box;
-}
+/* Rodapé (Documentação) logo depois do conteúdo. */
 .rodape-site {
-  margin-top: auto !important;
-  padding-top: 18px;
+  margin-top: 12px !important;
 }
 
 /* Exemplo do e-mail (Notificações): é o HTML real do e-mail; fontes no tamanho do admin e tabela com rolagem. */
