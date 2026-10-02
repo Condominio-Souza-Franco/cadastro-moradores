@@ -2974,3 +2974,19 @@ button.pendencia-item::before {
   color: var(--accent-color);
   text-decoration: none;
 }
+
+/* Rodapé (Documentação) sempre no fim da tela, mesmo com pouco conteúdo. */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+body > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+.rodape-site {
+  margin-top: auto !important;
+  padding-top: 18px;
+}

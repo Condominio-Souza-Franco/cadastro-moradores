@@ -136,3 +136,21 @@ h2.subtitulo {
 div#secDetalhes {
     margin-bottom: 0px;
 }
+
+/* Topo do formulário: "Acessar área da administração" e "Documentação" lado a lado, ocupando a linha toda. */
+.link-admin-topo {
+  display: flex;
+  gap: 8px;
+}
+.link-admin-topo a {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.25;
+  color: #3b5873;
+  text-wrap: balance;
+  border-radius: 12px;
+}
