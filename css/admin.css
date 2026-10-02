@@ -2996,3 +2996,32 @@ body > * {
 .exemplo-email-corpo > div { font-size: 12px !important; }
 .exemplo-email-corpo table { font-size: 11px !important; }
 .exemplo-email-corpo div div, .exemplo-email-corpo p[style*="12px"], .exemplo-email-corpo p[style*="12px"] a { font-size: 10px !important; }
+
+/* Menu com 8 botões, sem "viúva": tela larga 4 + 4; celular 2 + 2 + 2 + 2 (grade de 24 colunas). */
+.menu-admin button[data-painel="painelConsulta"] { grid-column: span 8; }
+.menu-admin button[data-painel="painelPendencias"],
+.menu-admin button[data-painel="painelRelatorios"],
+.menu-admin button[data-painel="painelMembros"] { grid-column: span 5; }
+.menu-admin button[data-painel="painelLinks"],
+.menu-admin button[data-painel="painelNotificacoes"],
+.menu-admin button[data-painel="painelBloqueios"] { grid-column: span 6; }
+.menu-admin button[data-painel="painelGabarito"] { grid-column: span 7; }
+@media (max-width: 560px) {
+  .menu-admin button[data-painel] { grid-column: span 12 !important; }
+}
+
+/* ---------- Bloqueios ---------- */
+.titulo-bloqueios { margin: 16px 0 6px; font-size: 0.92rem; color: #243447; }
+.lista-bloqueios { display: flex; flex-direction: column; gap: 8px; }
+.bloqueio-item { padding: 10px 12px; border: 1px solid #f0c2c2; border-radius: 12px; background: #fff7f7; font-size: 0.8rem; }
+.bloqueio-item.antigo { border-color: #d7e0ea; background: #fff; }
+.bloq-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.bloq-topo strong { font-size: 0.88rem; }
+.bloq-quem { color: #5f7287; }
+.bloq-sem-cadastro { font-style: italic; }
+.bloq-linha span { color: #5f7287; }
+.btn-desbloquear { flex: none; padding: 6px 12px; border: 1px solid #c62828; border-radius: 999px; background: #fff; color: #c62828; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+.btn-desbloquear:hover { background: #fdecec; }
+.bloq-tentativas { margin-top: 4px; }
+.bloq-tentativas summary { cursor: pointer; color: #2f5f98; }
+.bloq-tentativas ul { margin: 4px 0 0; padding-left: 18px; }

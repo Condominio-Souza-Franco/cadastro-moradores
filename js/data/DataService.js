@@ -143,6 +143,7 @@
     listarPendencias: 45000,
     obterMembros: 30000,
     obterNotificacoes: 30000,
+    listarBloqueios: 25000,
     listarHistorico: 25000,
     situacaoRelatorios: 25000,
     buscarTexto: 20000,
@@ -150,7 +151,7 @@
     gerarRelatorioApartamentosPdfDrive: 25000
   };
 
-  var SOMENTE_FIREBASE = ["listarPendencias", "obterMembros", "obterNotificacoes", "listarHistorico", "situacaoRelatorios"];
+  var SOMENTE_FIREBASE = ["listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarHistorico", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -361,6 +362,12 @@
     },
     obterNotificacoes: function() {
       return executarLeitura("obterNotificacoes", []);
+    },
+    listarBloqueios: function() {
+      return executarLeitura("listarBloqueios", []);
+    },
+    desbloquearCpf: function(id) {
+      return executarEscrita("desbloquearCpf", [id]);
     },
     salvarNotificacoes: function(destinatarios) {
       return executarEscrita("salvarNotificacoes", [destinatarios]);

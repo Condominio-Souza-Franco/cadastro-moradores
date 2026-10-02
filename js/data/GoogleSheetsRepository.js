@@ -52,6 +52,12 @@
     obterMembros: function() {
       return Promise.resolve({ sucesso: false, mensagem: "Os membros só estão disponíveis com o Firebase." });
     },
+    listarBloqueios: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "Os bloqueios só estão disponíveis com o Firebase." });
+    },
+    desbloquearCpf: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     obterNotificacoes: function() {
       return Promise.resolve({ sucesso: false, mensagem: "As notificações só estão disponíveis com o Firebase." });
     },

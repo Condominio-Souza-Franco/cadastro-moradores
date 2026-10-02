@@ -60,6 +60,13 @@
     salvarMembros: function(membros) {
       return chamarBackend("fbSalvarMembros", { membros: membros }, true);
     },
+    // CPFs bloqueados após 5 tentativas erradas (e o histórico) e o desbloqueio pela administração.
+    listarBloqueios: function() {
+      return chamarBackend("fbListarBloqueios", {}, true);
+    },
+    desbloquearCpf: function(id) {
+      return chamarBackend("fbDesbloquear", { id: id }, true);
+    },
     // Quem recebe o e-mail com as alterações cadastrais.
     obterNotificacoes: function() {
       return chamarBackend("fbObterNotificacoes", {}, true);

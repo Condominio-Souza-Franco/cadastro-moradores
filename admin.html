@@ -75,6 +75,7 @@
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
           <button type="button" data-painel="painelMembros" aria-pressed="false">Membros</button>
           <button type="button" data-painel="painelNotificacoes" aria-pressed="false">Notificações</button>
+          <button type="button" data-painel="painelBloqueios" aria-pressed="false">Bloqueios</button>
         </nav>
 
         <div id="paineisAdmin" class="paineis-admin">
@@ -179,6 +180,21 @@
             </div>
           </section>
 
+          <section id="painelBloqueios" class="painel-admin" hidden>
+            <div class="painel-topo">
+              <h2>Bloqueios</h2>
+              <button type="button" id="btnAtualizarBloqueios" class="btn-atualizar-pendencias">Atualizar</button>
+              <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
+            </div>
+            <p class="descricao-acao">CPFs bloqueados depois de 5 tentativas com CPF e data de nascimento que não conferem. O bloqueio só
+              acaba quando alguém da administração desbloqueia; o registro continua no histórico.</p>
+            <div id="statusBloqueios" class="status"></div>
+            <h3 id="tituloBloqueiosAtivos" class="titulo-bloqueios">Bloqueados agora</h3>
+            <div id="listaBloqueiosAtivos" class="lista-bloqueios"></div>
+            <h3 id="tituloBloqueiosHistorico" class="titulo-bloqueios">Histórico</h3>
+            <div id="listaBloqueiosHistorico" class="lista-bloqueios"></div>
+          </section>
+
           <section id="painelPendencias" class="painel-admin" hidden>
             <div class="painel-topo">
               <h2>Pendências</h2>
@@ -280,26 +296,27 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261002f"></script>
-  <script src="js/utils.js?v=20261002f"></script>
-  <script src="js/data/backend.js?v=20261002f"></script>
+  <script src="js/regras.js?v=20261002g"></script>
+  <script src="js/utils.js?v=20261002g"></script>
+  <script src="js/data/backend.js?v=20261002g"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261002f"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261002f"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261002f"></script>
-  <script src="js/data/DataService.js?v=20261002f"></script>
-  <script src="js/admin-fonte-dados.js?v=20261002f"></script>
-  <script src="js/admin-simples.js?v=20261002f"></script>
-  <script src="js/admin-relatorio.js?v=20261002f"></script>
-  <script src="js/admin-busca.js?v=20261002f"></script>
-  <script src="js/admin-historico.js?v=20261002f"></script>
-  <script src="js/admin-pendencias.js?v=20261002f"></script>
-  <script src="js/admin-membros.js?v=20261002f"></script>
-  <script src="js/admin-notificacoes.js?v=20261002f"></script>
-  <script src="js/admin-gabarito.js?v=20261002f"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261002f"></script>
-  <script src="js/admin-paineis.js?v=20261002f"></script>
+  <script src="js/admin-auth.js?v=20261002g"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261002g"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261002g"></script>
+  <script src="js/data/DataService.js?v=20261002g"></script>
+  <script src="js/admin-fonte-dados.js?v=20261002g"></script>
+  <script src="js/admin-simples.js?v=20261002g"></script>
+  <script src="js/admin-relatorio.js?v=20261002g"></script>
+  <script src="js/admin-busca.js?v=20261002g"></script>
+  <script src="js/admin-historico.js?v=20261002g"></script>
+  <script src="js/admin-pendencias.js?v=20261002g"></script>
+  <script src="js/admin-membros.js?v=20261002g"></script>
+  <script src="js/admin-bloqueios.js?v=20261002g"></script>
+  <script src="js/admin-notificacoes.js?v=20261002g"></script>
+  <script src="js/admin-gabarito.js?v=20261002g"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261002g"></script>
+  <script src="js/admin-paineis.js?v=20261002g"></script>
 </body>
 </html>
