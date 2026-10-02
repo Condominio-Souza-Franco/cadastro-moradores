@@ -448,6 +448,12 @@ function enviar() {
     return;
   }
 
+  const chkCodigo = document.getElementById("exigirCodigo");
+  if (chkCodigo && chkCodigo.checked && !String((document.getElementById("moradorEmail") || {}).value || "").trim()) {
+    mostrarAlerta("Para exigir código por e-mail, preencha o campo E-mail.", "Atenção");
+    return;
+  }
+
   if (snapshotFormularioOriginal !== null && capturarSnapshotFormulario() === snapshotFormularioOriginal && !window.confirmandoSemAlteracao) {
     // Cadastro com 11 meses ou mais (o e-mail de revisão anual pede para revisar): dá para só
     // confirmar que está tudo certo, sem mudar nada — o envio renova a data do cadastro.
@@ -584,6 +590,7 @@ function executarEnvio(fileData, eAtualizacao) {
     moradorCelular: document.getElementById("moradorCelular").value,
     moradorTel: document.getElementById("moradorTel").value,
     moradorEmail: document.getElementById("moradorEmail").value,
+    exigirCodigo: !!(document.getElementById("exigirCodigo") && document.getElementById("exigirCodigo").checked),
     
     vagaNumero: vagaNumeroEncontrada,
     vagaAndar: vagaAndarEncontrado,
@@ -631,6 +638,7 @@ function executarEnvio(fileData, eAtualizacao) {
   if (!isMoradorNovo && cadastroConsultado) {
     dados.cadastroId = cadastroConsultado.id;
     dados.credencialCpf = cadastroConsultado.cpf;
+    dados.credencialSessao = cadastroConsultado.sessao || "";
     dados.credencialNasc = cadastroConsultado.nasc;
   }
 

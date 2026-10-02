@@ -34,6 +34,13 @@
     obterMoradorPorCpf: function(cpf, nascimento) {
       return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento }, false);
     },
+    // Cadastro protegido por código por e-mail (codigoAcesso.gs).
+    confirmarCodigoCpf: function(cpf, nascimento, codigo) {
+      return chamarBackend("fbConfirmarCodigoCpf", { cpf: cpf, nascimento: nascimento, codigo: codigo }, false);
+    },
+    desativarCodigo: function(id) {
+      return chamarBackend("fbDesativarCodigo", { id: id }, true);
+    },
     obterApartamentosGabarito: function() {
       return chamarBackend("fbObterApartamentosGabarito", {}, false);
     },

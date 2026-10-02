@@ -192,6 +192,18 @@
     <p>Para abrir e atualizar o próprio cadastro, o morador informa o <strong>CPF</strong> e a <strong>data de
       nascimento</strong>. Os dois precisam conferir com o mesmo cadastro. Para evitar tentativas de adivinhação, existe
       um limite de tentativas erradas (veja "Bloqueio de tentativas").</p>
+    <h3>Proteção extra opcional: código por e-mail</h3>
+    <p>No formulário, o morador pode marcar <strong>"Exigir código por e-mail para abrir meu cadastro"</strong>. Com isso,
+      depois do CPF e da data de nascimento, o sistema manda um código de 6 dígitos para o e-mail do cadastro, válido por
+      10 minutos, e só mostra os dados depois do código certo. Assim, quem souber o CPF e a data de nascimento de alguém
+      não consegue abrir o cadastro sem acesso ao e-mail da pessoa.</p>
+    <ul>
+      <li>Código errado conta como tentativa errada (veja "Bloqueio de tentativas").</li>
+      <li>Um novo código só pode ser pedido 1 minuto depois do anterior.</li>
+      <li>Se o sistema estiver no modo de contingência, esses cadastros não abrem até o sistema principal voltar.</li>
+      <li>Se o morador perder o acesso ao e-mail, a administração pode desligar a opção. Isso fica registrado com o
+        e-mail de quem desligou.</li>
+    </ul>
     <p>Depois de cada envio, o sistema manda para o e-mail informado no formulário uma cópia do cadastro em PDF, para
       conferência.</p>
   </section>
@@ -312,6 +324,8 @@
       <li>O login da administração usa o "Fazer login com o Google". O token recebido é validado no servidor pelo
         Google (assinatura, emissor, validade e aplicativo de destino) antes de qualquer operação restrita.</li>
       <li>As permissões de cada papel são conferidas no servidor, não só na tela.</li>
+      <li>Código por e-mail: o código fica guardado só como resumo criptográfico (SHA-256) por 10 minutos. Abrir com
+        o código cria uma sessão de 1 hora, exigida também para gravar a atualização desse cadastro.</li>
       <li>As tentativas erradas ficam no cache do Apps Script por 15 minutos; os bloqueios, no Firestore (um registro
         permanente por bloqueio, completado no desbloqueio, e um marcador do bloqueio em vigor). Vale tanto para a
         consulta quanto para a atualização do cadastro.</li>

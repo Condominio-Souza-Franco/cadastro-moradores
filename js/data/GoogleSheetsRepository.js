@@ -52,6 +52,12 @@
     obterMembros: function() {
       return Promise.resolve({ sucesso: false, mensagem: "Os membros só estão disponíveis com o Firebase." });
     },
+    confirmarCodigoCpf: function() {
+      return Promise.resolve({ encontrado: false, mensagem: "O código por e-mail não está disponível no momento. Tente novamente mais tarde." });
+    },
+    desativarCodigo: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     listarBloqueios: function() {
       return Promise.resolve({ sucesso: false, mensagem: "Os bloqueios só estão disponíveis com o Firebase." });
     },

@@ -25,20 +25,21 @@
   <link rel="stylesheet" href="css/responsivo.css">
 
   <!-- Scripts JS -->
-  <script src="js/regras.js?v=20261002k" defer></script>
-  <script src="js/utils.js?v=20261002k" defer></script>
-  <script src="js/data/backend.js?v=20261002k" defer></script>
-  <script src="js/data/FirebaseRepository.js?v=20261002k" defer></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261002k" defer></script>
-  <script src="js/data/DataService.js?v=20261002k" defer></script>
-  <script src="js/mascaras.js?v=20261002k" defer></script>
-  <script src="js/ui-formulario.js?v=20261002k" defer></script>
-  <script src="js/form-controle.js?v=20261002k" defer></script>
-  <script src="js/validacoes-form.js?v=20261002k" defer></script>
-  <script src="js/envio-form.js?v=20261002k" defer></script>
-  <script src="js/modo-admin.js?v=20261002k" defer></script>
-  <script src="js/vaga-miniatura.js?v=20261002k" defer></script>
-  <script src="js/barra-acoes.js?v=20261002k" defer></script>
+  <script src="js/regras.js?v=20261002l" defer></script>
+  <script src="js/utils.js?v=20261002l" defer></script>
+  <script src="js/data/backend.js?v=20261002l" defer></script>
+  <script src="js/data/FirebaseRepository.js?v=20261002l" defer></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261002l" defer></script>
+  <script src="js/data/DataService.js?v=20261002l" defer></script>
+  <script src="js/mascaras.js?v=20261002l" defer></script>
+  <script src="js/ui-formulario.js?v=20261002l" defer></script>
+  <script src="js/form-controle.js?v=20261002l" defer></script>
+  <script src="js/validacoes-form.js?v=20261002l" defer></script>
+  <script src="js/codigo-email.js?v=20261002l"></script>
+<script src="js/envio-form.js?v=20261002l" defer></script>
+  <script src="js/modo-admin.js?v=20261002l" defer></script>
+  <script src="js/vaga-miniatura.js?v=20261002l" defer></script>
+  <script src="js/barra-acoes.js?v=20261002l" defer></script>
 </head>
 <body>
 
@@ -156,6 +157,13 @@
       <!-- 5. E-mail -->
       <label>E-mail</label>
       <input type="email" id="moradorEmail" placeholder="seuemail@exemplo.com">
+      <div class="checkbox-group opcao-codigo-email">
+        <input type="checkbox" id="exigirCodigo">
+        <label for="exigirCodigo">Exigir código por e-mail para abrir meu cadastro</label>
+      </div>
+      <p class="desc-secao dica-codigo-email">Proteção extra (opcional): além do CPF e da data de nascimento, será preciso
+        digitar um código enviado para o e-mail acima. Se você perder o acesso a esse e-mail, peça à administração para
+        desligar a opção.</p>
 
       <!-- Contatos de Emergência -->
       <div class="sub-title">Em caso de emergência procurar por</div>

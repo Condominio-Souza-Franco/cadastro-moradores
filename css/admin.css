@@ -3025,3 +3025,7 @@ button.pendencia-item::before {
 #painelBloqueios .descricao-acao { font-size: 0.8rem; margin-bottom: 4px; }
 #painelBloqueios .titulo-bloqueios { font-size: 0.85rem; margin: 12px 0 4px; }
 #painelBloqueios .sem-itens { font-size: 0.8rem; }
+
+/* Consulta: situação do código por e-mail do cadastro. */
+.codigo-status { margin: 4px 0 6px; font-size: 0.8rem; color: #243447; }
+.btn-desativar-codigo { margin-left: 6px; padding: 2px 10px; border: 1px solid #c62828; border-radius: 999px; background: #fff; color: #c62828; font-size: 0.75rem; font-weight: 700; cursor: pointer; }

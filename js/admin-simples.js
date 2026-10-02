@@ -435,6 +435,11 @@
     secoes.push(
       '<div class="registro-cabecalho">' +
         '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
+        // Código por e-mail para abrir o cadastro (opção do morador); a administração pode desligar.
+        (dados.exigirCodigo === true
+          ? '<div class="codigo-status">Código por e-mail para abrir o cadastro: <strong>ativado</strong> ' +
+              '<button type="button" class="btn-desativar-codigo" data-id="' + escaparHtml(dados.id || "") + '" data-apto="' + escaparHtml(dados.apto || "") + '">Desativar</button></div>'
+          : "") +
         // PDF mais recente do cadastro (pasta "Cadastros" no Drive), gerado a cada envio.
         (dados.pdfUrl
           ? '<a class="link-pdf-cadastro" href="' + escaparHtml(dados.pdfUrl) + '" target="_blank" rel="noopener noreferrer">Ver PDF do cadastro</a>'
@@ -740,3 +745,16 @@
     }
   });
 })();
+// Consulta: "Desativar" o código por e-mail (ex.: o morador perdeu o acesso ao e-mail).
+document.addEventListener("click", function(e) {
+  var botao = e.target.closest && e.target.closest(".btn-desativar-codigo");
+  if (!botao || !window.DataService) return;
+  if (!window.confirm("Desativar o código por e-mail deste cadastro? O morador volta a abrir o cadastro só com CPF e data de nascimento. Fica registrado no histórico com o seu e-mail.")) return;
+  botao.disabled = true;
+  DataService.desativarCodigo(botao.getAttribute("data-id"))
+    .then(function(r) {
+      if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível desativar.");
+      if (window.adminSimplesCarregarApartamento) window.adminSimplesCarregarApartamento(botao.getAttribute("data-apto"), botao.getAttribute("data-id"));
+    })
+    .catch(function(erro) { window.alert((erro && erro.message) || "Não foi possível desativar."); botao.disabled = false; });
+});

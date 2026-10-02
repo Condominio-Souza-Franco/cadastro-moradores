@@ -163,6 +163,7 @@ function preencherFormularioComCadastro(d) {
   if (document.getElementById("moradorCelular")) document.getElementById("moradorCelular").value = d.celular || "";
   if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
   if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
+  if (document.getElementById("exigirCodigo")) document.getElementById("exigirCodigo").checked = d.exigirCodigo === true;
 
   if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = obterValorAlternativo(d, 'inqPropAdmin', 'proprietarioAdmin', 'admin') || "";
   if (document.getElementById("inqContato")) document.getElementById("inqContato").value = obterValorAlternativo(d, 'inqContato', 'contatoInquilino', 'telefoneContato') || "";
@@ -255,7 +256,14 @@ async function consultarPorCpf() {
   }
 
   try {
-    const resposta = await DataService.obterMoradorPorCpf(cpfLimpo, nascInput);
+    let resposta = await DataService.obterMoradorPorCpf(cpfLimpo, nascInput);
+
+    // Cadastro protegido por código por e-mail: pede o código antes de mostrar os dados.
+    if (resposta && resposta.precisaCodigo && typeof window.pedirCodigoPorEmail === "function") {
+      if (typeof setOverlayProcessamento === 'function') setOverlayProcessamento(false);
+      resposta = await window.pedirCodigoPorEmail(cpfLimpo, nascInput, resposta.emailMascarado)
+        || { encontrado: false, mensagem: "Consulta cancelada. Para abrir o cadastro, é preciso o código enviado por e-mail." };
+    }
 
     if (btnBusca) {
       btnBusca.innerText = textoOriginalBtn;
@@ -279,7 +287,7 @@ async function consultarPorCpf() {
       preencherFormularioComCadastro(d);
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
-      cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "" };
+      cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "", sessao: resposta.sessao || "" };
 
     } else {
       if (inputCpf) inputCpf.disabled = false;
