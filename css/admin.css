@@ -2990,3 +2990,9 @@ body > * {
   margin-top: auto !important;
   padding-top: 18px;
 }
+
+/* Exemplo do e-mail (Notificações): é o HTML real do e-mail; fontes no tamanho do admin e tabela com rolagem. */
+.exemplo-email-corpo { overflow-x: auto; }
+.exemplo-email-corpo > div { font-size: 12px !important; }
+.exemplo-email-corpo table { font-size: 11px !important; }
+.exemplo-email-corpo div div, .exemplo-email-corpo p[style*="12px"], .exemplo-email-corpo p[style*="12px"] a { font-size: 10px !important; }
