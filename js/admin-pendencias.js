@@ -26,7 +26,7 @@
 
   function itemHtml(it) {
     // Chip "PDF" logo depois do nome (é um span dentro do botão; o clique nele abre o PDF, não o cadastro).
-    var pdf = it.pdfUrl ? ' <span class="pendencia-pdf" role="link" tabindex="0" data-url="' + escaparHtml(it.pdfUrl) + '" title="PDF mais recente do cadastro">PDF</span>' : "";
+    var pdf = it.pdfUrl ? ' <span class="pendencia-pdf" role="link" tabindex="0" data-url="' + escaparHtml(it.pdfUrl) + '" title="Ficha mais recente do cadastro, em PDF">Ficha em PDF</span>' : "";
     var texto = "<strong>" + escaparHtml(it.apto) + "</strong>" +
       (it.nome ? " · " + escaparHtml(it.nome) + (it.tipo ? " (" + escaparHtml(it.tipo) + ")" : "") : "") + pdf +
       (it.detalhe ? '<span class="pendencia-detalhe">' + escaparHtml(it.detalhe) + "</span>" : "");
