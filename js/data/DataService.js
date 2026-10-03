@@ -261,6 +261,19 @@
     } catch (e) {}
   }
 
+  // Quando os dados de uma leitura foram buscados no servidor pela última vez (ms) ou null.
+  function infoCacheAdmin(nome) {
+    var em = null;
+    try {
+      Object.keys(sessionStorage).forEach(function(k) {
+        if (k.indexOf(PREFIXO_CACHE_ADMIN) !== 0 || k.indexOf("|" + nome + "|") === -1) return;
+        var v = JSON.parse(sessionStorage.getItem(k) || "null");
+        if (v && v.em && (!em || v.em > em)) em = v.em;
+      });
+    } catch (e) {}
+    return em;
+  }
+
   function lerComCacheAdmin(nome, args) {
     if (!ehAreaAdmin()) return executarLeitura(nome, args);
     var chave = chaveCacheAdmin(nome, args);
@@ -272,6 +285,7 @@
         if (resultado && resultado.sucesso !== false) {
           var mudou = !!guardado && JSON.stringify(guardado.r) !== JSON.stringify(resultado);
           try { sessionStorage.setItem(chave, JSON.stringify({ r: resultado, em: Date.now() })); } catch (e) {}
+          window.dispatchEvent(new CustomEvent("cache-admin-gravado", { detail: { nome: nome } }));
           if (mudou) window.dispatchEvent(new CustomEvent("dados-admin-atualizados", { detail: { nome: nome } }));
         }
         return resultado;
@@ -395,6 +409,7 @@
       return lerComCacheAdmin("obterGabaritoVagasCompleto", []);
     },
     limparCacheAdmin: limparCacheAdmin,
+    infoCacheAdmin: infoCacheAdmin,
     obterMoradorPorApto: function(apto, ocorrencia) {
       return executarLeitura("obterMoradorPorApto", [apto, ocorrencia]);
     },

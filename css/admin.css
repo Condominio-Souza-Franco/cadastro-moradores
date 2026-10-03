@@ -3062,3 +3062,12 @@ button.pendencia-item::before {
 #painelMembros .btn-fechar-painel,
 #painelNotificacoes .btn-fechar-painel,
 #painelGabarito .btn-fechar-painel { margin-left: auto; }
+
+/* "atualizado há N min" ao lado do botão Atualizar. */
+.atualizado-em {
+  font-size: 0.7rem;
+  color: #8a99a8;
+  white-space: nowrap;
+  margin-left: 6px;
+}
+.atualizado-em:empty { display: none; }
