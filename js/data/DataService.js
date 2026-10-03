@@ -234,7 +234,65 @@
       });
   }
 
+  // ==========================================
+  // CACHE DA ÁREA DA ADMINISTRAÇÃO (sessionStorage)
+  // ==========================================
+  // Membros, Gabarito, Pendências, Bloqueios e Notificações abrem na hora com o que foi carregado da
+  // última vez; em segundo plano o sistema busca a versão nova e, se mudou, avisa a página (evento
+  // "dados-admin-atualizados") para ela se redesenhar. "Atualizar" apaga o cache daquela leitura.
+  // Qualquer gravação (salvar, ignorar, desbloquear...) apaga o cache inteiro.
+  // sessionStorage: some ao fechar a aba ou sair; nada fica guardado de forma permanente no aparelho.
+  var PREFIXO_CACHE_ADMIN = "cacheAdmin_";
+  var SEGUNDOS_SEM_REVALIDAR = 20;
+
+  function ehAreaAdmin() { return /admin\.html$/.test(location.pathname); }
+
+  function chaveCacheAdmin(nome, args) {
+    var email = "";
+    try { email = (window.AdminAuth && window.AdminAuth.getEmail && window.AdminAuth.getEmail()) || ""; } catch (e) {}
+    return PREFIXO_CACHE_ADMIN + email + "|" + nome + "|" + JSON.stringify(args || []);
+  }
+
+  function limparCacheAdmin(nome) {
+    try {
+      Object.keys(sessionStorage).forEach(function(k) {
+        if (k.indexOf(PREFIXO_CACHE_ADMIN) === 0 && (!nome || k.indexOf("|" + nome + "|") !== -1)) sessionStorage.removeItem(k);
+      });
+    } catch (e) {}
+  }
+
+  function lerComCacheAdmin(nome, args) {
+    if (!ehAreaAdmin()) return executarLeitura(nome, args);
+    var chave = chaveCacheAdmin(nome, args);
+    var guardado = null;
+    try { guardado = JSON.parse(sessionStorage.getItem(chave) || "null"); } catch (e) {}
+
+    function buscar() {
+      return executarLeitura(nome, args).then(function(resultado) {
+        if (resultado && resultado.sucesso !== false) {
+          var mudou = !!guardado && JSON.stringify(guardado.r) !== JSON.stringify(resultado);
+          try { sessionStorage.setItem(chave, JSON.stringify({ r: resultado, em: Date.now() })); } catch (e) {}
+          if (mudou) window.dispatchEvent(new CustomEvent("dados-admin-atualizados", { detail: { nome: nome } }));
+        }
+        return resultado;
+      });
+    }
+
+    if (guardado && guardado.r) {
+      if (Date.now() - guardado.em > SEGUNDOS_SEM_REVALIDAR * 1000) buscar().catch(function() {});
+      return Promise.resolve(guardado.r);
+    }
+    return buscar();
+  }
+
   function executarEscrita(nomeMetodo, args) {
+    return executarEscritaSemCache(nomeMetodo, args).then(function(resultado) {
+      limparCacheAdmin();
+      return resultado;
+    });
+  }
+
+  function executarEscritaSemCache(nomeMetodo, args) {
     if (escritaBloqueada()) {
       log("escrita bloqueada: fonte ativa é Google Sheets (somente leitura)");
       return Promise.reject(criarErroFonte("somente-leitura", "O sistema está em modo de contingência (Google Sheets) e não permite alterações no momento."));
@@ -334,8 +392,9 @@
       return executarLeitura("obterApartamentosGabarito", []);
     },
     obterGabaritoVagasCompleto: function() {
-      return executarLeitura("obterGabaritoVagasCompleto", []);
+      return lerComCacheAdmin("obterGabaritoVagasCompleto", []);
     },
+    limparCacheAdmin: limparCacheAdmin,
     obterMoradorPorApto: function(apto, ocorrencia) {
       return executarLeitura("obterMoradorPorApto", [apto, ocorrencia]);
     },
@@ -361,16 +420,16 @@
       return executarLeitura("listarHistorico", [limite]);
     },
     obterMembros: function() {
-      return executarLeitura("obterMembros", []);
+      return lerComCacheAdmin("obterMembros", []);
     },
     salvarMembros: function(membros) {
       return executarEscrita("salvarMembros", [membros]);
     },
     obterNotificacoes: function() {
-      return executarLeitura("obterNotificacoes", []);
+      return lerComCacheAdmin("obterNotificacoes", []);
     },
     listarBloqueios: function() {
-      return executarLeitura("listarBloqueios", []);
+      return lerComCacheAdmin("listarBloqueios", []);
     },
     desbloquearCpf: function(id) {
       return executarEscrita("desbloquearCpf", [id]);
@@ -382,7 +441,7 @@
       return executarEscrita("ignorarPendencia", [chave, ignorar]);
     },
     listarPendencias: function() {
-      return executarLeitura("listarPendencias", []);
+      return lerComCacheAdmin("listarPendencias", []);
     },
     gerarListaVeiculosPdfDrive: function() {
       return executarLeitura("gerarListaVeiculosPdfDrive", []);

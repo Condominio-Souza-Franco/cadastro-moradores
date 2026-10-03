@@ -89,10 +89,19 @@
   document.addEventListener("DOMContentLoaded", function() {
     var painel = document.getElementById("painelBloqueios");
     if (!painel || !window.DataService) return;
+    // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelBloqueios") carregar(); // sempre recarrega: bloqueios novos podem surgir a qualquer momento
+      if (e.detail && e.detail.id === "painelBloqueios" && true) carregar();
     });
-    document.getElementById("btnAtualizarBloqueios").addEventListener("click", carregar);
+    window.addEventListener("dados-admin-atualizados", function(e) {
+      var painelEl = document.getElementById("painelBloqueios");
+      if (e.detail && e.detail.nome === "listarBloqueios" && painelEl && !painelEl.hidden && true) setTimeout(carregar, 50); // depois do carregamento em andamento
+    });
+    document.getElementById("btnAtualizarBloqueios").addEventListener("click", function() {
+      if (!(true) && !window.confirm("Há alterações não salvas. Atualizar e descartar?")) return;
+      DataService.limparCacheAdmin("listarBloqueios");
+      carregar();
+    });
     painel.addEventListener("click", function(e) {
       var botao = e.target.closest(".btn-desbloquear");
       if (botao) desbloquear(botao.getAttribute("data-id"));

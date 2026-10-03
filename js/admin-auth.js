@@ -271,6 +271,8 @@
     if (!btnSair) return;
 
     btnSair.addEventListener("click", function() {
+      // Sair apaga também o cache da área admin (dados dos moradores guardados na aba).
+      if (window.DataService && window.DataService.limparCacheAdmin) window.DataService.limparCacheAdmin();
       encerrarSessao("Sessão encerrada.", "ok");
     });
   }

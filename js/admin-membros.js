@@ -164,8 +164,18 @@
     var form = document.getElementById("formMembros");
     if (!form || !window.DataService) return;
 
+    // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelMembros" && !carregado) carregar();
+      if (e.detail && e.detail.id === "painelMembros" && (!carregado || JSON.stringify(paraEnviar()) === originais)) carregar();
+    });
+    window.addEventListener("dados-admin-atualizados", function(e) {
+      var painelEl = document.getElementById("painelMembros");
+      if (e.detail && e.detail.nome === "obterMembros" && painelEl && !painelEl.hidden && (!carregado || JSON.stringify(paraEnviar()) === originais)) setTimeout(carregar, 50); // depois do carregamento em andamento
+    });
+    document.getElementById("btnAtualizarMembros").addEventListener("click", function() {
+      if (!((!carregado || JSON.stringify(paraEnviar()) === originais)) && !window.confirm("Há alterações não salvas. Atualizar e descartar?")) return;
+      DataService.limparCacheAdmin("obterMembros");
+      carregar();
     });
 
     form.addEventListener("input", function(e) {

@@ -106,14 +106,23 @@
     var lista = document.getElementById("listaPendencias");
     if (!lista || !window.DataService) return;
 
+    // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelPendencias" && !carregado) carregar();
+      if (e.detail && e.detail.id === "painelPendencias" && true) carregar();
+    });
+    window.addEventListener("dados-admin-atualizados", function(e) {
+      var painelEl = document.getElementById("painelPendencias");
+      if (e.detail && e.detail.nome === "listarPendencias" && painelEl && !painelEl.hidden && true) setTimeout(carregar, 50); // depois do carregamento em andamento
+    });
+    document.getElementById("btnAtualizarPendencias").addEventListener("click", function() {
+      if (!(true) && !window.confirm("Há alterações não salvas. Atualizar e descartar?")) return;
+      DataService.limparCacheAdmin("listarPendencias");
+      carregar();
     });
     // Depois de uma alteração, recarrega na próxima vez que a página for aberta.
     window.addEventListener("cadastro-alterado", function() { carregado = false; });
     window.addEventListener("cadastro-excluido", function() { carregado = false; });
 
-    document.getElementById("btnAtualizarPendencias").addEventListener("click", carregar);
 
     lista.addEventListener("change", function(e) {
       if (e.target.classList && e.target.classList.contains("ignorar-pendencia")) alternarIgnorar(e.target);

@@ -396,8 +396,18 @@
     var tabela = document.getElementById("tabelaGabarito");
     if (!tabela || !window.DataService) return;
 
+    // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelGabarito" && !carregado) carregar();
+      if (e.detail && e.detail.id === "painelGabarito" && (!carregado || !haAlteracoes())) carregar();
+    });
+    window.addEventListener("dados-admin-atualizados", function(e) {
+      var painelEl = document.getElementById("painelGabarito");
+      if (e.detail && e.detail.nome === "obterGabaritoVagasCompleto" && painelEl && !painelEl.hidden && (!carregado || !haAlteracoes())) setTimeout(carregar, 50); // depois do carregamento em andamento
+    });
+    document.getElementById("btnAtualizarGabarito").addEventListener("click", function() {
+      if (!((!carregado || !haAlteracoes())) && !window.confirm("Há alterações não salvas. Atualizar e descartar?")) return;
+      DataService.limparCacheAdmin("obterGabaritoVagasCompleto");
+      carregar();
     });
 
     tabela.addEventListener("input", function(e) {

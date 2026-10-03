@@ -3054,3 +3054,11 @@ button.pendencia-item::before {
 }
 .como-funcionam-notificacoes ul { margin: 4px 0 0; padding-left: 18px; }
 .como-funcionam-notificacoes li { margin: 3px 0; }
+
+/* "Atualizar" colado ao título também em Membros, Notificações e Gabarito. */
+#painelMembros .painel-topo h2,
+#painelNotificacoes .painel-topo h2,
+#painelGabarito .painel-topo h2 { flex: 0 1 auto; }
+#painelMembros .btn-fechar-painel,
+#painelNotificacoes .btn-fechar-painel,
+#painelGabarito .btn-fechar-painel { margin-left: auto; }

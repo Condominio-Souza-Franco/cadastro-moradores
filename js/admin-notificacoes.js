@@ -88,8 +88,18 @@
     var lista = document.getElementById("listaNotificacoes");
     if (!lista || !window.DataService) return;
 
+    // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelNotificacoes" && !carregado) carregar();
+      if (e.detail && e.detail.id === "painelNotificacoes" && (!carregado || JSON.stringify(marcados()) === originais)) carregar();
+    });
+    window.addEventListener("dados-admin-atualizados", function(e) {
+      var painelEl = document.getElementById("painelNotificacoes");
+      if (e.detail && e.detail.nome === "obterNotificacoes" && painelEl && !painelEl.hidden && (!carregado || JSON.stringify(marcados()) === originais)) setTimeout(carregar, 50); // depois do carregamento em andamento
+    });
+    document.getElementById("btnAtualizarNotificacoes").addEventListener("click", function() {
+      if (!((!carregado || JSON.stringify(marcados()) === originais)) && !window.confirm("Há alterações não salvas. Atualizar e descartar?")) return;
+      DataService.limparCacheAdmin("obterNotificacoes");
+      carregar();
     });
     // Membros mudaram: recarrega da próxima vez que a página for aberta.
     window.addEventListener("cadastro-alterado", function() { carregado = false; });
