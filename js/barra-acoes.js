@@ -1,7 +1,7 @@
 // ==========================================
-// BARRA FLUTUANTE COM "ATUALIZAR CADASTRO" E "SAIR"
+// BARRA FLUTUANTE COM "ATUALIZAR/ENVIAR CADASTRO" E "SAIR"
 // ==========================================
-// Depois que o morador carrega o próprio cadastro, aparece uma barra logo acima de "Qual é o seu
+// Depois que o morador carrega o próprio cadastro (ou abre um novo cadastro), aparece uma barra logo acima de "Qual é o seu
 // vínculo com a unidade?" com os mesmos botões do fim do formulário, lado a lado. Enquanto está
 // à mostra, fica FIXA no topo da tela (com a largura do formulário), sem rolar com o conteúdo.
 // Some quando os botões de baixo entram na tela — não faz sentido mostrar os dois.
@@ -12,8 +12,7 @@
   function cadastroCarregado() {
     var secao = document.getElementById("secTipoResidente");
     var enviar = document.getElementById("btnEnviarForm");
-    return !!secao && !secao.classList.contains("hidden") && !!enviar &&
-      /atualizar/i.test(enviar.textContent || "");
+    return !!secao && !secao.classList.contains("hidden") && !!enviar;
   }
 
   function noCampoDeVisao(el) {
