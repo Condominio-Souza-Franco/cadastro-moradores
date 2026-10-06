@@ -154,3 +154,5 @@ div#secDetalhes {
   text-wrap: balance;
   border-radius: 12px;
 }
+
+.nota-kit { font-size: 0.8rem; margin-top: -6px; }

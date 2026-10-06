@@ -134,7 +134,15 @@
     if (container) { container.innerHTML = ""; container.hidden = true; }
   }
 
-  window.VagaMiniatura = { mostrar: mostrar, esconder: esconder };
+  // Só o desenho (svg) com a vaga pintada, para outras telas (ex.: Cadastros pendentes no admin).
+  function montar(andar, vaga) {
+    andar = String(andar || "").trim().toUpperCase();
+    var vagas = separarVagas(vaga);
+    if (ANDARES.indexOf(andar) === -1 || !vagas.length) return Promise.resolve(null);
+    return carregarDesenhos().then(function() { return montarMiniatura(andar, vagas); });
+  }
+
+  window.VagaMiniatura = { mostrar: mostrar, esconder: esconder, montar: montar, urlMapa: urlMapa };
 
   document.addEventListener("DOMContentLoaded", function() {
     carregarDesenhos(); // baixa os desenhos em segundo plano, antes de o morador chegar na seção

@@ -580,8 +580,8 @@ function executarEnvio(fileData, eAtualizacao) {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
     tipoResidente: document.getElementById("tipoResidente").value,
-    moraNoImovel: document.getElementById("tipoResidente").value === "Proprietário"
-      ? (document.getElementById("moraNoImovel") && !document.getElementById("moraNoImovel").checked ? "Não" : "Sim")
+    moraNoImovel: document.getElementById("tipoResidente").value === "Proprietário" && document.getElementById("moraNoImovel")
+      ? document.getElementById("moraNoImovel").value
       : "",
     historicoContratos: cadastroEhInquilino() ? normalizarHistoricoContratosParaEnvio(historicoContratosCache) : [],
     
@@ -677,7 +677,7 @@ function executarEnvio(fileData, eAtualizacao) {
       mostrarAlerta(emailCopia
         ? "Uma cópia do cadastro em PDF também será enviada por e-mail para " + emailCopia + " em instantes."
         : "Como não foi informado um e-mail, você não receberá a cópia do cadastro em PDF. Se atualizar o cadastro com um e-mail, a cópia passa a ser enviada.", res.mensagem || "Cadastro enviado com sucesso!",
-        { link: { href: "kit.html", texto: "Acesse o Kit de Boas-vindas do condomínio" } });
+        { link: { href: "https://tinyurl.com/kit-souzafranco", texto: "Acesse o Kit de Boas-vindas do condomínio" } });
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(textoBotaoOriginal);

@@ -48,7 +48,7 @@
   }
 
   function cartao(c, podeAprovar) {
-    var tipo = c.tipo ? c.tipo + (c.moraNoImovel ? (c.moraNoImovel === "Sim" ? " (mora no imóvel)" : " (não mora no imóvel)") : "") : "";
+    var tipo = c.tipo ? c.tipo + (c.moraNoImovel ? " — mora no imóvel: " + c.moraNoImovel : "") : "";
     var vaga = [c.vagaNumeroAndar, c.vagaSituacao, c.vagaAptoRelacionado ? "apto " + c.vagaAptoRelacionado : ""].filter(Boolean).join(" — ");
     var contratos = (c.contratos || []).map(function(x) {
       return '<a href="' + escaparHtml(x.url) + '" target="_blank" rel="noopener">' + escaparHtml(x.texto || "Contrato") + "</a>";
@@ -61,6 +61,7 @@
       linha("Proprietário / administradora", c.inqPropAdmin) + linha("Contato", c.inqContato) + linha("Vigência do contrato", c.inqVigencia) +
       (contratos ? '<div class="aprov-linha"><span>Contrato:</span> ' + contratos + "</div>" : "") +
       linha("Vaga", vaga) +
+      '<div class="aprov-mapa" hidden></div>' +
       '<details class="aprov-detalhes"><summary>Demais dados</summary>' + grupos(c.grupos) + linha("Observações", c.observacoes) + "</details>" +
       (podeAprovar
         ? '<div class="aprov-acoes"><button type="button" class="btn-aprovar">Aprovar</button><button type="button" class="btn-rejeitar">Rejeitar</button></div>' +
@@ -86,6 +87,29 @@
     document.getElementById("listaAprovacoes").innerHTML = itens.length
       ? itens.map(function(c) { return cartao(c, r.podeAprovar); }).join("")
       : '<p class="sem-itens">Nenhum cadastro aguardando aprovação.</p>';
+    itens.forEach(desenharMapa);
+  }
+
+  // Miniatura do andar com a vaga pintada (a mesma do formulário); toque abre o mapa completo.
+  // vagaNumeroAndar vem do formulário: "14 / G1" ou "1 / 2 / G2" (o andar é a última parte).
+  function desenharMapa(c) {
+    if (!window.VagaMiniatura || !c.vagaNumeroAndar) return;
+    var partes = String(c.vagaNumeroAndar).split("/").map(function(p) { return p.trim(); });
+    if (partes.length < 2) return;
+    var andar = partes.pop(), vaga = partes.join(" / ");
+    window.VagaMiniatura.montar(andar, vaga).then(function(svg) {
+      var item = document.querySelector('.aprovacao-item[data-id="' + c.id + '"] .aprov-mapa');
+      if (!svg || !item) return;
+      var link = document.createElement("a");
+      link.href = window.VagaMiniatura.urlMapa(c.apto, andar, vaga);
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.title = "Abrir o mapa completo da garagem";
+      link.appendChild(svg);
+      item.innerHTML = "";
+      item.appendChild(link);
+      item.hidden = false;
+    }).catch(function() {});
   }
 
   function carregar() {

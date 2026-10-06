@@ -164,8 +164,8 @@ function preencherFormularioComCadastro(d) {
   if (document.getElementById("moradorTel")) document.getElementById("moradorTel").value = d.telFixo || "";
   if (document.getElementById("moradorEmail")) document.getElementById("moradorEmail").value = d.email || "";
   if (document.getElementById("exigirCodigo")) document.getElementById("exigirCodigo").checked = d.exigirCodigo === true;
-  // Proprietário sem a informação (cadastros antigos) conta como morador.
-  if (document.getElementById("moraNoImovel")) document.getElementById("moraNoImovel").checked = d.moraNoImovel !== "Não";
+  // Proprietário sem a informação (cadastros antigos) conta como morador ("Sim").
+  if (document.getElementById("moraNoImovel")) document.getElementById("moraNoImovel").value = d.moraNoImovel || (/propriet/i.test(d.tipo || "") ? "Sim" : "");
 
   if (document.getElementById("inqPropAdmin")) document.getElementById("inqPropAdmin").value = obterValorAlternativo(d, 'inqPropAdmin', 'proprietarioAdmin', 'admin') || "";
   if (document.getElementById("inqContato")) document.getElementById("inqContato").value = obterValorAlternativo(d, 'inqContato', 'contatoInquilino', 'telefoneContato') || "";

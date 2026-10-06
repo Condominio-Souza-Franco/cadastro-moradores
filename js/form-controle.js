@@ -274,7 +274,7 @@ function voltarTelaInicial() {
       tipoResidente.dataset.revertendo = 'false';
     }
     const moraNoImovel = document.getElementById('moraNoImovel');
-    if (moraNoImovel) moraNoImovel.checked = true;
+    if (moraNoImovel) moraNoImovel.value = '';
     const opcaoMora = document.getElementById('opcaoMoraNoImovel');
     if (opcaoMora) opcaoMora.classList.add('hidden');
 

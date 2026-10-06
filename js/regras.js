@@ -22,6 +22,7 @@ const ADMIN_AUTH_CONFIG = {
 const REGRAS_OBRIGATORIAS = [
   { id: "apto", nome: "Apartamento" },
   { id: "tipoResidente", nome: "Identificação do imóvel" },
+  { id: "moraNoImovel", nome: "Mora no imóvel?" }, // só aparece (e só é exigido) para proprietário
   { id: "moradorNome", nome: "Nome" },
   { id: "moradorNasc", nome: "Data de nascimento" },
   { id: "moradorCpf", nome: "CPF" },
@@ -39,6 +40,7 @@ const REGRAS_OBRIGATORIAS = [
 const ORDEM_DESEJADA = [
   "Apartamento",
   "Identificação do imóvel",
+  "Mora no imóvel?",
   "Nome",
   "Data de nascimento",
   "CPF",

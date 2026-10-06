@@ -3096,3 +3096,7 @@ button.pendencia-item::before {
 .aprov-rejeicao { margin-top: 8px; }
 .aprov-rejeicao label { display: block; margin-bottom: 4px; font-size: 0.78rem; color: #5f7287; }
 .aprov-motivo { width: 100%; box-sizing: border-box; font-size: 0.82rem; }
+
+.aprov-mapa { margin: 6px 0 2px; }
+.aprov-mapa a { display: block; max-width: 320px; border: 1px solid #d7e0ea; border-radius: 8px; padding: 4px; background: #fff; }
+.aprov-mapa svg { display: block; width: 100%; height: auto; }
