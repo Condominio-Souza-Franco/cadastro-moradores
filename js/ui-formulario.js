@@ -5,7 +5,15 @@
 function rolarParaSecao(secaoId) {
   const elemento = document.getElementById(secaoId);
   if (elemento) {
-    elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Com a barra fixa de botões no topo, desconta a altura dela para não cobrir o título da seção.
+    if (typeof window.atualizarBarraAcoes === 'function') window.atualizarBarraAcoes();
+    let desconto = 8;
+    if (document.body.classList.contains('com-barra-acoes')) {
+      const altura = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--altura-barra-acoes')) || 64;
+      desconto += altura + 8;
+    }
+    const topo = elemento.getBoundingClientRect().top + window.scrollY - desconto;
+    window.scrollTo({ top: Math.max(0, topo), behavior: 'smooth' });
   }
 }
 

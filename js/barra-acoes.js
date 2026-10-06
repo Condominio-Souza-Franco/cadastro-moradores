@@ -12,7 +12,11 @@
   function cadastroCarregado() {
     var secao = document.getElementById("secTipoResidente");
     var enviar = document.getElementById("btnEnviarForm");
-    return !!secao && !secao.classList.contains("hidden") && !!enviar;
+    if (!secao || secao.classList.contains("hidden") || !enviar) return false;
+    // Novo cadastro: só depois que o apartamento é escolhido.
+    if (/atualizar/i.test(enviar.textContent || "")) return true;
+    var apto = document.getElementById("apto");
+    return !!apto && !!apto.value;
   }
 
   function noCampoDeVisao(el) {
@@ -69,6 +73,8 @@
       document.getElementById("btnSairSemAlterar").click();
     });
 
+    window.atualizarBarraAcoes = atualizar;
+    document.getElementById("apto") && document.getElementById("apto").addEventListener("change", atualizar);
     window.addEventListener("scroll", atualizar, { passive: true });
     window.addEventListener("resize", atualizar);
     // Aparece/some conforme o cadastro é carregado, enviado ou fechado (texto do botão e seções).
