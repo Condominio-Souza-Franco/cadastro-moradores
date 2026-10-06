@@ -391,6 +391,8 @@
     var camposPrincipaisUnidade = [
       campoHtml("Apartamento", dados.apto),
       campoHtml("Tipo", dados.tipo),
+      // Proprietário: mora ou não no imóvel (vazio para inquilino).
+      textoLimpo(dados.tipo) === "Proprietário" ? campoHtml("Mora no imóvel", dados.moraNoImovel === "Não" ? "Não" : "Sim") : "",
       // Etiquetas de cargo da administração ao lado do nome.
       campoHtml("Nome", dados.nome).replace(/<\/p><\/div>$/, (dados.cargos || []).map(function(c) {
         return ' <span class="tag-cargo">' + escaparHtml(c) + "</span>";

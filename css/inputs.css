@@ -230,3 +230,12 @@ label .required-star,
 .required-hint-inline .required-star {
   color: #e74c3c;
 }
+
+/* "Mora no imóvel" (só para proprietário), centralizado abaixo do vínculo */
+.checkbox-group.opcao-mora-imovel {
+  justify-content: center;
+  margin-top: 12px;
+}
+.checkbox-group.opcao-mora-imovel.hidden {
+  display: none !important;
+}

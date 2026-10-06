@@ -68,6 +68,13 @@
       return chamarBackend("fbSalvarMembros", { membros: membros }, true);
     },
     // CPFs bloqueados após 5 tentativas erradas (e o histórico) e o desbloqueio pela administração.
+    // Cadastros novos aguardando aprovação (aprovacao.gs).
+    listarAprovacoes: function() {
+      return chamarBackend("fbListarAprovacoes", {}, true);
+    },
+    decidirAprovacao: function(id, decisao, motivo) {
+      return chamarBackend("fbDecidirAprovacao", { id: id, decisao: decisao, motivo: motivo || "" }, true);
+    },
     listarBloqueios: function() {
       return chamarBackend("fbListarBloqueios", {}, true);
     },

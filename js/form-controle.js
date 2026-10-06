@@ -273,6 +273,10 @@ function voltarTelaInicial() {
       tipoResidente.dataset.valorAnterior = '';
       tipoResidente.dataset.revertendo = 'false';
     }
+    const moraNoImovel = document.getElementById('moraNoImovel');
+    if (moraNoImovel) moraNoImovel.checked = true;
+    const opcaoMora = document.getElementById('opcaoMoraNoImovel');
+    if (opcaoMora) opcaoMora.classList.add('hidden');
 
     const containersDinamicos = [
       'containerEmergencia',

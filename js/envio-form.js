@@ -580,6 +580,9 @@ function executarEnvio(fileData, eAtualizacao) {
     apto: document.getElementById("apto").value,
     acao: isMoradorNovo ? "Sou morador novo" : "Atualizar dados cadastrais",
     tipoResidente: document.getElementById("tipoResidente").value,
+    moraNoImovel: document.getElementById("tipoResidente").value === "Proprietário"
+      ? (document.getElementById("moraNoImovel") && !document.getElementById("moraNoImovel").checked ? "Não" : "Sim")
+      : "",
     historicoContratos: cadastroEhInquilino() ? normalizarHistoricoContratosParaEnvio(historicoContratosCache) : [],
     
     moradorNome: document.getElementById("moradorNome").value,
@@ -659,12 +662,22 @@ function executarEnvio(fileData, eAtualizacao) {
           .then(function() { window.location.href = modoAdmin.urlRetorno; });
         return;
       }
+      // Cadastro novo: fica aguardando a aprovação da administração (confirmação por e-mail).
+      if (res.aguardandoAprovacao) {
+        const emailAviso = String(dados.moradorEmail || "").trim();
+        mostrarAlerta(emailAviso
+          ? "A administração do condomínio vai conferir os dados. Enquanto isso, o cadastro não pode ser aberto. Aguarde a confirmação, que será enviada para " + emailAviso + "."
+          : "A administração do condomínio vai conferir os dados. Enquanto isso, o cadastro não pode ser aberto. Como não foi informado um e-mail, procure a administração para saber da aprovação.",
+          res.mensagem || "Cadastro enviado! Aguardando aprovação");
+        voltarTelaInicial();
+        return;
+      }
       // O PDF do cadastro é gerado em segundo plano e mandado para o e-mail informado no formulário.
       const emailCopia = String(dados.moradorEmail || "").trim();
       mostrarAlerta(emailCopia
         ? "Uma cópia do cadastro em PDF também será enviada por e-mail para " + emailCopia + " em instantes."
         : "Como não foi informado um e-mail, você não receberá a cópia do cadastro em PDF. Se atualizar o cadastro com um e-mail, a cópia passa a ser enviada.", res.mensagem || "Cadastro enviado com sucesso!",
-        { link: { href: "https://tinyurl.com/kit-souzafranco", texto: "Acesse o Kit de Boas-vindas do condomínio" } });
+        { link: { href: "kit.html", texto: "Acesse o Kit de Boas-vindas do condomínio" } });
       voltarTelaInicial();
     } else {
       alterarTextoBotaoEnviar(textoBotaoOriginal);

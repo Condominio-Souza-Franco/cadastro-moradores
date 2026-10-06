@@ -68,6 +68,7 @@
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
         <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true"><svg class="icone-casa" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h4.5v-6h4v6h4.5V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Página inicial</span></button>
         <nav class="menu-admin" aria-label="Seções da administração">
+          <button type="button" data-painel="painelAprovacoes" aria-pressed="false">Cadastros pendentes <span id="contadorAprovacoes" class="contador-aprovacoes" hidden></span></button>
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
           <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências</button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
@@ -169,8 +170,11 @@
                   data de nascimento.</li>
                 <li><strong>Cadastro excluído</strong> (para os marcados abaixo que são síndico, condomínio ou desenvolvedor):
                   na hora. O conselho vê no resumo mensal. Morador novo aparece só no resumo mensal.</li>
-                <li><strong>Para o próprio morador</strong> (não depende desta lista): a cópia do cadastro em PDF a cada envio,
-                  o código para abrir o cadastro (se ele ativou) e o lembrete de revisão uma vez por ano.</li>
+                <li><strong>Novo cadastro aguardando aprovação</strong> (para os marcados abaixo que são síndico, condomínio ou
+                  desenvolvedor): na hora, com o link para a página Cadastros pendentes.</li>
+                <li><strong>Para o próprio morador</strong> (não depende desta lista): a aprovação ou a rejeição (com o motivo) do
+                  cadastro novo, a cópia do cadastro em PDF a cada envio, o código para abrir o cadastro (se ele ativou) e o
+                  lembrete de revisão uma vez por ano.</li>
               </ul>
             </div>
             <div id="statusNotificacoes" class="status"></div>
@@ -191,6 +195,22 @@
                 <div style="font-family:Arial,Helvetica,sans-serif;color:#243447;font-size:14px"><p>Houve 2 alterações no cadastro de moradores desde o último resumo (setembro de 2026):</p><table style="border-collapse:collapse;font-size:13px"><tr style="text-align:left;color:#5f7287"><th style="padding:6px 8px">Quando</th><th style="padding:6px 8px">O quê</th><th style="padding:6px 8px">Apto</th><th style="padding:6px 8px">Cadastro</th><th style="padding:6px 8px">Por</th></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 09:15</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">edição</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 302</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">Maria Souza (Proprietário)<div style="color:#5f7287;font-size:12px">Alterou: Celular, Carros</div></td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr><tr><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">02/10 10:40</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;font-weight:bold">criação</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;white-space:nowrap">Apto 504</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee">João Lima (Inquilino)</td><td style="padding:6px 8px;border-bottom:1px solid #e3e8ee;color:#5f7287">Próprio morador (formulário)</td></tr></table><p style="margin-top:16px;margin-bottom:4px">Relatórios:</p><ul style="margin-top:0"><li><strong>Relatório de contatos:</strong> <strong style="color:#1f7a3a">NOVO</strong> — mudou com estas alterações. <a href="#">Abrir PDF</a></li><li><strong>Lista de veículos:</strong> Nada mudou nele com estas alterações. <a href="#">Abrir o mais recente</a></li></ul><p style="margin-top:16px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/admin.html">Abrir o painel da administração</a></p><p style="color:#8a99a8;font-size:12px">E-mail automático do cadastro de moradores do Condomínio Souza Franco.</p><p style="color:#8a99a8;font-size:12px;margin-top:4px"><a href="https://condominio-souza-franco.github.io/cadastro-moradores/seguranca.html" style="color:#8a99a8">Documentação: meus dados estão seguros?</a></p></div>
               </div>
             </div>
+          </section>
+
+          <section id="painelAprovacoes" class="painel-admin" hidden>
+            <div class="painel-topo">
+              <h2>Cadastros pendentes</h2>
+              <button type="button" id="btnAtualizarAprovacoes" class="btn-atualizar-pendencias">Atualizar</button>
+              <span class="atualizado-em" data-leitura="listarAprovacoes"></span>
+              <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
+            </div>
+            <p class="descricao-acao">Cadastros novos enviados pelo formulário. Só entram no sistema (consulta, relatórios e acesso do
+              morador) depois de aprovados; o morador recebe a decisão por e-mail. Quem já teve o cadastro aprovado atualiza sem
+              nova aprovação.</p>
+            <p id="avisoSoVisualizarAprovacoes" class="descricao-acao aviso-so-visualizar" hidden>Você pode visualizar os cadastros
+              pendentes. Aprovar ou rejeitar é com o síndico, o condomínio ou o desenvolvedor.</p>
+            <div id="statusAprovacoes" class="status"></div>
+            <div id="listaAprovacoes" class="lista-aprovacoes"></div>
           </section>
 
           <section id="painelBloqueios" class="painel-admin" hidden>
@@ -311,28 +331,29 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261003d"></script>
-  <script src="js/utils.js?v=20261003d"></script>
-  <script src="js/data/backend.js?v=20261003d"></script>
+  <script src="js/regras.js?v=20261006c"></script>
+  <script src="js/utils.js?v=20261006c"></script>
+  <script src="js/data/backend.js?v=20261006c"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261003d"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261003d"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261003d"></script>
-  <script src="js/data/DataService.js?v=20261003d"></script>
-  <script src="js/admin-fonte-dados.js?v=20261003d"></script>
-  <script src="js/admin-simples.js?v=20261003d"></script>
-  <script src="js/admin-relatorio.js?v=20261003d"></script>
-  <script src="js/admin-busca.js?v=20261003d"></script>
-  <script src="js/admin-historico.js?v=20261003d"></script>
-  <script src="js/admin-pendencias.js?v=20261003d"></script>
-  <script src="js/admin-membros.js?v=20261003d"></script>
-  <script src="js/admin-bloqueios.js?v=20261003d"></script>
-  <script src="js/admin-notificacoes.js?v=20261003d"></script>
-  <script src="js/admin-gabarito.js?v=20261003d"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261003d"></script>
-  <script src="js/admin-pre-carga.js?v=20261003d"></script>
-  <script src="js/admin-paineis.js?v=20261003d"></script>
+  <script src="js/admin-auth.js?v=20261006c"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261006c"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261006c"></script>
+  <script src="js/data/DataService.js?v=20261006c"></script>
+  <script src="js/admin-fonte-dados.js?v=20261006c"></script>
+  <script src="js/admin-simples.js?v=20261006c"></script>
+  <script src="js/admin-relatorio.js?v=20261006c"></script>
+  <script src="js/admin-busca.js?v=20261006c"></script>
+  <script src="js/admin-historico.js?v=20261006c"></script>
+  <script src="js/admin-pendencias.js?v=20261006c"></script>
+  <script src="js/admin-membros.js?v=20261006c"></script>
+  <script src="js/admin-bloqueios.js?v=20261006c"></script>
+  <script src="js/admin-aprovacoes.js?v=20261006c"></script>
+  <script src="js/admin-notificacoes.js?v=20261006c"></script>
+  <script src="js/admin-gabarito.js?v=20261006c"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261006c"></script>
+  <script src="js/admin-pre-carga.js?v=20261006c"></script>
+  <script src="js/admin-paineis.js?v=20261006c"></script>
 </body>
 </html>

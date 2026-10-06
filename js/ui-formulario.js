@@ -217,6 +217,10 @@ function aplicarEscolhaTipoResidente(valor) {
     const titulo = document.getElementById('tituloDadosPessoais');
     if (titulo) titulo.innerText = `Dados do ${valor}`;
 
+    // "Mora no imóvel" só faz sentido para proprietário (inquilino sempre mora).
+    const opcaoMora = document.getElementById('opcaoMoraNoImovel');
+    if (opcaoMora) opcaoMora.classList.toggle('hidden', valor !== 'Proprietário');
+
     if (isInquilino) {
       if (secInquilino) {
         secInquilino.classList.remove('hidden');
@@ -231,6 +235,8 @@ function aplicarEscolhaTipoResidente(valor) {
 
     atualizarCamposLocacao(isInquilino);
   } else {
+    const opcaoMoraVazio = document.getElementById('opcaoMoraNoImovel');
+    if (opcaoMoraVazio) opcaoMoraVazio.classList.add('hidden');
     if (secApto) {
       secApto.classList.add('hidden');
       secApto.style.display = 'none';

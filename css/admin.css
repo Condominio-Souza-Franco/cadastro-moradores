@@ -3071,3 +3071,28 @@ button.pendencia-item::before {
   margin-left: 6px;
 }
 .atualizado-em:empty { display: none; }
+
+/* ---------- Cadastros pendentes (js/admin-aprovacoes.js) ---------- */
+/* Botão do menu em linha própria, largura total, acima dos outros 8 (sem "viúva"). */
+.menu-admin button[data-painel="painelAprovacoes"] { grid-column: 1 / -1 !important; order: -1; }
+.contador-aprovacoes { display: inline-block; min-width: 18px; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #c62828; color: #fff; font-size: 0.72rem; line-height: 1.4; }
+.contador-aprovacoes[hidden] { display: none; }
+.aviso-so-visualizar { color: #8a5a00; }
+.lista-aprovacoes { display: flex; flex-direction: column; gap: 8px; }
+.aprovacao-item { padding: 10px 12px; border: 1px solid #d7e0ea; border-radius: 12px; background: #fff; font-size: 0.8rem; }
+.aprov-topo strong { font-size: 0.88rem; }
+.aprov-quando { color: #5f7287; margin-bottom: 4px; }
+.aprov-linha span, .aprov-grupo span { color: #5f7287; }
+.aprov-vazio { font-style: italic; color: #5f7287; }
+.aprov-grupo ul { margin: 2px 0 4px; padding-left: 18px; }
+.aprov-detalhes { margin-top: 4px; }
+.aprov-detalhes summary { cursor: pointer; color: #2f5f98; }
+.aprov-acoes { display: flex; gap: 8px; margin-top: 8px; }
+.aprov-acoes button { flex: 1; min-height: 34px; padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+.btn-aprovar { border: 1px solid #1f7a3a; background: #1f7a3a; color: #fff; }
+.btn-rejeitar, .btn-confirmar-rejeicao { border: 1px solid #c62828; background: #fff; color: #c62828; }
+.btn-confirmar-rejeicao { background: #c62828; color: #fff; }
+.btn-cancelar-rejeicao { border: 1px solid #d7e0ea; background: #fff; color: #2f5f98; }
+.aprov-rejeicao { margin-top: 8px; }
+.aprov-rejeicao label { display: block; margin-bottom: 4px; font-size: 0.78rem; color: #5f7287; }
+.aprov-motivo { width: 100%; box-sizing: border-box; font-size: 0.82rem; }

@@ -144,6 +144,7 @@
     obterMembros: 30000,
     obterNotificacoes: 30000,
     listarBloqueios: 25000,
+    listarAprovacoes: 25000,
     listarHistorico: 25000,
     situacaoRelatorios: 25000,
     buscarTexto: 20000,
@@ -151,7 +152,7 @@
     gerarRelatorioApartamentosPdfDrive: 25000
   };
 
-  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarHistorico", "situacaoRelatorios"];
+  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarAprovacoes", "decidirAprovacao", "listarHistorico", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -445,6 +446,12 @@
     },
     listarBloqueios: function() {
       return lerComCacheAdmin("listarBloqueios", []);
+    },
+    listarAprovacoes: function() {
+      return lerComCacheAdmin("listarAprovacoes", []);
+    },
+    decidirAprovacao: function(id, decisao, motivo) {
+      return executarEscrita("decidirAprovacao", [id, decisao, motivo]);
     },
     desbloquearCpf: function(id) {
       return executarEscrita("desbloquearCpf", [id]);

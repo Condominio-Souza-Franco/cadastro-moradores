@@ -8,7 +8,7 @@
 // Ao lado de cada "Atualizar", um <span class="atualizado-em" data-leitura="..."> mostra quando os
 // dados daquela página foram buscados no servidor pela última vez.
 (function() {
-  var LEITURAS = ["listarPendencias", "obterMembros", "obterNotificacoes", "obterGabaritoVagasCompleto", "listarBloqueios"];
+  var LEITURAS = ["listarAprovacoes", "listarPendencias", "obterMembros", "obterNotificacoes", "obterGabaritoVagasCompleto", "listarBloqueios"];
 
   function preCarregar() {
     if (!window.DataService) return;
