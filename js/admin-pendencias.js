@@ -40,6 +40,21 @@
     return typeof g.ativos === "number" ? g.ativos : g.itens.filter(function(it) { return !it.ignorado; }).length;
   }
 
+  // Bolinha vermelha com a quantidade no botão "Pendências" do menu.
+  function atualizarBadgePendencias(total) {
+    var el = document.getElementById("contadorPendencias");
+    if (!el) return;
+    el.hidden = !total;
+    el.textContent = total > 99 ? "99+" : (total ? String(total) : "");
+  }
+  window.addEventListener("cache-admin-gravado", function(e) {
+    if (!e.detail || e.detail.nome !== "listarPendencias" || !window.DataService) return;
+    DataService.listarPendencias().then(function(r) {
+      if (!r || !r.sucesso) return;
+      atualizarBadgePendencias((r.grupos || []).reduce(function(soma, g) { return soma + ativos(g); }, 0));
+    }).catch(function() {});
+  });
+
   function renderizar() {
     var lista = document.getElementById("listaPendencias");
     if (!lista) return;
@@ -47,6 +62,7 @@
     var abertos = {};
     lista.querySelectorAll("details[open]").forEach(function(d) { abertos[d.getAttribute("data-chave")] = true; });
     var total = grupos.reduce(function(soma, g) { return soma + ativos(g); }, 0);
+    atualizarBadgePendencias(total);
     // Primeiro os grupos com pendência (não ignorada), depois os zerados.
     var ordenados = grupos.filter(function(g) { return ativos(g); }).concat(grupos.filter(function(g) { return !ativos(g); }));
     lista.innerHTML = ordenados.map(function(g) {

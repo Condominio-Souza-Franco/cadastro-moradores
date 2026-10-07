@@ -68,9 +68,9 @@
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
         <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true"><svg class="icone-casa" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h4.5v-6h4v6h4.5V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Página inicial</span></button>
         <nav class="menu-admin" aria-label="Seções da administração">
-          <button type="button" data-painel="painelAprovacoes" aria-pressed="false">Cadastros pendentes <span id="contadorAprovacoes" class="contador-aprovacoes" hidden></span></button>
+          <button type="button" data-painel="painelAprovacoes" aria-pressed="false"><span class="rotulo-longo">Cadastros para aprovação</span><span class="rotulo-curto">Para aprovação</span><span id="contadorAprovacoes" class="badge-menu" hidden></span></button>
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
-          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências</button>
+          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências<span id="contadorPendencias" class="badge-menu" hidden></span></button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
@@ -171,7 +171,7 @@
                 <li><strong>Cadastro excluído</strong> (para os marcados abaixo que são síndico, condomínio ou desenvolvedor):
                   na hora. O conselho vê no resumo mensal. Morador novo aparece só no resumo mensal.</li>
                 <li><strong>Novo cadastro aguardando aprovação</strong> (para os marcados abaixo que são síndico, condomínio ou
-                  desenvolvedor): na hora, com o link para a página Cadastros pendentes.</li>
+                  desenvolvedor): na hora, com o link para a página Cadastros para aprovação.</li>
                 <li><strong>Para o próprio morador</strong> (não depende desta lista): a aprovação ou a rejeição (com o motivo) do
                   cadastro novo, a cópia do cadastro em PDF a cada envio, o código para abrir o cadastro (se ele ativou) e o
                   lembrete de revisão uma vez por ano.</li>
@@ -199,7 +199,7 @@
 
           <section id="painelAprovacoes" class="painel-admin" hidden>
             <div class="painel-topo">
-              <h2>Cadastros pendentes</h2>
+              <h2>Cadastros para aprovação</h2>
               <button type="button" id="btnAtualizarAprovacoes" class="btn-atualizar-pendencias">Atualizar</button>
               <span class="atualizado-em" data-leitura="listarAprovacoes"></span>
               <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
@@ -331,30 +331,30 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261006e"></script>
-  <script src="js/utils.js?v=20261006e"></script>
-  <script src="js/data/backend.js?v=20261006e"></script>
+  <script src="js/regras.js?v=20261007a"></script>
+  <script src="js/utils.js?v=20261007a"></script>
+  <script src="js/data/backend.js?v=20261007a"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261006e"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261006e"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261006e"></script>
-  <script src="js/data/DataService.js?v=20261006e"></script>
-  <script src="js/admin-fonte-dados.js?v=20261006e"></script>
-  <script src="js/admin-simples.js?v=20261006e"></script>
-  <script src="js/admin-relatorio.js?v=20261006e"></script>
-  <script src="js/admin-busca.js?v=20261006e"></script>
-  <script src="js/admin-historico.js?v=20261006e"></script>
-  <script src="js/admin-pendencias.js?v=20261006e"></script>
-  <script src="js/admin-membros.js?v=20261006e"></script>
-  <script src="js/admin-bloqueios.js?v=20261006e"></script>
-  <script src="js/vaga-miniatura.js?v=20261006e"></script>
-  <script src="js/admin-aprovacoes.js?v=20261006e"></script>
-  <script src="js/admin-notificacoes.js?v=20261006e"></script>
-  <script src="js/admin-gabarito.js?v=20261006e"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261006e"></script>
-  <script src="js/admin-pre-carga.js?v=20261006e"></script>
-  <script src="js/admin-paineis.js?v=20261006e"></script>
+  <script src="js/admin-auth.js?v=20261007a"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261007a"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261007a"></script>
+  <script src="js/data/DataService.js?v=20261007a"></script>
+  <script src="js/admin-fonte-dados.js?v=20261007a"></script>
+  <script src="js/admin-simples.js?v=20261007a"></script>
+  <script src="js/admin-relatorio.js?v=20261007a"></script>
+  <script src="js/admin-busca.js?v=20261007a"></script>
+  <script src="js/admin-historico.js?v=20261007a"></script>
+  <script src="js/admin-pendencias.js?v=20261007a"></script>
+  <script src="js/admin-membros.js?v=20261007a"></script>
+  <script src="js/admin-bloqueios.js?v=20261007a"></script>
+  <script src="js/vaga-miniatura.js?v=20261007a"></script>
+  <script src="js/admin-aprovacoes.js?v=20261007a"></script>
+  <script src="js/admin-notificacoes.js?v=20261007a"></script>
+  <script src="js/admin-gabarito.js?v=20261007a"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261007a"></script>
+  <script src="js/admin-pre-carga.js?v=20261007a"></script>
+  <script src="js/admin-paineis.js?v=20261007a"></script>
 </body>
 </html>

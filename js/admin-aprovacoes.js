@@ -1,5 +1,5 @@
 // ==========================================
-// CADASTROS PENDENTES (ADMIN): aprovação de cadastros novos
+// CADASTROS PARA APROVAÇÃO (ADMIN): cadastros novos
 // ==========================================
 // Lista os cadastros novos enviados pelo formulário que aguardam aprovação, com todos os dados
 // para conferência. Síndico, Condomínio e Desenvolvedor aprovam ou rejeitam (com motivo); o
@@ -76,7 +76,7 @@
     var el = document.getElementById("contadorAprovacoes");
     if (!el) return;
     el.hidden = !total;
-    el.textContent = total ? String(total) : "";
+    el.textContent = total > 99 ? "99+" : (total ? String(total) : "");
   }
 
   function renderizar(r) {

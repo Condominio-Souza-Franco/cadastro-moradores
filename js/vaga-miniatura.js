@@ -134,7 +134,7 @@
     if (container) { container.innerHTML = ""; container.hidden = true; }
   }
 
-  // Só o desenho (svg) com a vaga pintada, para outras telas (ex.: Cadastros pendentes no admin).
+  // Só o desenho (svg) com a vaga pintada, para outras telas (ex.: Cadastros para aprovação no admin).
   function montar(andar, vaga) {
     andar = String(andar || "").trim().toUpperCase();
     var vagas = separarVagas(vaga);

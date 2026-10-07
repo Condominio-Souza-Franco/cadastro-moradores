@@ -3074,9 +3074,8 @@ button.pendencia-item::before {
 
 /* ---------- Cadastros pendentes (js/admin-aprovacoes.js) ---------- */
 /* Botão do menu em linha própria, largura total, acima dos outros 8 (sem "viúva"). */
-.menu-admin button[data-painel="painelAprovacoes"] { grid-column: 1 / -1 !important; order: -1; }
-.contador-aprovacoes { display: inline-block; min-width: 18px; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #c62828; color: #fff; font-size: 0.72rem; line-height: 1.4; }
-.contador-aprovacoes[hidden] { display: none; }
+#painelAprovacoes .painel-topo h2 { flex: 0 1 auto; }
+#painelAprovacoes .btn-fechar-painel { margin-left: auto; }
 .aviso-so-visualizar { color: #8a5a00; }
 .lista-aprovacoes { display: flex; flex-direction: column; gap: 8px; }
 .aprovacao-item { padding: 10px 12px; border: 1px solid #d7e0ea; border-radius: 12px; background: #fff; font-size: 0.8rem; }
@@ -3100,3 +3099,29 @@ button.pendencia-item::before {
 .aprov-mapa { margin: 6px 0 2px; }
 .aprov-mapa a { display: block; max-width: 320px; border: 1px solid #d7e0ea; border-radius: 8px; padding: 4px; background: #fff; }
 .aprov-mapa svg { display: block; width: 100%; height: auto; }
+
+/* ---------- Menu: 1ª linha "Cadastros para aprovação" + "Pendências" (50/50); depois 4 + 3 na tela
+   larga e 2 + 2 + 3 no celular (grade de 24 colunas, sem "viúva"). ---------- */
+.menu-admin button { position: relative; overflow: visible; }
+.menu-admin button[data-painel="painelAprovacoes"] { order: 1; grid-column: span 12 !important; }
+.menu-admin button[data-painel="painelPendencias"] { order: 2; grid-column: span 12 !important; }
+.menu-admin button[data-painel="painelConsulta"] { order: 3; grid-column: span 7 !important; }
+.menu-admin button[data-painel="painelRelatorios"] { order: 4; grid-column: span 5 !important; }
+.menu-admin button[data-painel="painelLinks"] { order: 5; grid-column: span 5 !important; }
+.menu-admin button[data-painel="painelGabarito"] { order: 6; grid-column: span 7 !important; }
+.menu-admin button[data-painel="painelMembros"] { order: 7; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelNotificacoes"] { order: 8; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelBloqueios"] { order: 9; grid-column: span 8 !important; }
+@media (max-width: 560px) {
+  .menu-admin button[data-painel="painelConsulta"],
+  .menu-admin button[data-painel="painelRelatorios"],
+  .menu-admin button[data-painel="painelLinks"],
+  .menu-admin button[data-painel="painelGabarito"] { grid-column: span 12 !important; }
+}
+/* Bolinha vermelha com a quantidade (estilo notificação de aplicativo), no canto do botão. */
+.badge-menu {
+  position: absolute; top: -7px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px; box-sizing: border-box;
+  border-radius: 999px; background: #e53935; color: #fff; font-size: 0.68rem; font-weight: 700; line-height: 19px;
+  text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none;
+}
+.badge-menu[hidden] { display: none; }
