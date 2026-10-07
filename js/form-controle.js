@@ -398,6 +398,8 @@ function atualizarInfoVagaLocal(apto) {
   const divVaga = document.getElementById('infoVagaGaragem');
   if (!divVaga) return;
   atualizarLinkMapaVaga(null);
+  const avisoMapa = document.getElementById('avisoMapaNovoCadastro');
+  if (avisoMapa) avisoMapa.hidden = true;
 
   if (!apto || apto.trim() === '') {
     divVaga.style.display = 'none';
@@ -416,7 +418,11 @@ function atualizarInfoVagaLocal(apto) {
 
       if (numero && andar) {
         vagaEncontrada = `Sua vaga é a <strong>${numero}</strong> e fica no <strong>${andar}</strong>.`;
-        atualizarLinkMapaVaga(apto, andar, numero);
+        // Cadastro novo (ainda sem aprovação): o mapa com a vaga vai na ficha enviada por e-mail.
+        const novo = !!(document.getElementById('chkMoradorNovo') && document.getElementById('chkMoradorNovo').checked);
+        const aviso = document.getElementById('avisoMapaNovoCadastro');
+        if (aviso) aviso.hidden = !novo;
+        if (!novo) atualizarLinkMapaVaga(apto, andar, numero);
       }
       break;
     }

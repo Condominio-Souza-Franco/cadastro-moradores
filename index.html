@@ -17,30 +17,30 @@
   <link rel="manifest" href="favicon/site.webmanifest">
   
   <!-- Estilos CSS -->
-  <link rel="stylesheet" href="css/base.css?v=20261006d">
-  <link rel="stylesheet" href="css/inputs.css?v=20261006d">
-  <link rel="stylesheet" href="css/consulta.css?v=20261006d">
-  <link rel="stylesheet" href="css/componentes.css?v=20261006d">
-  <link rel="stylesheet" href="css/utilitarios.css?v=20261006d">
-  <link rel="stylesheet" href="css/responsivo.css?v=20261006d">
+  <link rel="stylesheet" href="css/base.css?v=20261006e">
+  <link rel="stylesheet" href="css/inputs.css?v=20261006e">
+  <link rel="stylesheet" href="css/consulta.css?v=20261006e">
+  <link rel="stylesheet" href="css/componentes.css?v=20261006e">
+  <link rel="stylesheet" href="css/utilitarios.css?v=20261006e">
+  <link rel="stylesheet" href="css/responsivo.css?v=20261006e">
 
   <!-- Scripts JS -->
-  <script src="js/regras.js?v=20261006d" defer></script>
-  <script src="js/utils.js?v=20261006d" defer></script>
-  <script src="js/data/backend.js?v=20261006d" defer></script>
-  <script src="js/data/FirebaseRepository.js?v=20261006d" defer></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261006d" defer></script>
-  <script src="js/data/DataService.js?v=20261006d" defer></script>
-  <script src="js/mascaras.js?v=20261006d" defer></script>
-  <script src="js/ui-formulario.js?v=20261006d" defer></script>
-  <script src="js/form-controle.js?v=20261006d" defer></script>
-  <script src="js/validacoes-form.js?v=20261006d" defer></script>
-  <script src="js/codigo-email.js?v=20261006d"></script>
-<script src="js/envio-form.js?v=20261006d" defer></script>
-<script src="js/botao-sem-alteracao.js?v=20261006d" defer></script>
-  <script src="js/modo-admin.js?v=20261006d" defer></script>
-  <script src="js/vaga-miniatura.js?v=20261006d" defer></script>
-  <script src="js/barra-acoes.js?v=20261006d" defer></script>
+  <script src="js/regras.js?v=20261006e" defer></script>
+  <script src="js/utils.js?v=20261006e" defer></script>
+  <script src="js/data/backend.js?v=20261006e" defer></script>
+  <script src="js/data/FirebaseRepository.js?v=20261006e" defer></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261006e" defer></script>
+  <script src="js/data/DataService.js?v=20261006e" defer></script>
+  <script src="js/mascaras.js?v=20261006e" defer></script>
+  <script src="js/ui-formulario.js?v=20261006e" defer></script>
+  <script src="js/form-controle.js?v=20261006e" defer></script>
+  <script src="js/validacoes-form.js?v=20261006e" defer></script>
+  <script src="js/codigo-email.js?v=20261006e"></script>
+<script src="js/envio-form.js?v=20261006e" defer></script>
+<script src="js/botao-sem-alteracao.js?v=20261006e" defer></script>
+  <script src="js/modo-admin.js?v=20261006e" defer></script>
+  <script src="js/vaga-miniatura.js?v=20261006e" defer></script>
+  <script src="js/barra-acoes.js?v=20261006e" defer></script>
 </head>
 <body>
 
@@ -62,9 +62,9 @@
     Para ajudar na adaptação e garantir acesso rápido às principais informações, preparamos um Kit de Boas-vindas, que reúne os documentos e orientações mais importantes para a convivência no condomínio.
   </p>
   <p class="link-destaque">
-    <a href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">CLIQUE AQUI PARA ACESSAR O KIT DE BOAS VINDAS</a>
+    <a class="btn-kit" href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">Acessar o Kit de Boas-vindas</a>
   </p>
-  <p class="subtitle nota-kit">O kit abre para o e-mail informado no cadastro (entre com a conta Google desse e-mail), depois que o cadastro é aprovado.</p>
+  <p class="subtitle nota-kit">O acesso ao kit é liberado para o e-mail informado no cadastro, depois que ele é aprovado. Se o seu e-mail não for do Gmail, entre com uma conta Google criada com esse mesmo e-mail.</p>
 
 <!-- BLOCO DE CONSULTA POR CPF: busca o cadastro existente antes do formulário principal -->
   <div class="card-consulta centralizado" id="boxConsultaCpf">
@@ -105,7 +105,7 @@
       </select>
       <div id="opcaoMoraNoImovel" class="opcao-mora-imovel hidden">
         <label for="moraNoImovel">Mora no imóvel?<span class="required-star">*</span></label>
-        <select id="moraNoImovel">
+        <select id="moraNoImovel" onchange="tratarEscolhaMoraNoImovel(this.value)">
           <option value="">Selecione...</option>
           <option value="Sim">Sim</option>
           <option value="Não, está alugado">Não, está alugado</option>
@@ -240,6 +240,8 @@
 
       <!-- Miniatura do andar com a vaga pintada (último item da seção); abre o mapa completo num popup (js/vaga-miniatura.js). -->
       <div id="miniaturaVaga" class="miniatura-vaga-container" hidden></div>
+      <p id="avisoMapaNovoCadastro" class="desc-secao aviso-mapa-novo" hidden>Assim que o seu cadastro for aprovado, você recebe
+        por e-mail a ficha do cadastro com o mapa da garagem e a sua vaga demarcada.</p>
 
       <!-- Aluguel de Vagas -->
       <div class="sub-title title-grupo">Aluguel de vagas</div>

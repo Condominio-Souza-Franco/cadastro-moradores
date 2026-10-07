@@ -156,3 +156,12 @@ div#secDetalhes {
 }
 
 .nota-kit { font-size: 0.8rem; margin-top: -6px; }
+
+/* Botão do Kit de Boas-vindas, com a explicação logo abaixo */
+.link-destaque { margin-bottom: 6px; }
+.link-destaque a.btn-kit {
+  display: inline-block; padding: 10px 22px; border-radius: 10px; background: var(--accent-color); color: #fff;
+  font-weight: 700; text-decoration: none;
+}
+.link-destaque a.btn-kit:hover { color: #fff; text-decoration: none; filter: brightness(1.08); }
+.nota-kit { margin-top: 0 !important; margin-bottom: 25px !important; text-align: center; }

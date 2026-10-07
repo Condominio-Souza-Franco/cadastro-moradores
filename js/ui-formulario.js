@@ -208,10 +208,15 @@ function aplicarEscolhaTipoResidente(valor) {
   const isInquilino = valor === 'Inquilino';
 
   if (valor) {
-    if (secApto) {
-      secApto.classList.remove('hidden');
-      secApto.style.display = 'block';
-      rolarParaSecao('secApto');
+    // Proprietário: o apartamento só aparece depois de responder "Mora no imóvel?".
+    const moraEl = document.getElementById('moraNoImovel');
+    const esperaMora = valor === 'Proprietário' && moraEl && !moraEl.value;
+    if (secApto && !esperaMora) {
+      mostrarSecaoApto();
+    } else if (secApto) {
+      secApto.classList.add('hidden');
+      secApto.style.display = 'none';
+      rolarParaSecao('secTipoResidente');
     }
 
     const titulo = document.getElementById('tituloDadosPessoais');
@@ -288,6 +293,19 @@ function atualizarCamposLocacao(ativo) {
       nomeArquivoPreviewSpan.textContent = '';
     }
   }
+}
+
+function mostrarSecaoApto() {
+  const secApto = document.getElementById('secApto');
+  if (!secApto) return;
+  const jaVisivel = !secApto.classList.contains('hidden');
+  secApto.classList.remove('hidden');
+  secApto.style.display = 'block';
+  if (!jaVisivel) rolarParaSecao('secApto');
+}
+
+function tratarEscolhaMoraNoImovel(valor) {
+  if (valor) mostrarSecaoApto();
 }
 
 async function tratarEscolhaTipoResidente(valor) {

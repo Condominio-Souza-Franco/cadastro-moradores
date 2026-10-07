@@ -238,3 +238,8 @@ label .required-star,
 .opcao-mora-imovel.hidden {
   display: none !important;
 }
+
+/* Mesmo espaço entre "vínculo", "Mora no imóvel?" e "apartamento" */
+#secTipoResidente { margin-bottom: 0; }
+#secApto { margin-top: 20px !important; padding-top: 0; }
+.opcao-mora-imovel { margin-top: 20px !important; }
