@@ -48,6 +48,7 @@
     if (papel === "condominio" || papel === "desenvolvedor") return true;
     if (papel === "sindico") {
       if (parte === "condominio") return false;
+      if (parte === "administradora") return true;
       if (def && def.chave === "desenvolvedor") return false;
       if (def && def.chave === "sindico") return parte === "email"; // não troca o síndico
       if (def && def.chave === "conselho") return true;
@@ -95,7 +96,11 @@
       '<div class="cargo-membro"><div class="cargo-titulo">Condomínio</div>' +
         '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
         escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
-      CARGOS.map(cargoHtml).join("");
+      CARGOS.map(cargoHtml).join("") +
+      // Administradora: só visualiza a Consulta por apartamento e a Busca geral (o backend barra o resto).
+      '<div class="cargo-membro"><div class="cargo-titulo">Administradora <span class="cargo-nota">(só visualização: consulta por apartamento e busca geral)</span></div>' +
+        '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
+        escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>";
     atualizarBotoes();
   }
 
@@ -180,6 +185,7 @@
 
     form.addEventListener("input", function(e) {
       if (e.target.id === "emailCondominio") { membros.condominio.email = e.target.value.trim().toLowerCase(); atualizarBotoes(); return; }
+      if (e.target.id === "emailAdministradora") { membros.administradora = { email: e.target.value.trim().toLowerCase() }; atualizarBotoes(); return; }
       var bloco = e.target.closest(".cargo-membro[data-i]");
       if (!bloco || e.target.getAttribute("data-campo") !== "email") return;
       cargoDe(CARGOS[Number(bloco.getAttribute("data-i"))]).email = e.target.value.trim().toLowerCase();

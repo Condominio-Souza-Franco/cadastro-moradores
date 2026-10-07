@@ -3125,3 +3125,50 @@ button.pendencia-item::before {
   text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none;
 }
 .badge-menu[hidden] { display: none; }
+
+/* ---------- Consulta por apartamento: ficha, telefones e mapa da vaga ---------- */
+.btn-ficha-pdf {
+  display: inline-block; margin: 6px 0 8px; padding: 6px 14px; border-radius: 999px;
+  background: var(--accent-color); color: #fff !important; font-size: 0.8rem; font-weight: 700; text-decoration: none;
+}
+.btn-ficha-pdf:hover { filter: brightness(1.08); text-decoration: none; }
+.telefone-item { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.telefone-numero { white-space: nowrap; }
+.acao-telefone {
+  display: inline-block; padding: 1px 8px; border: 1px solid currentColor; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; line-height: 1.5; text-decoration: none; white-space: nowrap;
+}
+.acao-whatsapp { color: #1f8f4e; }
+.acao-ligar { color: var(--accent-color); }
+.acao-telefone:hover { text-decoration: none; filter: brightness(0.9); }
+.consulta-mapa-vaga { margin: 8px 0 4px; }
+.consulta-mapa-vaga a { display: block; width: 100%; max-width: 560px; border: 1px solid #d7e0ea; border-radius: 10px; padding: 6px; background: #fff; box-sizing: border-box; text-decoration: none; }
+.consulta-mapa-vaga svg { display: block; width: 100%; height: auto; }
+.consulta-mapa-dica { display: block; margin-top: 4px; font-size: 0.72rem; color: #5f7287; text-align: center; }
+
+/* ---------- Administradora: só Consulta por apartamento e Busca geral ---------- */
+body.papel-administradora .menu-admin button[data-painel]:not([data-painel="painelConsulta"]),
+body.papel-administradora #historicoAdmin,
+body.papel-administradora #btnAbrirFonteDados,
+body.papel-administradora .btn-excluir-cadastro,
+body.papel-administradora .btn-editar-cadastro,
+body.papel-administradora .btn-situacao-cadastro,
+body.papel-administradora .btn-desativar-codigo,
+body.papel-administradora .btn-ficha-pdf,
+body.papel-administradora .sem-pdf-cadastro { display: none !important; }
+body.papel-administradora .menu-admin button[data-painel="painelConsulta"] { grid-column: 1 / -1 !important; }
+.cargo-nota { font-weight: 400; font-size: 0.72rem; color: #5f7287; }
+
+/* ---------- Perfil dos moradores (página "Dados") ---------- */
+.titulo-perfil { margin-top: 22px; }
+.graficos-perfil { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 560px) { .graficos-perfil { grid-template-columns: 1fr; } }
+.grafico-perfil { padding: 10px 12px; border: 1px solid #d7e0ea; border-radius: 12px; background: #fff; }
+.grafico-perfil h3 { margin: 0 0 8px; font-size: 0.88rem; color: #243447; }
+.barra-linha { display: grid; grid-template-columns: 76px 1fr auto; align-items: center; gap: 8px; margin: 5px 0; font-size: 0.78rem; }
+.barra-rotulo { color: #5f7287; white-space: nowrap; }
+.barra-trilho { height: 12px; border-radius: 999px; background: #eef1f4; overflow: hidden; }
+.barra { display: block; height: 100%; border-radius: 999px; background: var(--accent-color); }
+.grafico-genero .barra-linha:nth-child(3) .barra { background: #8e5bb5; }
+.barra-valor { font-weight: 700; white-space: nowrap; }
+.barra-valor small { font-weight: 400; color: #5f7287; }

@@ -61,6 +61,36 @@
     });
   }
 
+  // Gráficos de barras (HTML/CSS) com o perfil dos moradores.
+  function grafico(titulo, itens, total, classe) {
+    var maior = Math.max.apply(null, itens.map(function(i) { return i.total; }).concat([1]));
+    return '<div class="grafico-perfil ' + classe + '"><h3>' + titulo + "</h3>" + itens.map(function(i) {
+      var pct = total ? Math.round(i.total * 100 / total) : 0;
+      return '<div class="barra-linha"><span class="barra-rotulo">' + i.rotulo + '</span>' +
+        '<span class="barra-trilho"><span class="barra" style="width:' + (i.total * 100 / maior).toFixed(1) + '%"></span></span>' +
+        '<span class="barra-valor">' + i.total + ' <small>(' + pct + '%)</small></span></div>';
+    }).join("") + "</div>";
+  }
+
+  function carregarPerfil() {
+    var alvo = document.getElementById("graficosPerfil");
+    var status = document.getElementById("statusPerfil");
+    if (!alvo || !DataService.estatisticas) return;
+    status.className = "status carregando";
+    status.textContent = "Carregando...";
+    DataService.estatisticas().then(function(r) {
+      if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar o perfil.");
+      status.className = "status";
+      status.textContent = r.total + " moradores contados.";
+      var genero = r.genero.filter(function(g) { return g.total || g.rotulo !== "Sem nome"; });
+      var idade = r.idade.filter(function(f) { return f.total || f.rotulo !== "Sem data"; });
+      alvo.innerHTML = grafico("Idade", idade, r.total, "grafico-idade") + grafico("Gênero (estimado)", genero, r.total, "grafico-genero");
+    }).catch(function(erro) {
+      status.className = "status erro";
+      status.textContent = (erro && erro.message) || "Não foi possível carregar o perfil.";
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     if (!window.DataService) return;
 
@@ -72,7 +102,7 @@
     if (botaoAbrir && painel) {
       botaoAbrir.addEventListener("click", function() {
         var vaiAbrir = painel.hidden;
-        if (vaiAbrir) aplicarPermissaoDados();
+        if (vaiAbrir) { aplicarPermissaoDados(); carregarPerfil(); }
         painel.hidden = !vaiAbrir;
         if (conteudoPrincipal) conteudoPrincipal.hidden = vaiAbrir;
         botaoAbrir.textContent = vaiAbrir ? "Voltar" : "Dados";

@@ -10,8 +10,15 @@
 (function() {
   var LEITURAS = ["listarAprovacoes", "listarPendencias", "obterMembros", "obterNotificacoes", "obterGabaritoVagasCompleto", "listarBloqueios"];
 
+  // Administradora: só Consulta por apartamento e Busca geral (o resto some da tela; o backend também barra).
+  function marcarPapel() {
+    var papel = window.AdminAuth && window.AdminAuth.getPapel ? window.AdminAuth.getPapel() : "";
+    document.body.classList.toggle("papel-administradora", papel === "administradora");
+    return papel;
+  }
+
   function preCarregar() {
-    if (!window.DataService) return;
+    if (!window.DataService || marcarPapel() === "administradora") return;
     LEITURAS.reduce(function(fila, nome) {
       return fila.then(function() {
         return Promise.resolve(DataService[nome]()).catch(function() {});
@@ -37,10 +44,11 @@
     });
   }
 
-  window.addEventListener("admin-auth-success", function() { setTimeout(preCarregar, 1500); });
+  window.addEventListener("admin-auth-success", function() { marcarPapel(); setTimeout(preCarregar, 1500); });
   window.addEventListener("cache-admin-gravado", atualizarIndicadores);
   window.addEventListener("painel-aberto", function() { setTimeout(atualizarIndicadores, 0); });
   document.addEventListener("DOMContentLoaded", function() {
+    marcarPapel();
     atualizarIndicadores();
     setInterval(atualizarIndicadores, 30000);
   });

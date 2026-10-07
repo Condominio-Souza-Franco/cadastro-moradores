@@ -138,82 +138,74 @@
     return texto ? texto : "Não preenchido";
   }
 
-  function normalizarTelefoneParaHref(valor) {
-    var texto = String(valor || "").trim();
-    if (!texto || /[a-z]/i.test(texto) || texto.indexOf("@") !== -1) return "";
-
-    var apenasTelefone = /^[\d\s()+\-.]+$/.test(texto);
-    if (!apenasTelefone) return "";
-
-    var digitos = texto.replace(/\D+/g, "");
-    if (digitos.length < 8 || digitos.length > 13) return "";
-
-    if (digitos.length === 10 || digitos.length === 11) {
-      return "tel:+55" + digitos;
-    }
-
-    if (digitos.length === 12 || digitos.length === 13) {
-      return "tel:+" + digitos;
-    }
-
-    // For short local numbers (8-9 digits), keep plain tel so mobile dialers can still handle them.
-    return "tel:" + digitos;
+  // Telefone -> só dígitos, no formato DDD + número (sem o 55). Sem DDD (8 ou 9 dígitos), assume 21.
+  // Com o 55 do Brasil na frente (12 ou 13 dígitos), tira o 55 para não duplicar. Outros: inválido ("").
+  function telefoneComDdd(valor) {
+    var digitos = String(valor || "").replace(/\D+/g, "").replace(/^0+/, "");
+    if ((digitos.length === 12 || digitos.length === 13) && digitos.indexOf("55") === 0) digitos = digitos.slice(2);
+    if (digitos.length === 8 || digitos.length === 9) digitos = "21" + digitos;
+    return digitos.length === 10 || digitos.length === 11 ? digitos : "";
   }
 
+  // O número aparece como texto; ao lado, os atalhos "WhatsApp" (wa.me/55...) e "Ligar" (tel:+55...).
   function renderizarTelefonesHtml(valor) {
     var texto = textoLimpo(valor);
     if (!texto) return "Não preenchido";
 
-    var regexTelefone = /(?:\+?\d[\d\s().\-]{6,}\d)/g;
-    var links = [];
-    texto.replace(regexTelefone, function(matched) {
-      var numero = textoLimpo(matched);
-      var href = normalizarTelefoneParaHref(numero);
-      if (!href) return matched;
-      links.push('<a class="campo-link-telefone" href="' + href + '">' + escaparHtml(numero) + '</a>');
-      return matched;
-    });
-
-    if (!links.length) {
-      return escaparHtml(texto);
+    var regexTelefone = /\+?\d[\d\s().\-]{6,}\d/g;
+    var html = [];
+    var ultimo = 0;
+    var m;
+    while ((m = regexTelefone.exec(texto)) !== null) {
+      var numero = textoLimpo(m[0]);
+      var ddd = telefoneComDdd(numero);
+      html.push(escaparHtml(texto.slice(ultimo, m.index)));
+      if (ddd) {
+        html.push('<span class="telefone-item"><span class="telefone-numero">' + escaparHtml(numero) + '</span>' +
+          '<a class="acao-telefone acao-whatsapp" href="https://wa.me/55' + ddd + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
+          '<a class="acao-telefone acao-ligar" href="tel:+55' + ddd + '">Ligar</a></span>');
+      } else {
+        html.push(escaparHtml(m[0]));
+      }
+      ultimo = m.index + m[0].length;
     }
+    html.push(escaparHtml(texto.slice(ultimo)));
+    return html.join("").replace(/\s*\/\s*(?=<span class="telefone-item">)/g, "<br>").replace(/\n/g, "<br>");
+  }
 
-    return links.join("<br>");
+  // Endereços viram link para o Google Maps. A busca usa só o logradouro (tipo + nome) e o número:
+  // "Rua Exemplo, 123, apto 402" -> "Rua Exemplo, 123". Complementos (apto, bloco, loja, andar...) ficam
+  // fora da busca, porque atrapalham o Maps. O texto completo continua visível.
+  var REGEX_LOGRADOURO = /\b(rua|r\.|avenida|av\.?|alameda|al\.|boulevard|travessa|tv\.|estrada|estr?\.|rodovia|rod\.|praça|praca|pça\.|largo|beco|ladeira|servidão|servidao|via|parque|vila)\s/i;
+
+  function buscaDoEndereco(endereco) {
+    var texto = textoLimpo(endereco);
+    var inicio = texto.search(REGEX_LOGRADOURO);
+    if (inicio > 0) texto = texto.slice(inicio);
+    // nome do logradouro (sem dígitos) + número (o primeiro depois do nome; aceita "nº 12", "n. 12", "12A")
+    var m = texto.match(/^([^\d,;]+?)[\s,]*(?:n[º°o.]?\s*)?(\d+[A-Za-z]?)\b/i);
+    if (!m) return "";
+    var nome = m[1].replace(/[\s,\-–]+$/, "").trim();
+    if (nome.length < 3) return "";
+    return nome + ", " + m[2];
   }
 
   function renderizarEnderecosHtml(valor) {
     var texto = textoLimpo(valor);
     if (!texto) return "Não preenchido";
 
-    var marcadoresLogradouro = "(?:rua|r\\.|avenida|av\\.|alameda|al\\.|boulevard|blvd\\.|travessa|tv\\.|estrada|est\\.|rodovia|rod\\.|praça|pça\\.|largo|beco|servidão)";
-    var marcadoresComplemento = "(?:apt|apto|apartamento|ap|bl|bloco|torre|casa|fundos|frente|térreo|terreo|sala|sl|salão|salao|complemento|complemento|conjunto|conj|cj|quadra|qd|lote|lt|andar|and|cobertura|cob|loja|lj|sobreloja|ed|edifício|edificio|cond|condomínio|condominio|anexo|km|nº|n°|n\\.?)";
-    var textoComEnderecosSeparados = texto
-      .replace(new RegExp("\\s+e\\s+(?=" + marcadoresLogradouro + "\\b)", "gi"), "\n")
-      .replace(new RegExp("\\s+(?=" + marcadoresLogradouro + "\\b)", "gi"), "\n");
-    var partes = textoComEnderecosSeparados
+    // Vários endereços no mesmo campo: separados por quebra de linha, ";", "|", " ou " e " e " antes de um logradouro.
+    var partes = texto
+      .replace(/\s+e\s+(?=(?:rua|avenida|av\.?|alameda|travessa|estrada|rodovia|praça|praca|largo|ladeira)\s)/gi, "\n")
       .split(/\s*(?:\n|;|\||\bou\b)\s*/i)
-      .map(function(item) { return textoLimpo(item); })
-      .filter(function(item) { return !!item; });
-
-    if (!partes.length) {
-      return escaparHtml(texto);
-    }
+      .map(textoLimpo)
+      .filter(Boolean);
 
     return partes.map(function(endereco) {
-      var correspondencia = endereco.match(new RegExp("^(.*?\\b\\d+)(\\s*(?:,|-)?\\s*" + marcadoresComplemento + "(?=\\s|,|-|$)[\\s\\S]*)$", "i"));
-      if (!correspondencia) {
-        correspondencia = endereco.match(/^(.*\b\d+)\s*$/);
-      }
-      if (!correspondencia) {
-        return escaparHtml(endereco);
-      }
-
-      var enderecoPrincipal = correspondencia[1].trim().replace(/[,:;\-]+$/, "").trim();
-      var complemento = correspondencia[2] || "";
-      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(enderecoPrincipal);
-      var htmlEndereco = '<a class="campo-link-endereco" href="' + href + '" target="_blank" rel="noopener noreferrer">' + escaparHtml(enderecoPrincipal) + '</a>';
-
-      return htmlEndereco + (complemento ? escaparHtml(complemento) : "");
+      var busca = buscaDoEndereco(endereco);
+      if (!busca) return escaparHtml(endereco);
+      var href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(busca);
+      return '<a class="campo-link-endereco" href="' + href + '" target="_blank" rel="noopener noreferrer" title="Abrir ' + escaparHtml(busca) + ' no Google Maps">' + escaparHtml(endereco) + '</a>';
     }).join("<br>");
   }
 
@@ -443,7 +435,7 @@
         '<div class="data-envio">Data do último envio: <strong>' + escaparHtml(formatarDataBr(dados.dataUltimoEnvio || dados.dataEnvio) || "Não preenchido") + '</strong></div>' +
         // PDF mais recente do cadastro (pasta "Cadastros" no Drive), gerado a cada envio.
         (dados.pdfUrl
-          ? '<a class="link-pdf-cadastro" href="' + escaparHtml(dados.pdfUrl) + '" target="_blank" rel="noopener noreferrer">Ficha em PDF</a>'
+          ? '<a class="btn-ficha-pdf" href="' + escaparHtml(dados.pdfUrl) + '" target="_blank" rel="noopener noreferrer">Ficha em PDF</a>'
           : '<div class="sem-pdf-cadastro">Ficha em PDF: será gerada no próximo envio ou atualização.</div>') +
         logsHtml.join("") +
       '</div>' +
@@ -502,6 +494,8 @@
         vagaPrincipalHtml(dados) +
         situacaoVagaHtml(dados.vagaSituacao, dados.vagaAptoRelacionado) +
       '</div>' +
+      // Miniatura do andar com a vaga pintada (a mesma do formulário); desenhada depois (desenharMapasVaga).
+      '<div class="consulta-mapa-vaga" data-apto="' + escaparHtml(dados.apto) + '" data-vaga="' + escaparHtml(textoLimpo(dados.vagaNumeroAndar)) + '" hidden></div>' +
       '<div class="subsecoes-lado-a-lado">' +
         registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
         registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
@@ -534,6 +528,32 @@
     return '<div class="admin-registro-card">' + btnFechar + secoes.join("") + btnExcluir + '</div>';
   }
 
+  // "14 / G1" ou "1 / 2 / G2": o andar é a última parte. Toque abre o mapa completo da garagem.
+  function desenharMapasVaga(raiz) {
+    if (!window.VagaMiniatura) return;
+    raiz.querySelectorAll(".consulta-mapa-vaga").forEach(function(caixa) {
+      var partes = String(caixa.getAttribute("data-vaga") || "").split("/").map(function(p) { return p.trim(); }).filter(Boolean);
+      if (partes.length < 2) return;
+      var andar = partes.pop(), vaga = partes.join(" / "), apto = caixa.getAttribute("data-apto");
+      window.VagaMiniatura.montar(andar, vaga).then(function(svg) {
+        if (!svg) return;
+        var link = document.createElement("a");
+        link.href = window.VagaMiniatura.urlMapa(apto, andar, vaga);
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.title = "Abrir o mapa completo da garagem";
+        link.appendChild(svg);
+        var dica = document.createElement("span");
+        dica.className = "consulta-mapa-dica";
+        dica.textContent = "Vaga " + vaga + " no " + andar + " · toque para ver o mapa completo";
+        link.appendChild(dica);
+        caixa.innerHTML = "";
+        caixa.appendChild(link);
+        caixa.hidden = false;
+      }).catch(function() {});
+    });
+  }
+
   function renderizarDados(dados, ocorrenciaSelecionada) {
     var resultado = document.getElementById("resultadoAdmin");
     if (!resultado) return;
@@ -544,6 +564,7 @@
     resultado.innerHTML = lista.map(function(item, index) {
       return montarHtmlRegistro(item, index, ocorrenciaSelecionada);
     }).join("");
+    desenharMapasVaga(resultado);
 
     resultado.querySelectorAll(".btn-excluir-cadastro").forEach(function(botao) {
       botao.addEventListener("click", function() {

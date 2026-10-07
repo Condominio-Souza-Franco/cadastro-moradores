@@ -69,6 +69,10 @@
     },
     // CPFs bloqueados após 5 tentativas erradas (e o histórico) e o desbloqueio pela administração.
     // Cadastros novos aguardando aprovação (aprovacao.gs).
+    // Perfil dos moradores (idade e gênero) para a página "Dados".
+    estatisticas: function() {
+      return chamarBackend("fbEstatisticas", {}, true);
+    },
     listarAprovacoes: function() {
       return chamarBackend("fbListarAprovacoes", {}, true);
     },
