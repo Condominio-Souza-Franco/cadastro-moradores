@@ -2759,11 +2759,12 @@ button.pendencia-item::before {
   gap: 6px;
 }
 
+/* No hover, a acesa escurece como o botão Buscar (fundo #174a7a) e o texto continua branco.
+   Fica fora da regra "fundo claro no hover" lá embaixo, que deixava o texto branco sobre branco. */
 .btn-pagina-inicial.ativo:hover,
 .btn-pagina-inicial.ativo:focus {
-  background: var(--accent-color);
+  background: #174a7a;
   color: #fff;
-  filter: brightness(1.1);
 }
 
 .btn-pagina-inicial:not(.ativo):hover {
@@ -3216,7 +3217,6 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 .btn-atualizar-historico:hover,
 .btn-atualizar-pendencias:hover,
 .menu-admin button:not(.ativo):not(.sem-autorizacao):not(:disabled):hover,
-.btn-pagina-inicial:hover,
 .gabarito-acoes .btn-secundario:hover,
 .gabarito-modos button:not(.ativo):hover,
 .gabarito-garagens button:not(.ativo):hover,
