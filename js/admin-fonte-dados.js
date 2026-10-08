@@ -83,7 +83,7 @@
       [x.carros, "carros"], [x.motos, "motos"], [x.bicicletas, "bicicletas"]
     ];
     return '<div class="cartoes-resumo">' + itens.map(function(i) {
-      return '<div class="cartao-resumo"><strong>' + i[0] + '</strong><span>' + i[1] + (i[2] ? ' <small>(' + i[2] + ')</small>' : '') + '</span></div>';
+      return '<div class="cartao-resumo"><strong>' + (i[0] == null ? "—" : i[0]) + '</strong><span>' + i[1] + (i[2] ? ' <small>(' + i[2] + ')</small>' : '') + '</span></div>';
     }).join('') + '</div>';
   }
 
@@ -114,6 +114,12 @@
     status.textContent = "Carregando...";
     DataService.estatisticas().then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar o perfil.");
+      // Resposta antiga guardada na aba (antes de carros/motos/bicicletas separados): busca de novo.
+      if (r.resumo && r.resumo.carros === undefined && !carregarPerfil.repetiu) {
+        carregarPerfil.repetiu = true;
+        DataService.limparCacheAdmin("estatisticas");
+        return carregarPerfil();
+      }
       status.className = "status";
       status.textContent = r.total + " moradores contados" + (typeof r.titulares === "number" ? ": " + r.titulares + " titulares e " + r.ocupantes + " demais ocupantes." : ".");
       var genero = r.genero.filter(function(g) { return g.total || g.rotulo !== "Sem nome"; });
