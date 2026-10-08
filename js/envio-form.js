@@ -501,10 +501,10 @@ function prosseguirEnvio() {
 
   if (btnSubmit) {
     btnSubmit.disabled = true;
-    btnSubmit.innerText = eAtualizacao ? "Atualizando..." : "Enviando...";
+    btnSubmit.innerText = eAtualizacao ? "Atualizando" : "Enviando";
   }
 
-  setOverlayProcessamento(true, eAtualizacao ? 'Aguarde: atualizando...' : 'Aguarde: enviando...');
+  setOverlayProcessamento(true, eAtualizacao ? 'Aguarde: atualizando' : 'Aguarde: enviando');
 
   const fileInput = document.getElementById("arquivoContrato");
   const file = fileInput && fileInput.files ? fileInput.files[0] : null;
@@ -672,6 +672,9 @@ function executarEnvio(fileData, eAtualizacao) {
         voltarTelaInicial();
         return;
       }
+      // Sessão de 1 hora (js/sessao-morador.js): se o morador corrigiu o próprio CPF ou a data de
+      // nascimento, o "Visualizar cadastro" passa a usar os novos.
+      if (eAtualizacao && window.SessaoMorador) window.SessaoMorador.atualizarCredenciais(dados.moradorCpf, dados.moradorNasc);
       // O PDF do cadastro é gerado em segundo plano e mandado para o e-mail informado no formulário.
       const emailCopia = String(dados.moradorEmail || "").trim();
       mostrarAlerta(emailCopia

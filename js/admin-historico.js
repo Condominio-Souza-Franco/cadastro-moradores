@@ -65,7 +65,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
 
     DataService.listarHistorico(LIMITE_BUSCA)
       .then(function(resposta) {

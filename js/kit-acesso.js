@@ -4,6 +4,8 @@
 // O botão do kit não abre nada direto: mostra um popup com
 //   1. Acessar o Kit  -> CPF + data de nascimento (mesma conferência e limite de tentativas da
 //      consulta do cadastro, rota fbAbrirKit). Deu certo: abre a página kit.html com os documentos.
+//      O acesso abre a sessão de 1 hora (js/sessao-morador.js): até ela acabar, o botão do kit
+//      leva direto à kit.html, que entra sozinha com o CPF e a data guardados.
 //   2. Abrir pasta no Drive -> a pasta do kit (abre para quem entrar com a conta Google do e-mail
 //      cadastrado).
 (function() {
@@ -73,11 +75,12 @@
       if (!/^\d{2}\/\d{2}\/\d{4}$/.test(form.nasc.value)) { aviso("Informe a data de nascimento no formato DD/MM/AAAA.", "erro"); form.nasc.focus(); return; }
       var botao = form.querySelector(".kit-btn");
       botao.disabled = true;
-      aviso("Conferindo...", "carregando");
+      aviso("Conferindo", "carregando");
       window.Backend.chamar("fbAbrirKit", { cpf: cpf, nascimento: form.nasc.value })
         .then(function(r) {
           if (!r || !r.encontrado) { aviso((r && r.mensagem) || "CPF ou data de nascimento não conferem.", "erro"); return; }
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
+          if (window.SessaoMorador) window.SessaoMorador.iniciar(cpf, form.nasc.value);
           window.location.href = "kit.html";
         })
         .catch(function() { aviso("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
@@ -105,6 +108,8 @@
     if (!link) return;
     e.preventDefault();
     e.stopPropagation();
+    // Sessão de 1 hora ativa (js/sessao-morador.js): vai direto para o kit, sem pedir o CPF de novo.
+    if (window.SessaoMorador && window.SessaoMorador.obter()) { window.location.href = "kit.html"; return; }
     abrir();
   }, true);
 

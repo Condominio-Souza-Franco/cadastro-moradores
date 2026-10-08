@@ -41,11 +41,9 @@
   }
 
   // Bolinha vermelha com a quantidade no botão "Pendências" do menu.
+  // A última contagem fica guardada (js/admin-badges.js) e aparece assim que a página abre.
   function atualizarBadgePendencias(total) {
-    var el = document.getElementById("contadorPendencias");
-    if (!el) return;
-    el.hidden = !total;
-    el.textContent = total > 99 ? "99+" : (total ? String(total) : "");
+    if (window.BadgeMenu) window.BadgeMenu.definir("contadorPendencias", total);
   }
   window.addEventListener("cache-admin-gravado", function(e) {
     if (!e.detail || e.detail.nome !== "listarPendencias" || !window.DataService) return;
@@ -101,7 +99,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     DataService.listarPendencias()
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) {

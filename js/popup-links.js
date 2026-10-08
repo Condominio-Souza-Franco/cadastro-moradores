@@ -40,7 +40,7 @@
     ".popup-link[hidden]{display:none}" +
     ".popup-link-caixa{display:flex;flex-direction:column;width:min(960px,100%);height:min(88vh,100%);background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.35)}" +
     ".popup-link-topo{display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border-bottom:1px solid #dcdde1;font-family:inherit}" +
-    ".popup-link-titulo{flex:1;min-width:0;font-size:.85rem;font-weight:700;color:#243447;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
+    ".popup-link-titulo{flex:1;min-width:0;font-size:.85rem;font-weight:700;color:#243447;overflow-wrap:anywhere}" +
     ".popup-link-nova{flex:none;font-size:.78rem;font-weight:700;color:#2f5f98;text-decoration:none;padding:4px 10px;border:1px solid #2f5f98;border-radius:999px}" +
     ".popup-link-nova:hover{background:#e9f1fa}" +
     ".popup-link-fechar{flex:none;width:30px;height:30px;min-height:0;padding:0;border:1px solid #dcdde1 !important;border-radius:50%;background:#fff !important;color:#243447 !important;font-size:18px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}" +

@@ -17,33 +17,34 @@
   <link rel="manifest" href="favicon/site.webmanifest">
   
   <!-- Estilos CSS -->
-  <link rel="stylesheet" href="css/base.css?v=20261008b">
-  <link rel="stylesheet" href="css/inputs.css?v=20261008b">
-  <link rel="stylesheet" href="css/consulta.css?v=20261008b">
-  <link rel="stylesheet" href="css/componentes.css?v=20261008b">
-  <link rel="stylesheet" href="css/utilitarios.css?v=20261008b">
-  <link rel="stylesheet" href="css/responsivo.css?v=20261008b">
+  <link rel="stylesheet" href="css/base.css?v=20261008c">
+  <link rel="stylesheet" href="css/inputs.css?v=20261008c">
+  <link rel="stylesheet" href="css/consulta.css?v=20261008c">
+  <link rel="stylesheet" href="css/componentes.css?v=20261008c">
+  <link rel="stylesheet" href="css/utilitarios.css?v=20261008c">
+  <link rel="stylesheet" href="css/responsivo.css?v=20261008c">
 
   <!-- Scripts JS -->
-  <script src="js/regras.js?v=20261008b" defer></script>
-  <script src="js/utils.js?v=20261008b" defer></script>
-  <script src="js/data/backend.js?v=20261008b" defer></script>
-  <script src="js/data/FirebaseRepository.js?v=20261008b" defer></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261008b" defer></script>
-  <script src="js/data/DataService.js?v=20261008b" defer></script>
-  <script src="js/mascaras.js?v=20261008b" defer></script>
-  <script src="js/ui-formulario.js?v=20261008b" defer></script>
-  <script src="js/form-controle.js?v=20261008b" defer></script>
-  <script src="js/validacoes-form.js?v=20261008b" defer></script>
-  <script src="js/codigo-email.js?v=20261008b"></script>
-<script src="js/envio-form.js?v=20261008b" defer></script>
-<script src="js/botao-sem-alteracao.js?v=20261008b" defer></script>
-  <script src="js/modo-admin.js?v=20261008b" defer></script>
-  <script src="js/vaga-miniatura.js?v=20261008b" defer></script>
-  <script src="js/popup-links.js?v=20261008b" defer></script>
-  <script src="js/sem-conectivos.js?v=20261008b" defer></script>
-  <script src="js/kit-acesso.js?v=20261008b" defer></script>
-  <script src="js/barra-acoes.js?v=20261008b" defer></script>
+  <script src="js/regras.js?v=20261008c" defer></script>
+  <script src="js/utils.js?v=20261008c" defer></script>
+  <script src="js/data/backend.js?v=20261008c" defer></script>
+  <script src="js/data/FirebaseRepository.js?v=20261008c" defer></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261008c" defer></script>
+  <script src="js/data/DataService.js?v=20261008c" defer></script>
+  <script src="js/mascaras.js?v=20261008c" defer></script>
+  <script src="js/ui-formulario.js?v=20261008c" defer></script>
+  <script src="js/form-controle.js?v=20261008c" defer></script>
+  <script src="js/sessao-morador.js?v=20261008c" defer></script>
+  <script src="js/validacoes-form.js?v=20261008c" defer></script>
+  <script src="js/codigo-email.js?v=20261008c"></script>
+<script src="js/envio-form.js?v=20261008c" defer></script>
+<script src="js/botao-sem-alteracao.js?v=20261008c" defer></script>
+  <script src="js/modo-admin.js?v=20261008c" defer></script>
+  <script src="js/vaga-miniatura.js?v=20261008c" defer></script>
+  <script src="js/popup-links.js?v=20261008c" defer></script>
+  <script src="js/sem-conectivos.js?v=20261008c" defer></script>
+  <script src="js/kit-acesso.js?v=20261008c" defer></script>
+  <script src="js/barra-acoes.js?v=20261008c" defer></script>
 </head>
 <body>
 
@@ -94,6 +95,8 @@
       <button type="button" id="btnMoradorNovo" class="btn-novo-cadastro" onclick="alternarMoradorNovo()" aria-pressed="false" aria-disabled="false">Novo cadastro</button>
       <button type="button" id="btnFecharNovoCadastro" class="btn-fechar-novo-cadastro hidden" onclick="fecharNovoCadastro()" aria-label="Fechar novo cadastro">x</button>
     </div>
+    <!-- Sessão de 1 hora depois do CPF + data de nascimento (js/sessao-morador.js). -->
+    <p id="avisoSessaoMorador" class="aviso-sessao-morador" role="status" hidden></p>
   </div>
 
   <form id="cadForm">
@@ -102,14 +105,14 @@
     <div id="secTipoResidente" class="section hidden centralizado">
       <label for="tipoResidente">Qual é o seu vínculo com a unidade?<span class="required-star">*</span></label>
       <select id="tipoResidente" onchange="tratarEscolhaTipoResidente(this.value)">
-        <option value="">Selecione se é Proprietário ou Inquilino...</option>
+        <option value="">Selecione se é Proprietário ou Inquilino</option>
         <option value="Proprietário">Proprietário</option>
         <option value="Inquilino">Inquilino</option>
       </select>
       <div id="opcaoMoraNoImovel" class="opcao-mora-imovel hidden">
         <label for="moraNoImovel">Mora no imóvel?<span class="required-star">*</span></label>
         <select id="moraNoImovel" onchange="tratarEscolhaMoraNoImovel(this.value)">
-          <option value="">Selecione...</option>
+          <option value="">Selecione</option>
           <option value="Sim">Sim</option>
           <option value="Não, está alugado">Não, está alugado</option>
           <option value="Não, está desocupado">Não, está desocupado</option>
@@ -121,7 +124,7 @@
     <div id="secApto" class="section hidden centralizado">
       <label for="apto">Qual seu apartamento?<span class="required-star">*</span></label>
       <select id="apto" required onchange="aoSelecionarApto(this.value)">
-        <option value="">Selecione...</option>
+        <option value="">Selecione</option>
       </select>
     </div>
 
@@ -256,13 +259,13 @@
 
       <div class="row-vagas">
         <select id="vagaSituacao">
-          <option value="">Selecione...</option>
+          <option value="">Selecione</option>
           <option value="Minha vaga está alugada para">Minha vaga está alugada para</option>
           <option value="Alugo vaga do">Alugo vaga do</option>
         </select>
 
         <select id="vagaAptoRelacionado">
-          <option value="">Apto envolvido...</option>
+          <option value="">Apto envolvido</option>
         </select>
       </div>
         
@@ -358,7 +361,7 @@
 <div id="overlayProcessamento" class="overlay-processamento hidden" aria-live="polite" aria-busy="true">
   <div class="overlay-processamento-card">
     <div class="overlay-processamento-spinner" aria-hidden="true"></div>
-    <p id="overlayProcessamentoMensagem">Aguarde: enviando...</p>
+    <p id="overlayProcessamentoMensagem">Aguarde: enviando</p>
   </div>
 </div>
 

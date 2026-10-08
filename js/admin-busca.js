@@ -112,7 +112,7 @@
       return;
     }
 
-    setStatusBusca("Buscando...", "");
+    setStatusBusca("Buscando", "");
     limparResultados();
 
     DataService.buscarTexto(termo)

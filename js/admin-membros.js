@@ -146,7 +146,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     DataService.obterMembros()
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar os membros.");
@@ -168,7 +168,7 @@
   function salvar() {
     var botao = document.getElementById("btnSalvarMembros");
     if (botao) botao.disabled = true;
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando os membros...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando os membros");
     DataService.salvarMembros(paraEnviar())
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
