@@ -5,7 +5,8 @@
 // formulário de Membros e uma tabela: cargos nas colunas, páginas/ações nas linhas. Enquanto a tabela
 // está aberta, "Desfazer" e "Salvar alterações" valem para ela. Condomínio, Síndico e Desenvolvedor
 // editam (a coluna do Condomínio, só o Desenvolvedor; a do Desenvolvedor fica toda marcada);
-// os demais veem a tabela desabilitada. O backend (autorizacoes.gs) confere tudo de novo.
+// os demais veem a tabela desabilitada. Caixas de ler em azul e de escrever em laranja, para não
+// confundir as duas. O backend (autorizacoes.gs) confere tudo de novo.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
   var NOMES = { condominio: "Condomínio", sindico: "Síndico", administradora: "Administradora", conselho: "Conselho", desenvolvedor: "Desenvolvedor" };
@@ -32,26 +33,27 @@
     var caixa = el("autorizacoesMembros");
     if (!caixa || !dados) return;
     // No celular, os nomes abreviados (Cond., Síndico, Adm., Conselho, Dev.).
-    var cabecalho = '<tr><th>Páginas<br><span class="aut-ler-escrever">ler <b class="aut-sep">|</b> escrever</span></th>' + dados.cargos.map(function(c) {
+    var cabecalho = '<tr><th>Páginas<br><span class="aut-ler-escrever"><span class="aut-legenda-ler">ler</span> <b class="aut-sep">|</b> <span class="aut-legenda-escrever">escrever</span></span></th>' + dados.cargos.map(function(c) {
       return '<th><span class="rotulo-longo">' + NOMES[c] + '</span><span class="rotulo-curto">' + CURTOS[c] + "</span></th>";
     }).join("") + "</tr>";
-    function celulaCheck(chave, c, rotulo) {
+    // "tipo" (ler/escrever) dá a cor da caixa: ler em azul, escrever em laranja.
+    function celulaCheck(chave, c, rotulo, tipo) {
       if (!chave) return '<span class="aut-sem-escrita" title="Esta página não tem o que escrever">—</span>';
       var marcado = atual[chave] && atual[chave][c];
       var travado = !dados.podeEditar || fixa(c, chave) || (dados.colunasTravadas || []).indexOf(c) !== -1;
-      return '<label class="aut-check' + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + rotulo) + '">' +
+      return '<label class="aut-check aut-check-' + tipo + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + rotulo) + '">' +
         '<input type="checkbox" data-chave="' + chave + '" data-cargo="' + c + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
         '<span class="aut-caixa" aria-hidden="true"></span></label>';
     }
     var linhas = dados.linhas.map(function(l) {
       return "<tr><td>" + escaparHtml(l.rotulo) + (l.explicacao ? '<em class="aut-explicacao">' + escaparHtml(l.explicacao) + "</em>" : "") + "</td>" + dados.cargos.map(function(c) {
-        return '<td class="aut-celula"><span class="aut-par">' + celulaCheck(l.ler, c, l.rotulo + " (ler)") +
-          '<b class="aut-sep">|</b>' + celulaCheck(l.escrever, c, l.rotulo + " (escrever)") + "</span></td>";
+        return '<td class="aut-celula"><span class="aut-par">' + celulaCheck(l.ler, c, l.rotulo + " (ler)", "ler") +
+          '<b class="aut-sep">|</b>' + celulaCheck(l.escrever, c, l.rotulo + " (escrever)", "escrever") + "</span></td>";
       }).join("") + "</tr>";
     }).join("");
     caixa.innerHTML =
       '<div class="aut-regras">' +
-        '<p>Marque o que cada cargo pode <strong>ver (ler)</strong> e <strong>alterar (escrever)</strong>.</p>' +
+        '<p>Marque o que cada cargo pode <strong class="aut-legenda-ler">ver (ler)</strong> e <strong class="aut-legenda-escrever">alterar (escrever)</strong>.</p>' +
         '<ul>' +
           '<li><strong>Desenvolvedor</strong> → acesso a tudo; altera as colunas do Condomínio, Síndico, Conselho e Administradora</li>' +
           '<li><strong>Condomínio</strong> → altera as colunas do Síndico, Conselho e Administradora</li>' +

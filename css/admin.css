@@ -3384,3 +3384,30 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 }
 .popup-link-fechar:hover, .kit-modal-fechar:hover, .popup-mapa-vaga-fechar:hover { background: #f1f4f8 !important; color: #243447 !important; }
 .popup-link-fechar svg, .kit-modal-fechar svg, .popup-mapa-vaga-fechar svg { display: block; width: 16px; height: 16px; }
+
+/* Autorizações: ler (azul, a cor padrão) e escrever (laranja) com cores diferentes, também na legenda. */
+.aut-check-escrever .aut-caixa { border-color: #c8610f; }
+.aut-check-escrever input:checked + .aut-caixa { background: #c8610f; }
+.aut-check-escrever input:focus-visible + .aut-caixa { outline-color: #c8610f; }
+.aut-legenda-ler { color: var(--accent-color); font-weight: 700; }
+.aut-legenda-escrever { color: #c8610f; font-weight: 700; }
+
+/* Consulta por apartamento: as caixas de informação crescem até ocupar a linha toda (100% da
+   largura), em vez de ficarem do tamanho do texto com sobra à direita. */
+#resultadoAdmin .grid-campos,
+#resultadoAdmin .linha-vaga-topo,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+#resultadoAdmin .campo,
+#resultadoAdmin .registro-conteudo .campo,
+#resultadoAdmin .registro-bloco .campo,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos .campo {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: 100%;
+}
+#resultadoAdmin .registro-conteudo { flex: 1 1 auto; }
+#resultadoAdmin .linha-vaga-topo .campo { align-items: flex-start; }
