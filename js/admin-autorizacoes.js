@@ -3,11 +3,12 @@
 // ==========================================
 // O botão "Autorizações" fica ao lado de "Desfazer" e "Salvar alterações" e alterna (toggle) entre o
 // formulário de Membros e uma tabela: cargos nas colunas, páginas/ações nas linhas. Enquanto a tabela
-// está aberta, "Desfazer" e "Salvar alterações" valem para ela. Só Condomínio e Desenvolvedor editam;
+// está aberta, "Desfazer" e "Salvar alterações" valem para ela. Condomínio, Síndico e Desenvolvedor
+// editam (a coluna do Condomínio, só o Desenvolvedor; a do Desenvolvedor fica toda marcada);
 // os demais veem a tabela desabilitada. O backend (autorizacoes.gs) confere tudo de novo.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
-  var NOMES = { sindico: "Síndico", administradora: "Administradora", conselho: "Conselho", desenvolvedor: "Desenvolvedor" };
+  var NOMES = { condominio: "Condomínio", sindico: "Síndico", administradora: "Administradora", conselho: "Conselho", desenvolvedor: "Desenvolvedor" };
   var dados = null;       // resposta de fbObterAutorizacoes
   var atual = null;       // permissões sendo editadas
   var originais = "";
@@ -33,7 +34,7 @@
     var linhas = dados.linhas.map(function(l) {
       return "<tr><td>" + escaparHtml(l.rotulo) + "</td>" + dados.cargos.map(function(c) {
         var marcado = atual[l.chave] && atual[l.chave][c];
-        var travado = !dados.podeEditar || fixa(c, l.chave);
+        var travado = !dados.podeEditar || fixa(c, l.chave) || (dados.colunasTravadas || []).indexOf(c) !== -1;
         return '<td class="aut-celula"><label class="aut-check' + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + l.rotulo) + '">' +
           '<input type="checkbox" data-chave="' + l.chave + '" data-cargo="' + c + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
           '<span class="aut-caixa" aria-hidden="true"></span></label></td>';
@@ -41,9 +42,9 @@
     }).join("");
     caixa.innerHTML =
       '<div class="aut-topo"><h3>Autorizações</h3><button type="button" class="btn-fechar-painel aut-fechar" aria-label="Fechar autorizações" title="Fechar">&times;</button></div>' +
-      '<p class="descricao-acao">O Condomínio sempre tem acesso a tudo. ' + (dados.podeEditar
+      '<p class="descricao-acao">O Desenvolvedor tem acesso a tudo. A coluna do Condomínio só o Desenvolvedor altera. ' + (dados.podeEditar
         ? "Marque o que cada cargo pode ver e fazer."
-        : "Somente visualização: só o Condomínio e o Desenvolvedor alteram as autorizações.") + "</p>" +
+        : "Somente visualização: só o Condomínio, o Síndico e o Desenvolvedor alteram as autorizações.") + "</p>" +
       '<div class="aut-tabela-rolagem"><table class="aut-tabela"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
     atualizarBotoes();
   }

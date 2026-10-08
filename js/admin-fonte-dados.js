@@ -81,7 +81,7 @@
     DataService.estatisticas().then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar o perfil.");
       status.className = "status";
-      status.textContent = r.total + " moradores contados.";
+      status.textContent = r.total + " moradores contados" + (typeof r.titulares === "number" ? ": " + r.titulares + " titulares e " + r.ocupantes + " demais ocupantes." : ".");
       var genero = r.genero.filter(function(g) { return g.total || g.rotulo !== "Sem nome"; });
       var idade = r.idade.filter(function(f) { return f.total || f.rotulo !== "Sem data"; });
       alvo.innerHTML = grafico("Idade", idade, r.total, "grafico-idade") + grafico("Gênero (estimado)", genero, r.total, "grafico-genero");
