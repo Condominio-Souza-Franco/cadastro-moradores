@@ -300,7 +300,20 @@
       ? renderizarTelefonesHtml(valor)
       : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal)));
 
-    return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
+    // Um telefone só: "WhatsApp" e "Ligar" ficam ao lado da label, e o número fica sozinho embaixo.
+    var acoesNoTitulo = "";
+    if (ehTelefone && !vazio) {
+      var tmp = document.createElement("div");
+      tmp.innerHTML = valorHtml;
+      var itens = tmp.querySelectorAll(".telefone-item");
+      if (itens.length === 1) {
+        var acoes = itens[0].querySelectorAll(".acao-telefone");
+        acoesNoTitulo = '<span class="acoes-telefone-titulo">' + Array.prototype.map.call(acoes, function(a) { return a.outerHTML; }).join("") + '</span>';
+        Array.prototype.forEach.call(acoes, function(a) { a.remove(); });
+        valorHtml = tmp.innerHTML;
+      }
+    }
+    return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + acoesNoTitulo + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
   }
 
   function vagaPrincipalHtml(dados) {

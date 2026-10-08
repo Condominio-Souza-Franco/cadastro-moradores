@@ -3321,3 +3321,45 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 .aut-so-ver { margin-top: 6px !important; font-style: italic; color: #8a5a00; }
 
 .atualizado-em.carregando-indicador { font-style: italic; color: #5f7287; }
+
+/* ---------- Tabelas do admin (Autorizações e Notificações) ----------
+   Zebra, linha vertical fina entre as colunas, 1ª coluna mais larga e fixa na rolagem horizontal. */
+.tabela-admin-rolagem { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; }
+.tabela-admin { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.78rem; }
+.tabela-admin th, .tabela-admin td { padding: 7px 12px; border-bottom: 1px solid #eef1f4; border-left: 1px solid #e3e8ee; vertical-align: middle; background: #fff; }
+.tabela-admin th:first-child, .tabela-admin td:first-child { border-left: 0; }
+.tabela-admin thead th { background: #f4f7fb; color: #43566b; font-weight: 700; text-align: center; line-height: 1.25; }
+.tabela-admin tbody tr:nth-child(even) td { background: #f7f9fb; }
+.tabela-admin tbody tr:last-child td { border-bottom: 0; }
+/* 1ª coluna: mais larga (cabe "Consulta por apartamento / e busca geral") e congelada. */
+.tabela-admin th:first-child, .tabela-admin td:first-child {
+  position: sticky; left: 0; z-index: 1; min-width: 180px; max-width: 230px; text-align: left;
+  box-shadow: 1px 0 0 #e3e8ee; text-wrap: pretty;
+}
+.tabela-admin thead th:first-child { z-index: 2; }
+.tabela-admin .aut-celula { text-align: center; white-space: nowrap; width: auto; }
+.aut-ler-escrever { white-space: nowrap; font-weight: 400; font-size: 0.72rem; }
+.aut-explicacao { display: block; margin-top: 2px; font-size: 0.7rem; color: #5f7287; font-style: italic; }
+.tabela-notificacoes thead th:not(:first-child) { min-width: 96px; }
+.notif-cargo-linha { display: block; font-weight: 700; color: #243447; }
+.notif-quem { display: block; font-size: 0.72rem; color: #5f7287; }
+@media (max-width: 560px) {
+  .tabela-admin { font-size: 0.72rem; }
+  .tabela-admin th, .tabela-admin td { padding: 6px 9px; }
+  .tabela-admin th:first-child, .tabela-admin td:first-child { min-width: 150px; max-width: 170px; }
+}
+
+/* Consulta: com um telefone só, WhatsApp e Ligar ao lado da label (o número fica embaixo, sozinho). */
+.campo-titulo .acoes-telefone-titulo { display: inline-flex; gap: 6px; margin-left: 8px; vertical-align: 1px; }
+.campo-titulo .acoes-telefone-titulo .acao-telefone { font-size: 0.66rem; padding: 0 7px; text-transform: none; letter-spacing: 0; }
+
+/* × da barra flutuante: só aparece com a barra presa no topo; fecha a página aberta. */
+.acoes-topo .btn-fechar-flutuante { display: none; }
+.acoes-topo.fixa { padding-right: 48px !important; }
+.acoes-topo.fixa .btn-fechar-flutuante {
+  display: inline-flex; align-items: center; justify-content: center; position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%); width: 30px !important; height: 30px !important; min-height: 0 !important; padding: 0 !important;
+  border: 1px solid var(--border) !important; border-radius: 50%; background: #fff !important; color: #243447 !important;
+  font-size: 18px; line-height: 1; cursor: pointer;
+}
+.acoes-topo.fixa .btn-fechar-flutuante:hover { background: #f1f4f8 !important; }

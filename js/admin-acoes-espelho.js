@@ -24,6 +24,19 @@
         copia.addEventListener("click", function() { b.click(); });
         destino.appendChild(copia);
       });
+      // × (só aparece com a barra flutuando): fecha a página aberta, como o × do topo dela.
+      var fechar = document.createElement("button");
+      fechar.type = "button";
+      fechar.className = "btn-fechar-flutuante";
+      fechar.setAttribute("aria-label", "Fechar esta página");
+      fechar.title = "Fechar esta página";
+      fechar.innerHTML = "&times;";
+      fechar.addEventListener("click", function() {
+        var painel = destino.closest(".painel-admin");
+        var x = painel && painel.querySelector(".painel-topo .btn-fechar-painel");
+        if (x) x.click();
+      });
+      destino.appendChild(fechar);
     }
 
     sincronizar();

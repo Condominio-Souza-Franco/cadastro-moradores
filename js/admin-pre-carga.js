@@ -32,9 +32,22 @@
     return "atualizado às " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
   }
 
+  // Leituras em andamento: enquanto houver, o indicador mostra "Carregando..." (nunca "atualizado agora" antes do fim).
+  var emAndamento = {};
+  window.addEventListener("leitura-admin-inicio", function(e) { emAndamento[e.detail.nome] = (emAndamento[e.detail.nome] || 0) + 1; atualizarIndicadores(); });
+  window.addEventListener("leitura-admin-fim", function(e) { emAndamento[e.detail.nome] = Math.max(0, (emAndamento[e.detail.nome] || 1) - 1); atualizarIndicadores(); });
+
   function atualizarIndicadores() {
     if (!window.DataService || !DataService.infoCacheAdmin) return;
     document.querySelectorAll(".atualizado-em[data-leitura]").forEach(function(el) {
+      if (el.dataset.manual === "1") return; // outra tela (ex.: Autorizações) está mostrando o próprio carregamento
+      if (emAndamento[el.getAttribute("data-leitura")]) {
+        el.textContent = "Carregando...";
+        el.classList.add("carregando-indicador");
+        el.title = "";
+        return;
+      }
+      el.classList.remove("carregando-indicador");
       var em = DataService.infoCacheAdmin(el.getAttribute("data-leitura"));
       el.textContent = textoIdade(em);
       el.title = em ? "Dados buscados no servidor em " + new Date(em).toLocaleString("pt-BR") : "";

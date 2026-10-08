@@ -281,8 +281,12 @@
     var guardado = null;
     try { guardado = JSON.parse(sessionStorage.getItem(chave) || "null"); } catch (e) {}
 
+    // Avisa a tela que esta leitura está em andamento ("Carregando..." no lugar do "atualizado há...").
     function buscar() {
+      window.dispatchEvent(new CustomEvent("leitura-admin-inicio", { detail: { nome: nome } }));
+      var fim = function() { window.dispatchEvent(new CustomEvent("leitura-admin-fim", { detail: { nome: nome } })); };
       return executarLeitura(nome, args).then(function(resultado) {
+        fim();
         if (resultado && resultado.sucesso !== false) {
           var mudou = !!guardado && JSON.stringify(guardado.r) !== JSON.stringify(resultado);
           try { sessionStorage.setItem(chave, JSON.stringify({ r: resultado, em: Date.now() })); } catch (e) {}
@@ -290,7 +294,7 @@
           if (mudou) window.dispatchEvent(new CustomEvent("dados-admin-atualizados", { detail: { nome: nome } }));
         }
         return resultado;
-      });
+      }, function(erro) { fim(); throw erro; });
     }
 
     if (guardado && guardado.r) {

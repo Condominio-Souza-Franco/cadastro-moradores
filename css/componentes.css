@@ -358,3 +358,36 @@ body.com-barra-acoes {
 .barra-acoes-flutuante .barra-acao-sair:hover {
   background: #eef4fb;
 }
+
+/* × da barra flutuante do formulário: fecha o formulário (como "Sair sem fazer alterações"). */
+.barra-acoes-flutuante .btn-fechar-flutuante {
+  flex: none; display: inline-flex; align-items: center; justify-content: center; width: 38px; min-width: 38px; padding: 0;
+  border: 1px solid #dcdde1; border-radius: 50%; background: #fff; color: #243447; font-size: 20px; line-height: 1; cursor: pointer;
+  align-self: center; height: 38px;
+}
+.barra-acoes-flutuante .btn-fechar-flutuante:hover { background: #f1f4f8; }
+
+/* ---------- Popup do Kit de Boas-vindas (js/kit-acesso.js) ---------- */
+.kit-modal { position: fixed; inset: 0; z-index: 10001; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(20, 30, 45, 0.55); }
+.kit-modal[hidden] { display: none; }
+body.kit-modal-aberto { overflow: hidden; }
+.kit-modal-caixa { width: min(460px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: #fff; border-radius: 12px; padding: 16px 18px; box-sizing: border-box; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+.kit-modal-topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.kit-modal-topo h3 { margin: 0; font-size: 1.05rem; color: #243447; }
+.kit-modal-fechar { width: 32px; height: 32px; min-width: 32px; padding: 0; border: 1px solid #dcdde1; border-radius: 50%; background: #fff; color: #243447; font-size: 20px; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.kit-modal-fechar:hover { background: #f1f4f8; }
+.kit-opcao { margin-top: 12px; padding: 12px 14px; border: 1px solid #dcdde1; border-radius: 10px; }
+.kit-opcao h4 { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: #243447; }
+.kit-opcao p { margin: 0 0 8px; font-size: 0.82rem; color: #5f7287; text-wrap: pretty; }
+.kit-numero { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-color, #2f5f98); color: #fff; font-size: 0.78rem; font-weight: 700; }
+.kit-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 420px) { .kit-campos { grid-template-columns: 1fr; } }
+.kit-campos label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; font-weight: 600; color: #43566b; }
+.kit-campos input { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1px solid #dcdde1; border-radius: 8px; font-size: 0.95rem; }
+.kit-btn { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; box-sizing: border-box; border: 1px solid var(--accent-color, #2f5f98); border-radius: 10px; background: var(--accent-color, #2f5f98); color: #fff; font-size: 0.92rem; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; }
+.kit-btn:disabled { opacity: 0.6; cursor: default; }
+.kit-btn-secundario { background: #fff; color: var(--accent-color, #2f5f98); }
+.kit-btn-secundario:hover { background: #e9f1fa; text-decoration: none; }
+.kit-mensagem { min-height: 1.2em; margin: 8px 0 0 !important; font-size: 0.8rem !important; }
+.kit-mensagem.erro { color: #c62828 !important; }
+.kit-mensagem.carregando { font-style: italic; }

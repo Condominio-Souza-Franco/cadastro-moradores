@@ -32,7 +32,7 @@
     var caixa = el("autorizacoesMembros");
     if (!caixa || !dados) return;
     // No celular, os nomes abreviados (Cond., Síndico, Adm., Conselho, Dev.).
-    var cabecalho = '<tr><th>Páginas: ler <b class="aut-sep">|</b> escrever</th>' + dados.cargos.map(function(c) {
+    var cabecalho = '<tr><th>Páginas<br><span class="aut-ler-escrever">ler <b class="aut-sep">|</b> escrever</span></th>' + dados.cargos.map(function(c) {
       return '<th><span class="rotulo-longo">' + NOMES[c] + '</span><span class="rotulo-curto">' + CURTOS[c] + "</span></th>";
     }).join("") + "</tr>";
     function celulaCheck(chave, c, rotulo) {
@@ -44,7 +44,7 @@
         '<span class="aut-caixa" aria-hidden="true"></span></label>';
     }
     var linhas = dados.linhas.map(function(l) {
-      return "<tr><td>" + escaparHtml(l.rotulo) + "</td>" + dados.cargos.map(function(c) {
+      return "<tr><td>" + escaparHtml(l.rotulo) + (l.explicacao ? '<em class="aut-explicacao">' + escaparHtml(l.explicacao) + "</em>" : "") + "</td>" + dados.cargos.map(function(c) {
         return '<td class="aut-celula"><span class="aut-par">' + celulaCheck(l.ler, c, l.rotulo + " (ler)") +
           '<b class="aut-sep">|</b>' + celulaCheck(l.escrever, c, l.rotulo + " (escrever)") + "</span></td>";
       }).join("") + "</tr>";
@@ -60,7 +60,7 @@
         '</ul>' +
         (dados.podeEditar ? '' : '<p class="aut-so-ver">Você pode apenas visualizar esta tabela.</p>') +
       '</div>' +
-      '<div class="aut-tabela-rolagem"><table class="aut-tabela"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
+      '<div class="aut-tabela-rolagem tabela-admin-rolagem"><table class="aut-tabela tabela-admin"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
     atualizarBotoes();
   }
 
@@ -79,8 +79,8 @@
     // "Carregando..." no lugar do "atualizado há..." ao lado do Atualizar: a página não pula.
     var indicador = document.querySelector("#painelMembros .atualizado-em");
     var textoAntes = indicador ? indicador.textContent : "";
-    if (indicador) { indicador.textContent = "Carregando..."; indicador.classList.add("carregando-indicador"); }
-    function restaurar() { if (indicador) { indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
+    if (indicador) { indicador.dataset.manual = "1"; indicador.textContent = "Carregando..."; indicador.classList.add("carregando-indicador"); }
+    function restaurar() { if (indicador) { delete indicador.dataset.manual; indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
     setStatus("", "");
     return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as autorizações.");

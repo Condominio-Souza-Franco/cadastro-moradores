@@ -62,12 +62,17 @@
     barra.hidden = true;
     barra.innerHTML =
       '<button type="button" class="btn-submit barra-acao-enviar">Atualizar cadastro</button>' +
-      '<button type="button" class="btn-secondary barra-acao-sair">Sair</button>';
+      '<button type="button" class="btn-secondary barra-acao-sair">Sair</button>' +
+      // ×: fecha o formulário e volta à tela inicial (o mesmo que "Sair sem fazer alterações").
+      '<button type="button" class="btn-fechar-flutuante" aria-label="Fechar o formulário" title="Fechar o formulário">&times;</button>';
     lugar.appendChild(barra);
     secao.parentNode.insertBefore(lugar, secao);
 
     barra.querySelector(".barra-acao-enviar").addEventListener("click", function() {
       document.getElementById("btnEnviarForm").click();
+    });
+    barra.querySelector(".btn-fechar-flutuante").addEventListener("click", function() {
+      document.getElementById("btnSairSemAlterar").click();
     });
     barra.querySelector(".barra-acao-sair").addEventListener("click", function() {
       document.getElementById("btnSairSemAlterar").click();

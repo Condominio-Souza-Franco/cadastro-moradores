@@ -1,8 +1,9 @@
 // ==========================================
 // NOTIFICAÇÕES (ADMIN): quem recebe o e-mail com as alterações cadastrais
 // ==========================================
-// Lista os membros da administração (página Membros) com uma caixinha cada. O backend
-// (notificacoes.gs) confere de novo ao salvar:
+// Tabela: membros da administração nas linhas, tipos de e-mail nas colunas (resumo mensal, CPF
+// bloqueado, cadastro excluído, novo cadastro aguardando aprovação). Cada célula liga/desliga aquele
+// e-mail para aquele membro. O backend (notificacoes.gs) confere de novo ao salvar:
 //   condomínio, desenvolvedor e síndico: marcam/desmarcam qualquer um;
 //   conselho: só o próprio e-mail (os outros aparecem travados).
 (function() {
@@ -19,9 +20,21 @@
     el.textContent = texto || "";
   }
 
+  var TIPOS = [
+    { chave: "resumo", titulo: "Resumo<br>mensal" },
+    { chave: "bloqueio", titulo: "CPF<br>bloqueado" },
+    { chave: "exclusao", titulo: "Cadastro<br>excluído" },
+    { chave: "aprovacao", titulo: "Novo cadastro<br>aguardando aprovação" }
+  ];
+
+  // { email: { tipo: true/false } } — o que vai para o backend e serve para comparar com o original.
   function marcados() {
-    return membros.filter(function(m) { return m.marcado; }).map(function(m) { return m.email; }).sort();
+    var r = {};
+    membros.forEach(function(m) { r[m.email] = Object.assign({}, m.preferencias || {}); });
+    return r;
   }
+
+  function primeiroNome(nome) { return String(nome || "").trim().split(/\s+/)[0] || ""; }
 
   function atualizarBotoes() {
     var alterado = JSON.stringify(marcados()) !== originais;
@@ -31,17 +44,26 @@
 
   function renderizar() {
     var lista = document.getElementById("listaNotificacoes");
-    lista.innerHTML = membros.map(function(m, i) {
-      var quem = m.nome ? escaparHtml(m.nome) + (m.apto ? " <span class=\"notif-apto\">· apto " + escaparHtml(m.apto) + "</span>" : "") : escaparHtml(m.cargos.join(", "));
-      return '<label class="item-notificacao' + (m.editavel ? "" : " travado") + '">' +
-        '<input type="checkbox" data-i="' + i + '"' + (m.marcado ? " checked" : "") + (m.editavel ? "" : " disabled") + ">" +
-        '<span class="notif-texto">' +
-          '<span class="notif-nome">' + quem + "</span>" +
-          (m.nome ? '<span class="notif-cargo">' + escaparHtml(m.cargos.join(", ")) + "</span>" : "") +
-          '<span class="notif-email">' + escaparHtml(m.email) + "</span>" +
-        "</span>" +
-      "</label>";
-    }).join("") || '<p class="sem-itens">Nenhum membro cadastrado. Preencha a página Membros primeiro.</p>';
+    if (!membros.length) {
+      lista.innerHTML = '<p class="sem-itens">Nenhum membro cadastrado. Preencha a página Membros primeiro.</p>';
+      atualizarBotoes();
+      return;
+    }
+    var cabecalho = "<tr><th>Membro</th>" + TIPOS.map(function(t) { return "<th>" + t.titulo + "</th>"; }).join("") + "</tr>";
+    var linhas = membros.map(function(m, i) {
+      var quem = m.apto || m.nome ? '<span class="notif-quem">' + escaparHtml([m.apto, primeiroNome(m.nome)].filter(Boolean).join(" · ")) + "</span>" : "";
+      return '<tr><td><span class="notif-cargo-linha">' + escaparHtml(m.cargos.join(", ")) + "</span>" + quem + "</td>" +
+        TIPOS.map(function(t) {
+          var permitido = !m.permitidos || m.permitidos[t.chave] !== false;
+          var travado = !m.editavel || !permitido;
+          var marcado = permitido && m.preferencias && m.preferencias[t.chave];
+          return '<td class="aut-celula"><label class="aut-check' + (travado ? " travado" : "") + '" title="' +
+            (permitido ? "" : "Só o Síndico, o Condomínio e o Desenvolvedor recebem este aviso") + '">' +
+            '<input type="checkbox" data-i="' + i + '" data-tipo="' + t.chave + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
+            '<span class="aut-caixa" aria-hidden="true"></span></label></td>';
+        }).join("") + "</tr>";
+    }).join("");
+    lista.innerHTML = '<div class="tabela-admin-rolagem"><table class="tabela-admin tabela-notificacoes"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
     atualizarBotoes();
   }
 
@@ -74,8 +96,7 @@
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
         aplicar(r);
-        var n = marcados().length;
-        setStatus(n ? "Salvo. O próximo e-mail vai para " + n + (n === 1 ? " pessoa." : " pessoas.") : "Salvo. Ninguém está marcado: nenhum e-mail será enviado.", "ok");
+        setStatus("Salvo. Os próximos e-mails seguem esta tabela.", "ok");
       })
       .catch(function(erro) {
         setStatus((erro && erro.message) || "Não foi possível salvar.", "erro");
@@ -104,9 +125,11 @@
     // Membros mudaram: recarrega da próxima vez que a página for aberta.
     window.addEventListener("cadastro-alterado", function() { carregado = false; });
     lista.addEventListener("change", function(e) {
-      var i = e.target.getAttribute("data-i");
-      if (i === null) return;
-      membros[Number(i)].marcado = e.target.checked;
+      var i = e.target.getAttribute("data-i"), tipo = e.target.getAttribute("data-tipo");
+      if (i === null || !tipo) return;
+      var m = membros[Number(i)];
+      m.preferencias = m.preferencias || {};
+      m.preferencias[tipo] = e.target.checked;
       atualizarBotoes();
     });
     document.getElementById("btnSalvarNotificacoes").addEventListener("click", salvar);

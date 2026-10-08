@@ -167,17 +167,17 @@
           <section id="painelNotificacoes" class="painel-admin" hidden>
             <div class="painel-topo"><h2>Notificações</h2><button type="button" id="btnAtualizarNotificacoes" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterNotificacoes"></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao">
-              Marque quem recebe os e-mails da administração. A lista vem da página Membros; quem sair da
+              Marque, para cada membro, quais e-mails ele recebe. A lista vem da página Membros; quem sair da
               administração deixa de receber.
             </p>
             <div class="como-funcionam-notificacoes">
               <strong>Como funcionam os e-mails do sistema</strong>
               <ul>
-                <li><strong>Resumo mensal</strong> (para os marcados abaixo): no dia 1 de cada mês, um e-mail com todas as
+                <li><strong>Resumo mensal</strong> (para quem estiver marcado na coluna): no dia 1 de cada mês, um e-mail com todas as
                   alterações cadastrais do mês anterior e os links dos relatórios. Se nada mudou, não é enviado.</li>
-                <li><strong>CPF bloqueado</strong> (para os marcados abaixo): na hora, quando alguém erra 5 vezes o CPF e a
+                <li><strong>CPF bloqueado</strong> (para quem estiver marcado na coluna): na hora, quando alguém erra 5 vezes o CPF e a
                   data de nascimento.</li>
-                <li><strong>Cadastro excluído</strong> (para os marcados abaixo que são síndico, condomínio ou desenvolvedor):
+                <li><strong>Cadastro excluído</strong> (só síndico, condomínio ou desenvolvedor, se marcados):
                   na hora. O conselho vê no resumo mensal. Morador novo aparece só no resumo mensal.</li>
                 <li><strong>Novo cadastro aguardando aprovação</strong> (para os marcados abaixo que são síndico, condomínio ou
                   desenvolvedor): na hora, com o link para a página Cadastros para aprovação.</li>
@@ -340,33 +340,34 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261007m"></script>
-  <script src="js/utils.js?v=20261007m"></script>
-  <script src="js/data/backend.js?v=20261007m"></script>
+  <script src="js/regras.js?v=20261008a"></script>
+  <script src="js/utils.js?v=20261008a"></script>
+  <script src="js/data/backend.js?v=20261008a"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261007m"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261007m"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261007m"></script>
-  <script src="js/data/DataService.js?v=20261007m"></script>
-  <script src="js/admin-fonte-dados.js?v=20261007m"></script>
-  <script src="js/admin-simples.js?v=20261007m"></script>
-  <script src="js/admin-relatorio.js?v=20261007m"></script>
-  <script src="js/admin-busca.js?v=20261007m"></script>
-  <script src="js/admin-historico.js?v=20261007m"></script>
-  <script src="js/admin-pendencias.js?v=20261007m"></script>
-  <script src="js/admin-permissoes.js?v=20261007m"></script>
-  <script src="js/admin-autorizacoes.js?v=20261007m"></script>
-  <script src="js/admin-membros.js?v=20261007m"></script>
-  <script src="js/admin-bloqueios.js?v=20261007m"></script>
-  <script src="js/vaga-miniatura.js?v=20261007m"></script>
-  <script src="js/admin-aprovacoes.js?v=20261007m"></script>
-  <script src="js/admin-notificacoes.js?v=20261007m"></script>
-  <script src="js/admin-gabarito.js?v=20261007m"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261007m"></script>
-  <script src="js/admin-pre-carga.js?v=20261007m"></script>
-  <script src="js/admin-paineis.js?v=20261007m"></script>
-  <script src="js/popup-links.js?v=20261007m"></script>
+  <script src="js/admin-auth.js?v=20261008a"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261008a"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261008a"></script>
+  <script src="js/data/DataService.js?v=20261008a"></script>
+  <script src="js/admin-fonte-dados.js?v=20261008a"></script>
+  <script src="js/admin-simples.js?v=20261008a"></script>
+  <script src="js/admin-relatorio.js?v=20261008a"></script>
+  <script src="js/admin-busca.js?v=20261008a"></script>
+  <script src="js/admin-historico.js?v=20261008a"></script>
+  <script src="js/admin-pendencias.js?v=20261008a"></script>
+  <script src="js/admin-permissoes.js?v=20261008a"></script>
+  <script src="js/admin-autorizacoes.js?v=20261008a"></script>
+  <script src="js/admin-membros.js?v=20261008a"></script>
+  <script src="js/admin-bloqueios.js?v=20261008a"></script>
+  <script src="js/vaga-miniatura.js?v=20261008a"></script>
+  <script src="js/admin-aprovacoes.js?v=20261008a"></script>
+  <script src="js/admin-notificacoes.js?v=20261008a"></script>
+  <script src="js/admin-gabarito.js?v=20261008a"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261008a"></script>
+  <script src="js/admin-pre-carga.js?v=20261008a"></script>
+  <script src="js/admin-paineis.js?v=20261008a"></script>
+  <script src="js/popup-links.js?v=20261008a"></script>
+  <script src="js/sem-conectivos.js?v=20261008a"></script>
 </body>
 </html>
