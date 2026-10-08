@@ -150,7 +150,8 @@
       if (chip) {
         e.preventDefault();
         e.stopPropagation();
-        window.open(chip.getAttribute("data-url"), "_blank", "noopener");
+        // Abre num popup dentro do site (js/popup-links.js); se não der, em nova aba.
+        if (!(window.PopupLinks && window.PopupLinks.abrir(chip.getAttribute("data-url"), "Ficha em PDF"))) window.open(chip.getAttribute("data-url"), "_blank", "noopener");
         return;
       }
       var botao = e.target.closest("button.pendencia-item");
