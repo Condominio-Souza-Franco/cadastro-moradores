@@ -49,7 +49,7 @@
     var resultado = document.getElementById("resultadoTesteConexoes");
     if (!resultado || !window.DataService) return;
 
-    resultado.textContent = "Testando...";
+    resultado.textContent = "Testando";
 
     DataService.testarConexoes().then(function(status) {
       var linhas = [];
@@ -111,7 +111,7 @@
     var status = document.getElementById("statusPerfil");
     if (!alvo || !DataService.estatisticas) return;
     status.className = "status carregando";
-    status.textContent = "Carregando...";
+    status.textContent = "Carregando";
     DataService.estatisticas().then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar o perfil.");
       // Resposta antiga guardada na aba (antes de carros/motos/bicicletas separados): busca de novo.

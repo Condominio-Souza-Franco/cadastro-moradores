@@ -1,7 +1,7 @@
 // ==========================================
 // CÓDIGO POR E-MAIL PARA ABRIR O CADASTRO (formulário do morador)
 // ==========================================
-// Quando o cadastro exige código (o morador marcou "Exigir código por e-mail..."), a consulta por
+// Quando o cadastro exige código (o morador marcou "Exigir código por e-mail"), a consulta por
 // CPF + data devolve "precisaCodigo". Esta janela pede o código de 6 dígitos enviado ao e-mail e o
 // confere no servidor. pedirCodigoPorEmail(cpf, nasc, emailMascarado) devolve a mesma resposta da
 // consulta normal (encontrado + dados + sessao) ou null se o morador cancelar.
@@ -48,7 +48,7 @@
       confirmar.onclick = function() {
         if (input.value.length !== 6) { mostrarErro("Digite os 6 números do código."); return; }
         confirmar.disabled = true;
-        confirmar.textContent = "Conferindo...";
+        confirmar.textContent = "Conferindo";
         DataService.confirmarCodigoCpf(cpf, nasc, input.value)
           .then(function(r) {
             if (r && r.encontrado) { fechar(r); return; }

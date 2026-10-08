@@ -109,7 +109,7 @@
                   contatos de emergência, ocupantes, prestadores (com chave ou não) e pets.
                   Não traz veículos. Fica na pasta "Relatório de contatos" do Drive.
                 </p>
-                <div id="situacaoRelatorioContatos" class="situacao-relatorio carregando">Carregando...</div>
+                <div id="situacaoRelatorioContatos" class="situacao-relatorio carregando">Carregando</div>
                 <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1dLdxTGZhJNw6IduyJjDz_4g9u0Cwye95?usp=sharing" target="_blank" rel="noopener noreferrer">Backups de Relatórios de Contatos</a>
               </div>
 
@@ -121,7 +121,7 @@
                   o mapa da garagem (G1 e G2) com os veículos desenhados em cada vaga.
                   Fica na pasta "Relatório de veículos" do Drive.
                 </p>
-                <div id="situacaoListaVeiculos" class="situacao-relatorio carregando">Carregando...</div>
+                <div id="situacaoListaVeiculos" class="situacao-relatorio carregando">Carregando</div>
                 <a class="link-backups-relatorio" href="https://drive.google.com/drive/folders/1ZHTUh1wWCMGOsHfhnqTOXyUbqnz97KGF?usp=sharing" target="_blank" rel="noopener noreferrer">Backups das Listas de veículos</a>
               </div>
 
@@ -139,7 +139,7 @@
             <div class="linha">
               <label for="aptoAdmin">Apartamento:</label>
               <select id="aptoAdmin">
-                <option value="">Selecione...</option>
+                <option value="">Selecione</option>
               </select>
               <button type="button" id="btnBuscarApto">Carregar dados</button>
             </div>
@@ -151,7 +151,7 @@
           </section>
 
           <section id="painelMembros" class="painel-admin" hidden>
-            <div class="painel-topo"><h2>Membros</h2><button type="button" id="btnAtualizarMembros" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterMembros"></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <div class="painel-topo"><h2>Membros</h2><span class="bloco-atualizar"><button type="button" id="btnAtualizarMembros" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterMembros"></span></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao" id="descricaoMembros">Quem acessa a área restrita. O e-mail de acesso é o da conta Google usada no login.</p>
             <div id="statusMembros" class="status"></div>
             <div class="acoes-50 acoes-3" data-espelho="acoesMembros"></div>
@@ -165,7 +165,7 @@
           </section>
 
           <section id="painelNotificacoes" class="painel-admin" hidden>
-            <div class="painel-topo"><h2>Notificações</h2><button type="button" id="btnAtualizarNotificacoes" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterNotificacoes"></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <div class="painel-topo"><h2>Notificações</h2><span class="bloco-atualizar"><button type="button" id="btnAtualizarNotificacoes" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterNotificacoes"></span></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao">
               Marque, para cada membro, quais e-mails ele recebe. A lista vem da página Membros; quem sair da
               administração deixa de receber.
@@ -253,8 +253,7 @@
           <section id="painelAprovacoes" class="painel-admin" hidden>
             <div class="painel-topo">
               <h2>Cadastros para aprovação</h2>
-              <button type="button" id="btnAtualizarAprovacoes" class="btn-atualizar-pendencias">Atualizar</button>
-              <span class="atualizado-em" data-leitura="listarAprovacoes"></span>
+              <span class="bloco-atualizar"><button type="button" id="btnAtualizarAprovacoes" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="listarAprovacoes"></span></span>
               <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
             </div>
             <p class="descricao-acao">Cadastros novos enviados pelo formulário. Só entram no sistema (consulta, relatórios e acesso do
@@ -269,8 +268,7 @@
           <section id="painelBloqueios" class="painel-admin" hidden>
             <div class="painel-topo">
               <h2>Bloqueios</h2>
-              <button type="button" id="btnAtualizarBloqueios" class="btn-atualizar-pendencias">Atualizar</button>
-              <span class="atualizado-em" data-leitura="listarBloqueios"></span>
+              <span class="bloco-atualizar"><button type="button" id="btnAtualizarBloqueios" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="listarBloqueios"></span></span>
               <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
             </div>
             <p class="descricao-acao">CPFs bloqueados depois de 5 tentativas com CPF e data de nascimento que não conferem. O bloqueio só
@@ -285,8 +283,7 @@
           <section id="painelPendencias" class="painel-admin" hidden>
             <div class="painel-topo">
               <h2>Pendências</h2>
-              <button type="button" id="btnAtualizarPendencias" class="btn-atualizar-pendencias">Atualizar</button>
-              <span class="atualizado-em" data-leitura="listarPendencias"></span>
+              <span class="bloco-atualizar"><button type="button" id="btnAtualizarPendencias" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="listarPendencias"></span></span>
               <button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button>
             </div>
             <p class="dica-pendencias">Toque num grupo para ver a lista e num item para abrir o cadastro. Marque a caixinha para ignorar uma pendência.</p>
@@ -295,7 +292,7 @@
           </section>
 
           <section id="painelGabarito" class="painel-admin" hidden>
-            <div class="painel-topo"><h2>Gabarito de vagas</h2><button type="button" id="btnAtualizarGabarito" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterGabaritoVagasCompleto"></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
+            <div class="painel-topo"><h2>Gabarito de vagas</h2><span class="bloco-atualizar"><button type="button" id="btnAtualizarGabarito" class="btn-atualizar-pendencias">Atualizar</button><span class="atualizado-em" data-leitura="obterGabaritoVagasCompleto"></span></span><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <p class="descricao-acao">
               Uma linha por vaga do desenho (vagas não são criadas nem removidas; para devolver uma ao condomínio, escolha "— Condomínio —"). Salvar grava no banco de dados e na aba "Gabarito" da planilha. Se a vaga não
               bater com o desenho da garagem, aparece um aviso (dá para salvar mesmo assim).
@@ -357,12 +354,12 @@
         </details>
 
         <section class="busca-home">
-          <h2 class="titulo-home">Busca geral <span class="subtitulo-painel">(nome, carro, pet, prestador...)</span></h2>
+          <h2 class="titulo-home">Busca geral <span class="subtitulo-painel">(nome, carro, pet ou prestador)</span></h2>
             <div id="buscaGeralAdmin" class="card-busca">
               <div class="linha-busca">
                 <!-- O × fica dentro do campo, à direita: limpa o termo e os resultados. -->
                 <div class="campo-busca">
-                  <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa, modelo..." aria-label="Buscar em todos os cadastros">
+                  <input type="text" id="buscaGeralInput" placeholder="Digite um nome, placa ou modelo" aria-label="Buscar em todos os cadastros">
                   <button type="button" id="btnFecharBusca" class="btn-limpar-busca" aria-label="Limpar busca" title="Limpar busca" hidden>&times;</button>
                 </div>
                 <button type="button" id="btnBuscaGeral">Buscar</button>
@@ -379,39 +376,40 @@
   <div id="overlayProcessamento" class="overlay-processamento hidden" aria-live="polite" aria-busy="true">
     <div class="overlay-processamento-card">
       <div class="overlay-processamento-spinner" aria-hidden="true"></div>
-      <p id="overlayProcessamentoMensagem">Aguarde: buscando cadastro...</p>
+      <p id="overlayProcessamentoMensagem">Aguarde: buscando cadastro</p>
     </div>
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261008b"></script>
-  <script src="js/utils.js?v=20261008b"></script>
-  <script src="js/data/backend.js?v=20261008b"></script>
+  <script src="js/regras.js?v=20261008c"></script>
+  <script src="js/utils.js?v=20261008c"></script>
+  <script src="js/data/backend.js?v=20261008c"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261008b"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261008b"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261008b"></script>
-  <script src="js/data/DataService.js?v=20261008b"></script>
-  <script src="js/admin-fonte-dados.js?v=20261008b"></script>
-  <script src="js/admin-simples.js?v=20261008c"></script>
-  <script src="js/admin-relatorio.js?v=20261008b"></script>
-  <script src="js/admin-busca.js?v=20261008b"></script>
-  <script src="js/admin-historico.js?v=20261008b"></script>
-  <script src="js/admin-pendencias.js?v=20261008b"></script>
-  <script src="js/admin-permissoes.js?v=20261008b"></script>
-  <script src="js/admin-autorizacoes.js?v=20261008b"></script>
-  <script src="js/admin-membros.js?v=20261008b"></script>
-  <script src="js/admin-bloqueios.js?v=20261008b"></script>
-  <script src="js/vaga-miniatura.js?v=20261008b"></script>
-  <script src="js/admin-aprovacoes.js?v=20261008b"></script>
-  <script src="js/admin-notificacoes.js?v=20261008b"></script>
-  <script src="js/admin-gabarito.js?v=20261008b"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261008b"></script>
-  <script src="js/admin-pre-carga.js?v=20261008b"></script>
-  <script src="js/admin-paineis.js?v=20261008b"></script>
-  <script src="js/popup-links.js?v=20261008b"></script>
-  <script src="js/sem-conectivos.js?v=20261008b"></script>
+  <script src="js/admin-auth.js?v=20261008c"></script>
+  <script src="js/admin-badges.js?v=20261008c"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261008c"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261008c"></script>
+  <script src="js/data/DataService.js?v=20261008c"></script>
+  <script src="js/admin-fonte-dados.js?v=20261008c"></script>
+  <script src="js/admin-simples.js?v=20261008d"></script>
+  <script src="js/admin-relatorio.js?v=20261008c"></script>
+  <script src="js/admin-busca.js?v=20261008c"></script>
+  <script src="js/admin-historico.js?v=20261008c"></script>
+  <script src="js/admin-pendencias.js?v=20261008c"></script>
+  <script src="js/admin-permissoes.js?v=20261008c"></script>
+  <script src="js/admin-autorizacoes.js?v=20261008c"></script>
+  <script src="js/admin-membros.js?v=20261008c"></script>
+  <script src="js/admin-bloqueios.js?v=20261008c"></script>
+  <script src="js/vaga-miniatura.js?v=20261008c"></script>
+  <script src="js/admin-aprovacoes.js?v=20261008c"></script>
+  <script src="js/admin-notificacoes.js?v=20261008c"></script>
+  <script src="js/admin-gabarito.js?v=20261008c"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261008c"></script>
+  <script src="js/admin-pre-carga.js?v=20261008c"></script>
+  <script src="js/admin-paineis.js?v=20261008c"></script>
+  <script src="js/popup-links.js?v=20261008c"></script>
+  <script src="js/sem-conectivos.js?v=20261008c"></script>
 </body>
 </html>

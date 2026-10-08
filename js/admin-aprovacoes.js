@@ -72,11 +72,9 @@
     "</div>";
   }
 
+  // A última contagem fica guardada (js/admin-badges.js) e aparece assim que a página abre.
   function atualizarContador(total) {
-    var el = document.getElementById("contadorAprovacoes");
-    if (!el) return;
-    el.hidden = !total;
-    el.textContent = total > 99 ? "99+" : (total ? String(total) : "");
+    if (window.BadgeMenu) window.BadgeMenu.definir("contadorAprovacoes", total);
   }
 
   function renderizar(r) {
@@ -115,7 +113,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     DataService.listarAprovacoes()
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar os cadastros pendentes.");
@@ -128,7 +126,7 @@
 
   function decidir(id, decisao, motivo) {
     if (decisao === "aprovar" && !window.confirm("Aprovar este cadastro? Ele passa a valer no sistema (consulta e relatórios) e o morador recebe a confirmação por e-mail.")) return;
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, decisao === "aprovar" ? "Aguarde: aprovando..." : "Aguarde: rejeitando...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, decisao === "aprovar" ? "Aguarde: aprovando" : "Aguarde: rejeitando");
     DataService.decidirAprovacao(id, decisao, motivo)
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível registrar a decisão.");

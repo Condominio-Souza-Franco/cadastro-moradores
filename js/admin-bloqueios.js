@@ -61,7 +61,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     DataService.listarBloqueios()
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar os bloqueios.");
@@ -75,7 +75,7 @@
 
   function desbloquear(id) {
     if (!window.confirm("Desbloquear este CPF? A pessoa volta a poder consultar e atualizar o cadastro. O registro do bloqueio continua no histórico.")) return;
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: desbloqueando...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: desbloqueando");
     DataService.desbloquearCpf(id)
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível desbloquear.");

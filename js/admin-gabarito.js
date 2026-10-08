@@ -305,7 +305,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     Promise.all([DataService.obterGabaritoVagasCompleto(), desenho ? Promise.resolve(desenho) : carregarDesenho()])
       .then(function(r) {
         var resposta = r[0];
@@ -364,13 +364,13 @@
       return;
     }
     if (todosAvisos.length && !window.confirm("Há " + todosAvisos.length + " aviso(s):\n\n" + todosAvisos.slice(0, 8).join("\n") +
-      (todosAvisos.length > 8 ? "\n..." : "") + "\n\nSalvar mesmo assim?")) {
+      (todosAvisos.length > 8 ? "\n(e mais " + (todosAvisos.length - 8) + ")" : "") + "\n\nSalvar mesmo assim?")) {
       return;
     }
 
     var botao = document.getElementById("btnSalvarGabarito");
     if (botao) botao.disabled = true;
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando o gabarito de vagas...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando o gabarito de vagas");
     DataService.salvarGabarito(enviar)
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) throw new Error((resposta && resposta.mensagem) || "Não foi possível salvar.");

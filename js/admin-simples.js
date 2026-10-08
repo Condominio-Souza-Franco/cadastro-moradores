@@ -9,7 +9,7 @@
     if (!select) return;
 
     select.innerHTML = "";
-    select.add(new Option("Selecione...", ""));
+    select.add(new Option("Selecione", ""));
 
     for (var andar = 2; andar <= 8; andar++) {
       for (var pos = 1; pos <= 6; pos++) {
@@ -27,7 +27,7 @@
     if (!select) return;
 
     select.innerHTML = "";
-    select.add(new Option("Selecione...", ""));
+    select.add(new Option("Selecione", ""));
 
     (Array.isArray(itens) ? itens : []).forEach(function(item) {
       if (!item || !item.apto) return;
@@ -64,7 +64,7 @@
     if (select) {
       select.disabled = true;
       select.innerHTML = "";
-      select.add(new Option("Carregando...", ""));
+      select.add(new Option("Carregando", ""));
     }
     setStatus("", "");
 
@@ -83,7 +83,7 @@
           // Sessão expirada: o admin-auth.js já voltou para a tela de login.
           if (select) {
             select.innerHTML = "";
-            select.add(new Option("Selecione...", ""));
+            select.add(new Option("Selecione", ""));
           }
           return;
         }
@@ -585,7 +585,7 @@
         var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.\n\nSe o morador saiu do prédio, prefira \"Mudou-se\": o cadastro e o histórico ficam guardados. Excluir apaga tudo.");
         if (!confirmar) return;
 
-        setOverlayAdmin(true, "Aguarde: excluindo cadastro...");
+        setOverlayAdmin(true, "Aguarde: excluindo cadastro");
         DataService.excluirCadastro(apto, ocorrencia)
           .then(function(resposta) {
             setOverlayAdmin(false);
@@ -630,7 +630,7 @@
           : "Reativar o cadastro " + (nome ? "de " + nome + " " : "") + "(apto " + apto + ")? Ele volta aos relatórios, à planilha e à consulta por CPF.";
         if (!window.confirm(pergunta)) return;
 
-        setOverlayAdmin(true, marcandoMudouSe ? "Aguarde: marcando \"mudou-se\"..." : "Aguarde: reativando cadastro...");
+        setOverlayAdmin(true, marcandoMudouSe ? "Aguarde: marcando \"mudou-se\"" : "Aguarde: reativando cadastro");
         DataService.definirSituacaoCadastro(apto, ocorrencia, situacao)
           .then(function(resposta) {
             setOverlayAdmin(false);
@@ -678,7 +678,7 @@
     // O cadastro aparece no painel "Consulta por apartamento" (abre e vai para o topo).
     if (window.AdminPaineis) window.AdminPaineis.abrir("painelConsulta");
     setStatus("", "");
-    setOverlayAdmin(true, "Aguarde: buscando cadastro...");
+    setOverlayAdmin(true, "Aguarde: buscando cadastro");
 
     return DataService.obterMoradorPorApto(apto, ocorrencia)
       .then(function(respostaFinal) {

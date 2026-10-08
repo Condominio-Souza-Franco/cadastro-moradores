@@ -151,6 +151,11 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
 }
 
 function alternarMoradorNovo() {
+  // Com a sessão de 1 hora (js/sessao-morador.js), este botão vira "Sair".
+  if (window.SessaoMorador && window.SessaoMorador.telaTravada()) {
+    window.SessaoMorador.sair();
+    return;
+  }
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
   const nascConsulta = document.getElementById('nascConsulta');
@@ -331,6 +336,9 @@ function voltarTelaInicial() {
     }
 
     atualizarBloqueioNovoCadastro();
+
+    // Sessão de 1 hora ativa: a consulta volta preenchida e travada, com "Visualizar cadastro" e "Sair".
+    if (window.SessaoMorador) window.SessaoMorador.aplicarNaTela();
   } catch (erro) {
     console.error('Erro ao voltar para a tela inicial: ', erro);
     window.location.reload();

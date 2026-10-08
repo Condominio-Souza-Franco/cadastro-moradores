@@ -76,7 +76,7 @@
   function carregar() {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando...", "carregando");
+    setStatus("Carregando", "carregando");
     DataService.obterNotificacoes()
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as notificações.");
@@ -91,7 +91,7 @@
 
   function salvar() {
     document.getElementById("btnSalvarNotificacoes").disabled = true;
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando");
     DataService.salvarNotificacoes(marcados())
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
