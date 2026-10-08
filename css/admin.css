@@ -3311,3 +3311,13 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 
 /* Membros e Autorizações se alternam: o display do formulário não pode anular o "hidden". */
 #formMembros[hidden], #autorizacoesMembros[hidden], #descricaoMembros[hidden] { display: none !important; }
+
+/* Autorizações: regras em linhas, com setas. */
+.aut-regras { font-size: 0.78rem; color: #43566b; margin: 4px 0 10px; }
+.aut-regras p { margin: 0 0 4px; }
+.aut-regras ul { margin: 0; padding-left: 0; list-style: none; }
+.aut-regras li { margin: 3px 0; padding-left: 12px; position: relative; }
+.aut-regras li::before { content: ""; position: absolute; left: 2px; top: 0.55em; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-color); }
+.aut-so-ver { margin-top: 6px !important; font-style: italic; color: #8a5a00; }
+
+.atualizado-em.carregando-indicador { font-style: italic; color: #5f7287; }

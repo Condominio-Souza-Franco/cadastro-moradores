@@ -50,7 +50,16 @@
       }).join("") + "</tr>";
     }).join("");
     caixa.innerHTML =
-      '<p class="descricao-acao">Marque o que cada cargo pode ver (ler) e alterar (escrever). O Desenvolvedor tem acesso a tudo. Quem altera cada coluna: a do Condomínio, só o Desenvolvedor; a do Síndico, o Condomínio; as do Conselho e da Administradora, o Condomínio ou o Síndico. ' + (dados.podeEditar ? "" : "Você pode apenas visualizar esta tabela.") + "</p>" +
+      '<div class="aut-regras">' +
+        '<p>Marque o que cada cargo pode <strong>ver (ler)</strong> e <strong>alterar (escrever)</strong>.</p>' +
+        '<ul>' +
+          '<li><strong>Desenvolvedor</strong> → acesso a tudo; altera as colunas do Condomínio, Síndico, Conselho e Administradora</li>' +
+          '<li><strong>Condomínio</strong> → altera as colunas do Síndico, Conselho e Administradora</li>' +
+          '<li><strong>Síndico</strong> → altera as colunas do Conselho e da Administradora</li>' +
+          '<li><strong>Conselho</strong> e <strong>Administradora</strong> → só visualizam</li>' +
+        '</ul>' +
+        (dados.podeEditar ? '' : '<p class="aut-so-ver">Você pode apenas visualizar esta tabela.</p>') +
+      '</div>' +
       '<div class="aut-tabela-rolagem"><table class="aut-tabela"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
     atualizarBotoes();
   }
@@ -61,20 +70,26 @@
     if (!aberto) return;
     var salvar = el("btnSalvarMembros"), desfazer = el("btnDesfazerMembros");
     var pode = !!(dados && dados.podeEditar);
-    if (salvar) { salvar.hidden = !pode; salvar.disabled = !alterado(); }
-    if (desfazer) { desfazer.hidden = !pode; desfazer.disabled = !alterado(); }
+    // Quem só visualiza vê Desfazer/Salvar desativados (não somem: a linha continua com 3 botões).
+    if (salvar) { salvar.hidden = false; salvar.disabled = !pode || !alterado(); }
+    if (desfazer) { desfazer.hidden = false; desfazer.disabled = !pode || !alterado(); }
   }
 
   function carregar() {
-    setStatus("Carregando...", "carregando");
+    // "Carregando..." no lugar do "atualizado há..." ao lado do Atualizar: a página não pula.
+    var indicador = document.querySelector("#painelMembros .atualizado-em");
+    var textoAntes = indicador ? indicador.textContent : "";
+    if (indicador) { indicador.textContent = "Carregando..."; indicador.classList.add("carregando-indicador"); }
+    function restaurar() { if (indicador) { indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
+    setStatus("", "");
     return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as autorizações.");
       dados = r;
       atual = JSON.parse(JSON.stringify(r.permissoes));
       originais = JSON.stringify(atual);
-      setStatus("", "");
+      restaurar();
       renderizar();
-    }).catch(function(erro) { setStatus((erro && erro.message) || "Não foi possível carregar as autorizações.", "erro"); });
+    }).catch(function(erro) { restaurar(); setStatus((erro && erro.message) || "Não foi possível carregar as autorizações.", "erro"); });
   }
 
   function abrir(sim) {
@@ -87,10 +102,12 @@
     el("autorizacoesMembros").hidden = !sim;
     var titulo = document.querySelector("#painelMembros .painel-topo h2");
     if (titulo) titulo.textContent = sim ? "Membros > Autorizações" : "Membros";
+    // A descrição troca de texto (não some), para os botões não pularem.
     var descricao = el("descricaoMembros");
-    if (descricao) descricao.hidden = sim;
-    var atualizar = el("btnAtualizarMembros");
-    if (atualizar) atualizar.hidden = sim;
+    if (descricao) {
+      if (!descricao.dataset.textoMembros) descricao.dataset.textoMembros = descricao.textContent;
+      descricao.textContent = sim ? "O que cada cargo pode ver e fazer na área da administração." : descricao.dataset.textoMembros;
+    }
     if (sim) {
       carregar();
     } else {
@@ -135,6 +152,13 @@
       });
       renderizar();
     });
+    // Com a tabela aberta, "Atualizar" recarrega as autorizações.
+    el("btnAtualizarMembros").addEventListener("click", function(e) {
+      if (!aberto) return;
+      e.stopImmediatePropagation();
+      if (alterado() && !window.confirm("Há alterações não salvas nas autorizações. Atualizar e descartar?")) return;
+      carregar();
+    }, true);
     // Com a tabela aberta, "Desfazer" e "Salvar alterações" valem para ela (fase de captura: antes do Membros).
     el("btnSalvarMembros").addEventListener("click", function(e) {
       if (!aberto) return;
