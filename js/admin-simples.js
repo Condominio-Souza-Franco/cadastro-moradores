@@ -162,7 +162,8 @@
       html.push(escaparHtml(texto.slice(ultimo, m.index)));
       if (ddd) {
         html.push('<span class="telefone-item"><span class="telefone-numero">' + escaparHtml(numero) + '</span>' +
-          '<a class="acao-telefone acao-whatsapp" href="https://wa.me/55' + ddd + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
+          // WhatsApp só para celular (DDD + 9 dígitos começando com 9); telefone fixo só tem "Ligar".
+          (/^\d{2}9\d{8}$/.test(ddd) ? '<a class="acao-telefone acao-whatsapp" href="https://wa.me/55' + ddd + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' : '') +
           '<a class="acao-telefone acao-ligar" href="tel:+55' + ddd + '">Ligar</a></span>');
       } else {
         html.push(escaparHtml(m[0]));

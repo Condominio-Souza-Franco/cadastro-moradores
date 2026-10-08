@@ -53,7 +53,7 @@
     return window.Backend.chamar("fbMeuAcesso", { idToken: idToken }, false, "servidor")
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Este e-mail não está autorizado para a área restrita.");
-        return { papel: r.papel, nomePapel: r.nomePapel };
+        return { papel: r.papel, nomePapel: r.nomePapel, permissoes: r.permissoes || null };
       });
   }
 
@@ -71,6 +71,7 @@
       email: textoLimpo(payload.email),
       papel: (acesso && acesso.papel) || "",
       nomePapel: (acesso && acesso.nomePapel) || "",
+      permissoes: (acesso && acesso.permissoes) || null, // Membros > Autorizações (só para a tela; o backend confere)
       name: textoLimpo(payload.name),
       picture: textoLimpo(payload.picture),
       // "exp" do token do Google, em milissegundos (o token vale ~1 hora).
@@ -292,13 +293,14 @@
     var sessao = carregarSessao();
     if (sessao && !sessaoExpirada(sessao)) {
       // Sessão desta aba ainda válida: entra direto (o backend confere o acesso a cada chamada).
-      if (sessao.papel) {
+      if (sessao.papel && sessao.permissoes) {
         liberarAreaAdmin(sessao);
       } else {
         consultarAcesso(obterIdToken())
           .then(function(acesso) {
             sessao.papel = acesso.papel;
             sessao.nomePapel = acesso.nomePapel;
+            sessao.permissoes = acesso.permissoes;
             sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(sessao));
             liberarAreaAdmin(sessao);
           })
@@ -315,7 +317,8 @@
     getIdToken: obterIdToken,
     // Papel de quem está logado: "condominio", "desenvolvedor", "sindico" ou "conselho".
     getPapel: function() { var s = carregarSessao(); return (s && s.papel) || ""; },
-    getEmail: function() { var s = carregarSessao(); return (s && s.email) || ""; }
+    getEmail: function() { var s = carregarSessao(); return (s && s.email) || ""; },
+    getPermissoes: function() { var s = carregarSessao(); return (s && s.permissoes) || null; }
   };
 
   document.addEventListener("DOMContentLoaded", init);

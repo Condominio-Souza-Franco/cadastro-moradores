@@ -214,6 +214,7 @@
       renderizar();
     });
 
+    window.atualizarBotoesMembros = atualizarBotoes; // a página Autorizações devolve os botões ao fechar
     document.getElementById("btnSalvarMembros").addEventListener("click", salvar);
     document.getElementById("btnDesfazerMembros").addEventListener("click", function() {
       membros = JSON.parse(originais);

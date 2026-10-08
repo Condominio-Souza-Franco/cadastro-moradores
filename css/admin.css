@@ -3146,17 +3146,24 @@ button.pendencia-item::before {
 .consulta-mapa-vaga svg { display: block; width: 100%; height: auto; }
 .consulta-mapa-dica { display: block; margin-top: 4px; font-size: 0.72rem; color: #5f7287; text-align: center; }
 
-/* ---------- Administradora: só Consulta por apartamento e Busca geral ---------- */
-body.papel-administradora .menu-admin button[data-painel]:not([data-painel="painelConsulta"]),
-body.papel-administradora #historicoAdmin,
-body.papel-administradora #btnAbrirFonteDados,
-body.papel-administradora .btn-excluir-cadastro,
-body.papel-administradora .btn-editar-cadastro,
-body.papel-administradora .btn-situacao-cadastro,
-body.papel-administradora .btn-desativar-codigo,
-body.papel-administradora .btn-ficha-pdf,
-body.papel-administradora .sem-pdf-cadastro { display: none !important; }
-body.papel-administradora .menu-admin button[data-painel="painelConsulta"] { grid-column: 1 / -1 !important; }
+/* ---------- Sem autorização (Membros > Autorizações): visual de desativado ---------- */
+.menu-admin button.sem-autorizacao,
+#btnAbrirFonteDados.sem-autorizacao,
+body.sem-historico #historicoAdmin > summary,
+body.sem-editarCadastros .btn-excluir-cadastro,
+body.sem-editarCadastros .btn-editar-cadastro,
+body.sem-editarCadastros .btn-situacao-cadastro,
+body.sem-editarCadastros .btn-desativar-codigo,
+body.sem-drive .btn-ficha-pdf,
+body.sem-drive a[href*="drive.google.com"],
+body.sem-drive a[href*="docs.google.com"] {
+  opacity: 0.45 !important; cursor: not-allowed !important; filter: grayscale(1);
+}
+body.sem-editarCadastros .btn-excluir-cadastro,
+body.sem-editarCadastros .btn-editar-cadastro,
+body.sem-editarCadastros .btn-situacao-cadastro,
+body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important; }
+.menu-admin button.sem-autorizacao:hover { background: var(--surface) !important; color: var(--accent-color) !important; }
 .cargo-nota { font-weight: 400; font-size: 0.72rem; color: #5f7287; }
 
 /* ---------- Perfil dos moradores (página "Dados") ---------- */
@@ -3172,3 +3179,51 @@ body.papel-administradora .menu-admin button[data-painel="painelConsulta"] { gri
 .grafico-genero .barra-linha:nth-child(3) .barra { background: #8e5bb5; }
 .barra-valor { font-weight: 700; white-space: nowrap; }
 .barra-valor small { font-weight: 400; color: #5f7287; }
+
+/* ---------- Membros: Autorizações + Desfazer + Salvar na mesma linha; tabela de autorizações ---------- */
+.acoes-50.acoes-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.btn-autorizacoes.ativo { background: var(--accent-color) !important; color: #fff !important; border-color: var(--accent-color) !important; }
+.aut-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.aut-topo h3 { margin: 6px 0; font-size: 0.95rem; color: #243447; }
+.aut-tabela-rolagem { overflow-x: auto; }
+.aut-tabela { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.aut-tabela th { padding: 6px 4px; text-align: center; color: #5f7287; font-weight: 700; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.aut-tabela th:first-child { text-align: left; }
+.aut-tabela td { padding: 6px 4px; border-bottom: 1px solid #eef1f4; }
+.aut-tabela tbody tr:nth-child(even) td { background: #f7f9fb; }
+.aut-celula { text-align: center; width: 15%; }
+.aut-check { position: relative; display: inline-flex; width: 20px; height: 20px; cursor: pointer; }
+.aut-check input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.aut-caixa { width: 18px; height: 18px; border: 2px solid var(--accent-color); border-radius: 5px; background: #fff; box-sizing: border-box; transition: background 0.15s; }
+.aut-check input:checked + .aut-caixa { background: var(--accent-color); }
+.aut-check input:checked + .aut-caixa::after { content: ""; display: block; width: 5px; height: 9px; margin: 1px 0 0 5px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.aut-check input:focus-visible + .aut-caixa { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+.aut-check.travado { cursor: default; opacity: 0.55; }
+.aut-check.travado input { cursor: default; }
+@media (max-width: 560px) { .aut-tabela { font-size: 0.7rem; } .aut-tabela th { white-space: normal; } }
+
+/* ---------- Hover legível nos botões claros ----------
+   A regra geral "button:hover" escurece o fundo (#174a7a) sem mudar a cor do texto; nos botões de fundo
+   claro e texto azul, o texto sumia. Aqui eles ganham um fundo claro no hover, mantendo o texto. */
+.btn-atualizar-historico:hover,
+.btn-atualizar-pendencias:hover,
+.menu-admin button:not(.ativo):not(.sem-autorizacao):not(:disabled):hover,
+.btn-pagina-inicial:hover,
+.gabarito-acoes .btn-secundario:hover,
+.gabarito-modos button:not(.ativo):hover,
+.gabarito-garagens button:not(.ativo):hover,
+.editor-vaga-mapa .btn-secundario:hover,
+.membros-acoes .btn-secundario:not(.ativo):hover,
+.acoes-50 .btn-secundario:not(.ativo):hover,
+.segmentado > button:not(.ativo):hover,
+.btn-restaurar-numeracao:not(:disabled):hover,
+.btn-cancelar-rejeicao:hover {
+  background: #e9f1fa !important;
+}
+.btn-restaurar-numeracao:disabled:hover { background: inherit !important; }
+.btn-rejeitar:hover,
+.btn-desativar-codigo:hover { background: #fdecec !important; }
+.btn-confirmar-rejeicao:hover { background: #a61f1f !important; color: #fff !important; }
+.btn-aprovar:hover { background: #17652f !important; color: #fff !important; }
+.segmentado > button.ativo:hover,
+.btn-autorizacoes.ativo:hover { color: #fff !important; }
