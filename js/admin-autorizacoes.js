@@ -83,7 +83,7 @@
     el("formMembros").hidden = sim;
     el("autorizacoesMembros").hidden = !sim;
     var titulo = document.querySelector("#painelMembros .painel-topo h2");
-    if (titulo) titulo.textContent = sim ? "Autorizações" : "Membros";
+    if (titulo) titulo.textContent = sim ? "Membros > Autorizações" : "Membros";
     var descricao = el("descricaoMembros");
     if (descricao) descricao.hidden = sim;
     var atualizar = el("btnAtualizarMembros");

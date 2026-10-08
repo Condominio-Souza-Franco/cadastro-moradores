@@ -1,7 +1,8 @@
 // ==========================================
 // MEMBROS DA ADMINISTRAÇÃO (ADMIN)
 // ==========================================
-// Define quem acessa a área restrita: e-mail do condomínio, síndico, 3 membros do conselho e
+// Define quem acessa a área restrita: e-mail do condomínio, síndico, membros do conselho (quantos
+// quiser: "+" e "Apagar", só condomínio, síndico e desenvolvedor), administradora e
 // desenvolvedor. Para cada cargo (menos o condomínio) escolhe-se o morador; aparecem nome e
 // telefone, e o e-mail de acesso pode ser o do cadastro (padrão, campo travado) ou outro.
 //
@@ -12,13 +13,18 @@
 //   conselho: cada membro edita só o próprio e-mail de acesso.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
-  var CARGOS = [
-    { chave: "sindico", titulo: "Síndico" },
-    { chave: "conselho", indice: 0, titulo: "Conselho — membro 1" },
-    { chave: "conselho", indice: 1, titulo: "Conselho — membro 2" },
-    { chave: "conselho", indice: 2, titulo: "Conselho — membro 3" },
-    { chave: "desenvolvedor", titulo: "Desenvolvedor" }
-  ];
+  var MAX_CONSELHO = 10;
+  // Cargos na tela: síndico, um por membro do conselho (quantos houver) e desenvolvedor.
+  function cargosLista() {
+    var lista = [{ chave: "sindico", titulo: "Síndico" }];
+    (membros && membros.conselho || []).forEach(function(c, i) {
+      lista.push({ chave: "conselho", indice: i, titulo: "Conselho — membro " + (i + 1) });
+    });
+    lista.push({ chave: "desenvolvedor", titulo: "Desenvolvedor" });
+    return lista;
+  }
+  // Acrescentar/apagar membros do conselho: condomínio, síndico e desenvolvedor.
+  function podeMudarConselho() { return papel === "condominio" || papel === "sindico" || papel === "desenvolvedor"; }
 
   var membros = null;      // o que está na tela
   var originais = "";      // JSON do que veio do backend
@@ -78,7 +84,10 @@
       : (cargo.cadastroId ? "Morador não encontrado (pode ter se mudado)" : "");
     var semEmailNoCadastro = morador && cargo.usarEmailCadastro && !morador.email;
     return '<div class="cargo-membro cargo-' + def.chave + (def.chave === "conselho" ? " cargo-conselho-" + def.indice : "") + '" data-i="' + i + '">' +
-      '<div class="cargo-titulo">' + escaparHtml(def.titulo) + "</div>" +
+      '<div class="cargo-titulo">' + escaparHtml(def.titulo) +
+        (def.chave === "conselho" && podeMudarConselho()
+          ? ' <button type="button" class="btn-apagar-conselho" data-indice="' + def.indice + '" title="Apagar este membro do conselho" aria-label="Apagar ' + escaparHtml(def.titulo) + '">Apagar</button>'
+          : "") + "</div>" +
       '<select data-campo="cadastroId" aria-label="Apartamento do ' + escaparHtml(def.titulo) + '"' + (podeMorador ? "" : " disabled") + ">" + opcoesMoradores(cargo.cadastroId) + "</select>" +
       (info ? '<div class="cargo-info">' + info + "</div>" : "") +
       '<input type="email" data-campo="email" placeholder="' + (cargo.usarEmailCadastro ? (semEmailNoCadastro ? "o cadastro não tem e-mail" : "e-mail do cadastro") : "e-mail de acesso") +
@@ -92,15 +101,31 @@
   function renderizar() {
     var form = document.getElementById("formMembros");
     if (!form || !membros) return;
+    var lista = cargosLista();
+    var html = {};
+    lista.forEach(function(def, i) { html[def.chave + (def.chave === "conselho" ? def.indice : "")] = cargoHtml(def, i); });
+    var conselhoHtml = (membros.conselho || []).map(function(c, i) { return html["conselho" + i]; }).join("");
+    // Coluna 1: Condomínio, Síndico, Administradora, Desenvolvedor. Coluna 2: Conselho (com "+").
+    // No celular as colunas se desfazem e a ordem vira Condomínio, Síndico, Administradora, Conselho, Desenvolvedor.
     form.innerHTML =
-      '<div class="cargo-membro cargo-condominio"><div class="cargo-titulo">Condomínio</div>' +
-        '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
-        escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
-      CARGOS.map(cargoHtml).join("") +
-      // Administradora: só visualiza a Consulta por apartamento e a Busca geral (o backend barra o resto).
-      '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(só visualização: consulta por apartamento e busca geral)</span></div>' +
-        '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
-        escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>";
+      '<div class="membros-coluna membros-coluna-1">' +
+        '<div class="cargo-membro cargo-condominio"><div class="cargo-titulo">Condomínio</div>' +
+          '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
+          escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
+        html.sindico +
+        // Administradora: o acesso segue Membros > Autorizações.
+        '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(acesso conforme as Autorizações)</span></div>' +
+          '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
+          escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>" +
+        html.desenvolvedor +
+      "</div>" +
+      '<div class="membros-coluna membros-coluna-2">' +
+        '<div class="conselho-cabecalho"><span>Conselho</span>' +
+          (podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO
+            ? '<button type="button" class="btn-mais-conselho" title="Acrescentar membro do conselho" aria-label="Acrescentar membro do conselho">+</button>'
+            : "") + "</div>" +
+        (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
+      "</div>";
     atualizarBotoes();
   }
 
@@ -188,14 +213,32 @@
       if (e.target.id === "emailAdministradora") { membros.administradora = { email: e.target.value.trim().toLowerCase() }; atualizarBotoes(); return; }
       var bloco = e.target.closest(".cargo-membro[data-i]");
       if (!bloco || e.target.getAttribute("data-campo") !== "email") return;
-      cargoDe(CARGOS[Number(bloco.getAttribute("data-i"))]).email = e.target.value.trim().toLowerCase();
+      cargoDe(cargosLista()[Number(bloco.getAttribute("data-i"))]).email = e.target.value.trim().toLowerCase();
       atualizarBotoes();
+    });
+
+    // "+" acrescenta um membro do conselho em branco; "Apagar" tira o membro (vale ao salvar).
+    form.addEventListener("click", function(e) {
+      if (e.target.closest(".btn-mais-conselho")) {
+        membros.conselho = (membros.conselho || []).concat([{ cadastroId: "", usarEmailCadastro: true, email: "" }]);
+        renderizar();
+        return;
+      }
+      var apagar = e.target.closest(".btn-apagar-conselho");
+      if (apagar) {
+        var i = Number(apagar.getAttribute("data-indice"));
+        var c = membros.conselho[i];
+        var morador = c && candidatoPorId(c.cadastroId);
+        if ((c.cadastroId || c.email) && !window.confirm("Apagar o membro " + (i + 1) + " do conselho" + (morador ? " (" + (morador.nome || "") + ")" : "") + "? Ele perde o acesso ao salvar.")) return;
+        membros.conselho.splice(i, 1);
+        renderizar();
+      }
     });
 
     form.addEventListener("change", function(e) {
       var bloco = e.target.closest(".cargo-membro[data-i]");
       if (!bloco) return;
-      var cargo = cargoDe(CARGOS[Number(bloco.getAttribute("data-i"))]);
+      var cargo = cargoDe(cargosLista()[Number(bloco.getAttribute("data-i"))]);
       var campo = e.target.getAttribute("data-campo");
       if (campo === "cadastroId") {
         cargo.cadastroId = e.target.value;

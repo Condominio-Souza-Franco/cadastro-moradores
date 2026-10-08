@@ -72,18 +72,38 @@
     }).join("") + "</div>";
   }
 
-  // 12 cartões com os números gerais (4 x 3 na tela larga, 2 x 6 no celular: linhas sempre cheias).
+  // 14 cartões com os números gerais (7 x 2 na tela larga, 2 x 7 no celular: linhas sempre cheias).
   function cartoesResumo(x) {
     if (!x) return "";
     var itens = [
       [x.moradores, "moradores"], [x.proprietarios, "proprietários"], [x.inquilinos, "inquilinos"], [x.ocupantes, "demais ocupantes"],
       [x.proprietariosNaoMoram, "proprietários que não moram"], [x.semCadastro, "apartamentos sem cadastro", "de " + x.apartamentos],
       [x.alugados, "apartamentos alugados"], [x.desocupados, "apartamentos desocupados"],
-      [x.menores, "crianças e adolescentes", "até 17 anos"], [x.idosos, "com 60 anos ou mais"], [x.pets, "pets"], [x.veiculos, "carros e motos"]
+      [x.menores, "crianças e adolescentes", "até 17 anos"], [x.idosos, "com 70 anos ou mais"], [x.pets, "pets"],
+      [x.carros, "carros"], [x.motos, "motos"], [x.bicicletas, "bicicletas"]
     ];
     return '<div class="cartoes-resumo">' + itens.map(function(i) {
       return '<div class="cartao-resumo"><strong>' + i[0] + '</strong><span>' + i[1] + (i[2] ? ' <small>(' + i[2] + ')</small>' : '') + '</span></div>';
     }).join('') + '</div>';
+  }
+
+  // Pizza (conic-gradient) com legenda: Feminino, Masculino e, se houver, sem nome.
+  function pizza(titulo, itens, total) {
+    var cores = ["#8e5bb5", "#2f5f98", "#b8c4d0"];
+    var inicio = 0;
+    var fatias = itens.map(function(i, k) {
+      var fim = inicio + (total ? i.total * 360 / total : 0);
+      var trecho = cores[k] + " " + inicio.toFixed(1) + "deg " + fim.toFixed(1) + "deg";
+      inicio = fim;
+      return trecho;
+    });
+    return '<div class="grafico-perfil grafico-pizza"><h3>' + titulo + '</h3><div class="pizza-corpo">' +
+      '<div class="pizza" style="background: conic-gradient(' + fatias.join(", ") + ')" role="img" aria-label="' +
+        itens.map(function(i) { return i.rotulo + ": " + i.total; }).join(", ") + '"></div>' +
+      '<ul class="pizza-legenda">' + itens.map(function(i, k) {
+        var pct = total ? Math.round(i.total * 100 / total) : 0;
+        return '<li><span class="pizza-cor" style="background:' + cores[k] + '"></span>' + i.rotulo + ' <strong>' + i.total + '</strong> <small>(' + pct + '%)</small></li>';
+      }).join("") + '</ul></div></div>';
   }
 
   function carregarPerfil() {
@@ -98,7 +118,7 @@
       status.textContent = r.total + " moradores contados" + (typeof r.titulares === "number" ? ": " + r.titulares + " titulares e " + r.ocupantes + " demais ocupantes." : ".");
       var genero = r.genero.filter(function(g) { return g.total || g.rotulo !== "Sem nome"; });
       var idade = r.idade.filter(function(f) { return f.total || f.rotulo !== "Sem data"; });
-      alvo.innerHTML = cartoesResumo(r.resumo) + grafico("Idade", idade, r.total, "grafico-idade") + grafico("Gênero (estimado)", genero, r.total, "grafico-genero");
+      alvo.innerHTML = cartoesResumo(r.resumo) + grafico("Idade", idade, r.total, "grafico-idade") + pizza("Gênero (estimado)", genero, r.total);
     }).catch(function(erro) {
       status.className = "status erro";
       status.textContent = (erro && erro.message) || "Não foi possível carregar o perfil.";
