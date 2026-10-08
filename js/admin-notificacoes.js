@@ -139,3 +139,19 @@
     });
   });
 })();
+
+// Exemplos dos e-mails: um botão por tipo; mostra um de cada vez (toggle). De início, nenhum aberto.
+document.addEventListener("click", function(e) {
+  var botao = e.target.closest(".btn-exemplo-email");
+  if (!botao) return;
+  var tipo = botao.getAttribute("data-exemplo");
+  var abrir = botao.getAttribute("aria-pressed") !== "true";
+  document.querySelectorAll(".btn-exemplo-email").forEach(function(b) {
+    var ativo = abrir && b === botao;
+    b.setAttribute("aria-pressed", ativo ? "true" : "false");
+    b.classList.toggle("ativo", ativo);
+  });
+  document.querySelectorAll(".exemplo-email-bloco").forEach(function(bloco) {
+    bloco.hidden = !(abrir && bloco.getAttribute("data-exemplo") === tipo);
+  });
+});

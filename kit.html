@@ -71,6 +71,8 @@
       border: 1px solid var(--borda); border-radius: 10px; background: #fff; color: var(--texto);
       text-decoration: none; font-weight: 600; font-size: 0.92rem; line-height: 1.3;
     }
+    button.doc { width: 100%; text-align: left; font-family: inherit; cursor: pointer; }
+    button.doc:disabled { opacity: 0.7; cursor: wait; }
     .doc:hover { border-color: var(--destaque); background: var(--destaque-fundo); }
     .doc svg { flex: none; width: 26px; height: 26px; color: var(--destaque); }
     .doc span { overflow-wrap: anywhere; }
@@ -119,7 +121,6 @@
       <p id="saudacao"></p>
       <button type="button" class="btn btn-secundario" id="btnSair">Sair</button>
     </div>
-    <p class="nota">Os documentos abrem no Google Drive para quem entra com a conta Google do e-mail informado no cadastro.</p>
     <h2 id="tituloPrincipais">Documentos</h2>
     <div id="docsPrincipais" class="docs"></div>
     <div id="secoes"></div>
@@ -127,8 +128,8 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261008a"></script>
-<script src="js/data/backend.js?v=20261008a"></script>
+<script src="js/regras.js?v=20261008b"></script>
+<script src="js/data/backend.js?v=20261008b"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -173,7 +174,8 @@
 
     function listaDocs(arquivos) {
       return arquivos.map(function(a) {
-        return '<a class="doc" href="' + escapar(a.url) + '" target="_blank" rel="noopener">' + ICONE + "<span>" + escapar(a.nome) + "</span></a>";
+        // O PDF vem do servidor (fbArquivoKit), com a sessão aberta pelo CPF + data: não precisa de conta Google.
+        return '<button type="button" class="doc" data-id="' + escapar(a.id || "") + '" data-nome="' + escapar(a.nome) + '">' + ICONE + "<span>" + escapar(a.nome) + "</span></button>";
       }).join("");
     }
 
@@ -188,6 +190,40 @@
         return '<details class="secao"><summary>' + escapar(s.nome) + ' <span class="qtd">' + s.arquivos.length +
           (s.arquivos.length === 1 ? " documento" : " documentos") + '</span></summary><div class="docs">' + listaDocs(s.arquivos) + "</div></details>";
       }).join("");
+    }
+
+    // Abre um documento: baixa pelo servidor e mostra no popup do site.
+    document.addEventListener("click", function(e) {
+      var doc = e.target.closest("button.doc[data-id]");
+      if (!doc) return;
+      var guardado = null;
+      try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e2) {}
+      if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento para abrir os documentos."); return; }
+      var span = doc.querySelector("span");
+      var texto = span.textContent;
+      span.textContent = "Abrindo...";
+      doc.disabled = true;
+      window.Backend.chamar("fbArquivoKit", { sessao: guardado.sessaoKit, id: doc.getAttribute("data-id") })
+        .then(function(r) {
+          if (!r || !r.sucesso) {
+            if (r && r.expirado) { voltarAoFormulario(r.mensagem); return; }
+            throw new Error((r && r.mensagem) || "Não foi possível abrir o documento.");
+          }
+          var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
+          for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+          var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
+          if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
+          else window.open(url, "_blank");
+        })
+        .catch(function(erro) { alert((erro && erro.message) || "Não foi possível abrir o documento."); })
+        .then(function() { span.textContent = texto; doc.disabled = false; });
+    });
+
+    function voltarAoFormulario(mensagem) {
+      try { sessionStorage.removeItem(CHAVE); } catch (e) {}
+      document.getElementById("conteudoKit").hidden = true;
+      form.hidden = false;
+      setMensagem(mensagem || "", mensagem ? "erro" : "");
     }
 
     try {
@@ -225,7 +261,7 @@
     });
   })();
 </script>
-<script src="js/popup-links.js?v=20261008a"></script>
-<script src="js/sem-conectivos.js?v=20261008a"></script>
+<script src="js/popup-links.js?v=20261008b"></script>
+<script src="js/sem-conectivos.js?v=20261008b"></script>
 </body>
 </html>

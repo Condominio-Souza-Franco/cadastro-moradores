@@ -69,7 +69,7 @@
     popup.hidden = true;
     popup.innerHTML =
       '<div class="popup-mapa-vaga-caixa" role="dialog" aria-modal="true" aria-label="Mapa da garagem">' +
-        '<button type="button" class="popup-mapa-vaga-fechar" aria-label="Fechar">&times;</button>' +
+        '<button type="button" class="popup-mapa-vaga-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>' +
         '<iframe title="Mapa da garagem" loading="eager"></iframe>' +
       "</div>";
     document.body.appendChild(popup);

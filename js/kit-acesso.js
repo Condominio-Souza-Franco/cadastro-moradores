@@ -36,20 +36,22 @@
     modal.innerHTML =
       '<div class="kit-modal-caixa" role="dialog" aria-modal="true" aria-labelledby="kitModalTitulo">' +
         '<div class="kit-modal-topo"><h3 id="kitModalTitulo">Kit de Boas-vindas</h3>' +
-          '<button type="button" class="kit-modal-fechar" aria-label="Fechar">&times;</button></div>' +
+          '<button type="button" class="kit-modal-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
+        '<p class="kit-intro">Escolha <strong>uma</strong> das duas formas de acesso:</p>' +
         '<form class="kit-opcao" novalidate>' +
-          '<h4><span class="kit-numero">1</span> Acessar o Kit</h4>' +
-          '<p>Informe o CPF e a data de nascimento do seu cadastro de morador.</p>' +
+          '<h4>Pelo CPF e data de nascimento</h4>' +
+          '<p>Os documentos abrem aqui no site. Não precisa de conta Google.</p>' +
           '<div class="kit-campos">' +
             '<label>CPF<input type="text" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14"></label>' +
             '<label>Data de nascimento<input type="text" name="nasc" inputmode="numeric" autocomplete="off" placeholder="DD/MM/AAAA" maxlength="10"></label>' +
           '</div>' +
-          '<button type="submit" class="kit-btn">Acessar o Kit</button>' +
+          '<button type="submit" class="kit-btn">Acessar o Kit pelo CPF</button>' +
           '<p class="kit-mensagem" role="status"></p>' +
         '</form>' +
+        '<div class="kit-ou"><span>ou</span></div>' +
         '<div class="kit-opcao kit-opcao-drive">' +
-          '<h4><span class="kit-numero">2</span> Abrir pasta no Drive</h4>' +
-          '<p>Para quem entra com a conta Google do e-mail informado no cadastro (depois da aprovação).</p>' +
+          '<h4>Pela pasta no Google Drive</h4>' +
+          '<p>Para quem entra com a conta Google do e-mail informado no cadastro.</p>' +
           '<a class="kit-btn kit-btn-secundario" href="' + URL_PASTA + '" target="_blank" rel="noopener noreferrer">Abrir pasta no Drive</a>' +
         '</div>' +
       '</div>';

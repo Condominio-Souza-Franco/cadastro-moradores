@@ -64,7 +64,7 @@
       '<div class="popup-link-caixa" role="dialog" aria-modal="true">' +
         '<div class="popup-link-topo"><span class="popup-link-titulo"></span>' +
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
-          '<button type="button" class="popup-link-fechar" aria-label="Fechar">&times;</button></div>' +
+          '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, use "Abrir em nova aba".</div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
@@ -94,7 +94,9 @@
     document.body.classList.remove("popup-link-aberto");
   }
 
-  window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; }, fechar: fechar };
+  // abrirDireto: mostra uma URL já pronta (ex.: PDF baixado pelo servidor, blob:) no mesmo popup.
+  window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
+    abrirDireto: function(url, titulo) { abrir(url, url, titulo); }, fechar: fechar };
 
   // Fase de bolha: quem já trata o clique (ex.: mapa da vaga, links do Drive desativados) chama
   // preventDefault antes, e aqui o link é ignorado.

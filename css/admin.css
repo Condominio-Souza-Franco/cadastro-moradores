@@ -3363,3 +3363,24 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
   font-size: 18px; line-height: 1; cursor: pointer;
 }
 .acoes-topo.fixa .btn-fechar-flutuante:hover { background: #f1f4f8 !important; }
+
+/* Notificações: botões dos exemplos (4 lado a lado; 2 x 2 no celular) e um exemplo por vez. */
+.botoes-exemplo-email { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 6px 0 10px; }
+@media (max-width: 560px) { .botoes-exemplo-email { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.btn-exemplo-email {
+  width: 100%; min-height: 40px; height: auto; padding: 6px 8px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface, #fff); color: var(--accent-color); font-size: 0.78rem; font-weight: 700; line-height: 1.2; cursor: pointer; text-wrap: balance;
+}
+.btn-exemplo-email:not(.ativo):hover { background: #e9f1fa !important; color: var(--accent-color) !important; }
+.btn-exemplo-email.ativo { background: var(--accent-color) !important; border-color: var(--accent-color); color: #fff !important; }
+.exemplo-email-bloco[hidden] { display: none !important; }
+
+/* Botão de fechar dos popups (links, Kit, mapa da vaga): o mesmo em todo o site. */
+.popup-link-fechar, .kit-modal-fechar, .popup-mapa-vaga-fechar {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  flex: none !important; width: 34px !important; height: 34px !important; min-width: 34px !important; min-height: 0 !important;
+  margin: 0 !important; padding: 0 !important; border: 1px solid #d7dee6 !important; border-radius: 50% !important;
+  background: #fff !important; color: #243447 !important; box-shadow: none !important; cursor: pointer;
+}
+.popup-link-fechar:hover, .kit-modal-fechar:hover, .popup-mapa-vaga-fechar:hover { background: #f1f4f8 !important; color: #243447 !important; }
+.popup-link-fechar svg, .kit-modal-fechar svg, .popup-mapa-vaga-fechar svg { display: block; width: 16px; height: 16px; }

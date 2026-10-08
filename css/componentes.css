@@ -391,3 +391,19 @@ body.kit-modal-aberto { overflow: hidden; }
 .kit-mensagem { min-height: 1.2em; margin: 8px 0 0 !important; font-size: 0.8rem !important; }
 .kit-mensagem.erro { color: #c62828 !important; }
 .kit-mensagem.carregando { font-style: italic; }
+
+/* Botão de fechar dos popups (links, Kit, mapa da vaga): o mesmo em todo o site. */
+.popup-link-fechar, .kit-modal-fechar, .popup-mapa-vaga-fechar {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  flex: none !important; width: 34px !important; height: 34px !important; min-width: 34px !important; min-height: 0 !important;
+  margin: 0 !important; padding: 0 !important; border: 1px solid #d7dee6 !important; border-radius: 50% !important;
+  background: #fff !important; color: #243447 !important; box-shadow: none !important; cursor: pointer;
+}
+.popup-link-fechar:hover, .kit-modal-fechar:hover, .popup-mapa-vaga-fechar:hover { background: #f1f4f8 !important; color: #243447 !important; }
+.popup-link-fechar svg, .kit-modal-fechar svg, .popup-mapa-vaga-fechar svg { display: block; width: 16px; height: 16px; }
+
+/* Popup do Kit: as duas opções são alternativas (uma OU outra), não passos. */
+.kit-intro { margin: 2px 0 0; font-size: 0.85rem; color: #43566b; }
+.kit-opcao h4 { gap: 0; }
+.kit-ou { display: flex; align-items: center; gap: 10px; margin: 10px 0 -2px; color: #8a99a8; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.kit-ou::before, .kit-ou::after { content: ""; flex: 1; height: 1px; background: #dcdde1; }

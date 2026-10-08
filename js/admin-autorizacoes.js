@@ -101,7 +101,7 @@
     el("formMembros").hidden = sim;
     el("autorizacoesMembros").hidden = !sim;
     var titulo = document.querySelector("#painelMembros .painel-topo h2");
-    if (titulo) titulo.textContent = sim ? "Membros > Autorizações" : "Membros";
+    if (titulo) titulo.textContent = "Membros";
     // A descrição troca de texto (não some), para os botões não pularem.
     var descricao = el("descricaoMembros");
     if (descricao) {
