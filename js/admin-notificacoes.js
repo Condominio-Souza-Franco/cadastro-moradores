@@ -3,7 +3,7 @@
 // ==========================================
 // Tabela: membros da administração nas linhas, tipos de e-mail nas colunas (resumo mensal, CPF
 // bloqueado, cadastro excluído, novo cadastro aguardando aprovação). Cada célula liga/desliga aquele
-// e-mail para aquele membro. O backend (notificacoes.gs) confere de novo ao salvar:
+// e-mail para aquele membro. Quem acumula funções aparece com uma função por linha. O backend (notificacoes.gs) confere de novo ao salvar:
 //   condomínio, desenvolvedor e síndico: marcam/desmarcam qualquer um;
 //   conselho: só o próprio e-mail (os outros aparecem travados).
 (function() {
@@ -52,7 +52,7 @@
     var cabecalho = "<tr><th>Membro</th>" + TIPOS.map(function(t) { return "<th>" + t.titulo + "</th>"; }).join("") + "</tr>";
     var linhas = membros.map(function(m, i) {
       var quem = m.apto || m.nome ? '<span class="notif-quem">' + escaparHtml([m.apto, primeiroNome(m.nome)].filter(Boolean).join(" · ")) + "</span>" : "";
-      return '<tr><td><span class="notif-cargo-linha">' + escaparHtml(m.cargos.join(", ")) + "</span>" + quem + "</td>" +
+      return '<tr><td>' + m.cargos.map(function(c) { return '<span class="notif-cargo-linha">' + escaparHtml(c) + "</span>"; }).join("") + quem + "</td>" +
         TIPOS.map(function(t) {
           var permitido = !m.permitidos || m.permitidos[t.chave] !== false;
           var travado = !m.editavel || !permitido;
