@@ -9,6 +9,7 @@
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
   var NOMES = { condominio: "Condomínio", sindico: "Síndico", administradora: "Administradora", conselho: "Conselho", desenvolvedor: "Desenvolvedor" };
+  var CURTOS = { condominio: "Cond.", sindico: "Síndico", administradora: "Adm.", conselho: "Conselho", desenvolvedor: "Dev." };
   var dados = null;       // resposta de fbObterAutorizacoes
   var atual = null;       // permissões sendo editadas
   var originais = "";
@@ -30,7 +31,10 @@
   function renderizar() {
     var caixa = el("autorizacoesMembros");
     if (!caixa || !dados) return;
-    var cabecalho = "<tr><th>Página / autorização</th>" + dados.cargos.map(function(c) { return "<th>" + NOMES[c] + "</th>"; }).join("") + "</tr>";
+    // No celular, os nomes abreviados (Cond., Síndico, Adm., Conselho, Dev.).
+    var cabecalho = "<tr><th>Página / autorização</th>" + dados.cargos.map(function(c) {
+      return '<th><span class="rotulo-longo">' + NOMES[c] + '</span><span class="rotulo-curto">' + CURTOS[c] + "</span></th>";
+    }).join("") + "</tr>";
     var linhas = dados.linhas.map(function(l) {
       return "<tr><td>" + escaparHtml(l.rotulo) + "</td>" + dados.cargos.map(function(c) {
         var marcado = atual[l.chave] && atual[l.chave][c];
@@ -41,7 +45,6 @@
       }).join("") + "</tr>";
     }).join("");
     caixa.innerHTML =
-      '<div class="aut-topo"><h3>Autorizações</h3><button type="button" class="btn-fechar-painel aut-fechar" aria-label="Fechar autorizações" title="Fechar">&times;</button></div>' +
       '<p class="descricao-acao">O Desenvolvedor tem acesso a tudo. A coluna do Condomínio só o Desenvolvedor altera. ' + (dados.podeEditar
         ? "Marque o que cada cargo pode ver e fazer."
         : "Somente visualização: só o Condomínio, o Síndico e o Desenvolvedor alteram as autorizações.") + "</p>" +
@@ -76,8 +79,15 @@
     aberto = sim;
     var botao = el("btnAutorizacoes");
     if (botao) { botao.classList.toggle("ativo", sim); botao.setAttribute("aria-pressed", sim ? "true" : "false"); }
+    // Uma tela por vez: com Autorizações aberta, somem o formulário e a descrição de Membros.
     el("formMembros").hidden = sim;
     el("autorizacoesMembros").hidden = !sim;
+    var titulo = document.querySelector("#painelMembros .painel-topo h2");
+    if (titulo) titulo.textContent = sim ? "Autorizações" : "Membros";
+    var descricao = el("descricaoMembros");
+    if (descricao) descricao.hidden = sim;
+    var atualizar = el("btnAtualizarMembros");
+    if (atualizar) atualizar.hidden = sim;
     if (sim) {
       carregar();
     } else {
@@ -103,7 +113,13 @@
     var botao = el("btnAutorizacoes");
     if (!botao || !window.Backend) return;
     botao.addEventListener("click", function() { abrir(!aberto); });
-    el("autorizacoesMembros").addEventListener("click", function(e) { if (e.target.closest(".aut-fechar")) abrir(false); });
+    // O × do topo, com Autorizações aberta, volta para Membros (em vez de fechar a página).
+    document.querySelector("#painelMembros .btn-fechar-painel").addEventListener("click", function(e) {
+      if (!aberto) return;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      abrir(false);
+    }, true);
     el("autorizacoesMembros").addEventListener("change", function(e) {
       var c = e.target.closest("input[data-chave]");
       if (!c) return;

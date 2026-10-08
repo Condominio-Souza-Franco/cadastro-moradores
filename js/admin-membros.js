@@ -77,7 +77,7 @@
       ? escaparHtml(morador.nome || "(sem nome)") + (morador.celular ? " · " + escaparHtml(morador.celular) : " · sem telefone")
       : (cargo.cadastroId ? "Morador não encontrado (pode ter se mudado)" : "");
     var semEmailNoCadastro = morador && cargo.usarEmailCadastro && !morador.email;
-    return '<div class="cargo-membro" data-i="' + i + '">' +
+    return '<div class="cargo-membro cargo-' + def.chave + (def.chave === "conselho" ? " cargo-conselho-" + def.indice : "") + '" data-i="' + i + '">' +
       '<div class="cargo-titulo">' + escaparHtml(def.titulo) + "</div>" +
       '<select data-campo="cadastroId" aria-label="Apartamento do ' + escaparHtml(def.titulo) + '"' + (podeMorador ? "" : " disabled") + ">" + opcoesMoradores(cargo.cadastroId) + "</select>" +
       (info ? '<div class="cargo-info">' + info + "</div>" : "") +
@@ -93,12 +93,12 @@
     var form = document.getElementById("formMembros");
     if (!form || !membros) return;
     form.innerHTML =
-      '<div class="cargo-membro"><div class="cargo-titulo">Condomínio</div>' +
+      '<div class="cargo-membro cargo-condominio"><div class="cargo-titulo">Condomínio</div>' +
         '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
         escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
       CARGOS.map(cargoHtml).join("") +
       // Administradora: só visualiza a Consulta por apartamento e a Busca geral (o backend barra o resto).
-      '<div class="cargo-membro"><div class="cargo-titulo">Administradora <span class="cargo-nota">(só visualização: consulta por apartamento e busca geral)</span></div>' +
+      '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(só visualização: consulta por apartamento e busca geral)</span></div>' +
         '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
         escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>";
     atualizarBotoes();

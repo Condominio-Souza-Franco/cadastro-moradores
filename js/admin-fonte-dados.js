@@ -72,6 +72,20 @@
     }).join("") + "</div>";
   }
 
+  // 12 cartões com os números gerais (4 x 3 na tela larga, 2 x 6 no celular: linhas sempre cheias).
+  function cartoesResumo(x) {
+    if (!x) return "";
+    var itens = [
+      [x.moradores, "moradores"], [x.proprietarios, "proprietários"], [x.inquilinos, "inquilinos"], [x.ocupantes, "demais ocupantes"],
+      [x.proprietariosNaoMoram, "proprietários que não moram"], [x.semCadastro, "apartamentos sem cadastro", "de " + x.apartamentos],
+      [x.alugados, "apartamentos alugados"], [x.desocupados, "apartamentos desocupados"],
+      [x.menores, "crianças e adolescentes", "até 17 anos"], [x.idosos, "com 60 anos ou mais"], [x.pets, "pets"], [x.veiculos, "carros e motos"]
+    ];
+    return '<div class="cartoes-resumo">' + itens.map(function(i) {
+      return '<div class="cartao-resumo"><strong>' + i[0] + '</strong><span>' + i[1] + (i[2] ? ' <small>(' + i[2] + ')</small>' : '') + '</span></div>';
+    }).join('') + '</div>';
+  }
+
   function carregarPerfil() {
     var alvo = document.getElementById("graficosPerfil");
     var status = document.getElementById("statusPerfil");
@@ -84,7 +98,7 @@
       status.textContent = r.total + " moradores contados" + (typeof r.titulares === "number" ? ": " + r.titulares + " titulares e " + r.ocupantes + " demais ocupantes." : ".");
       var genero = r.genero.filter(function(g) { return g.total || g.rotulo !== "Sem nome"; });
       var idade = r.idade.filter(function(f) { return f.total || f.rotulo !== "Sem data"; });
-      alvo.innerHTML = grafico("Idade", idade, r.total, "grafico-idade") + grafico("Gênero (estimado)", genero, r.total, "grafico-genero");
+      alvo.innerHTML = cartoesResumo(r.resumo) + grafico("Idade", idade, r.total, "grafico-idade") + grafico("Gênero (estimado)", genero, r.total, "grafico-genero");
     }).catch(function(erro) {
       status.className = "status erro";
       status.textContent = (erro && erro.message) || "Não foi possível carregar o perfil.";
