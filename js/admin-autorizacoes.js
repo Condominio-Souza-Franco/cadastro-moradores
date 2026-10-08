@@ -50,9 +50,7 @@
       }).join("") + "</tr>";
     }).join("");
     caixa.innerHTML =
-      '<p class="descricao-acao">O Desenvolvedor tem acesso a tudo. A coluna do Condomínio só o Desenvolvedor altera. ' + (dados.podeEditar
-        ? "Marque o que cada cargo pode ver e fazer."
-        : "Somente visualização: só o Condomínio, o Síndico e o Desenvolvedor alteram as autorizações.") + "</p>" +
+      '<p class="descricao-acao">Marque o que cada cargo pode ver (ler) e alterar (escrever). O Desenvolvedor tem acesso a tudo. Quem altera cada coluna: a do Condomínio, só o Desenvolvedor; a do Síndico, o Condomínio; as do Conselho e da Administradora, o Condomínio ou o Síndico. ' + (dados.podeEditar ? "" : "Você pode apenas visualizar esta tabela.") + "</p>" +
       '<div class="aut-tabela-rolagem"><table class="aut-tabela"><thead>' + cabecalho + "</thead><tbody>" + linhas + "</tbody></table></div>";
     atualizarBotoes();
   }
