@@ -85,8 +85,9 @@
     var semEmailNoCadastro = morador && cargo.usarEmailCadastro && !morador.email;
     return '<div class="cargo-membro cargo-' + def.chave + (def.chave === "conselho" ? " cargo-conselho-" + def.indice : "") + '" data-i="' + i + '">' +
       '<div class="cargo-titulo">' + escaparHtml(def.titulo) +
-        (def.chave === "conselho" && podeMudarConselho()
-          ? ' <button type="button" class="btn-apagar-conselho" data-indice="' + def.indice + '" title="Apagar este membro do conselho" aria-label="Apagar ' + escaparHtml(def.titulo) + '">Apagar</button>'
+        // Todos veem; só condomínio, síndico e desenvolvedor podem usar (os outros: desativado).
+        (def.chave === "conselho"
+          ? ' <button type="button" class="btn-apagar-conselho" data-indice="' + def.indice + '" title="' + (podeMudarConselho() ? 'Apagar este membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor apagam membros') + '" aria-label="Apagar ' + escaparHtml(def.titulo) + '"' + (podeMudarConselho() ? '' : ' disabled') + '>Apagar</button>'
           : "") + "</div>" +
       '<select data-campo="cadastroId" aria-label="Apartamento do ' + escaparHtml(def.titulo) + '"' + (podeMorador ? "" : " disabled") + ">" + opcoesMoradores(cargo.cadastroId) + "</select>" +
       (info ? '<div class="cargo-info">' + info + "</div>" : "") +
@@ -121,9 +122,7 @@
       "</div>" +
       '<div class="membros-coluna membros-coluna-2">' +
         '<div class="conselho-cabecalho"><span>Conselho</span>' +
-          (podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO
-            ? '<button type="button" class="btn-mais-conselho" title="Acrescentar membro do conselho" aria-label="Acrescentar membro do conselho">+</button>'
-            : "") + "</div>" +
+          '<button type="button" class="btn-mais-conselho" title="' + (podeMudarConselho() ? 'Acrescentar membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor acrescentam membros') + '" aria-label="Acrescentar membro do conselho"' + (podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO ? '' : ' disabled') + '>+</button>' + "</div>" +
         (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
       "</div>";
     atualizarBotoes();

@@ -3274,3 +3274,6 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 .pizza-legenda li { display: flex; align-items: center; gap: 6px; margin: 5px 0; }
 .pizza-cor { width: 12px; height: 12px; border-radius: 3px; flex: none; }
 .pizza-legenda small { color: #5f7287; }
+
+.btn-mais-conselho:disabled, .btn-apagar-conselho:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+.btn-mais-conselho:disabled:hover, .btn-apagar-conselho:disabled:hover { background: #fff !important; }
