@@ -3141,7 +3141,11 @@ button.pendencia-item::before {
   background: var(--accent-color); color: #fff !important; font-size: 0.8rem; font-weight: 700; text-decoration: none;
 }
 .btn-ficha-pdf:hover { filter: brightness(1.08); text-decoration: none; }
-.telefone-item { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+/* Cada telefone é um bloco: número numa linha, WhatsApp e Ligar na linha de baixo. O mesmo espaço (4px)
+   separa número e botões e um telefone do seguinte, para as entrelinhas ficarem uniformes. */
+.telefone-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.telefone-item + .telefone-item { margin-top: 4px; }
+.telefone-acoes { display: flex; flex-wrap: wrap; gap: 4px 6px; }
 .telefone-numero { white-space: nowrap; }
 .acao-telefone {
   display: inline-block; padding: 1px 8px; border: 1px solid currentColor; border-radius: 999px;
@@ -3356,10 +3360,6 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
   .tabela-admin th, .tabela-admin td { padding: 6px 9px; }
   .tabela-admin th:first-child, .tabela-admin td:first-child { min-width: 150px; max-width: 170px; }
 }
-
-/* Consulta: com um telefone só, WhatsApp e Ligar ao lado da label (o número fica embaixo, sozinho). */
-.campo-titulo .acoes-telefone-titulo { display: inline-flex; gap: 6px; margin-left: 8px; vertical-align: 1px; }
-.campo-titulo .acoes-telefone-titulo .acao-telefone { font-size: 0.66rem; padding: 0 7px; text-transform: none; letter-spacing: 0; }
 
 /* × da barra flutuante: só aparece com a barra presa no topo; fecha a página aberta. */
 .acoes-topo .btn-fechar-flutuante { display: none; }

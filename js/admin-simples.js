@@ -147,12 +147,14 @@
     return digitos.length === 10 || digitos.length === 11 ? digitos : "";
   }
 
-  // O número aparece como texto; ao lado, os atalhos "WhatsApp" (wa.me/55...) e "Ligar" (tel:+55...).
+  // Cada telefone vira um bloco de duas linhas: o número em cima e, embaixo, os atalhos "WhatsApp"
+  // (wa.me/55...) e "Ligar" (tel:+55...). Dois telefones = quatro linhas, sempre com o mesmo espaçamento.
   function renderizarTelefonesHtml(valor) {
     var texto = textoLimpo(valor);
     if (!texto) return "Não preenchido";
 
-    var regexTelefone = /\+?\d[\d\s().\-]{6,}\d/g;
+    // O "(" do DDD entra no número; sem isso ele ficaria sozinho numa linha acima do bloco.
+    var regexTelefone = /\+?\(?\d[\d\s().\-]{6,}\d/g;
     var html = [];
     var ultimo = 0;
     var m;
@@ -162,16 +164,21 @@
       html.push(escaparHtml(texto.slice(ultimo, m.index)));
       if (ddd) {
         html.push('<span class="telefone-item"><span class="telefone-numero">' + escaparHtml(numero) + '</span>' +
+          '<span class="telefone-acoes">' +
           // WhatsApp só para celular (DDD + 9 dígitos começando com 9); telefone fixo só tem "Ligar".
           (/^\d{2}9\d{8}$/.test(ddd) ? '<a class="acao-telefone acao-whatsapp" href="https://wa.me/55' + ddd + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' : '') +
-          '<a class="acao-telefone acao-ligar" href="tel:+55' + ddd + '">Ligar</a></span>');
+          '<a class="acao-telefone acao-ligar" href="tel:+55' + ddd + '">Ligar</a></span></span>');
       } else {
         html.push(escaparHtml(m[0]));
       }
       ultimo = m.index + m[0].length;
     }
     html.push(escaparHtml(texto.slice(ultimo)));
-    return html.join("").replace(/\s*\/\s*(?=<span class="telefone-item">)/g, "<br>").replace(/\n/g, "<br>");
+    // Separadores entre dois telefones ("/", ",", ";", "e", "ou") somem: cada bloco já começa em linha nova,
+    // e um <br> a mais criaria uma linha vazia e desigualaria o espaçamento.
+    return html.join("")
+      .replace(/(<\/span><\/span>)(?:\s|\/|,|;|\be\b|\bou\b)*(?=<span class="telefone-item">)/gi, "$1")
+      .replace(/\n/g, "<br>");
   }
 
   // Endereços viram link para o Google Maps. A busca usa só o logradouro (tipo + nome) e o número:
@@ -300,20 +307,7 @@
       ? renderizarTelefonesHtml(valor)
       : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal)));
 
-    // Um telefone só: "WhatsApp" e "Ligar" ficam ao lado da label, e o número fica sozinho embaixo.
-    var acoesNoTitulo = "";
-    if (ehTelefone && !vazio) {
-      var tmp = document.createElement("div");
-      tmp.innerHTML = valorHtml;
-      var itens = tmp.querySelectorAll(".telefone-item");
-      if (itens.length === 1) {
-        var acoes = itens[0].querySelectorAll(".acao-telefone");
-        acoesNoTitulo = '<span class="acoes-telefone-titulo">' + Array.prototype.map.call(acoes, function(a) { return a.outerHTML; }).join("") + '</span>';
-        Array.prototype.forEach.call(acoes, function(a) { a.remove(); });
-        valorHtml = tmp.innerHTML;
-      }
-    }
-    return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + acoesNoTitulo + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
+    return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
   }
 
   function vagaPrincipalHtml(dados) {
