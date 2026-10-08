@@ -29,7 +29,7 @@
       dois(data.getHours()) + ":" + dois(data.getMinutes());
   }
 
-  // "Mais recente: 26/09/2026 às 10:32 — abrir PDF" (+ "atualizando..." se for o caso).
+  // "Mais recente: 26/09/2026 às 10:32 — abrir PDF" (+ "atualizando" se for o caso).
   function mostrarSituacao(id, info, atualizando) {
     if (!info) return setHtml(id, "");
     var partes = [];
@@ -40,7 +40,7 @@
       partes.push('<a class="link-mais-recente" href="' + escaparHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
         "📄 Relatório mais recente · " + escaparHtml(formatarDataHora(info.geradoEm)) + "</a>");
     }
-    if (atualizando) partes.push('<span class="aviso-atualizando">Atualizando com a última alteração...</span>');
+    if (atualizando) partes.push('<span class="aviso-atualizando">Atualizando com a última alteração</span>');
     setHtml(id, partes.join(" "), atualizando ? "atualizando" : "");
   }
 

@@ -1,11 +1,11 @@
 // ==========================================
-// PRÉ-CARGA DAS PÁGINAS DO ADMIN + "ATUALIZADO HÁ ..." AO LADO DO "ATUALIZAR"
+// PRÉ-CARGA DAS PÁGINAS DO ADMIN + "ATUALIZADO HÁ N MIN" EMBAIXO DO "ATUALIZAR"
 // ==========================================
 // Logo depois do login, busca em segundo plano (uma de cada vez, para não sobrecarregar o servidor)
 // as leituras de Pendências, Membros, Notificações, Gabarito e Bloqueios. Elas ficam no cache da aba
-// (DataService), então, quando a pessoa abre a página, ela aparece na hora, sem "Carregando...".
+// (DataService), então, quando a pessoa abre a página, ela aparece na hora, sem "Carregando".
 //
-// Ao lado de cada "Atualizar", um <span class="atualizado-em" data-leitura="..."> mostra quando os
+// Embaixo de cada "Atualizar", um <span class="atualizado-em" data-leitura="..."> mostra quando os
 // dados daquela página foram buscados no servidor pela última vez.
 (function() {
   var LEITURAS = ["listarAprovacoes", "listarPendencias", "obterMembros", "obterNotificacoes", "obterGabaritoVagasCompleto", "listarBloqueios"];
@@ -32,7 +32,7 @@
     return "atualizado às " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
   }
 
-  // Leituras em andamento: enquanto houver, o indicador mostra "Carregando..." (nunca "atualizado agora" antes do fim).
+  // Leituras em andamento: enquanto houver, o indicador mostra "Carregando" (nunca "atualizado agora" antes do fim).
   var emAndamento = {};
   window.addEventListener("leitura-admin-inicio", function(e) { emAndamento[e.detail.nome] = (emAndamento[e.detail.nome] || 0) + 1; atualizarIndicadores(); });
   window.addEventListener("leitura-admin-fim", function(e) { emAndamento[e.detail.nome] = Math.max(0, (emAndamento[e.detail.nome] || 1) - 1); atualizarIndicadores(); });
@@ -42,7 +42,7 @@
     document.querySelectorAll(".atualizado-em[data-leitura]").forEach(function(el) {
       if (el.dataset.manual === "1") return; // outra tela (ex.: Autorizações) está mostrando o próprio carregamento
       if (emAndamento[el.getAttribute("data-leitura")]) {
-        el.textContent = "Carregando...";
+        el.textContent = "Carregando";
         el.classList.add("carregando-indicador");
         el.title = "";
         return;

@@ -87,7 +87,7 @@
         .then(function() { window.location.href = "admin.html"; });
     });
 
-    setOverlayProcessamento(true, "Aguarde: carregando cadastro...");
+    setOverlayProcessamento(true, "Aguarde: carregando cadastro");
 
     // A lista de apartamentos precisa estar carregada antes de preencher o formulário.
     Promise.all([obterApartamentosDoGabarito(), DataService.obterMoradorPorApto(apto, id)])

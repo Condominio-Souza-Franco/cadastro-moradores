@@ -329,6 +329,10 @@
       <li>O login da administração usa o "Fazer login com o Google". O token recebido é validado no servidor pelo
         Google (assinatura, emissor, validade e aplicativo de destino) antes de qualquer operação restrita.</li>
       <li>As permissões de cada papel são conferidas no servidor, não só na tela.</li>
+      <li>Sessão de 1 hora do morador: depois que o CPF e a data de nascimento conferem (no Kit de Boas-vindas ou na
+        consulta do cadastro), o site guarda os dois só nesta aba do navegador (sessionStorage) por 1 hora, para não
+        pedir de novo. Na tela, aparecem só os 3 primeiros dígitos do CPF e o dia do aniversário. Tocar em "Sair" ou
+        fechar a aba apaga os dados; o servidor continua conferindo o CPF e a data a cada uso.</li>
       <li>Código por e-mail: o código fica guardado só como resumo criptográfico (SHA-256) por 10 minutos. Abrir com
         o código cria uma sessão de 1 hora, exigida também para gravar a atualização desse cadastro.</li>
       <li>As tentativas erradas ficam no cache do Apps Script por 15 minutos; os bloqueios, no Firestore (um registro
@@ -391,7 +395,7 @@
     if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains("topico")) abrir(hash);
   })();
 </script>
-<script src="js/popup-links.js?v=20261008b"></script>
-<script src="js/sem-conectivos.js?v=20261008b"></script>
+<script src="js/popup-links.js?v=20261008c"></script>
+<script src="js/sem-conectivos.js?v=20261008c"></script>
 </body>
 </html>
