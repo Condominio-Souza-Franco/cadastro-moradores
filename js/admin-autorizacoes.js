@@ -32,16 +32,21 @@
     var caixa = el("autorizacoesMembros");
     if (!caixa || !dados) return;
     // No celular, os nomes abreviados (Cond., Síndico, Adm., Conselho, Dev.).
-    var cabecalho = "<tr><th>Página / autorização</th>" + dados.cargos.map(function(c) {
+    var cabecalho = '<tr><th>Páginas: ler <b class="aut-sep">|</b> escrever</th>' + dados.cargos.map(function(c) {
       return '<th><span class="rotulo-longo">' + NOMES[c] + '</span><span class="rotulo-curto">' + CURTOS[c] + "</span></th>";
     }).join("") + "</tr>";
+    function celulaCheck(chave, c, rotulo) {
+      if (!chave) return '<span class="aut-sem-escrita" title="Esta página não tem o que escrever">—</span>';
+      var marcado = atual[chave] && atual[chave][c];
+      var travado = !dados.podeEditar || fixa(c, chave) || (dados.colunasTravadas || []).indexOf(c) !== -1;
+      return '<label class="aut-check' + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + rotulo) + '">' +
+        '<input type="checkbox" data-chave="' + chave + '" data-cargo="' + c + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
+        '<span class="aut-caixa" aria-hidden="true"></span></label>';
+    }
     var linhas = dados.linhas.map(function(l) {
       return "<tr><td>" + escaparHtml(l.rotulo) + "</td>" + dados.cargos.map(function(c) {
-        var marcado = atual[l.chave] && atual[l.chave][c];
-        var travado = !dados.podeEditar || fixa(c, l.chave) || (dados.colunasTravadas || []).indexOf(c) !== -1;
-        return '<td class="aut-celula"><label class="aut-check' + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + l.rotulo) + '">' +
-          '<input type="checkbox" data-chave="' + l.chave + '" data-cargo="' + c + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
-          '<span class="aut-caixa" aria-hidden="true"></span></label></td>';
+        return '<td class="aut-celula"><span class="aut-par">' + celulaCheck(l.ler, c, l.rotulo + " (ler)") +
+          '<b class="aut-sep">|</b>' + celulaCheck(l.escrever, c, l.rotulo + " (escrever)") + "</span></td>";
       }).join("") + "</tr>";
     }).join("");
     caixa.innerHTML =
@@ -123,8 +128,14 @@
     el("autorizacoesMembros").addEventListener("change", function(e) {
       var c = e.target.closest("input[data-chave]");
       if (!c) return;
-      atual[c.getAttribute("data-chave")][c.getAttribute("data-cargo")] = c.checked;
-      atualizarBotoes();
+      var chave = c.getAttribute("data-chave"), cargo = c.getAttribute("data-cargo");
+      atual[chave][cargo] = c.checked;
+      // Escrever exige ler: marcar "escrever" marca "ler"; desmarcar "ler" desmarca "escrever".
+      (dados.linhas || []).forEach(function(l) {
+        if (l.escrever === chave && c.checked) atual[l.ler][cargo] = true;
+        if (l.ler === chave && !c.checked && l.escrever) atual[l.escrever][cargo] = false;
+      });
+      renderizar();
     });
     // Com a tabela aberta, "Desfazer" e "Salvar alterações" valem para ela (fase de captura: antes do Membros).
     el("btnSalvarMembros").addEventListener("click", function(e) {

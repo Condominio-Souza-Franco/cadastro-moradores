@@ -3277,3 +3277,34 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 
 .btn-mais-conselho:disabled, .btn-apagar-conselho:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
 .btn-mais-conselho:disabled:hover, .btn-apagar-conselho:disabled:hover { background: #fff !important; }
+
+/* Sem autorização de ESCREVER (Membros > Autorizações): controles de gravação com visual desativado. */
+body.sem-pendenciasEscrever .ignorar-pendencia,
+body.sem-historicoEscrever .btn-apagar-historico,
+body.sem-gabaritoEscrever #btnSalvarGabarito, body.sem-gabaritoEscrever #btnDesfazerGabarito, body.sem-gabaritoEscrever #btnRestaurarNumeracao,
+body.sem-membrosEscrever #btnSalvarMembros, body.sem-membrosEscrever #btnDesfazerMembros,
+body.sem-membrosEscrever #formMembros input, body.sem-membrosEscrever #formMembros select, body.sem-membrosEscrever #formMembros button,
+body.sem-notificacoesEscrever #btnSalvarNotificacoes, body.sem-notificacoesEscrever #btnDesfazerNotificacoes, body.sem-notificacoesEscrever #listaNotificacoes input,
+body.sem-bloqueiosEscrever .btn-desbloquear,
+body.sem-aprovar .btn-aprovar, body.sem-aprovar .btn-rejeitar,
+body.sem-dadosEscrever input[name="fonteDados"], body.sem-dadosEscrever #btnTestarConexoes {
+  opacity: 0.45 !important; cursor: not-allowed !important; pointer-events: none !important; filter: grayscale(1);
+}
+/* Os botões espelhados no topo (barra flutuante) também. */
+body.sem-gabaritoEscrever [data-espelho="acoesGabarito"] button,
+body.sem-notificacoesEscrever [data-espelho="acoesNotificacoes"] button { opacity: 0.45 !important; pointer-events: none !important; filter: grayscale(1); }
+body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizacoes) { opacity: 0.45 !important; pointer-events: none !important; filter: grayscale(1); }
+
+/* Autorizações: dois checkbox por cargo (ler | escrever). */
+.aut-par { display: inline-flex; align-items: center; gap: 4px; }
+.aut-sep { color: #b8c4d0; font-weight: 400; margin: 0 1px; }
+.aut-sem-escrita { display: inline-block; width: 20px; text-align: center; color: #b8c4d0; }
+
+/* "+" do Conselho: pequeno, redondo, com o + centralizado. */
+.conselho-cabecalho .btn-mais-conselho {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; min-height: 0; padding: 0; margin: 0;
+  border-radius: 50%; border: 1px solid var(--accent-color); background: #fff; color: var(--accent-color);
+  font-size: 15px; font-weight: 700; line-height: 1; font-family: Arial, Helvetica, sans-serif;
+}
+.conselho-cabecalho .btn-mais-conselho::before { content: ""; }

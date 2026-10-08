@@ -10,7 +10,8 @@
     painelAprovacoes: "aprovacoes", painelConsulta: "consulta", painelPendencias: "pendencias", painelRelatorios: "relatorios",
     painelLinks: "drive", painelGabarito: "gabarito", painelMembros: "membros", painelNotificacoes: "notificacoes", painelBloqueios: "bloqueios"
   };
-  var CLASSES_BODY = ["consulta", "editarCadastros", "aprovar", "historico", "dados", "drive"];
+  var CLASSES_BODY = ["consulta", "editarCadastros", "aprovar", "historico", "dados", "drive",
+    "pendenciasEscrever", "historicoEscrever", "gabaritoEscrever", "membrosEscrever", "notificacoesEscrever", "bloqueiosEscrever", "dadosEscrever"];
 
   function permissoes() {
     return window.AdminAuth && window.AdminAuth.getPermissoes ? window.AdminAuth.getPermissoes() : null;
