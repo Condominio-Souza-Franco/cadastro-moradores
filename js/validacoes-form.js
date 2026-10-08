@@ -229,9 +229,17 @@ async function consultarPorCpf() {
   const inputNasc = document.getElementById("nascConsulta");
   const btnBusca = document.getElementById("btnBuscarCpf");
   
-  const cpfInput = inputCpf ? inputCpf.value.trim() : "";
+  // Sessão de 1 hora (js/sessao-morador.js): os campos mostram o CPF e a data censurados, então
+  // a consulta usa os valores guardados nesta aba.
+  const sessaoMorador = window.SessaoMorador && window.SessaoMorador.telaTravada() ? window.SessaoMorador.obter() : null;
+  if (window.SessaoMorador && window.SessaoMorador.telaTravada() && !sessaoMorador) {
+    window.SessaoMorador.aplicarNaTela();
+    mostrarAlerta("A sessão de 1 hora terminou. Informe o CPF e a data de nascimento de novo.", "Atenção");
+    return;
+  }
+  const cpfInput = sessaoMorador ? sessaoMorador.cpf : (inputCpf ? inputCpf.value.trim() : "");
   const cpfLimpo = limparCpf(cpfInput);
-  const nascInput = inputNasc ? inputNasc.value : "";
+  const nascInput = sessaoMorador ? sessaoMorador.nasc : (inputNasc ? inputNasc.value : "");
   
   if (cpfLimpo.length !== 11) {
     mostrarAlerta("Por favor, digite um CPF válido com 11 dígitos.", "Atenção");
@@ -247,14 +255,14 @@ async function consultarPorCpf() {
   let textoOriginalBtn = "Buscar Cadastro";
   if (btnBusca) {
     textoOriginalBtn = btnBusca.innerText;
-    btnBusca.innerText = "Buscando...";
+    btnBusca.innerText = "Buscando";
     btnBusca.disabled = true;
   }
   if (inputCpf) inputCpf.disabled = true;
   if (inputNasc) inputNasc.disabled = true;
 
   if (typeof setOverlayProcessamento === 'function') {
-    setOverlayProcessamento(true, 'Aguarde: buscando cadastro...');
+    setOverlayProcessamento(true, 'Aguarde: buscando cadastro');
   }
 
   try {
@@ -264,7 +272,7 @@ async function consultarPorCpf() {
     if (resposta && resposta.precisaCodigo && typeof window.pedirCodigoPorEmail === "function") {
       if (typeof setOverlayProcessamento === 'function') setOverlayProcessamento(false);
       resposta = await window.pedirCodigoPorEmail(cpfLimpo, nascInput, resposta.emailMascarado)
-        || { encontrado: false, mensagem: "Consulta cancelada. Para abrir o cadastro, é preciso o código enviado por e-mail." };
+        || { encontrado: false, cancelado: true, mensagem: "Consulta cancelada. Para abrir o cadastro, é preciso o código enviado por e-mail." };
     }
 
     if (btnBusca) {
@@ -290,8 +298,13 @@ async function consultarPorCpf() {
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
       cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "", sessao: resposta.sessao || "" };
+      if (inputCpf) delete inputCpf.dataset.sessao;
+      if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfLimpo, nascInput);
 
     } else {
+      // Com a sessão, o CPF ou a data deixaram de conferir (ex.: bloqueio): encerra e volta à consulta normal.
+      // Se a pessoa só cancelou o código por e-mail, a sessão continua.
+      if (sessaoMorador && !(resposta && resposta.cancelado)) window.SessaoMorador.encerrar();
       if (inputCpf) inputCpf.disabled = false;
       if (inputNasc) inputNasc.disabled = false;
       if (inputCpf) inputCpf.value = "";
@@ -307,6 +320,7 @@ async function consultarPorCpf() {
       if (secResto) { secResto.classList.add('hidden'); secResto.style.display = 'none'; }
 
       alterarTextoBotaoEnviar("Enviar cadastro");
+      if (window.SessaoMorador) window.SessaoMorador.aplicarNaTela();
       mostrarAlerta(resposta && resposta.mensagem ? resposta.mensagem : "CPF ou data de nascimento incorretos, ou não localizados na base de dados.", resposta && resposta.aguardandoAprovacao ? "Aguardando aprovação" : "Atenção");
     }
   } catch (err) {
@@ -318,6 +332,7 @@ async function consultarPorCpf() {
     }
     if (inputCpf) inputCpf.disabled = false;
     if (inputNasc) inputNasc.disabled = false;
+    if (sessaoMorador) window.SessaoMorador.aplicarNaTela(); // campos censurados continuam travados
 
     const erroNormalizado = String(err && err.message ? err.message : err || '').trim();
     const erroDetalhado = err && typeof err.toString === 'function'

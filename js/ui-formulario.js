@@ -51,14 +51,14 @@ function popularDropdownAptos() {
   const select = document.getElementById('vagaAptoRelacionado');
   if (!select) return;
 
-  select.innerHTML = '<option value="">Carregando apartamentos...</option>';
+  select.innerHTML = '<option value="">Carregando apartamentos</option>';
   select.disabled = true;
 
   // Busca apartamentos do backend
   if (typeof DataService !== 'undefined') {
     obterApartamentosDoGabarito()
       .then(data => {
-        select.innerHTML = '<option value="">Apto envolvido...</option>';
+        select.innerHTML = '<option value="">Apto envolvido</option>';
         
         if (data.sucesso && Array.isArray(data.apartamentos)) {
           data.apartamentos.forEach(apto => {
@@ -75,7 +75,7 @@ function popularDropdownAptos() {
       });
   } else {
     // Fallback para valores estáticos se WEB_APP_URL não estiver definido
-    select.innerHTML = '<option value="">Apto envolvido...</option>';
+    select.innerHTML = '<option value="">Apto envolvido</option>';
     for (let andar = 2; andar <= 8; andar++) {
       for (let pos = 1; pos <= 6; pos++) {
         const numApto = `${andar}0${pos}`;
@@ -115,14 +115,14 @@ function popularDropdownApto() {
   const select = document.getElementById('apto');
   if (!select) return;
 
-  select.innerHTML = '<option value="">Carregando apartamentos...</option>';
+  select.innerHTML = '<option value="">Carregando apartamentos</option>';
   select.disabled = true;
 
   // Busca apartamentos do backend
   if (typeof DataService !== 'undefined') {
     obterApartamentosDoGabarito()
       .then(data => {
-        select.innerHTML = '<option value="">Selecione o apartamento...</option>';
+        select.innerHTML = '<option value="">Selecione o apartamento</option>';
         
         if (data.sucesso && Array.isArray(data.apartamentos)) {
           data.apartamentos.forEach(apto => {
@@ -144,7 +144,7 @@ function popularDropdownApto() {
       });
   } else {
     // Fallback para valores estáticos se WEB_APP_URL não estiver definido
-    select.innerHTML = '<option value="">Selecione o apartamento...</option>';
+    select.innerHTML = '<option value="">Selecione o apartamento</option>';
     for (let andar = 2; andar <= 8; andar++) {
       for (let pos = 1; pos <= 6; pos++) {
         const numApto = `${andar}0${pos}`;
@@ -478,7 +478,7 @@ function addPet(v = {}) {
       <div>
         <span class="input-label">Porte<span class="required-star">*</span></span>
         <select class="pet-porte">
-          <option value="">Selecione...</option>
+          <option value="">Selecione</option>
           <option value="Pequeno" ${v.porte === 'Pequeno' ? 'selected' : ''}>Pequeno</option>
           <option value="Médio" ${v.porte === 'Médio' ? 'selected' : ''}>Médio</option>
           <option value="Grande" ${v.porte === 'Grande' ? 'selected' : ''}>Grande</option>
@@ -522,7 +522,7 @@ function addPrestador(v = {}) {
     <div><span class="input-label">Serviço<span class="required-star">*</span></span><input type="text" placeholder="Ex: Diarista" class="pr-servico" value="${escaparValor(v.servico)}"></div>
     <div><span class="input-label">Telefone/Celular<span class="required-star">*</span></span><input type="tel" placeholder="21999999999" class="pr-tel" value="${escaparValor(v.tel)}"></div>
     <div><span class="input-label">Possui chave?<span class="required-star">*</span></span><select class="pr-chave">
-      <option value="">Selecione...</option>
+      <option value="">Selecione</option>
       <option value="Sim" ${v.chave === 'Sim' ? 'selected' : ''}>Sim</option>
       <option value="Não" ${v.chave === 'Não' ? 'selected' : ''}>Não</option>
     </select></div>

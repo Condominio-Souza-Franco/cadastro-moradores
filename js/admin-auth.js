@@ -182,7 +182,7 @@
 
     var button = btnContainer.querySelector("button");
     if (button && !button.textContent.trim()) {
-      button.textContent = "Fazer login...";
+      button.textContent = "Fazer login";
     }
   }
 
@@ -206,7 +206,7 @@
             return;
           }
 
-          setMensagem("Verificando acesso...", "carregando");
+          setMensagem("Verificando acesso", "carregando");
           consultarAcesso(response && response.credential)
             .then(function(acesso) {
               var usuario = salvarSessao(payload, response && response.credential, acesso);

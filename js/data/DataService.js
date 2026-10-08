@@ -281,7 +281,7 @@
     var guardado = null;
     try { guardado = JSON.parse(sessionStorage.getItem(chave) || "null"); } catch (e) {}
 
-    // Avisa a tela que esta leitura está em andamento ("Carregando..." no lugar do "atualizado há...").
+    // Avisa a tela que esta leitura está em andamento ("Carregando" no lugar do "atualizado há").
     function buscar() {
       window.dispatchEvent(new CustomEvent("leitura-admin-inicio", { detail: { nome: nome } }));
       var fim = function() { window.dispatchEvent(new CustomEvent("leitura-admin-fim", { detail: { nome: nome } })); };

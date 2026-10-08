@@ -88,6 +88,7 @@
     details.secao[open] > summary::after { content: "−"; }
     details.secao .docs { padding: 0 10px 10px; }
     .qtd { font-weight: 400; color: var(--suave); font-size: 0.85rem; }
+    .aviso-sessao { margin: 10px 0 0; padding: 8px 12px; border: 1px solid var(--borda); border-radius: 8px; background: var(--destaque-fundo); color: var(--suave); font-size: 0.82rem; line-height: 1.4; text-wrap: pretty; }
     .rodape { margin-top: 28px; font-size: 0.85rem; color: var(--suave); }
     [hidden] { display: none !important; }
 
@@ -121,6 +122,7 @@
       <p id="saudacao"></p>
       <button type="button" class="btn btn-secundario" id="btnSair">Sair</button>
     </div>
+    <p id="avisoSessao" class="aviso-sessao" role="status" hidden></p>
     <h2 id="tituloPrincipais">Documentos</h2>
     <div id="docsPrincipais" class="docs"></div>
     <div id="secoes"></div>
@@ -128,8 +130,9 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261008b"></script>
-<script src="js/data/backend.js?v=20261008b"></script>
+<script src="js/regras.js?v=20261008c"></script>
+<script src="js/data/backend.js?v=20261008c"></script>
+<script src="js/sessao-morador.js?v=20261008c"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -183,6 +186,7 @@
       form.hidden = true;
       document.getElementById("conteudoKit").hidden = false;
       document.getElementById("saudacao").textContent = "Olá" + (r.nome ? ", " + r.nome : "") + "! Toque num documento para abrir.";
+      mostrarAvisoSessao();
       var principais = r.principais || [];
       document.getElementById("tituloPrincipais").hidden = !principais.length;
       document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
@@ -201,23 +205,54 @@
       if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento para abrir os documentos."); return; }
       var span = doc.querySelector("span");
       var texto = span.textContent;
-      span.textContent = "Abrindo...";
+      span.textContent = "Abrindo";
       doc.disabled = true;
       window.Backend.chamar("fbArquivoKit", { sessao: guardado.sessaoKit, id: doc.getAttribute("data-id") })
         .then(function(r) {
           if (!r || !r.sucesso) {
-            if (r && r.expirado) { voltarAoFormulario(r.mensagem); return; }
+            if (r && r.expirado) {
+              // O acesso do kit no servidor expirou, mas a sessão de 1 hora do site ainda vale: entra de novo e abre.
+              if (!doc.dataset.reentrou && window.SessaoMorador && window.SessaoMorador.obter()) {
+                doc.dataset.reentrou = "1";
+                return entrarPelaSessao().then(function(novo) {
+                  span.textContent = texto; doc.disabled = false;
+                  if (novo) doc.click(); else voltarAoFormulario(r.mensagem);
+                  return "repetido";
+                });
+              }
+              voltarAoFormulario(r.mensagem); return;
+            }
             throw new Error((r && r.mensagem) || "Não foi possível abrir o documento.");
           }
+          delete doc.dataset.reentrou;
           var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
           for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
           var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
           if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
           else window.open(url, "_blank");
         })
-        .catch(function(erro) { alert((erro && erro.message) || "Não foi possível abrir o documento."); })
-        .then(function() { span.textContent = texto; doc.disabled = false; });
+        .catch(function(erro) { delete doc.dataset.reentrou; alert((erro && erro.message) || "Não foi possível abrir o documento."); })
+        .then(function(res) { if (res !== "repetido") { span.textContent = texto; doc.disabled = false; } });
     });
+
+    // Sessão de 1 hora (js/sessao-morador.js): aviso com o horário em que ela termina.
+    function mostrarAvisoSessao() {
+      var aviso = document.getElementById("avisoSessao");
+      var texto = window.SessaoMorador ? window.SessaoMorador.textoAviso() : "";
+      aviso.textContent = texto;
+      aviso.hidden = !texto;
+    }
+
+    // Entra no kit com o CPF e a data guardados na sessão de 1 hora, sem pedir de novo.
+    function entrarPelaSessao() {
+      var s = window.SessaoMorador && window.SessaoMorador.obter();
+      if (!s) return Promise.resolve(null);
+      return window.Backend.chamar("fbAbrirKit", { cpf: s.cpf, nascimento: s.nasc }).then(function(r) {
+        if (!r || !r.encontrado) { window.SessaoMorador.encerrar(); return null; }
+        try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
+        return r;
+      });
+    }
 
     function voltarAoFormulario(mensagem) {
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
@@ -226,10 +261,25 @@
       setMensagem(mensagem || "", mensagem ? "erro" : "");
     }
 
-    try {
-      var guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null");
-      if (guardado && guardado.encontrado) mostrarKit(guardado);
-    } catch (e) {}
+    var guardadoInicial = null;
+    try { guardadoInicial = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
+    if (guardadoInicial && guardadoInicial.encontrado && window.SessaoMorador && window.SessaoMorador.obter()) {
+      mostrarKit(guardadoInicial);
+    } else if (window.SessaoMorador && window.SessaoMorador.obter()) {
+      // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo.
+      btn.disabled = true;
+      setMensagem("Abrindo o kit", "carregando");
+      entrarPelaSessao()
+        .then(function(r) {
+          setMensagem("", "");
+          if (r) mostrarKit(r);
+          else setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
+        })
+        .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
+        .then(function() { btn.disabled = false; });
+    } else {
+      try { sessionStorage.removeItem(CHAVE); } catch (e) {}
+    }
 
     form.addEventListener("submit", function(e) {
       e.preventDefault();
@@ -237,7 +287,7 @@
       if (cpfDigitos.length !== 11) { setMensagem("Informe o CPF completo (11 dígitos).", "erro"); cpf.focus(); return; }
       if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nasc.value)) { setMensagem("Informe a data de nascimento no formato DD/MM/AAAA.", "erro"); nasc.focus(); return; }
       btn.disabled = true;
-      setMensagem("Conferindo...", "carregando");
+      setMensagem("Conferindo", "carregando");
       window.Backend.chamar("fbAbrirKit", { cpf: cpfDigitos, nascimento: nasc.value })
         .then(function(r) {
           if (!r || !r.encontrado) {
@@ -246,6 +296,7 @@
           }
           setMensagem("", "");
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
+          if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfDigitos, nasc.value);
           mostrarKit(r);
         })
         .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
@@ -253,7 +304,9 @@
     });
 
     document.getElementById("btnSair").addEventListener("click", function() {
+      // Sair encerra também a sessão de 1 hora (o cadastro volta a pedir o CPF e a data).
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
+      if (window.SessaoMorador) window.SessaoMorador.encerrar();
       cpf.value = ""; nasc.value = "";
       document.getElementById("conteudoKit").hidden = true;
       form.hidden = false;
@@ -261,7 +314,7 @@
     });
   })();
 </script>
-<script src="js/popup-links.js?v=20261008b"></script>
-<script src="js/sem-conectivos.js?v=20261008b"></script>
+<script src="js/popup-links.js?v=20261008c"></script>
+<script src="js/sem-conectivos.js?v=20261008c"></script>
 </body>
 </html>

@@ -76,10 +76,10 @@
   }
 
   function carregar() {
-    // "Carregando..." no lugar do "atualizado há..." ao lado do Atualizar: a página não pula.
+    // "Carregando" no lugar do "atualizado há" ao lado do Atualizar: a página não pula.
     var indicador = document.querySelector("#painelMembros .atualizado-em");
     var textoAntes = indicador ? indicador.textContent : "";
-    if (indicador) { indicador.dataset.manual = "1"; indicador.textContent = "Carregando..."; indicador.classList.add("carregando-indicador"); }
+    if (indicador) { indicador.dataset.manual = "1"; indicador.textContent = "Carregando"; indicador.classList.add("carregando-indicador"); }
     function restaurar() { if (indicador) { delete indicador.dataset.manual; indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
     setStatus("", "");
     return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
@@ -117,7 +117,7 @@
   }
 
   function salvar() {
-    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando as autorizações...");
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando as autorizações");
     window.Backend.chamar("fbSalvarAutorizacoes", { permissoes: atual }, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
       dados = r;
