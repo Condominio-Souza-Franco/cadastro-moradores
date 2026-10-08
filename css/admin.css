@@ -3308,3 +3308,6 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
   font-size: 15px; font-weight: 700; line-height: 1; font-family: Arial, Helvetica, sans-serif;
 }
 .conselho-cabecalho .btn-mais-conselho::before { content: ""; }
+
+/* Membros e Autorizações se alternam: o display do formulário não pode anular o "hidden". */
+#formMembros[hidden], #autorizacoesMembros[hidden], #descricaoMembros[hidden] { display: none !important; }
