@@ -7,6 +7,8 @@
 // desenho, é do condomínio ou já está com outro apto — mas deixa salvar mesmo assim.
 // Modo "Mapa": o mesmo gabarito desenhado na planta; tocar numa vaga abre um seletor de apto.
 // Tabela e mapa editam as mesmas linhas, e o "Salvar alterações" vale para os dois.
+// O mapa é o modo padrão. A tabela mostra 5 vagas por vez, com "Carregar mais 5" (ou o que faltar,
+// ex.: "Carregar mais 3"); ao sair da página e voltar, ou ao trocar G1/G2, volta a mostrar só 5.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
   var GARAGENS = ["G1", "G2"];
@@ -20,7 +22,9 @@
   var svgs = {};           // texto dos SVGs de cada garagem (modo mapa), "paisagem" e "retrato"
   // Tela estreita ou em pé (celular): planta girada, com o texto de pé (mapas/*-retrato.svg).
   var consultaRetrato = window.matchMedia("(max-width: 700px), (max-aspect-ratio: 1/1)");
-  var modo = "tabela";
+  var modo = "mapa";
+  var POR_VEZ = 5;
+  var limiteTabela = POR_VEZ; // quantas vagas da tabela estão à mostra
   var garagemMapa = "G1";
   var vagaEditada = null;  // número da vaga aberta no editor do mapa ("14", "1/2"...)
 
@@ -147,6 +151,8 @@
       if (isNaN(va) !== isNaN(vb)) return isNaN(va) ? 1 : -1;
       return (va - vb) || (a - b);
     });
+    var total = visiveis.length;
+    visiveis = visiveis.slice(0, limiteTabela);
     tabela.innerHTML = visiveis.map(function(i) {
       var l = linhas[i];
       var avisos = avisosDaLinha(l, i);
@@ -158,6 +164,12 @@
         }).join("") + "</div>" : "") +
       "</div>";
     }).join("") || '<p class="sem-itens">Nenhuma vaga no ' + garagemMapa + ".</p>";
+    var mais = document.getElementById("btnCarregarMaisGabarito");
+    if (mais) {
+      var restante = total - visiveis.length;
+      mais.hidden = restante <= 0;
+      mais.textContent = "Carregar mais " + Math.min(POR_VEZ, restante);
+    }
     var restaurar = document.getElementById("btnRestaurarNumeracao");
     if (restaurar) restaurar.disabled = !numeracaoMudou();
     atualizarBotoes();
@@ -398,7 +410,14 @@
 
     // Cache da área admin (DataService): abre na hora com o último resultado e revalida em segundo plano.
     window.addEventListener("painel-aberto", function(e) {
-      if (e.detail && e.detail.id === "painelGabarito" && (!carregado || !haAlteracoes())) carregar();
+      if (!e.detail || e.detail.id !== "painelGabarito") return;
+      // Voltou à página: a tabela recomeça com 5 vagas.
+      limiteTabela = POR_VEZ;
+      if (!carregado || !haAlteracoes()) carregar(); else renderizar();
+    });
+    document.getElementById("btnCarregarMaisGabarito").addEventListener("click", function() {
+      limiteTabela += POR_VEZ;
+      renderizar();
     });
     window.addEventListener("dados-admin-atualizados", function(e) {
       var painelEl = document.getElementById("painelGabarito");
@@ -445,6 +464,7 @@
     document.querySelectorAll(".gabarito-garagens [data-garagem]").forEach(function(b) {
       b.addEventListener("click", function() {
         garagemMapa = b.getAttribute("data-garagem");
+        limiteTabela = POR_VEZ;
         document.querySelectorAll(".gabarito-garagens [data-garagem]").forEach(function(o) { o.classList.toggle("ativo", o === b); });
         fecharEditorVaga();
         renderizar();

@@ -3419,3 +3419,90 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 }
 #resultadoAdmin .registro-conteudo { flex: 1 1 auto; }
 #resultadoAdmin .linha-vaga-topo .campo { align-items: flex-start; }
+
+/* ---------- Consulta por apartamento: caixas da mesma linha com a mesma altura ----------
+   O "height: 100%" das caixas dentro de um registro impedia o esticar do flex (cada caixa ficava
+   da altura do próprio texto). Com altura automática, todas acompanham a maior da linha. */
+#resultadoAdmin .registro-conteudo .campo { height: auto; }
+#resultadoAdmin .registro-conteudo { align-self: stretch; }
+#resultadoAdmin .registro-bloco { align-items: center; }
+
+/* Emergência e prestadores: 3 colunas fixas (mesma largura em todos os registros), cada caixa com
+   a altura da maior. A 1ª coluna junta dois campos: nome + parentesco, ou nome + serviço. */
+#resultadoAdmin .grid-campos.grid-colunas,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos.grid-colunas {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+}
+#resultadoAdmin .grid-colunas-emergencia { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); }
+#resultadoAdmin .grid-colunas-prestadores { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.6fr); }
+#resultadoAdmin .grid-colunas .campo,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos.grid-colunas .campo {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  grid-column: auto;
+}
+.campo-agrupado { gap: 6px; }
+.campo-parte .campo-titulo { margin-bottom: 2px; }
+.campo-parte.vazio .campo-valor { color: #7c8a99; }
+/* Celular: 2 colunas; a 3ª caixa (endereço ou chave) desce para uma linha inteira. */
+@media (max-width: 600px) {
+  #resultadoAdmin .grid-colunas-emergencia,
+  #resultadoAdmin .grid-colunas-prestadores { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #resultadoAdmin .subsecao .registro-conteudo .grid-campos.grid-colunas > .campo:nth-child(3) { grid-column: 1 / -1; }
+}
+
+/* ---------- Membros: membro 1 do conselho na mesma altura do Síndico ----------
+   Grade de 2 linhas na tela larga: em cima, Condomínio | título "Conselho" (rente ao pé do
+   Condomínio); embaixo, Síndico, Administradora, Desenvolvedor | membros do conselho. */
+.membros-lista { display: contents; }
+.form-membros .membros-lista-2 > * { order: 4; }
+@media (min-width: 761px) {
+  .form-membros { grid-template-rows: auto auto; }
+  .form-membros .membros-coluna { display: contents; }
+  .form-membros .cargo-condominio { grid-column: 1; grid-row: 1; }
+  .form-membros .conselho-cabecalho { grid-column: 2; grid-row: 1; align-self: end; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
+  .form-membros .membros-lista { display: flex; flex-direction: column; grid-row: 2; }
+  .form-membros .membros-lista-1 { grid-column: 1; }
+  .form-membros .membros-lista-2 { grid-column: 2; }
+}
+
+/* ---------- Controle segmentado (Mapa/Tabela, G1/G2): hover legível ----------
+   A opção ativa fica sobre o indicador branco; o "texto branco no hover" de outras regras a
+   deixava invisível. Aqui o fundo continua transparente e o texto, azul. */
+.segmentado > button.ativo:hover,
+.segmentado > button.ativo:focus {
+  background: transparent !important;
+  color: var(--primary-color) !important;
+}
+.segmentado > button:not(.ativo):hover {
+  color: var(--primary-color) !important;
+}
+
+/* Gabarito: "Carregar mais 5" embaixo da tabela. */
+.btn-carregar-mais {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--accent-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-carregar-mais:hover { background: #e9f1fa !important; color: var(--accent-color) !important; }
+.btn-carregar-mais[hidden] { display: none; }
+
+/* × das páginas do admin: a regra geral "button:hover" escurecia o fundo e o × (escuro) sumia.
+   No hover, fundo claro avermelhado, como o × do cadastro aberto. */
+.btn-fechar-painel:hover,
+.btn-fechar-painel:focus-visible {
+  background: #fdecec !important;
+  color: var(--error) !important;
+}

@@ -18,7 +18,7 @@
   function cargosLista() {
     var lista = [{ chave: "sindico", titulo: "Síndico" }];
     (membros && membros.conselho || []).forEach(function(c, i) {
-      lista.push({ chave: "conselho", indice: i, titulo: "Conselho — membro " + (i + 1) });
+      lista.push({ chave: "conselho", indice: i, titulo: "Membro " + (i + 1) });
     });
     lista.push({ chave: "desenvolvedor", titulo: "Desenvolvedor" });
     return lista;
@@ -87,9 +87,9 @@
       '<div class="cargo-titulo">' + escaparHtml(def.titulo) +
         // Todos veem; só condomínio, síndico e desenvolvedor podem usar (os outros: desativado).
         (def.chave === "conselho"
-          ? ' <button type="button" class="btn-apagar-conselho" data-indice="' + def.indice + '" title="' + (podeMudarConselho() ? 'Apagar este membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor apagam membros') + '" aria-label="Apagar ' + escaparHtml(def.titulo) + '"' + (podeMudarConselho() ? '' : ' disabled') + '>Apagar</button>'
+          ? ' <button type="button" class="btn-apagar-conselho" data-indice="' + def.indice + '" title="' + (podeMudarConselho() ? 'Apagar este membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor apagam membros') + '" aria-label="Apagar o ' + escaparHtml(def.titulo.toLowerCase()) + ' do conselho"' + (podeMudarConselho() ? '' : ' disabled') + '>Apagar</button>'
           : "") + "</div>" +
-      '<select data-campo="cadastroId" aria-label="Apartamento do ' + escaparHtml(def.titulo) + '"' + (podeMorador ? "" : " disabled") + ">" + opcoesMoradores(cargo.cadastroId) + "</select>" +
+      '<select data-campo="cadastroId" aria-label="Apartamento do ' + escaparHtml(def.chave === "conselho" ? def.titulo.toLowerCase() + " do conselho" : def.titulo) + '"' + (podeMorador ? "" : " disabled") + ">" + opcoesMoradores(cargo.cadastroId) + "</select>" +
       (info ? '<div class="cargo-info">' + info + "</div>" : "") +
       '<input type="email" data-campo="email" placeholder="' + (cargo.usarEmailCadastro ? (semEmailNoCadastro ? "o cadastro não tem e-mail" : "e-mail do cadastro") : "e-mail de acesso") +
         '" aria-label="E-mail de acesso" value="' + escaparHtml(emailMostrado || "") + '"' + (podeEmail && !cargo.usarEmailCadastro ? "" : " disabled") + ">" +
@@ -107,23 +107,29 @@
     lista.forEach(function(def, i) { html[def.chave + (def.chave === "conselho" ? def.indice : "")] = cargoHtml(def, i); });
     var conselhoHtml = (membros.conselho || []).map(function(c, i) { return html["conselho" + i]; }).join("");
     // Coluna 1: Condomínio, Síndico, Administradora, Desenvolvedor. Coluna 2: Conselho (com "+").
+    // Na tela larga, o título "Conselho" fica na altura do Condomínio e o membro 1 na do Síndico
+    // (grade de 2 linhas: cabeçalhos em cima, cargos embaixo; css/admin.css).
     // No celular as colunas se desfazem e a ordem vira Condomínio, Síndico, Administradora, Conselho, Desenvolvedor.
     form.innerHTML =
       '<div class="membros-coluna membros-coluna-1">' +
         '<div class="cargo-membro cargo-condominio"><div class="cargo-titulo">Condomínio</div>' +
           '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
           escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
-        html.sindico +
-        // Administradora: o acesso segue Membros > Autorizações.
-        '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(acesso conforme as Autorizações)</span></div>' +
-          '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
-          escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>" +
-        html.desenvolvedor +
+        '<div class="membros-lista membros-lista-1">' +
+          html.sindico +
+          // Administradora: o acesso segue Membros > Autorizações.
+          '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(acesso conforme as Autorizações)</span></div>' +
+            '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
+            escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>" +
+          html.desenvolvedor +
+        "</div>" +
       "</div>" +
       '<div class="membros-coluna membros-coluna-2">' +
         '<div class="conselho-cabecalho"><span>Conselho</span>' +
           '<button type="button" class="btn-mais-conselho" title="' + (podeMudarConselho() ? 'Acrescentar membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor acrescentam membros') + '" aria-label="Acrescentar membro do conselho"' + (podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO ? '' : ' disabled') + '>+</button>' + "</div>" +
-        (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
+        '<div class="membros-lista membros-lista-2">' +
+          (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
+        "</div>" +
       "</div>";
     atualizarBotoes();
   }

@@ -320,7 +320,7 @@ body.popup-aberto {
 }
 
 .barra-acoes-flutuante .btn-submit {
-  flex: 2;
+  flex: 1;
   width: auto;
   margin: 0;
 }
@@ -346,16 +346,14 @@ body.com-barra-acoes {
   color: #6b4e00;
 }
 
-/* "Sair" com cara de botão ativo (contorno azul), para não parecer desabilitado ao lado do
-   "Atualizar cadastro" desabilitado quando nada mudou. */
-#btnSairSemAlterar,
-.barra-acoes-flutuante .barra-acao-sair {
+/* "Sair sem fazer alterações" com cara de botão ativo (contorno azul), para não parecer
+   desabilitado ao lado do "Atualizar cadastro" desabilitado quando nada mudou. */
+#btnSairSemAlterar {
   background: #ffffff;
   color: #1f5d99;
   border: 1px solid #1f5d99;
 }
-#btnSairSemAlterar:hover,
-.barra-acoes-flutuante .barra-acao-sair:hover {
+#btnSairSemAlterar:hover {
   background: #eef4fb;
 }
 

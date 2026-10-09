@@ -1,8 +1,10 @@
 // ==========================================
-// BARRA FLUTUANTE COM "ATUALIZAR/ENVIAR CADASTRO" E "SAIR"
+// BARRA FLUTUANTE COM "ATUALIZAR/ENVIAR CADASTRO" E O "×"
 // ==========================================
 // Depois que o morador carrega o próprio cadastro (ou abre um novo cadastro), aparece uma barra logo acima de "Qual é o seu
-// vínculo com a unidade?" com os mesmos botões do fim do formulário, lado a lado. Enquanto está
+// vínculo com a unidade?" com o botão de enviar do fim do formulário e um × para fechar.
+// Não tem "Sair": ao lado do "Sair" da sessão (embaixo de "Visualizar cadastro") ficava ambíguo;
+// o × já fecha o formulário sem alterar nada. Enquanto está
 // à mostra, fica FIXA no topo da tela (com a largura do formulário), sem rolar com o conteúdo.
 // Some quando os botões de baixo entram na tela — não faz sentido mostrar os dois.
 // Os botões da barra só "clicam" nos botões originais: a lógica de envio é a mesma.
@@ -62,7 +64,6 @@
     barra.hidden = true;
     barra.innerHTML =
       '<button type="button" class="btn-submit barra-acao-enviar">Atualizar cadastro</button>' +
-      '<button type="button" class="btn-secondary barra-acao-sair">Sair</button>' +
       // ×: fecha o formulário e volta à tela inicial (o mesmo que "Sair sem fazer alterações").
       '<button type="button" class="btn-fechar-flutuante" aria-label="Fechar o formulário" title="Fechar o formulário">&times;</button>';
     lugar.appendChild(barra);
@@ -72,9 +73,6 @@
       document.getElementById("btnEnviarForm").click();
     });
     barra.querySelector(".btn-fechar-flutuante").addEventListener("click", function() {
-      document.getElementById("btnSairSemAlterar").click();
-    });
-    barra.querySelector(".barra-acao-sair").addEventListener("click", function() {
       document.getElementById("btnSairSemAlterar").click();
     });
 

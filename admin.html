@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261008d">
+  <link rel="stylesheet" href="css/admin.css?v=20261009a">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -94,6 +94,7 @@
               <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
               <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
               <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
+              <a href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">Kit de Boas-vindas</a>
             </div>
           </section>
 
@@ -305,8 +306,8 @@
                 title="Volta os números das vagas ao que estava antes das suas mudanças">Restaurar distribuição original</button>
             </p>
             <div class="gabarito-modos segmentado" role="tablist">
-              <button type="button" data-modo="tabela" class="ativo" role="tab">Tabela</button>
-              <button type="button" data-modo="mapa" role="tab">Mapa</button>
+              <button type="button" data-modo="mapa" class="ativo" role="tab">Mapa</button>
+              <button type="button" data-modo="tabela" role="tab">Tabela</button>
             </div>
             <!-- G1/G2 vale para os dois modos (tabela e mapa). -->
             <div class="gabarito-garagens segmentado">
@@ -315,12 +316,13 @@
             </div>
             <div id="statusGabarito" class="status"></div>
             <div class="acoes-50" data-espelho="acoesGabarito"></div>
-            <div id="modoTabelaGabarito">
+            <div id="modoTabelaGabarito" hidden>
               <div class="gabarito-cabecalho" aria-hidden="true"><span>Vaga</span><span>Apartamento</span></div>
               <div id="tabelaGabarito" class="tabela-gabarito"></div>
+              <button type="button" id="btnCarregarMaisGabarito" class="btn-carregar-mais" hidden>Carregar mais 5</button>
             </div>
-            <!-- Modo mapa: toque numa vaga para escolher o apto (js/admin-gabarito.js). -->
-            <div id="modoMapaGabarito" hidden>
+            <!-- Modo mapa (padrão): toque numa vaga para escolher o apto (js/admin-gabarito.js). -->
+            <div id="modoMapaGabarito">
               <p class="descricao-acao">Toque numa vaga para escolher o apartamento. Vagas com aviso ficam com contorno vermelho.</p>
               <div id="editorVagaMapa" class="editor-vaga-mapa" hidden>
                 <strong id="editorVagaTitulo"></strong>
@@ -330,7 +332,6 @@
                 <div id="editorVagaAvisos" class="gabarito-avisos"></div>
               </div>
               <div id="mapaGabarito" class="mapa-gabarito"></div>
-              <p class="descricao-acao">Toque numa vaga para escolher o apartamento. Vagas com aviso ficam com contorno vermelho.</p>
             </div>
             <div id="acoesGabarito" class="gabarito-acoes acoes-50">
               <button type="button" id="btnDesfazerGabarito" class="btn-secundario">Desfazer</button>
@@ -393,19 +394,19 @@
   <script src="js/data/GoogleSheetsRepository.js?v=20261008c"></script>
   <script src="js/data/DataService.js?v=20261008c"></script>
   <script src="js/admin-fonte-dados.js?v=20261008c"></script>
-  <script src="js/admin-simples.js?v=20261008d"></script>
+  <script src="js/admin-simples.js?v=20261009a"></script>
   <script src="js/admin-relatorio.js?v=20261008c"></script>
   <script src="js/admin-busca.js?v=20261008c"></script>
   <script src="js/admin-historico.js?v=20261008c"></script>
   <script src="js/admin-pendencias.js?v=20261008c"></script>
   <script src="js/admin-permissoes.js?v=20261008c"></script>
   <script src="js/admin-autorizacoes.js?v=20261008d"></script>
-  <script src="js/admin-membros.js?v=20261008c"></script>
+  <script src="js/admin-membros.js?v=20261009a"></script>
   <script src="js/admin-bloqueios.js?v=20261008c"></script>
   <script src="js/vaga-miniatura.js?v=20261008c"></script>
   <script src="js/admin-aprovacoes.js?v=20261008c"></script>
   <script src="js/admin-notificacoes.js?v=20261008d"></script>
-  <script src="js/admin-gabarito.js?v=20261008c"></script>
+  <script src="js/admin-gabarito.js?v=20261009a"></script>
   <script src="js/admin-acoes-espelho.js?v=20261008c"></script>
   <script src="js/admin-pre-carga.js?v=20261008c"></script>
   <script src="js/admin-paineis.js?v=20261008c"></script>
