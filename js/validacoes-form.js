@@ -302,7 +302,10 @@ async function consultarPorCpf() {
       snapshotFormularioOriginal = capturarSnapshotFormulario();
       cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "", sessao: resposta.sessao || "" };
       if (inputCpf) delete inputCpf.dataset.sessao;
-      if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfLimpo, nascInput);
+      if (window.SessaoMorador) {
+        var aptoAtual = document.getElementById("apto");
+        window.SessaoMorador.iniciar(cpfLimpo, nascInput, { nome: d.nome || "", apto: (aptoAtual && aptoAtual.value) || d.apto || "", email: d.email || "" });
+      }
 
     } else {
       // Com a sessão, o CPF ou a data deixaram de conferir (ex.: bloqueio): encerra e volta à consulta normal.

@@ -38,6 +38,11 @@
       nome = document.getElementById("moradorNome").value;
       email = (document.getElementById("moradorEmail") || {}).value || "";
       apto = document.getElementById("apto") && document.getElementById("apto").value || "";
+      // Guarda quem é na sessão (ex.: entrou pelo kit), para o topo mostrar o nome sem abrir o cadastro.
+      var sessaoAtual = window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter();
+      if (sessaoAtual && !sessaoAtual.pessoa && nome.trim()) {
+        window.SessaoMorador.iniciar(sessaoAtual.cpf, sessaoAtual.nasc, { nome: nome, apto: apto, email: email });
+      }
     } else if (window.SessaoMorador && window.SessaoMorador.pessoa && window.SessaoMorador.pessoa()) {
       var p = window.SessaoMorador.pessoa();
       nome = p.nome || ""; email = p.email || ""; apto = p.apto || "";
