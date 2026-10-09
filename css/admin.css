@@ -3454,20 +3454,29 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
   #resultadoAdmin .subsecao .registro-conteudo .grid-campos.grid-colunas > .campo:nth-child(3) { grid-column: 1 / -1; }
 }
 
-/* ---------- Membros: membro 1 do conselho na mesma altura do Síndico ----------
-   Grade de 2 linhas na tela larga: em cima, Condomínio | título "Conselho" (rente ao pé do
-   Condomínio); embaixo, Síndico, Administradora, Desenvolvedor | membros do conselho. */
+/* ---------- Membros: Condomínio | Administradora em cima; Síndico e Desenvolvedor | conselho embaixo ----------
+   Grade de 2 linhas na tela larga, para o membro 1 do conselho ficar na altura do Síndico.
+   No celular as listas se desfazem e a ordem vem do "order" das regras de 2 colunas acima. */
 .membros-lista { display: contents; }
 .form-membros .membros-lista-2 > * { order: 4; }
 @media (min-width: 761px) {
   .form-membros { grid-template-rows: auto auto; }
   .form-membros .membros-coluna { display: contents; }
   .form-membros .cargo-condominio { grid-column: 1; grid-row: 1; }
-  .form-membros .conselho-cabecalho { grid-column: 2; grid-row: 1; align-self: end; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
+  .form-membros .cargo-administradora { grid-column: 2; grid-row: 1; }
   .form-membros .membros-lista { display: flex; flex-direction: column; grid-row: 2; }
   .form-membros .membros-lista-1 { grid-column: 1; }
   .form-membros .membros-lista-2 { grid-column: 2; }
 }
+/* "+ Adicionar membro no conselho": largura toda da coluna, tracejado como no formulário do morador. */
+.btn-add.btn-adicionar-conselho {
+  display: block; width: 100%; min-height: 0; height: auto; margin: 10px 0; padding: 9px 12px;
+  border: 1.5px dashed #2b7fb9; border-radius: 8px; background: #eaf6ff; color: #0f5d8c;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+}
+.btn-add.btn-adicionar-conselho:not(:disabled):hover { background: #d0e7f9 !important; color: #0f5d8c !important; }
+.btn-add.btn-adicionar-conselho:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(1); }
+.btn-add.btn-adicionar-conselho:disabled:hover { background: #eaf6ff !important; color: #0f5d8c !important; }
 
 /* ---------- Controle segmentado (Mapa/Tabela, G1/G2): hover legível ----------
    A opção ativa fica sobre o indicador branco; o "texto branco no hover" de outras regras a
@@ -3505,4 +3514,44 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 .btn-fechar-painel:focus-visible {
   background: #fdecec !important;
   color: var(--error) !important;
+}
+
+/* ---------- Consulta por apartamento: colunas padronizadas ----------
+   Em vez de cada caixa ter a largura do próprio texto (colunas desalinhadas entre um registro e
+   outro), cada lista usa colunas de mesma largura: uma por campo (grid-n2/n3/n4), e o Registro
+   4 colunas (2 no celular). Textos longos quebram linha dentro da caixa. */
+#resultadoAdmin .grid-campos.grid-registro,
+#resultadoAdmin .grid-campos.grid-n2,
+#resultadoAdmin .grid-campos.grid-n3,
+#resultadoAdmin .grid-campos.grid-n4 {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+}
+#resultadoAdmin .grid-registro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#resultadoAdmin .grid-registro .campo,
+#resultadoAdmin .grid-n2 .campo,
+#resultadoAdmin .grid-n3 .campo,
+#resultadoAdmin .grid-n4 .campo,
+#resultadoAdmin .registro-conteudo .grid-n2 .campo,
+#resultadoAdmin .registro-conteudo .grid-n3 .campo,
+#resultadoAdmin .registro-conteudo .grid-n4 .campo {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+/* Carros e motos na coluna estreita da tela larga, e listas de 3 campos no celular: o 1º campo
+   (marca e modelo, nome do pet) na linha toda e os outros dois embaixo, lado a lado. */
+@media (min-width: 601px) {
+  #resultadoAdmin .subsecoes-veiculos .grid-n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #resultadoAdmin .subsecoes-veiculos .grid-n3 > .campo:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  #resultadoAdmin .grid-registro,
+  #resultadoAdmin .grid-n3,
+  #resultadoAdmin .grid-n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #resultadoAdmin .grid-n3 > .campo:first-child { grid-column: 1 / -1; }
 }

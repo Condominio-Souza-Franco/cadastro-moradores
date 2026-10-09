@@ -393,7 +393,8 @@
       var tituloRegistro = mostrarTituloNumerico ? String(indice + 1) : (titulo + ' ' + (indice + 1));
       var colunas = opcoes && Array.isArray(opcoes.colunas) ? opcoes.colunas : null;
       html.push('<div class="registro-bloco"><div class="registro-titulo">' + tituloRegistro + '</div><div class="registro-conteudo"><div class="grid-campos' +
-        (colunas ? ' grid-colunas grid-colunas-' + escaparHtml(opcoes.tipoColunas || "") : '') + '">');
+        // Sem colunas próprias: uma coluna por campo, todas da mesma largura (grid-n2, grid-n3, grid-n4).
+        (colunas ? ' grid-colunas grid-colunas-' + escaparHtml(opcoes.tipoColunas || "") : ' grid-n' + nomesCampos.length) + '">');
       if (colunas) {
         // Colunas fixas (mesma largura em todos os registros e a mesma altura, a da caixa maior).
         colunas.forEach(function(coluna) {
@@ -476,7 +477,7 @@
       '</div>' +
       '<section class="secao">' +
         '<h2>' + tituloRegistro + '</h2>' +
-        '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
+        '<div class="grid-campos grid-registro">' + camposPrincipaisUnidade.join("") + '</div>' +
       '</section>'
     );
 
@@ -533,7 +534,7 @@
       '</div>' +
       // Miniatura do andar com a vaga pintada (a mesma do formulário); desenhada depois (desenharMapasVaga).
       '<div class="consulta-mapa-vaga" data-apto="' + escaparHtml(dados.apto) + '" data-vaga="' + escaparHtml(textoLimpo(dados.vagaNumeroAndar)) + '" hidden></div>' +
-      '<div class="subsecoes-lado-a-lado">' +
+      '<div class="subsecoes-lado-a-lado subsecoes-veiculos">' +
         registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
         registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
         registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
