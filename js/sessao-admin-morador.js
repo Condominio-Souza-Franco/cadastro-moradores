@@ -58,15 +58,38 @@
     return null;
   }
 
+  // Diagnóstico (sem dados pessoais): com ?diag=1 no endereço, mostra em qual passo parou.
+  var DIAG = /[?&]diag=1/.test(location.search);
+  function diag(texto) {
+    if (!DIAG) return;
+    var el = document.getElementById("diagSessaoAdmin");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "diagSessaoAdmin";
+      el.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;padding:8px 12px;border-radius:8px;background:#243447;color:#fff;font:12px/1.4 Arial,sans-serif;white-space:pre-line";
+      document.body.appendChild(el);
+    }
+    el.textContent += (el.textContent ? "\n" : "") + texto;
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
-    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) return;
-    if (!document.getElementById("cpfConsulta")) return;
+    diag("Sessão do admin → morador:");
+    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) { diag("parou: scripts da página não carregaram"); return; }
+    if (!document.getElementById("cpfConsulta")) { diag("parou: página sem a consulta por CPF"); return; }
     var admin = lerAdmin();
-    if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
-    if (window.SessaoMorador.obter()) return;
+    if (!admin) {
+      var bruto = null;
+      try { bruto = JSON.parse(sessionStorage.getItem(CHAVE_ADMIN) || "null"); } catch (e) {}
+      diag(!bruto ? "parou: não há login do admin NESTA aba (entre no admin e volte pela mesma aba)"
+        : (bruto.expiraEm && Date.now() >= bruto.expiraEm ? "parou: o login do admin expirou (vale 1 hora); entre de novo" : "parou: login do admin incompleto (sem token)"));
+      return;
+    }
+    if (admin.papel === "condominio" || admin.papel === "administradora") { diag("parou: o cargo " + admin.papel + " não tem cadastro de morador"); return; }
+    if (window.SessaoMorador.obter()) { diag("ok: a sessão de morador já estava aberta"); return; }
+    diag("login do admin encontrado (cargo: " + (admin.papel || "?") + ")");
     // Só marca "já feito" quando a sessão abre: se der errado, tenta de novo na próxima visita; se der
     // certo e a pessoa clicar em "Sair", não reconecta nesta aba.
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; } catch (e) { return; }
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) { diag("parou: já conectou uma vez nesta aba e você clicou em Sair"); return; } } catch (e) { return; }
 
     // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
     if (!window.AdminAuth) {
@@ -78,24 +101,29 @@
 
     window.DataService.obterMembros()
       .then(function(r) {
-        if (!r || !r.sucesso) return null;
+        if (!r || !r.sucesso) { diag("parou: a página Membros não respondeu (" + ((r && r.mensagem) || "sem resposta") + ")"); return null; }
         var cargo = cargoDoLogado(r, admin.email);
+        diag(cargo && cargo.cadastroId ? "cargo com cadastro encontrado" : "parou: nenhum cargo com o seu e-mail tem morador escolhido em Membros");
         var id = cargo && cargo.cadastroId;
         var candidato = id && (r.candidatos || []).filter(function(c) { return c.id === id; })[0];
-        if (!candidato || !candidato.apto) return null;
+        if (!candidato || !candidato.apto) { if (cargo && cargo.cadastroId) diag("parou: o cadastro escolhido em Membros não está entre os moradores ativos"); return null; }
         return window.DataService.obterMoradorPorApto(candidato.apto, id);
       })
       .then(function(resposta) {
         var d = resposta && resposta.encontrado && resposta.dados;
-        if (!d || d.situacao === "mudou-se") return;
+        if (resposta === null) return;
+        if (!d) { diag("parou: a consulta do cadastro não respondeu (" + ((resposta && resposta.mensagem) || "sem resposta") + ")"); return; }
+        if (d.situacao === "mudou-se") { diag("parou: o cadastro está marcado como mudou-se"); return; }
         var cpf = String(d.cpf || "").replace(/\D/g, "");
         var nasc = dataBr(d.nasc);
         // A pessoa pode ter começado a digitar ou aberto um cadastro enquanto isso: não atropela.
-        if (cpf.length !== 11 || !nasc || window.SessaoMorador.obter()) return;
-        if (document.getElementById("cpfConsulta").value) return;
+        if (cpf.length !== 11 || !nasc) { diag("parou: o cadastro está sem CPF ou data de nascimento válidos"); return; }
+        if (window.SessaoMorador.obter()) { diag("ok: a sessão já tinha sido aberta"); return; }
+        if (document.getElementById("cpfConsulta").value) { diag("parou: o campo CPF já estava preenchido"); return; }
         window.SessaoMorador.iniciar(cpf, nasc);
         try { sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) {}
+        diag("ok: sessão de morador aberta");
       })
-      .catch(function() {});
+      .catch(function(erro) { diag("parou: erro " + ((erro && erro.message) || erro)); });
   });
 })();
