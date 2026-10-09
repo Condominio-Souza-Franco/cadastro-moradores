@@ -6,16 +6,14 @@
 // site (ex.: mapa da garagem). O topo do popup tem o × para fechar (Esc também fecha).
 // WhatsApp, telefone, e-mail e sites que não aceitam ser embutidos continuam como antes.
 (function() {
-  // Kit de Boas-vindas (tinyurl -> pasta do Drive).
-  var PASTA_KIT = "1ZLt6ZQP8lMK8R3VEbgoaIz8_Qz6kFxCe";
-
   function urlEmbutida(href) {
     var u;
     try { u = new URL(href, location.href); } catch (e) { return null; }
     var m;
     if (/^(tel|mailto|whatsapp):/i.test(u.protocol) || /(^|\.)wa\.me$/i.test(u.hostname)) return null;
     if (u.hostname === "tinyurl.com" && /kit-souzafranco/i.test(u.pathname)) {
-      return "https://drive.google.com/embeddedfolderview?id=" + PASTA_KIT + "#list";
+      // Mesma página do kit que o morador vê (kit.html), dentro do popup.
+      return new URL("kit.html", location.href).href;
     }
     if (u.hostname === "drive.google.com") {
       if ((m = u.pathname.match(/\/file\/d\/([^/]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
@@ -62,6 +60,7 @@
     popup.innerHTML =
       '<div class="popup-link-caixa" role="dialog" aria-modal="true">' +
         '<div class="popup-link-topo"><span class="popup-link-titulo"></span>' +
+          '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
@@ -70,12 +69,17 @@
     popup.addEventListener("click", function(e) {
       if (e.target === popup || e.target.closest(".popup-link-fechar")) fechar();
     });
+    popup.querySelector(".popup-link-nova").addEventListener("click", fechar);
     document.addEventListener("keydown", function(e) { if (e.key === "Escape") fechar(); });
     return popup;
   }
 
-  function abrir(embutida, original, titulo) {
+  function abrir(embutida, original, titulo, comNovaAba) {
     var p = garantirPopup();
+    // "Abrir em nova aba" só aparece na visualização de arquivos (PDF), não nos links.
+    var nova = p.querySelector(".popup-link-nova");
+    nova.hidden = !comNovaAba;
+    if (comNovaAba) nova.href = original;
     p.querySelector(".popup-link-titulo").textContent = titulo || "";
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
     p.querySelector("iframe").src = embutida;
@@ -92,7 +96,7 @@
 
   // abrirDireto: mostra uma URL já pronta (ex.: PDF baixado pelo servidor, blob:) no mesmo popup.
   window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
-    abrirDireto: function(url, titulo) { abrir(url, url, titulo); }, fechar: fechar };
+    abrirDireto: function(url, titulo) { abrir(url, url, titulo, true); }, fechar: fechar };
 
   // Fase de bolha: quem já trata o clique (ex.: mapa da vaga, links do Drive desativados) chama
   // preventDefault antes, e aqui o link é ignorado.
