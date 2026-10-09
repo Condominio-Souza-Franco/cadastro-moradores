@@ -140,7 +140,11 @@
 </main>
 <script src="js/regras.js?v=20261009x"></script>
 <script src="js/data/backend.js?v=20261009x"></script>
-<script src="js/sessao-morador.js?v=20261009x"></script>
+<script src="js/data/FirebaseRepository.js?v=20261009y"></script>
+<script src="js/data/GoogleSheetsRepository.js?v=20261009y"></script>
+<script src="js/data/DataService.js?v=20261009y"></script>
+<script src="js/sessao-morador.js?v=20261009y"></script>
+<script src="js/cadastro-pre-carregado.js?v=20261009y"></script>
 <script src="js/pular-campo.js?v=20261009x"></script>
 <script>
   (function() {
@@ -302,6 +306,11 @@
       form.hidden = false;
       setMensagem(mensagem || "", mensagem ? "erro" : "");
     }
+
+    // Sessão de 1 hora ativa: o cadastro do morador vai sendo carregado em segundo plano, para que
+    // "Visualizar cadastro" na página inicial abra na hora (js/cadastro-pre-carregado.js).
+    var sessaoAtiva = window.SessaoMorador && window.SessaoMorador.obter();
+    if (sessaoAtiva && window.CadastroPreCarregado) window.CadastroPreCarregado.preCarregar(sessaoAtiva.cpf, sessaoAtiva.nasc);
 
     var guardadoInicial = null;
     try { guardadoInicial = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}

@@ -16,6 +16,7 @@
 (function() {
   var CHAVE = "sessaoMorador";
   var CHAVE_KIT = "kitBoasVindas"; // dados do Kit já aberto (kit-acesso.js e kit.html)
+  var CHAVE_CADASTRO = "cadastroPreCarregado"; // mesma chave de js/cadastro-pre-carregado.js
   var DURACAO_MS = 60 * 60 * 1000;
 
   function dois(n) { return String(n).padStart(2, "0"); }
@@ -50,7 +51,11 @@
   }
 
   function encerrar() {
-    try { sessionStorage.removeItem(CHAVE); sessionStorage.removeItem(CHAVE_KIT); } catch (e) {}
+    try {
+      sessionStorage.removeItem(CHAVE);
+      sessionStorage.removeItem(CHAVE_KIT);
+      sessionStorage.removeItem(CHAVE_CADASTRO); // cadastro carregado em segundo plano (js/cadastro-pre-carregado.js)
+    } catch (e) {}
     avisarMudanca();
   }
 
