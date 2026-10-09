@@ -50,9 +50,7 @@
     );
   }
 
-  // Bolinha com o número de itens: a última contagem fica guardada neste navegador (como as bolinhas do
-  // menu) e aparece logo ao abrir a página. Só guarda o número, nenhum dado de morador.
-  var CHAVE_CONTAGEM = "contagemMenu:contagemHistorico";
+  // Bolinha com o número de itens. O número fica guardado no servidor e é lido logo ao abrir a página.
   function mostrarContagem(total) {
     var contagem = document.getElementById("contagemHistorico");
     if (!contagem) return;
@@ -61,13 +59,12 @@
     contagem.hidden = !total;
   }
   function guardarContagem(total) {
-    try { localStorage.setItem(CHAVE_CONTAGEM, String(total)); } catch (e) {}
     mostrarContagem(total);
   }
-  function restaurarContagem() {
-    var guardado = null;
-    try { guardado = localStorage.getItem(CHAVE_CONTAGEM); } catch (e) {}
-    if (guardado !== null) mostrarContagem(parseInt(guardado, 10) || 0);
+  function lerContadorDoServidor() {
+    return DataService.obterContadorHistorico().then(function(r) {
+      if (r && r.sucesso && r.total !== null && !carregado) mostrarContagem(r.total);
+    }).catch(function() {});
   }
 
   function renderizar() {
@@ -134,12 +131,12 @@
     var botaoMais = document.getElementById("btnMaisHistorico");
     var lista = document.getElementById("listaHistorico");
     if (!secao || !window.DataService) return;
-    restaurarContagem();
-    // Em 2º plano, logo ao abrir a página (com o admin logado): atualiza a bolinha e deixa a lista pronta.
-    // Se o número for outro, a bolinha muda sozinha; a lista só aparece quando a seção é aberta.
+    // Em 2º plano, logo ao abrir a página (com o admin logado): o número vem do servidor e a lista é
+    // atualizada. Se o número for outro, a bolinha muda sozinha; a lista só aparece quando a seção abre.
     function atualizarEmSegundoPlano() {
       if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
       if (carregado || carregando) return;
+      lerContadorDoServidor();
       carregar(true);
     }
     atualizarEmSegundoPlano();

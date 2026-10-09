@@ -60,6 +60,10 @@
     listarHistorico: function(limite) {
       return chamarBackend("fbListarHistorico", { limite: limite }, true);
     },
+    // Número de itens do histórico guardado no servidor (aparece na bolinha antes da lista carregar).
+    obterContadorHistorico: function() {
+      return chamarBackend("fbObterContadorHistorico", {}, true);
+    },
     // Membros da administração (quem acessa a área restrita e com qual papel).
     obterMembros: function() {
       return chamarBackend("fbObterMembros", {}, true);

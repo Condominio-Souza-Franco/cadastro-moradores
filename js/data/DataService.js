@@ -152,7 +152,7 @@
     gerarRelatorioApartamentosPdfDrive: 25000
   };
 
-  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarAprovacoes", "decidirAprovacao", "estatisticas", "listarHistorico", "situacaoRelatorios"];
+  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarAprovacoes", "decidirAprovacao", "estatisticas", "listarHistorico", "obterContadorHistorico", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -438,6 +438,9 @@
     },
     listarHistorico: function(limite) {
       return executarLeitura("listarHistorico", [limite]);
+    },
+    obterContadorHistorico: function() {
+      return executarLeitura("obterContadorHistorico", []);
     },
     obterMembros: function() {
       return lerComCacheAdmin("obterMembros", []);
