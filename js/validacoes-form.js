@@ -266,7 +266,9 @@ async function consultarPorCpf() {
   }
 
   try {
-    let resposta = await DataService.obterMoradorPorCpf(cpfLimpo, nascInput);
+    // Cadastro já carregado em segundo plano no Kit ou na administração (js/cadastro-pre-carregado.js): abre na hora.
+    let resposta = (window.CadastroPreCarregado && window.CadastroPreCarregado.usar(cpfLimpo, nascInput))
+      || await DataService.obterMoradorPorCpf(cpfLimpo, nascInput);
 
     // Cadastro protegido por código por e-mail: pede o código antes de mostrar os dados.
     if (resposta && resposta.precisaCodigo && typeof window.pedirCodigoPorEmail === "function") {
@@ -298,6 +300,7 @@ async function consultarPorCpf() {
 
       snapshotFormularioOriginal = capturarSnapshotFormulario();
       cadastroConsultado = { id: d.id || "", cpf: cpfLimpo, nasc: nascInput, dataUltimoEnvio: d.dataUltimoEnvio || "", sessao: resposta.sessao || "" };
+      marcarBotoesDoCadastroAberto();
       if (inputCpf) delete inputCpf.dataset.sessao;
       if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfLimpo, nascInput);
 

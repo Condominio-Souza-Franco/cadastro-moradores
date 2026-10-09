@@ -46,23 +46,10 @@
     return null;
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) return;
-    if (!document.getElementById("cpfConsulta")) return;
-    var admin = lerAdmin();
-    if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
-    if (window.SessaoMorador.obter()) return;
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) { return; }
-
-    // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
-    if (!window.AdminAuth) {
-      window.AdminAuth = {
-        getIdToken: function() { try { return sessionStorage.getItem(CHAVE_TOKEN) || ""; } catch (e) { return ""; } },
-        getEmail: function() { return admin.email; }
-      };
-    }
-
-    window.DataService.obterMembros()
+  // CPF e data de nascimento do cadastro de quem está logado; null se não houver cadastro.
+  // Usado pela página inicial (abre a sessão) e pela administração (carrega o cadastro em segundo plano).
+  function descobrirCadastro(admin) {
+    return window.DataService.obterMembros()
       .then(function(r) {
         if (!r || !r.sucesso) return null;
         var cargo = cargoDoLogado(r);
@@ -73,13 +60,53 @@
       })
       .then(function(resposta) {
         var d = resposta && resposta.encontrado && resposta.dados;
-        if (!d || d.situacao === "mudou-se") return;
+        if (!d || d.situacao === "mudou-se") return null;
         var cpf = String(d.cpf || "").replace(/\D/g, "");
         var nasc = dataBr(d.nasc);
+        if (cpf.length !== 11 || !nasc) return null;
+        return { cpf: cpf, nasc: nasc };
+      });
+  }
+
+  // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
+  function garantirAdminAuth(admin) {
+    if (window.AdminAuth) return;
+    window.AdminAuth = {
+      getIdToken: function() { try { return sessionStorage.getItem(CHAVE_TOKEN) || ""; } catch (e) { return ""; } },
+      getEmail: function() { return admin.email; }
+    };
+  }
+
+  // Na administração (admin.html), logo depois do login o cadastro do próprio logado já é carregado em
+  // segundo plano (js/cadastro-pre-carregado.js). Assim "Visualizar cadastro" abre na hora na página inicial.
+  function preCarregarNaAdministracao() {
+    var admin = lerAdmin();
+    if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
+    if (!window.DataService || !window.CadastroPreCarregado) return;
+    garantirAdminAuth(admin);
+    descobrirCadastro(admin)
+      .then(function(c) { if (c) window.CadastroPreCarregado.preCarregar(c.cpf, c.nasc); })
+      .catch(function() {});
+  }
+
+  window.SessaoAdminMorador = { descobrirCadastro: descobrirCadastro, preCarregarNaAdministracao: preCarregarNaAdministracao };
+  window.addEventListener("admin-auth-success", function() { preCarregarNaAdministracao(); });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) return;
+    if (!document.getElementById("cpfConsulta")) return;
+    var admin = lerAdmin();
+    if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
+    if (window.SessaoMorador.obter()) return;
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) { return; }
+
+    garantirAdminAuth(admin);
+    descobrirCadastro(admin)
+      .then(function(c) {
         // A pessoa pode ter começado a digitar ou aberto um cadastro enquanto isso: não atropela.
-        if (cpf.length !== 11 || !nasc || window.SessaoMorador.obter()) return;
+        if (!c || window.SessaoMorador.obter()) return;
         if (document.getElementById("cpfConsulta").value) return;
-        window.SessaoMorador.iniciar(cpf, nasc);
+        window.SessaoMorador.iniciar(c.cpf, c.nasc);
       })
       .catch(function() {});
   });

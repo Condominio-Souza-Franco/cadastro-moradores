@@ -418,8 +418,10 @@
     obterMoradorPorApto: function(apto, ocorrencia) {
       return executarLeitura("obterMoradorPorApto", [apto, ocorrencia]);
     },
-    obterMoradorPorCpf: function(cpf, nascimento) {
-      return executarLeitura("obterMoradorPorCpf", [cpf, nascimento]);
+    // opcoes.previa = true: pré-carregamento; se o cadastro exige código por e-mail, o servidor só
+    // responde precisaCodigo, sem mandar o código (o e-mail só sai quando a pessoa clica no botão).
+    obterMoradorPorCpf: function(cpf, nascimento, opcoes) {
+      return executarLeitura("obterMoradorPorCpf", [cpf, nascimento, opcoes]);
     },
     confirmarCodigoCpf: function(cpf, nascimento, codigo) {
       return executarLeitura("confirmarCodigoCpf", [cpf, nascimento, codigo]);

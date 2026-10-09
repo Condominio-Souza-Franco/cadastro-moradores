@@ -227,7 +227,21 @@ function redefinirBotoesParaNovoCadastro() {
   if (btnSair) {
     btnSair.textContent = 'Sair';
     btnSair.innerText = 'Sair';
+    btnSair.removeAttribute('aria-label');
+    btnSair.removeAttribute('title');
   }
+}
+
+// Com um cadastro aberto, os botões de baixo são "Atualizar cadastro" e "×" (fecha sem alterar nada).
+// "Sair" não aparece aqui: fica só no topo, para encerrar a sessão (SessaoMorador.sair).
+// O "×" faz o mesmo que a barra flutuante (js/barra-acoes.js), que também clica neste botão.
+function marcarBotoesDoCadastroAberto() {
+  const btnSair = document.getElementById('btnSairSemAlterar');
+  if (!btnSair) return;
+  btnSair.textContent = '×';
+  btnSair.innerText = '×';
+  btnSair.setAttribute('aria-label', 'Fechar o formulário sem fazer alterações');
+  btnSair.title = 'Fechar o formulário sem fazer alterações';
 }
 
 function voltarTelaInicial() {
