@@ -38,8 +38,20 @@
   }
 
   // Cadastro do cargo de quem está logado, pelo papel que o backend informou.
-  function cargoDoLogado(r) {
+  // Cadastro de quem está logado: procura em TODOS os cargos (síndico, desenvolvedor, conselho) um que
+  // tenha morador escolhido e cujo e-mail de acesso seja o do login. Assim, quem tem dois cargos (ex.:
+  // desenvolvedor e conselho) é encontrado mesmo que só um deles esteja ligado ao cadastro.
+  function cargoDoLogado(r, email) {
     var membros = (r && r.membros) || {};
+    var alvo = String(email || "").trim().toLowerCase();
+    var cargos = [membros.sindico, membros.desenvolvedor].concat(membros.conselho || []).filter(function(c) { return c && c.cadastroId; });
+    var porId = {};
+    (r.candidatos || []).forEach(function(c) { porId[c.id] = c; });
+    var doLogado = cargos.filter(function(c) {
+      var efetivo = c.usarEmailCadastro !== false ? (porId[c.cadastroId] && porId[c.cadastroId].email) : c.email;
+      return String(efetivo || "").trim().toLowerCase() === alvo;
+    })[0];
+    if (doLogado) return doLogado;
     if (r.papel === "sindico") return membros.sindico;
     if (r.papel === "desenvolvedor") return membros.desenvolvedor;
     if (r.papel === "conselho") return (membros.conselho || [])[r.indice];
@@ -52,7 +64,9 @@
     var admin = lerAdmin();
     if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
     if (window.SessaoMorador.obter()) return;
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) { return; }
+    // Só marca "já feito" quando a sessão abre: se der errado, tenta de novo na próxima visita; se der
+    // certo e a pessoa clicar em "Sair", não reconecta nesta aba.
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; } catch (e) { return; }
 
     // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
     if (!window.AdminAuth) {
@@ -65,7 +79,7 @@
     window.DataService.obterMembros()
       .then(function(r) {
         if (!r || !r.sucesso) return null;
-        var cargo = cargoDoLogado(r);
+        var cargo = cargoDoLogado(r, admin.email);
         var id = cargo && cargo.cadastroId;
         var candidato = id && (r.candidatos || []).filter(function(c) { return c.id === id; })[0];
         if (!candidato || !candidato.apto) return null;
@@ -80,6 +94,7 @@
         if (cpf.length !== 11 || !nasc || window.SessaoMorador.obter()) return;
         if (document.getElementById("cpfConsulta").value) return;
         window.SessaoMorador.iniciar(cpf, nasc);
+        try { sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) {}
       })
       .catch(function() {});
   });
