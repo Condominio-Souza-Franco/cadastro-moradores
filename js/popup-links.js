@@ -16,8 +16,6 @@
       return new URL("kit.html", location.href).href;
     }
     if (u.hostname === "drive.google.com") {
-      // Pasta: mesma tela do kit (lista própria). Arquivo: visualização embutida, com "Abrir em nova aba".
-      if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return new URL("kit.html?pasta=" + encodeURIComponent(m[1]) + "&t=" + Date.now(), location.href).href;
       if ((m = u.pathname.match(/\/file\/d\/([^/]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
       if ((m = u.search.match(/[?&]id=([^&]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
       return null;
@@ -47,18 +45,7 @@
     ".popup-link-aviso[hidden]{display:none}" +
     ".popup-link iframe{flex:1;width:100%;border:0;background:#f4f7f6}" +
     ".popup-link-caixa{position:relative}" +
-    ".popup-link-caixa.kit-pequeno{width:min(380px,100%);height:min(230px,60vh)}" +
-    ".popup-link-caixa.kit-grande{width:min(760px,100%);height:min(78vh,100%)}" +
-    ".popup-link-carregando{display:flex;align-items:center;justify-content:center}" +
-    ".popup-link-carregando[hidden]{display:none}" +
-    ".popup-link-carregando-drive{margin-top:4px;padding:8px 16px;border-radius:999px;background:#2f5f98;color:#fff;font-size:.85rem;font-weight:700;text-decoration:none}" +
-    ".popup-link-carregando-drive:hover{background:#244b7a}" +
-    ".popup-link-carregando-card{position:relative;width:min(360px,90%);box-sizing:border-box;background:#fff;border-radius:12px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.22)}" +
-    ".popup-link-carregando-bolinha{width:34px;height:34px;border-radius:50%;border:3px solid #dbeafe;border-top-color:#1f5f8b;animation:popupGirar .9s linear infinite}" +
     "@keyframes popupGirar{to{transform:rotate(360deg)}}" +
-    ".popup-link-carregando-texto{margin:0;color:#1f2937;font-weight:700}" +
-    ".popup .popup-link-carregando-fechar,.popup-link .popup-link-carregando-fechar{position:absolute !important;top:8px !important;right:8px !important;width:30px !important;height:30px !important;min-height:0 !important;margin:0 !important;padding:0 !important;border-radius:50% !important;border:1px solid #dcdde1 !important;background:#fff !important;color:#243447 !important;font-size:18px !important;line-height:1 !important;box-shadow:none !important;cursor:pointer}" +
-    ".popup-link .popup-link-carregando-fechar:hover{background:#f1f4f8 !important}" +
     "body.popup-link-aberto{overflow:hidden}";
 
   var popup = null;
@@ -77,11 +64,8 @@
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
-        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><button type="button" class="popup-link-carregando-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p><a class="popup-link-carregando-drive" data-nova-aba target="_blank" rel="noopener noreferrer">Abrir no Google Drive</a></div></div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
-    // O card de carregamento fica fora da janela: a janela some enquanto a pasta carrega.
-    popup.appendChild(popup.querySelector(".popup-link-carregando"));
     document.body.appendChild(popup);
     popup.addEventListener("click", function(e) {
       if (e.target === popup || e.target.closest(".popup-link-fechar")) fechar();
@@ -104,17 +88,6 @@
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
     // Pasta do kit: janela pequena com "Carregando..." até a pasta ficar pronta (aí vira grande).
     var caixa = p.querySelector(".popup-link-caixa");
-    var ehPasta = /kit\.html\?pasta=/.test(embutida);
-    // Pasta do kit: só o "Carregando" aparece; a janela da pasta só é mostrada quando ela está pronta.
-    caixa.classList.toggle("kit-grande", ehPasta);
-    caixa.style.display = ehPasta ? "none" : "";
-    p.querySelector(".popup-link-carregando").hidden = !ehPasta;
-    // O botão do Drive abre o endereço original (a pasta) e interrompe o carregamento.
-    // O botão do Drive só aparece quando o conteúdo é do Drive.
-    var botaoDrive = p.querySelector(".popup-link-carregando-drive");
-    var ehDrive = /drive\.google\.com/.test(original || "");
-    botaoDrive.hidden = !(ehPasta && ehDrive);
-    botaoDrive.href = original;
     p.querySelector("iframe").src = embutida;
     p.hidden = false;
     document.body.classList.add("popup-link-aberto");
@@ -132,19 +105,7 @@
   window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
     abrirDireto: function(url, titulo, linkDrive) { abrir(url, url, titulo, linkDrive || null, "Ver no Google Drive"); }, fechar: fechar };
 
-  // × do carregamento da pasta: desiste e fecha o popup.
-  document.addEventListener("click", function(e) {
-    if (e.target.closest && e.target.closest(".popup-link-carregando-fechar, .popup-link-carregando-drive")) fechar();
-  });
 
-  // A pasta do kit avisa quando está pronta: o popup vira grande e tira o "Carregando...".
-  window.addEventListener("message", function(e) {
-    if (e.origin !== location.origin || !e.data || !("kitPasta" in e.data) || !popup || popup.hidden) return;
-    var caixa = popup.querySelector(".popup-link-caixa");
-    caixa.style.display = "";
-    caixa.classList.add("kit-grande");
-    popup.querySelector(".popup-link-carregando").hidden = true;
-  });
 
   // Fase de bolha: quem já trata o clique (ex.: mapa da vaga, links do Drive desativados) chama
   // preventDefault antes, e aqui o link é ignorado.
