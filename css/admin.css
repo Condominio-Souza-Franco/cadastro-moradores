@@ -3589,3 +3589,7 @@ details.como-funcionam-notificacoes[open] > summary::before { transform: rotate(
 /* Bolinhas com 0 itens: verde com "OK" (menu e últimas alterações). */
 .badge-menu.ok,
 .contagem-historico.ok { background: #2e7d32; box-shadow: 0 0 0 2px #fff; }
+
+/* Bolinhas que ainda esperam o número do servidor: já aparecem no lugar, em cinza. */
+.badge-menu.aguardando,
+.contagem-historico.aguardando { background: #9aa7b4; box-shadow: 0 0 0 2px #fff; }

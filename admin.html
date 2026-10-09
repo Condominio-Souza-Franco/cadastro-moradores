@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261009A">
+  <link rel="stylesheet" href="css/admin.css?v=20261009B">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -75,9 +75,9 @@
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
         <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true"><svg class="icone-casa" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h4.5v-6h4v6h4.5V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Página inicial</span></button>
         <nav class="menu-admin" aria-label="Seções da administração">
-          <button type="button" data-painel="painelAprovacoes" aria-pressed="false"><span class="rotulo-longo">Cadastros para aprovação</span><span class="rotulo-curto">Para aprovação</span><span id="contadorAprovacoes" class="badge-menu" hidden></span></button>
+          <button type="button" data-painel="painelAprovacoes" aria-pressed="false"><span class="rotulo-longo">Cadastros para aprovação</span><span class="rotulo-curto">Para aprovação</span><span id="contadorAprovacoes" class="badge-menu aguardando">…</span></button>
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
-          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências<span id="contadorPendencias" class="badge-menu" hidden></span></button>
+          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências<span id="contadorPendencias" class="badge-menu aguardando">…</span></button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
@@ -344,7 +344,7 @@
         <div id="homeAdmin" class="home-admin">
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
-          <summary><span>Últimas alterações cadastrais</span><b id="contadorHistorico" class="contagem-historico" hidden></b><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
+          <summary><span>Últimas alterações cadastrais</span><b id="contadorHistorico" class="contagem-historico aguardando">…</b><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
           <div class="historico-conteudo">
             <div id="statusHistorico" class="status"></div>
             <ol id="listaHistorico" class="lista-historico"></ol>
@@ -382,37 +382,37 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261009A"></script>
-  <script src="js/utils.js?v=20261009A"></script>
-  <script src="js/data/backend.js?v=20261009A"></script>
+  <script src="js/regras.js?v=20261009B"></script>
+  <script src="js/utils.js?v=20261009B"></script>
+  <script src="js/data/backend.js?v=20261009B"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261009A"></script>
-  <script src="js/admin-badges.js?v=20261009A"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261009A"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261009A"></script>
-  <script src="js/data/DataService.js?v=20261009A"></script>
-  <script src="js/sessao-morador.js?v=20261009A" defer></script>
-  <script src="js/sessao-admin-morador.js?v=20261009A" defer></script>
-  <script src="js/admin-fonte-dados.js?v=20261009A"></script>
-  <script src="js/admin-simples.js?v=20261009A"></script>
-  <script src="js/admin-relatorio.js?v=20261009A"></script>
-  <script src="js/admin-busca.js?v=20261009A"></script>
-  <script src="js/admin-historico.js?v=20261009A"></script>
-  <script src="js/admin-pendencias.js?v=20261009A"></script>
-  <script src="js/admin-permissoes.js?v=20261009A"></script>
-  <script src="js/admin-autorizacoes.js?v=20261009A"></script>
-  <script src="js/admin-membros.js?v=20261009A"></script>
-  <script src="js/admin-bloqueios.js?v=20261009A"></script>
-  <script src="js/vaga-miniatura.js?v=20261009A"></script>
-  <script src="js/admin-aprovacoes.js?v=20261009A"></script>
-  <script src="js/admin-notificacoes.js?v=20261009A"></script>
-  <script src="js/admin-gabarito.js?v=20261009A"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261009A"></script>
-  <script src="js/admin-pre-carga.js?v=20261009A"></script>
-  <script src="js/admin-paineis.js?v=20261009A"></script>
-  <script src="js/popup-links.js?v=20261009A"></script>
-  <script src="js/sem-conectivos.js?v=20261009A"></script>
+  <script src="js/admin-auth.js?v=20261009B"></script>
+  <script src="js/admin-badges.js?v=20261009B"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261009B"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261009B"></script>
+  <script src="js/data/DataService.js?v=20261009B"></script>
+  <script src="js/sessao-morador.js?v=20261009B" defer></script>
+  <script src="js/sessao-admin-morador.js?v=20261009B" defer></script>
+  <script src="js/admin-fonte-dados.js?v=20261009B"></script>
+  <script src="js/admin-simples.js?v=20261009B"></script>
+  <script src="js/admin-relatorio.js?v=20261009B"></script>
+  <script src="js/admin-busca.js?v=20261009B"></script>
+  <script src="js/admin-historico.js?v=20261009B"></script>
+  <script src="js/admin-pendencias.js?v=20261009B"></script>
+  <script src="js/admin-permissoes.js?v=20261009B"></script>
+  <script src="js/admin-autorizacoes.js?v=20261009B"></script>
+  <script src="js/admin-membros.js?v=20261009B"></script>
+  <script src="js/admin-bloqueios.js?v=20261009B"></script>
+  <script src="js/vaga-miniatura.js?v=20261009B"></script>
+  <script src="js/admin-aprovacoes.js?v=20261009B"></script>
+  <script src="js/admin-notificacoes.js?v=20261009B"></script>
+  <script src="js/admin-gabarito.js?v=20261009B"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261009B"></script>
+  <script src="js/admin-pre-carga.js?v=20261009B"></script>
+  <script src="js/admin-paineis.js?v=20261009B"></script>
+  <script src="js/popup-links.js?v=20261009B"></script>
+  <script src="js/sem-conectivos.js?v=20261009B"></script>
 </body>
 </html>

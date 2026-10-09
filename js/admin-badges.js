@@ -19,6 +19,7 @@
     var texto = ok ? "OK" : (total > 99 ? "99+" : String(total));
     if (el.textContent !== texto) el.textContent = texto;
     el.classList.toggle("ok", ok);
+    el.classList.remove("aguardando");
     el.hidden = false;
   }
 
@@ -27,11 +28,13 @@
     return !p || p[PERMISSAO[id]] !== false;
   }
 
-  // Mostra todas de uma vez (as que têm número e que a pessoa pode ver).
+  // Mostra todas de uma vez: com o número, ou escondidas (sem autorização, ou sem número).
   function mostrarTodas() {
     Object.keys(PERMISSAO).forEach(function(id) {
       var el = document.getElementById(id);
-      if (el && podeVer(id) && typeof valores[id] === "number") mostrar(el, valores[id]);
+      if (!el) return;
+      if (!podeVer(id) || typeof valores[id] !== "number") { el.hidden = true; el.classList.remove("aguardando"); return; }
+      mostrar(el, valores[id]);
     });
   }
 
