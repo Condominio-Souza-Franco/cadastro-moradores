@@ -3419,3 +3419,151 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 }
 #resultadoAdmin .registro-conteudo { flex: 1 1 auto; }
 #resultadoAdmin .linha-vaga-topo .campo { align-items: flex-start; }
+
+/* ---------- Consulta por apartamento: caixas da mesma linha com a mesma altura ----------
+   O "height: 100%" das caixas dentro de um registro impedia o esticar do flex (cada caixa ficava
+   da altura do próprio texto). Com altura automática, todas acompanham a maior da linha. */
+#resultadoAdmin .registro-conteudo .campo { height: auto; }
+#resultadoAdmin .registro-conteudo { align-self: stretch; }
+#resultadoAdmin .registro-bloco { align-items: center; }
+
+/* Emergência e prestadores: 3 colunas fixas (mesma largura em todos os registros), cada caixa com
+   a altura da maior. A 1ª coluna junta dois campos: nome + parentesco, ou nome + serviço. */
+#resultadoAdmin .grid-campos.grid-colunas,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos.grid-colunas {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+}
+#resultadoAdmin .grid-colunas-emergencia { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); }
+#resultadoAdmin .grid-colunas-prestadores { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.6fr); }
+#resultadoAdmin .grid-colunas .campo,
+#resultadoAdmin .subsecao-emergencia .registro-conteudo .grid-campos.grid-colunas .campo {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  grid-column: auto;
+}
+.campo-agrupado { gap: 6px; }
+.campo-parte .campo-titulo { margin-bottom: 2px; }
+.campo-parte.vazio .campo-valor { color: #7c8a99; }
+/* Celular: 2 colunas; a 3ª caixa (endereço ou chave) desce para uma linha inteira. */
+@media (max-width: 600px) {
+  #resultadoAdmin .grid-colunas-emergencia,
+  #resultadoAdmin .grid-colunas-prestadores { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #resultadoAdmin .subsecao .registro-conteudo .grid-campos.grid-colunas > .campo:nth-child(3) { grid-column: 1 / -1; }
+}
+
+/* ---------- Membros: Condomínio | Administradora em cima; Síndico e Desenvolvedor | conselho embaixo ----------
+   Grade de 2 linhas na tela larga, para o membro 1 do conselho ficar na altura do Síndico.
+   No celular as listas se desfazem e a ordem vem do "order" das regras de 2 colunas acima. */
+.membros-lista { display: contents; }
+.form-membros .membros-lista-2 > * { order: 4; }
+@media (min-width: 761px) {
+  .form-membros { grid-template-rows: auto auto; }
+  .form-membros .membros-coluna { display: contents; }
+  .form-membros .cargo-condominio { grid-column: 1; grid-row: 1; }
+  .form-membros .cargo-administradora { grid-column: 2; grid-row: 1; }
+  .form-membros .membros-lista { display: flex; flex-direction: column; grid-row: 2; }
+  .form-membros .membros-lista-1 { grid-column: 1; }
+  .form-membros .membros-lista-2 { grid-column: 2; }
+}
+/* "+ Adicionar membro no conselho": largura toda da coluna, tracejado como no formulário do morador. */
+.btn-add.btn-adicionar-conselho {
+  display: block; width: 100%; min-height: 0; height: auto; margin: 10px 0; padding: 9px 12px;
+  border: 1.5px dashed #2b7fb9; border-radius: 8px; background: #eaf6ff; color: #0f5d8c;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+}
+.btn-add.btn-adicionar-conselho:not(:disabled):hover { background: #d0e7f9 !important; color: #0f5d8c !important; }
+.btn-add.btn-adicionar-conselho:disabled { opacity: 0.45; cursor: not-allowed; filter: grayscale(1); }
+.btn-add.btn-adicionar-conselho:disabled:hover { background: #eaf6ff !important; color: #0f5d8c !important; }
+
+/* ---------- Controle segmentado (Mapa/Tabela, G1/G2): hover legível ----------
+   A opção ativa fica sobre o indicador branco; o "texto branco no hover" de outras regras a
+   deixava invisível. Aqui o fundo continua transparente e o texto, azul. */
+.segmentado > button.ativo:hover,
+.segmentado > button.ativo:focus {
+  background: transparent !important;
+  color: var(--primary-color) !important;
+}
+.segmentado > button:not(.ativo):hover {
+  color: var(--primary-color) !important;
+}
+
+/* Gabarito: "Carregar mais 5" embaixo da tabela. */
+.btn-carregar-mais {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  margin: 8px 0 0;
+  padding: 6px 12px;
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--accent-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-carregar-mais:hover { background: #e9f1fa !important; color: var(--accent-color) !important; }
+.btn-carregar-mais[hidden] { display: none; }
+
+/* × das páginas do admin: a regra geral "button:hover" escurecia o fundo e o × (escuro) sumia.
+   No hover, fundo claro avermelhado, como o × do cadastro aberto. */
+.btn-fechar-painel:hover,
+.btn-fechar-painel:focus-visible {
+  background: #fdecec !important;
+  color: var(--error) !important;
+}
+
+/* ---------- Consulta por apartamento: colunas padronizadas ----------
+   Em vez de cada caixa ter a largura do próprio texto (colunas desalinhadas entre um registro e
+   outro), cada lista usa colunas de mesma largura: uma por campo (grid-n2/n3/n4), e o Registro
+   4 colunas (2 no celular). Textos longos quebram linha dentro da caixa. */
+#resultadoAdmin .grid-campos.grid-registro,
+#resultadoAdmin .grid-campos.grid-n2,
+#resultadoAdmin .grid-campos.grid-n3,
+#resultadoAdmin .grid-campos.grid-n4 {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+}
+#resultadoAdmin .grid-registro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#resultadoAdmin .grid-n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#resultadoAdmin .grid-registro .campo,
+#resultadoAdmin .grid-n2 .campo,
+#resultadoAdmin .grid-n3 .campo,
+#resultadoAdmin .grid-n4 .campo,
+#resultadoAdmin .registro-conteudo .grid-n2 .campo,
+#resultadoAdmin .registro-conteudo .grid-n3 .campo,
+#resultadoAdmin .registro-conteudo .grid-n4 .campo {
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+/* Carros e motos na coluna estreita da tela larga, e listas de 3 campos no celular: o 1º campo
+   (marca e modelo, nome do pet) na linha toda e os outros dois embaixo, lado a lado. */
+@media (min-width: 601px) {
+  #resultadoAdmin .subsecoes-veiculos .grid-n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #resultadoAdmin .subsecoes-veiculos .grid-n3 > .campo:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  #resultadoAdmin .grid-registro,
+  #resultadoAdmin .grid-n3,
+  #resultadoAdmin .grid-n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #resultadoAdmin .grid-n3 > .campo:first-child { grid-column: 1 / -1; }
+}
+
+/* Consulta: "Não preenchido" das listas vazias (Pets, Prestadores, Motos, Contratos, Observações...)
+   com o mesmo tamanho e cor do "Não preenchido" dentro das caixas, em vez da letra grande em itálico. */
+#resultadoAdmin .sem-itens,
+#resultadoAdmin .contratos-vazio,
+#resultadoAdmin .observacoes-valor.vazio {
+  font-size: 0.85rem;
+  font-style: normal;
+  color: #7c8a99;
+}
+#resultadoAdmin .contratos-vazio em,
+#resultadoAdmin .observacoes-valor.vazio em { font-style: normal; }

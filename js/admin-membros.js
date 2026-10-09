@@ -2,7 +2,7 @@
 // MEMBROS DA ADMINISTRAÇÃO (ADMIN)
 // ==========================================
 // Define quem acessa a área restrita: e-mail do condomínio, síndico, membros do conselho (quantos
-// quiser: "+" e "Apagar", só condomínio, síndico e desenvolvedor), administradora e
+// quiser: "+ Adicionar membro no conselho" e "Apagar", só condomínio, síndico e desenvolvedor), administradora e
 // desenvolvedor. Para cada cargo (menos o condomínio) escolhe-se o morador; aparecem nome e
 // telefone, e o e-mail de acesso pode ser o do cadastro (padrão, campo travado) ou outro.
 //
@@ -106,24 +106,30 @@
     var html = {};
     lista.forEach(function(def, i) { html[def.chave + (def.chave === "conselho" ? def.indice : "")] = cargoHtml(def, i); });
     var conselhoHtml = (membros.conselho || []).map(function(c, i) { return html["conselho" + i]; }).join("");
-    // Coluna 1: Condomínio, Síndico, Administradora, Desenvolvedor. Coluna 2: Conselho (com "+").
-    // No celular as colunas se desfazem e a ordem vira Condomínio, Síndico, Administradora, Conselho, Desenvolvedor.
+    // Tela larga, 2 colunas: Condomínio | Administradora na 1ª linha; embaixo, Síndico e
+    // Desenvolvedor | membros do conselho e, por último, "+ Adicionar membro no conselho" (largura toda
+    // da coluna, como os botões de acrescentar do formulário do morador). Assim o membro 1 fica na
+    // altura do Síndico. No celular, uma coluna: Condomínio, Síndico, Administradora, Conselho, Desenvolvedor.
+    var podeAcrescentar = podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO;
     form.innerHTML =
       '<div class="membros-coluna membros-coluna-1">' +
         '<div class="cargo-membro cargo-condominio"><div class="cargo-titulo">Condomínio</div>' +
           '<input type="email" id="emailCondominio" placeholder="e-mail de acesso do condomínio" aria-label="E-mail de acesso do condomínio" value="' +
           escaparHtml(membros.condominio.email || "") + '"' + (pode("condominio") ? "" : " disabled") + "></div>" +
-        html.sindico +
+        '<div class="membros-lista membros-lista-1">' + html.sindico + html.desenvolvedor + "</div>" +
+      "</div>" +
+      '<div class="membros-coluna membros-coluna-2">' +
         // Administradora: o acesso segue Membros > Autorizações.
         '<div class="cargo-membro cargo-administradora"><div class="cargo-titulo">Administradora <span class="cargo-nota">(acesso conforme as Autorizações)</span></div>' +
           '<input type="email" id="emailAdministradora" placeholder="e-mail de acesso da administradora (opcional)" aria-label="E-mail de acesso da administradora" value="' +
           escaparHtml((membros.administradora && membros.administradora.email) || "") + '"' + (pode("administradora") ? "" : " disabled") + "></div>" +
-        html.desenvolvedor +
-      "</div>" +
-      '<div class="membros-coluna membros-coluna-2">' +
-        '<div class="conselho-cabecalho"><span>Conselho</span>' +
-          '<button type="button" class="btn-mais-conselho" title="' + (podeMudarConselho() ? 'Acrescentar membro do conselho' : 'Só o Condomínio, o Síndico e o Desenvolvedor acrescentam membros') + '" aria-label="Acrescentar membro do conselho"' + (podeMudarConselho() && (membros.conselho || []).length < MAX_CONSELHO ? '' : ' disabled') + '>+</button>' + "</div>" +
-        (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
+        '<div class="membros-lista membros-lista-2">' +
+          (conselhoHtml || '<div class="cargo-info conselho-vazio">Nenhum membro do conselho.</div>') +
+          // Todos veem; só condomínio, síndico e desenvolvedor podem usar (os outros: desativado).
+          '<button type="button" class="btn-add btn-adicionar-conselho" title="' + (podeMudarConselho()
+            ? (podeAcrescentar ? 'Acrescentar membro do conselho' : 'O conselho já tem ' + MAX_CONSELHO + ' membros')
+            : 'Só o Condomínio, o Síndico e o Desenvolvedor acrescentam membros') + '"' + (podeAcrescentar ? '' : ' disabled') + '>+ Adicionar membro no conselho</button>' +
+        "</div>" +
       "</div>";
     atualizarBotoes();
   }
@@ -218,7 +224,7 @@
 
     // "+" acrescenta um membro do conselho em branco; "Apagar" tira o membro (vale ao salvar).
     form.addEventListener("click", function(e) {
-      if (e.target.closest(".btn-mais-conselho")) {
+      if (e.target.closest(".btn-adicionar-conselho")) {
         membros.conselho = (membros.conselho || []).concat([{ cadastroId: "", usarEmailCadastro: true, email: "" }]);
         renderizar();
         return;

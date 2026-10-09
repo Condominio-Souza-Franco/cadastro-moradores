@@ -294,9 +294,8 @@
     return dataBr + " (" + idade + " anos)";
   }
 
-  function campoHtml(titulo, valor) {
-    var vazio = estaVazio(valor);
-    var valorFinal = normalizarCampo(valor);
+  // Título + valor de um campo, já formatados (e-mail vira link, telefone ganha WhatsApp/Ligar etc.).
+  function partesCampo(titulo, valor) {
     var tituloTexto = String(titulo || "");
     var possuiEmail = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(String(valor || ""));
     var ehTelefone = /telefone|celular/i.test(tituloTexto);
@@ -305,9 +304,28 @@
       ? renderizarEmailsHtml(valor)
       : (ehTelefone
       ? renderizarTelefonesHtml(valor)
-      : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(valorFinal)));
+      : (ehEndereco ? renderizarEnderecosHtml(valor) : escaparHtml(normalizarCampo(valor))));
+    return {
+      vazio: estaVazio(valor),
+      telefone: ehTelefone,
+      html: '<p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p>'
+    };
+  }
 
-    return '<div class="campo' + (vazio ? ' vazio' : '') + (ehTelefone ? ' campo-telefone' : '') + '"><p class="campo-titulo">' + escaparHtml(tituloTexto) + '</p><p class="campo-valor">' + valorHtml + '</p></div>';
+  function campoHtml(titulo, valor) {
+    var p = partesCampo(titulo, valor);
+    return '<div class="campo' + (p.vazio ? ' vazio' : '') + (p.telefone ? ' campo-telefone' : '') + '">' + p.html + '</div>';
+  }
+
+  // Vários campos na mesma caixa, um embaixo do outro (ex.: nome e, embaixo, o parentesco).
+  // pares: lista de [titulo, valor]. A caixa só fica cinza ("vazio") quando todos estão vazios.
+  function campoAgrupadoHtml(pares) {
+    if (pares.length === 1) return campoHtml(pares[0][0], pares[0][1]);
+    var partes = pares.map(function(par) { return partesCampo(par[0], par[1]); });
+    var todosVazios = partes.every(function(p) { return p.vazio; });
+    return '<div class="campo campo-agrupado' + (todosVazios ? ' vazio' : '') + '">' + partes.map(function(p) {
+      return '<div class="campo-parte' + (p.vazio ? ' vazio' : '') + '">' + p.html + '</div>';
+    }).join("") + '</div>';
   }
 
   function vagaPrincipalHtml(dados) {
@@ -373,11 +391,21 @@
     lista.forEach(function(linha, indice) {
       var campos = extrairCamposLinha(linha, nomesCampos.length);
       var tituloRegistro = mostrarTituloNumerico ? String(indice + 1) : (titulo + ' ' + (indice + 1));
-      html.push('<div class="registro-bloco"><div class="registro-titulo">' + tituloRegistro + '</div><div class="registro-conteudo"><div class="grid-campos">');
-      nomesCampos.forEach(function(nomeCampo, idx) {
-        var indiceCampo = ordemCampos && typeof ordemCampos[idx] === "number" ? ordemCampos[idx] : idx;
-        html.push(campoHtml(nomeCampo, campos[indiceCampo]));
-      });
+      var colunas = opcoes && Array.isArray(opcoes.colunas) ? opcoes.colunas : null;
+      html.push('<div class="registro-bloco"><div class="registro-titulo">' + tituloRegistro + '</div><div class="registro-conteudo"><div class="grid-campos' +
+        // Sem colunas próprias: uma coluna por campo, todas da mesma largura (grid-n2, grid-n3, grid-n4).
+        (colunas ? ' grid-colunas grid-colunas-' + escaparHtml(opcoes.tipoColunas || "") : ' grid-n' + nomesCampos.length) + '">');
+      if (colunas) {
+        // Colunas fixas (mesma largura em todos os registros e a mesma altura, a da caixa maior).
+        colunas.forEach(function(coluna) {
+          html.push(campoAgrupadoHtml(coluna.map(function(c) { return [nomesCampos[c], campos[c]]; })));
+        });
+      } else {
+        nomesCampos.forEach(function(nomeCampo, idx) {
+          var indiceCampo = ordemCampos && typeof ordemCampos[idx] === "number" ? ordemCampos[idx] : idx;
+          html.push(campoHtml(nomeCampo, campos[indiceCampo]));
+        });
+      }
       html.push('</div></div></div>');
     });
     html.push('</div></div>');
@@ -449,14 +477,16 @@
       '</div>' +
       '<section class="secao">' +
         '<h2>' + tituloRegistro + '</h2>' +
-        '<div class="grid-campos">' + camposPrincipaisUnidade.join("") + '</div>' +
+        '<div class="grid-campos grid-registro">' + camposPrincipaisUnidade.join("") + '</div>' +
       '</section>'
     );
 
     secoes.push(
       '<section class="secao">' +
         '<h2>Em caso de emergência procurar por</h2>' +
-        registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Vínculo/Parentesco", "Endereço"], { ordemCampos: [0, 1, 3, 2], classeSubsecao: "subsecao-emergencia", tituloVisivel: false }) +
+        registroEmBoxes("Em caso de emergência procurar por", dados.emergencias ? dados.emergencias.split("\n") : [], ["Nome", "Telefone/Celular", "Endereço", "Vínculo/Parentesco"], {
+          // 3 colunas: nome com o parentesco embaixo | telefone | endereço.
+          colunas: [[0, 3], [1], [2]], tipoColunas: "emergencia", classeSubsecao: "subsecao-emergencia", tituloVisivel: false }) +
       '</section>'
     );
 
@@ -504,13 +534,15 @@
       '</div>' +
       // Miniatura do andar com a vaga pintada (a mesma do formulário); desenhada depois (desenharMapasVaga).
       '<div class="consulta-mapa-vaga" data-apto="' + escaparHtml(dados.apto) + '" data-vaga="' + escaparHtml(textoLimpo(dados.vagaNumeroAndar)) + '" hidden></div>' +
-      '<div class="subsecoes-lado-a-lado">' +
+      '<div class="subsecoes-lado-a-lado subsecoes-veiculos">' +
         registroEmBoxes("Carros", dados.carros ? dados.carros.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
         registroEmBoxes("Motos", dados.motos ? dados.motos.split("\n") : [], ["Marca e modelo", "Cor", "Placa"]) +
         registroEmBoxes("Bicicletas", dados.bikes ? dados.bikes.split("\n") : [], ["Marca", "Cor"]) +
       '</div>' +
       registroEmBoxes("Pets", dados.pets ? dados.pets.split("\n") : [], ["Nome", "Espécie e raça", "Porte"]) +
-      registroEmBoxes("Prestadores de serviço", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"]) +
+      registroEmBoxes("Prestadores de serviço", dados.prestadores ? dados.prestadores.split("\n") : [], ["Nome", "Serviço", "Telefone/Celular", "Possui chave?"], {
+        // 3 colunas: nome com o serviço embaixo | telefone | chave.
+        colunas: [[0, 1], [2], [3]], tipoColunas: "prestadores" }) +
       '<div class="subsecao"><h3>Observações</h3><p class="observacoes-valor' + (estaVazio(dados.observacoes) ? ' vazio' : '') + '">' + (estaVazio(dados.observacoes) ? '<em>Não preenchido</em>' : escaparHtml(dados.observacoes)) + '</p></div>' +
       '</section>');
 
