@@ -140,10 +140,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009N"></script>
-<script src="js/data/backend.js?v=20261009N"></script>
-<script src="js/sessao-morador.js?v=20261009N"></script>
-<script src="js/pular-campo.js?v=20261009N"></script>
+<script src="js/regras.js?v=20261009O"></script>
+<script src="js/data/backend.js?v=20261009O"></script>
+<script src="js/sessao-morador.js?v=20261009O"></script>
+<script src="js/pular-campo.js?v=20261009O"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -315,7 +315,7 @@
       document.querySelector("h1").textContent = r.nome || "Pasta do Google Drive";
       if (r.url && !document.getElementById("botaoPastaDrive")) {
         var botao = document.createElement("p");
-        botao.innerHTML = '<a id="botaoPastaDrive" class="btn" href="' + escapar(r.url) + '" target="_blank" rel="noopener noreferrer">Abrir pasta no Google Drive</a>';
+        botao.innerHTML = '<a id="botaoPastaDrive" class="btn" data-nova-aba href="' + escapar(r.url) + '" target="_blank" rel="noopener noreferrer">Abrir pasta no Google Drive</a>';
         document.querySelector(".subtitulo").after(botao);
       }
       var principais = r.principais || [];
@@ -416,7 +416,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009N"></script>
-<script src="js/sem-conectivos.js?v=20261009N"></script>
+<script src="js/popup-links.js?v=20261009O"></script>
+<script src="js/sem-conectivos.js?v=20261009O"></script>
 </body>
 </html>

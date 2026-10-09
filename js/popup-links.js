@@ -17,7 +17,7 @@
     }
     if (u.hostname === "drive.google.com") {
       // Pasta: mesma tela do kit (lista própria). Arquivo: visualização embutida, com "Abrir em nova aba".
-      if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return new URL("kit.html?pasta=" + encodeURIComponent(m[1]), location.href).href;
+      if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return new URL("kit.html?pasta=" + encodeURIComponent(m[1]) + "&t=" + Date.now(), location.href).href;
       if ((m = u.pathname.match(/\/file\/d\/([^/]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
       if ((m = u.search.match(/[?&]id=([^&]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
       return null;
@@ -108,7 +108,7 @@
   document.addEventListener("click", function(e) {
     if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
     var link = e.target.closest("a[target='_blank'][href]");
-    if (!link || link.closest(".popup-link")) return;
+    if (!link || link.closest(".popup-link") || link.hasAttribute("data-nova-aba")) return;
     var embutida = urlEmbutida(link.getAttribute("href"));
     if (!embutida) return;
     e.preventDefault();
