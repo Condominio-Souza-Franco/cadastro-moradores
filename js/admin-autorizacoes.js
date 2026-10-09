@@ -6,11 +6,15 @@
 // está aberta, "Desfazer" e "Salvar alterações" valem para ela. Condomínio, Síndico e Desenvolvedor
 // editam (a coluna do Condomínio, só o Desenvolvedor; a do Desenvolvedor fica toda marcada);
 // os demais veem a tabela desabilitada. Caixas de ler em azul e de escrever em laranja, para não
-// confundir as duas. O backend (autorizacoes.gs) confere tudo de novo.
+// confundir as duas. O Conselho fica sempre marcado (travado) em Membros e Notificações: pode mudar o
+// próprio e-mail e desligar os próprios avisos, mesmo sem outras autorizações. O backend
+// (autorizacoes.gs) confere tudo de novo.
 (function() {
   var escaparHtml = window.Utils.escaparHtml;
   var NOMES = { condominio: "Condomínio", sindico: "Síndico", administradora: "Administradora", conselho: "Conselho", desenvolvedor: "Desenvolvedor" };
   var CURTOS = { condominio: "Cond.", sindico: "Síndico", administradora: "Adm.", conselho: "Conselho", desenvolvedor: "Dev." };
+  // Caixas do Conselho que são sempre marcadas e travadas (ver e escrever em Membros e Notificações).
+  var FIXAS_CONSELHO = ["membros", "membrosEscrever", "notificacoes", "notificacoesEscrever"];
   var dados = null;       // resposta de fbObterAutorizacoes
   var atual = null;       // permissões sendo editadas
   var originais = "";
@@ -26,7 +30,14 @@
   }
 
   function fixa(cargo, chave) {
+    if (cargo === "conselho" && FIXAS_CONSELHO.indexOf(chave) !== -1) return true;
     return !!(dados && dados.fixas && dados.fixas[cargo] && dados.fixas[cargo].indexOf(chave) !== -1);
+  }
+
+  // Marca no próprio objeto as caixas fixas do Conselho, para o Salvar mandar o mesmo que a tela mostra.
+  function completarFixas(p) {
+    FIXAS_CONSELHO.forEach(function(chave) { p[chave] = p[chave] || {}; p[chave].conselho = true; });
+    return p;
   }
 
   function renderizar() {
@@ -58,7 +69,8 @@
           '<li><strong>Desenvolvedor</strong> → acesso a tudo; altera as colunas do Condomínio, Síndico, Conselho e Administradora</li>' +
           '<li><strong>Condomínio</strong> → altera as colunas do Síndico, Conselho e Administradora</li>' +
           '<li><strong>Síndico</strong> → altera as colunas do Conselho e da Administradora</li>' +
-          '<li><strong>Conselho</strong> e <strong>Administradora</strong> → só visualizam</li>' +
+          '<li><strong>Administradora</strong> → só visualiza</li>' +
+          '<li><strong>Conselho</strong> → só visualiza, exceto em Membros e Notificações: nessas duas páginas, sempre pode mudar o próprio e-mail e desligar os próprios avisos, mesmo sem outras autorizações</li>' +
         '</ul>' +
         (dados.podeEditar ? '' : '<p class="aut-so-ver">Você pode apenas visualizar esta tabela.</p>') +
       '</div>' +
@@ -89,7 +101,7 @@
     return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as autorizações.");
       dados = r;
-      atual = JSON.parse(JSON.stringify(r.permissoes));
+      atual = completarFixas(JSON.parse(JSON.stringify(r.permissoes)));
       originais = JSON.stringify(atual);
       restaurar();
       renderizar();
@@ -125,7 +137,7 @@
     window.Backend.chamar("fbSalvarAutorizacoes", { permissoes: atual }, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
       dados = r;
-      atual = JSON.parse(JSON.stringify(r.permissoes));
+      atual = completarFixas(JSON.parse(JSON.stringify(r.permissoes)));
       originais = JSON.stringify(atual);
       renderizar();
       setStatus("Autorizações salvas. Quem já está logado vê a mudança ao entrar de novo.", "ok");
