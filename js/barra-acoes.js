@@ -31,6 +31,15 @@
     return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--altura-barra-acoes")) || 64;
   }
 
+  // Login da área de admin, se for da administradora (ela não tem cadastro de morador).
+  function pessoaAdministradora() {
+    try {
+      var u = JSON.parse(sessionStorage.getItem("adminSimplesAuthUser") || "null");
+      if (u && u.papel === "administradora" && u.email && sessionStorage.getItem("adminSimplesAuthToken")) return u;
+    } catch (e) {}
+    return null;
+  }
+
   // Nome, apto e e-mail de quem está com o cadastro aberto (campos do próprio formulário).
   function atualizarIdentidade() {
     var nome = "", apto = "", email = "";
@@ -50,11 +59,13 @@
     nome = String(nome).trim();
     // Com a sessão aberta, a faixa aparece sempre (com o "Sair"), mesmo sem o nome carregado ainda.
     var sessao = !!(window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter());
-    identidade.hidden = !nome && !sessao;
+    // Administradora logada (sem cadastro de morador): mostra "Administradora - e-mail".
+    var administradora = pessoaAdministradora();
+    identidade.hidden = !nome && !sessao && !administradora;
     if (identidade.hidden) return;
     identidadeTexto.textContent = nome
       ? [nome, apto ? "Apto " + apto : "", String(email).trim()].filter(Boolean).join(" · ")
-      : "Você está conectado";
+      : (administradora ? "Administradora - " + administradora.email : "Você está conectado");
   }
 
   function atualizar() {

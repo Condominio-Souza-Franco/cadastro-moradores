@@ -80,7 +80,7 @@
         .then(function(r) {
           if (!r || !r.encontrado) { aviso((r && r.mensagem) || "CPF ou data de nascimento não conferem.", "erro"); return; }
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
-          if (window.SessaoMorador) window.SessaoMorador.iniciar(cpf, form.nasc.value);
+          if (window.SessaoMorador) window.SessaoMorador.iniciar(cpf, form.nasc.value, { nome: r.nomeCompleto || r.nome || "", apto: r.apto || "", email: r.email || "" });
           fechar();
           abrirKitPopup();
         })
