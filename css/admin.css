@@ -3555,3 +3555,15 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
   #resultadoAdmin .grid-n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #resultadoAdmin .grid-n3 > .campo:first-child { grid-column: 1 / -1; }
 }
+
+/* Consulta: "Não preenchido" das listas vazias (Pets, Prestadores, Motos, Contratos, Observações...)
+   com o mesmo tamanho e cor do "Não preenchido" dentro das caixas, em vez da letra grande em itálico. */
+#resultadoAdmin .sem-itens,
+#resultadoAdmin .contratos-vazio,
+#resultadoAdmin .observacoes-valor.vazio {
+  font-size: 0.85rem;
+  font-style: normal;
+  color: #7c8a99;
+}
+#resultadoAdmin .contratos-vazio em,
+#resultadoAdmin .observacoes-valor.vazio em { font-style: normal; }
