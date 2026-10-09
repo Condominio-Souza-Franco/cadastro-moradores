@@ -78,6 +78,10 @@
     .doc span { overflow-wrap: anywhere; }
     /* Número ímpar de documentos: o último ocupa a linha inteira (sem "viúva"). */
     .docs .doc:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .docs .doc, .docs .secao.vazia { min-height: 56px; box-sizing: border-box; }
+    .kit-drive-titulo { margin: 0 0 8px; text-align: center; }
+    .btn-pasta-drive { display: inline-block; padding: 8px 16px; border-radius: 10px; background: var(--destaque); color: #fff; font-weight: 700; text-decoration: none; }
+    #botaoPastaDrive { width: auto; display: inline-block; margin-top: 0; padding: 8px 16px; }
     details.secao { border: 1px solid var(--borda); border-radius: 10px; margin-top: 8px; background: #fff; }
     details.secao > summary {
       cursor: pointer; padding: 10px 14px; font-weight: 700; color: var(--destaque); list-style: none;
@@ -113,7 +117,10 @@
   <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
   <h1>Kit de Boas-vindas</h1>
   <p class="subtitulo">Os documentos e orientações mais importantes para a convivência no Condomínio Souza Franco.</p>
-  <p class="kit-drive">O conteúdo abaixo é espelhado da <a href="https://drive.google.com/drive/folders/1ZLt6ZQP8lMK8R3VEbgoaIz8_Qz6kFxCe" target="_blank" rel="noopener noreferrer">pasta do Google Drive</a>: o que for adicionado, alterado ou removido lá aparece aqui. Quem tem o e-mail cadastrado abre a pasta com a conta Google desse e-mail; quem não usa e-mail acessa pelo CPF e pela data de nascimento, como aqui.</p>
+  <div class="kit-drive-bloco">
+    <p class="kit-drive-titulo"><a class="btn-pasta-drive" data-nova-aba href="https://drive.google.com/drive/folders/1ZLt6ZQP8lMK8R3VEbgoaIz8_Qz6kFxCe" target="_blank" rel="noopener noreferrer">Pasta do Google Drive</a></p>
+    <p class="kit-drive">O conteúdo abaixo é espelhado dessa pasta, o que for adicionado, alterado ou removido lá aparece aqui. Quem tem o e-mail cadastrado abre a pasta com a conta Google desse e-mail; quem não usa e-mail acessa pelo CPF e pela data de nascimento, como aqui.</p>
+  </div>
   <!-- Só com o kit aberto: "Atualizar" lê a pasta do Drive na hora (sozinho, ela é relida a cada 6 horas). -->
   <div id="atualizacaoKit" class="atualizacao-kit" hidden>
     <button type="button" class="btn btn-secundario" id="btnAtualizarKit">Atualizar</button>
@@ -140,10 +147,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009P"></script>
-<script src="js/data/backend.js?v=20261009P"></script>
-<script src="js/sessao-morador.js?v=20261009P"></script>
-<script src="js/pular-campo.js?v=20261009P"></script>
+<script src="js/regras.js?v=20261009Q"></script>
+<script src="js/data/backend.js?v=20261009Q"></script>
+<script src="js/sessao-morador.js?v=20261009Q"></script>
+<script src="js/pular-campo.js?v=20261009Q"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -348,7 +355,7 @@
       }
       // Na pasta, a mensagem aparece na própria tela (o bloco do formulário fica escondido).
       form.hidden = true;
-      document.querySelector(".kit-drive").hidden = true;
+      document.querySelector(".kit-drive-bloco").hidden = true;
       document.querySelector(".voltar").hidden = true;
       document.getElementById("atualizacaoKit").hidden = true;
       document.getElementById("conteudoKit").hidden = false;
@@ -356,11 +363,14 @@
       msgPasta.className = "mensagem carregando";
       msgPasta.textContent = "Carregando a pasta…";
       document.getElementById("conteudoKit").insertBefore(msgPasta, document.getElementById("conteudoKit").firstChild);
-      function falhaPasta(texto) { msgPasta.className = "mensagem erro"; msgPasta.textContent = texto; }
+      function falhaPasta(texto) { msgPasta.className = "mensagem erro"; msgPasta.textContent = texto; avisarPopup("erro"); }
+      // Avisa a janela do popup que a pasta está pronta (ela troca o "Carregando..." pelo popup grande).
+      function avisarPopup(estado) { if (window.parent && window.parent !== window) window.parent.postMessage({ kitPasta: estado }, location.origin); }
       window.Backend.chamar("fbListarPastaDrive", { id: PASTA }, true).then(function(r) {
         if (!r || !r.sucesso) { falhaPasta((r && r.mensagem) || "Não foi possível abrir a pasta."); return; }
         msgPasta.remove();
         mostrarPasta(r);
+        avisarPopup("pronta");
       }).catch(function(erro) { falhaPasta("Não foi possível abrir a pasta. " + ((erro && erro.message) || "Tente novamente em instantes.")); });
       return;
     }
@@ -416,7 +426,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009P"></script>
-<script src="js/sem-conectivos.js?v=20261009P"></script>
+<script src="js/popup-links.js?v=20261009Q"></script>
+<script src="js/sem-conectivos.js?v=20261009Q"></script>
 </body>
 </html>

@@ -46,6 +46,11 @@
     ".popup-link-aviso{padding:5px 14px;font-size:.72rem;color:#5f7287;background:#f7f9fb;border-bottom:1px solid #eef1f4}" +
     ".popup-link-aviso[hidden]{display:none}" +
     ".popup-link iframe{flex:1;width:100%;border:0;background:#f4f7f6}" +
+    ".popup-link-caixa{position:relative}" +
+    ".popup-link-caixa.kit-pequeno{width:min(380px,100%);height:min(230px,60vh)}" +
+    ".popup-link-caixa.kit-grande{width:min(760px,100%);height:min(78vh,100%)}" +
+    ".popup-link-carregando{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:#fff;color:#243447;font-weight:700;font-size:.95rem}" +
+    ".popup-link-carregando[hidden]{display:none}" +
     "body.popup-link-aberto{overflow:hidden}";
 
   var popup = null;
@@ -64,6 +69,7 @@
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
+        '<div class="popup-link-carregando" hidden>Carregando…</div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
     document.body.appendChild(popup);
@@ -86,6 +92,12 @@
     nova.textContent = textoNova || "Abrir em nova aba";
     p.querySelector(".popup-link-titulo").textContent = titulo || "";
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
+    // Pasta do kit: janela pequena com "Carregando..." até a pasta ficar pronta (aí vira grande).
+    var caixa = p.querySelector(".popup-link-caixa");
+    var ehPasta = /kit\.html\?pasta=/.test(embutida);
+    caixa.classList.remove("kit-grande");
+    caixa.classList.toggle("kit-pequeno", ehPasta);
+    p.querySelector(".popup-link-carregando").hidden = !ehPasta;
     p.querySelector("iframe").src = embutida;
     p.hidden = false;
     document.body.classList.add("popup-link-aberto");
@@ -102,6 +114,15 @@
   // linkDrive (opcional): endereço do arquivo no Google Drive, mostrado como "Ver no Google Drive".
   window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
     abrirDireto: function(url, titulo, linkDrive) { abrir(url, url, titulo, linkDrive || null, "Ver no Google Drive"); }, fechar: fechar };
+
+  // A pasta do kit avisa quando está pronta: o popup vira grande e tira o "Carregando...".
+  window.addEventListener("message", function(e) {
+    if (e.origin !== location.origin || !e.data || !("kitPasta" in e.data) || !popup || popup.hidden) return;
+    var caixa = popup.querySelector(".popup-link-caixa");
+    caixa.classList.remove("kit-pequeno");
+    caixa.classList.add("kit-grande");
+    popup.querySelector(".popup-link-carregando").hidden = true;
+  });
 
   // Fase de bolha: quem já trata o clique (ex.: mapa da vaga, links do Drive desativados) chama
   // preventDefault antes, e aqui o link é ignorado.
