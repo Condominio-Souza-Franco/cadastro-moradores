@@ -51,6 +51,8 @@
     ".popup-link-caixa.kit-grande{width:min(760px,100%);height:min(78vh,100%)}" +
     ".popup-link-carregando{display:flex;align-items:center;justify-content:center}" +
     ".popup-link-carregando[hidden]{display:none}" +
+    ".popup-link-carregando-drive{margin-top:4px;padding:8px 16px;border-radius:999px;background:#2f5f98;color:#fff;font-size:.85rem;font-weight:700;text-decoration:none}" +
+    ".popup-link-carregando-drive:hover{background:#244b7a}" +
     ".popup-link-carregando-card{position:relative;width:min(360px,90%);box-sizing:border-box;background:#fff;border-radius:12px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.22)}" +
     ".popup-link-carregando-bolinha{width:34px;height:34px;border-radius:50%;border:3px solid #dbeafe;border-top-color:#1f5f8b;animation:popupGirar .9s linear infinite}" +
     "@keyframes popupGirar{to{transform:rotate(360deg)}}" +
@@ -75,7 +77,7 @@
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
-        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><button type="button" class="popup-link-carregando-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p></div></div>' +
+        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><button type="button" class="popup-link-carregando-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p><a class="popup-link-carregando-drive" data-nova-aba target="_blank" rel="noopener noreferrer">Abrir no Google Drive</a></div></div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
     // O card de carregamento fica fora da janela: a janela some enquanto a pasta carrega.
@@ -107,6 +109,8 @@
     caixa.classList.toggle("kit-grande", ehPasta);
     caixa.style.display = ehPasta ? "none" : "";
     p.querySelector(".popup-link-carregando").hidden = !ehPasta;
+    // O botão do Drive abre o endereço original (a pasta) e interrompe o carregamento.
+    p.querySelector(".popup-link-carregando-drive").href = original;
     p.querySelector("iframe").src = embutida;
     p.hidden = false;
     document.body.classList.add("popup-link-aberto");
@@ -126,7 +130,7 @@
 
   // × do carregamento da pasta: desiste e fecha o popup.
   document.addEventListener("click", function(e) {
-    if (e.target.closest && e.target.closest(".popup-link-carregando-fechar")) fechar();
+    if (e.target.closest && e.target.closest(".popup-link-carregando-fechar, .popup-link-carregando-drive")) fechar();
   });
 
   // A pasta do kit avisa quando está pronta: o popup vira grande e tira o "Carregando...".
