@@ -16,12 +16,15 @@
       return new URL("kit.html", location.href).href;
     }
     if (u.hostname === "drive.google.com") {
-      // Pasta: mesma tela do kit (lista própria). Arquivo: não é embutido, abre direto em nova aba.
+      // Pasta: mesma tela do kit (lista própria). Arquivo: visualização embutida, com "Abrir em nova aba".
       if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return new URL("kit.html?pasta=" + encodeURIComponent(m[1]), location.href).href;
+      if ((m = u.pathname.match(/\/file\/d\/([^/]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
+      if ((m = u.search.match(/[?&]id=([^&]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
       return null;
     }
-    // Planilhas e documentos do Google: abrem direto em nova aba (não são embutidos).
-    if (u.hostname === "docs.google.com") return null;
+    if (u.hostname === "docs.google.com" && (m = u.pathname.match(/\/(spreadsheets|document|presentation)\/d\/([^/]+)/))) {
+      return "https://docs.google.com/" + m[1] + "/d/" + m[2] + "/preview";
+    }
     if (/(^|\.)google\.[a-z.]+$/i.test(u.hostname) && /\/maps/.test(u.pathname)) {
       var q = u.searchParams.get("query") || u.searchParams.get("q");
       return q ? "https://maps.google.com/maps?q=" + encodeURIComponent(q) + "&output=embed" : null;
@@ -72,12 +75,15 @@
     return popup;
   }
 
-  function abrir(embutida, original, titulo, comNovaAba) {
+  // linkNova: endereço do botão do topo (undefined = pelo padrão: arquivo do Drive/planilha ganha
+  // "Abrir em nova aba"; a pasta do kit não ganha botão). textoNova: rótulo do botão.
+  function abrir(embutida, original, titulo, linkNova, textoNova) {
     var p = garantirPopup();
-    // "Abrir em nova aba" só aparece na visualização de arquivos (PDF), não nos links.
+    if (linkNova === undefined) linkNova = /(drive|docs)\.google\.com/.test(embutida) && !/kit\.html/.test(embutida) ? original : null;
     var nova = p.querySelector(".popup-link-nova");
-    nova.hidden = !comNovaAba;
-    if (comNovaAba) nova.href = original;
+    nova.hidden = !linkNova;
+    if (linkNova) nova.href = linkNova;
+    nova.textContent = textoNova || "Abrir em nova aba";
     p.querySelector(".popup-link-titulo").textContent = titulo || "";
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
     p.querySelector("iframe").src = embutida;
@@ -93,8 +99,9 @@
   }
 
   // abrirDireto: mostra uma URL já pronta (ex.: PDF baixado pelo servidor, blob:) no mesmo popup.
+  // linkDrive (opcional): endereço do arquivo no Google Drive, mostrado como "Ver no Google Drive".
   window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
-    abrirDireto: function(url, titulo) { abrir(url, url, titulo, true); }, fechar: fechar };
+    abrirDireto: function(url, titulo, linkDrive) { abrir(url, url, titulo, linkDrive || null, "Ver no Google Drive"); }, fechar: fechar };
 
   // Fase de bolha: quem já trata o clique (ex.: mapa da vaga, links do Drive desativados) chama
   // preventDefault antes, e aqui o link é ignorado.

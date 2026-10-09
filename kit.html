@@ -135,10 +135,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009K"></script>
-<script src="js/data/backend.js?v=20261009K"></script>
-<script src="js/sessao-morador.js?v=20261009K"></script>
-<script src="js/pular-campo.js?v=20261009K"></script>
+<script src="js/regras.js?v=20261009L"></script>
+<script src="js/data/backend.js?v=20261009L"></script>
+<script src="js/sessao-morador.js?v=20261009L"></script>
+<script src="js/pular-campo.js?v=20261009L"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -186,7 +186,7 @@
     function listaDocs(arquivos) {
       return arquivos.map(function(a) {
         // O PDF vem do servidor (fbArquivoKit), com a sessão aberta pelo CPF + data: não precisa de conta Google.
-        return '<button type="button" class="doc" data-id="' + escapar(a.id || "") + '" data-nome="' + escapar(a.nome) + '">' + ICONE + "<span>" + escapar(a.nome) + "</span></button>";
+        return '<button type="button" class="doc" data-id="' + escapar(a.id || "") + '" data-nome="' + escapar(a.nome) + '" data-drive="' + escapar(a.url || "") + '">' + ICONE + "<span>" + escapar(a.nome) + "</span></button>";
       }).join("");
     }
 
@@ -267,7 +267,7 @@
           var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
           for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
           var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
-          if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
+          if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto, doc.getAttribute("data-drive"));
           else window.open(url, "_blank");
         })
         .catch(function(erro) { delete doc.dataset.reentrou; alert((erro && erro.message) || "Não foi possível abrir o documento."); })
@@ -319,7 +319,7 @@
         var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
         for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
         var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
-        if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
+        if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto, doc.getAttribute("data-drive"));
         else window.open(url, "_blank");
       }).catch(function(erro) { alert((erro && erro.message) || "Não foi possível abrir o arquivo."); })
         .then(function() { span.textContent = texto; doc.disabled = false; });
@@ -329,16 +329,22 @@
       if (!window.AdminAuth) {
         window.AdminAuth = { getIdToken: function() { try { return sessionStorage.getItem("adminSimplesAuthToken") || ""; } catch (e) { return ""; } }, getEmail: function() { return ""; } };
       }
+      // Na pasta, a mensagem aparece na própria tela (o bloco do formulário fica escondido).
       form.hidden = true;
       document.querySelector(".kit-drive").hidden = true;
+      document.querySelector(".voltar").hidden = true;
       document.getElementById("atualizacaoKit").hidden = true;
-      document.querySelector(".subtitulo").textContent = "Conteúdo da pasta do Google Drive, como aparece no kit.";
-      setMensagem("Carregando", "carregando");
+      document.getElementById("conteudoKit").hidden = false;
+      var msgPasta = document.createElement("p");
+      msgPasta.className = "mensagem carregando";
+      msgPasta.textContent = "Carregando a pasta…";
+      document.getElementById("conteudoKit").insertBefore(msgPasta, document.getElementById("conteudoKit").firstChild);
+      function falhaPasta(texto) { msgPasta.className = "mensagem erro"; msgPasta.textContent = texto; }
       window.Backend.chamar("fbListarPastaDrive", { id: PASTA }, true).then(function(r) {
-        setMensagem("", "");
-        if (!r || !r.sucesso) { setMensagem((r && r.mensagem) || "Não foi possível abrir a pasta.", "erro"); return; }
+        if (!r || !r.sucesso) { falhaPasta((r && r.mensagem) || "Não foi possível abrir a pasta."); return; }
+        msgPasta.remove();
         mostrarPasta(r);
-      }).catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); });
+      }).catch(function(erro) { falhaPasta("Não foi possível abrir a pasta. " + ((erro && erro.message) || "Tente novamente em instantes.")); });
       return;
     }
 
@@ -393,7 +399,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009K"></script>
-<script src="js/sem-conectivos.js?v=20261009K"></script>
+<script src="js/popup-links.js?v=20261009L"></script>
+<script src="js/sem-conectivos.js?v=20261009L"></script>
 </body>
 </html>
