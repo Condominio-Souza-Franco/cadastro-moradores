@@ -100,7 +100,8 @@
       .docs { grid-template-columns: 1fr; }
       .docs .doc:last-child:nth-child(odd) { grid-column: auto; }
     }
-  </style>
+    .kit-drive, .subtitulo { font-size: 0.92em; }
+</style>
 </head>
 <body>
 <main>
@@ -127,11 +128,6 @@
   </form>
 
   <section id="conteudoKit" hidden>
-    <div class="topo-kit">
-      <p id="saudacao"></p>
-      <button type="button" class="btn btn-secundario" id="btnSair">Sair</button>
-    </div>
-    <p id="avisoSessao" class="aviso-sessao" role="status" hidden></p>
     <h2 id="tituloPrincipais">Documentos</h2>
     <div id="docsPrincipais" class="docs"></div>
     <div id="secoes"></div>
@@ -139,10 +135,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009I"></script>
-<script src="js/data/backend.js?v=20261009I"></script>
-<script src="js/sessao-morador.js?v=20261009I"></script>
-<script src="js/pular-campo.js?v=20261009I"></script>
+<script src="js/regras.js?v=20261009J"></script>
+<script src="js/data/backend.js?v=20261009J"></script>
+<script src="js/sessao-morador.js?v=20261009J"></script>
+<script src="js/pular-campo.js?v=20261009J"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -227,8 +223,6 @@
       document.getElementById("conteudoKit").hidden = false;
       document.getElementById("atualizacaoKit").hidden = false;
       document.getElementById("lidoEmKit").textContent = textoLidoEm(r.lidoEm);
-      document.getElementById("saudacao").textContent = "Olá" + (r.nome ? ", " + r.nome : "") + "! Toque num documento para abrir.";
-      mostrarAvisoSessao();
       var principais = r.principais || [];
       document.getElementById("tituloPrincipais").hidden = !principais.length;
       document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
@@ -276,14 +270,6 @@
         .catch(function(erro) { delete doc.dataset.reentrou; alert((erro && erro.message) || "Não foi possível abrir o documento."); })
         .then(function(res) { if (res !== "repetido") { span.textContent = texto; doc.disabled = false; } });
     });
-
-    // Sessão de 1 hora (js/sessao-morador.js): aviso com o horário em que ela termina.
-    function mostrarAvisoSessao() {
-      var aviso = document.getElementById("avisoSessao");
-      var texto = window.SessaoMorador ? window.SessaoMorador.textoAviso() : "";
-      aviso.textContent = texto;
-      aviso.hidden = !texto;
-    }
 
     // Entra no kit com o CPF e a data guardados na sessão de 1 hora, sem pedir de novo.
     function entrarPelaSessao() {
@@ -353,19 +339,9 @@
         .then(function() { btn.disabled = false; });
     });
 
-    document.getElementById("btnSair").addEventListener("click", function() {
-      // Sair encerra também a sessão de 1 hora (o cadastro volta a pedir o CPF e a data).
-      try { sessionStorage.removeItem(CHAVE); } catch (e) {}
-      if (window.SessaoMorador) window.SessaoMorador.encerrar();
-      cpf.value = ""; nasc.value = "";
-      document.getElementById("conteudoKit").hidden = true;
-      document.getElementById("atualizacaoKit").hidden = true;
-      form.hidden = false;
-      setMensagem("", "");
-    });
   })();
 </script>
-<script src="js/popup-links.js?v=20261009I"></script>
-<script src="js/sem-conectivos.js?v=20261009I"></script>
+<script src="js/popup-links.js?v=20261009J"></script>
+<script src="js/sem-conectivos.js?v=20261009J"></script>
 </body>
 </html>

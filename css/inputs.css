@@ -243,3 +243,13 @@ label .required-star,
 #secTipoResidente { margin-bottom: 0; }
 #secApto { margin-top: 20px !important; padding-top: 0; }
 .opcao-mora-imovel { margin-top: 20px !important; }
+
+/* "Novo cadastro" desativado (com login, ou enquanto o CPF estiver preenchido): cinza, sem clique. */
+.btn-novo-cadastro.bloqueado,
+.btn-novo-cadastro[aria-disabled="true"] {
+  background: #eef1f4;
+  color: #9aa6b2;
+  border-color: #d5dce3;
+  box-shadow: none;
+  cursor: not-allowed;
+}
