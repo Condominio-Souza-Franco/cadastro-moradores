@@ -154,9 +154,13 @@
   }
 
   // "Sair" da página inicial: encerra a sessão e volta à consulta vazia.
-  // "Sair" do morador também sai da área de admin desta aba, para não ficar um login preso.
+  // "Sair" (em qualquer lugar do site) desloga de tudo nesta aba: morador e área de admin.
   function sair() {
-    try { sessionStorage.removeItem("adminSimplesAuthUser"); sessionStorage.removeItem("adminSimplesAuthToken"); } catch (e) {}
+    try {
+      sessionStorage.removeItem("adminSimplesAuthUser");
+      sessionStorage.removeItem("adminSimplesAuthToken");
+      sessionStorage.removeItem("sessaoMoradorDoAdmin");
+    } catch (e) {}
     encerrar();
     aplicarNaTela();
     var cpf = document.getElementById("cpfConsulta");

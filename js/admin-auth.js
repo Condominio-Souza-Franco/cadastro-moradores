@@ -274,6 +274,10 @@
     btnSair.addEventListener("click", function() {
       // Sair apaga também o cache da área admin (dados dos moradores guardados na aba).
       if (window.DataService && window.DataService.limparCacheAdmin) window.DataService.limparCacheAdmin();
+      // Sair desta área também encerra a sessão de morador desta aba (regra: qualquer "Sair" desloga tudo).
+      ["sessaoMorador", "kitBoasVindas", "sessaoMoradorDoAdmin", "cadastroPreCarregado"].forEach(function(chave) {
+        try { sessionStorage.removeItem(chave); } catch (e) {}
+      });
       encerrarSessao("Sessão encerrada.", "ok");
     });
   }
