@@ -59,6 +59,18 @@
     if (!window.DataService || !DataService.obterContadores) return;
     if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
     lendo = true;
+    // Enquanto o servidor responde, a administração fica numa tela de carregamento (não aparece pela metade).
+    // Limite de 10 segundos: se a resposta demorar mais, a tela libera mesmo assim.
+    if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Carregando a administração");
+    var limite = setTimeout(terminar, 10000);
+    function terminar() {
+      clearTimeout(limite);
+      if (!lendo) return;
+      lendo = false;
+      pronto = true;
+      mostrarTodas();
+      if (window.setOverlayAdmin) window.setOverlayAdmin(false);
+    }
     DataService.obterContadores().then(function(r) {
       if (r && r.sucesso) {
         Object.keys(PERMISSAO).forEach(function(id) {
@@ -69,11 +81,7 @@
           }
         });
       }
-    }).catch(function() {}).then(function() {
-      lendo = false;
-      pronto = true;
-      mostrarTodas();
-    });
+    }).catch(function() {}).then(terminar);
   }
 
   window.BadgeMenu = { definir: definir, restaurar: restaurar };
