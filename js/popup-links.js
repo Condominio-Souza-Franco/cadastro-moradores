@@ -110,7 +110,11 @@
     caixa.style.display = ehPasta ? "none" : "";
     p.querySelector(".popup-link-carregando").hidden = !ehPasta;
     // O botão do Drive abre o endereço original (a pasta) e interrompe o carregamento.
-    p.querySelector(".popup-link-carregando-drive").href = original;
+    // O botão do Drive só aparece quando o conteúdo é do Drive.
+    var botaoDrive = p.querySelector(".popup-link-carregando-drive");
+    var ehDrive = /drive\.google\.com/.test(original || "");
+    botaoDrive.hidden = !(ehPasta && ehDrive);
+    botaoDrive.href = original;
     p.querySelector("iframe").src = embutida;
     p.hidden = false;
     document.body.classList.add("popup-link-aberto");
