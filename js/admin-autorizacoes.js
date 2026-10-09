@@ -39,7 +39,7 @@
     // "tipo" (ler/escrever) dá a cor da caixa: ler em azul, escrever em laranja.
     function celulaCheck(chave, c, rotulo, tipo) {
       if (!chave) return '<span class="aut-sem-escrita" title="Esta página não tem o que escrever">—</span>';
-      var marcado = atual[chave] && atual[chave][c];
+      var marcado = fixa(c, chave) || (c === "desenvolvedor") || !!(atual[chave] && atual[chave][c]); // desenvolvedor: sempre tudo
       var travado = !dados.podeEditar || fixa(c, chave) || (dados.colunasTravadas || []).indexOf(c) !== -1;
       return '<label class="aut-check aut-check-' + tipo + (travado ? " travado" : "") + '" title="' + escaparHtml(NOMES[c] + " — " + rotulo) + '">' +
         '<input type="checkbox" data-chave="' + chave + '" data-cargo="' + c + '"' + (marcado ? " checked" : "") + (travado ? " disabled" : "") + '>' +
@@ -148,11 +148,12 @@
       var c = e.target.closest("input[data-chave]");
       if (!c) return;
       var chave = c.getAttribute("data-chave"), cargo = c.getAttribute("data-cargo");
+      atual[chave] = atual[chave] || {}; // autorização nova que ainda não veio do servidor
       atual[chave][cargo] = c.checked;
       // Escrever exige ler: marcar "escrever" marca "ler"; desmarcar "ler" desmarca "escrever".
       (dados.linhas || []).forEach(function(l) {
-        if (l.escrever === chave && c.checked) atual[l.ler][cargo] = true;
-        if (l.ler === chave && !c.checked && l.escrever) atual[l.escrever][cargo] = false;
+        if (l.escrever === chave && c.checked) { atual[l.ler] = atual[l.ler] || {}; atual[l.ler][cargo] = true; }
+        if (l.ler === chave && !c.checked && l.escrever) { atual[l.escrever] = atual[l.escrever] || {}; atual[l.escrever][cargo] = false; }
       });
       renderizar();
     });
