@@ -49,7 +49,11 @@
     ".popup-link-caixa{position:relative}" +
     ".popup-link-caixa.kit-pequeno{width:min(380px,100%);height:min(230px,60vh)}" +
     ".popup-link-caixa.kit-grande{width:min(760px,100%);height:min(78vh,100%)}" +
-    ".popup-link-carregando{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:#fff;color:#243447;font-weight:700;font-size:.95rem}" +
+    ".popup-link-carregando{position:absolute;top:46px;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.58)}" +
+    ".popup-link-carregando-card{width:min(300px,90%);background:#fff;border-radius:12px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.22)}" +
+    ".popup-link-carregando-bolinha{width:34px;height:34px;border-radius:50%;border:3px solid #dbeafe;border-top-color:#1f5f8b;animation:popupGirar .9s linear infinite}" +
+    "@keyframes popupGirar{to{transform:rotate(360deg)}}" +
+    ".popup-link-carregando-texto{margin:0;color:#1f2937;font-weight:700}" +
     ".popup-link-carregando[hidden]{display:none}" +
     "body.popup-link-aberto{overflow:hidden}";
 
@@ -69,7 +73,7 @@
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
-        '<div class="popup-link-carregando" hidden>Carregando…</div>' +
+        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p></div></div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
     document.body.appendChild(popup);

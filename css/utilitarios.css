@@ -87,7 +87,14 @@ textarea {
   display: none !important;
 }
 
+.overlay-processamento-fechar {
+  position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #dcdde1;
+  background: #fff; color: #243447; font-size: 18px; line-height: 1; cursor: pointer; padding: 0;
+}
+.overlay-processamento-fechar:hover { background: #f1f4f8; }
+
 .overlay-processamento-card {
+  position: relative;
   width: min(360px, 100%);
   background: #ffffff;
   border-radius: 12px;

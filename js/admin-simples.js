@@ -764,6 +764,10 @@
 
   window.adminSimplesCarregarApartamento = carregarRegistro;
   window.setOverlayAdmin = setOverlayAdmin;
+  // × do "Aguarde": o usuário desiste da espera (a operação, se já foi enviada, termina sozinha).
+  document.addEventListener("click", function(e) {
+    if (e.target.closest && e.target.closest(".overlay-processamento-fechar")) setOverlayAdmin(false);
+  });
 
   function iniciarAppAdmin() {
     if (appInicializado) {
