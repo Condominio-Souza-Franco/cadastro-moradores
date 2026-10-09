@@ -49,6 +49,14 @@ function formatarListaCamposFaltantes(campos) {
   return `${campos.slice(0, -1).join(', ')} e ${campos[campos.length - 1]}`;
 }
 
+// × do "Aguarde" (em qualquer página): a pessoa desiste da espera; o envio, se já saiu, termina sozinho.
+document.addEventListener('click', function(e) {
+  if (e.target.closest && e.target.closest('.overlay-processamento-fechar')) {
+    const overlay = e.target.closest('.overlay-processamento');
+    if (overlay && overlay.id === 'overlayProcessamento') setOverlayProcessamento(false);
+  }
+});
+
 function setOverlayProcessamento(visivel, mensagem) {
   const overlay = document.getElementById('overlayProcessamento');
   const mensagemEl = document.getElementById('overlayProcessamentoMensagem');

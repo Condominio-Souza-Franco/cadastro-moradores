@@ -54,6 +54,9 @@
     ".popup-link-carregando-bolinha{width:34px;height:34px;border-radius:50%;border:3px solid #dbeafe;border-top-color:#1f5f8b;animation:popupGirar .9s linear infinite}" +
     "@keyframes popupGirar{to{transform:rotate(360deg)}}" +
     ".popup-link-carregando-texto{margin:0;color:#1f2937;font-weight:700}" +
+    ".popup-link-carregando-card{position:relative}" +
+    ".popup-link-carregando-fechar{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:1px solid #dcdde1;background:#fff;color:#243447;font-size:18px;line-height:1;cursor:pointer;padding:0}" +
+    ".popup-link-carregando-fechar:hover{background:#f1f4f8}" +
     ".popup-link-carregando[hidden]{display:none}" +
     "body.popup-link-aberto{overflow:hidden}";
 
@@ -73,7 +76,7 @@
           '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
         '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
-        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p></div></div>' +
+        '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><button type="button" class="popup-link-carregando-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p></div></div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
     document.body.appendChild(popup);
@@ -118,6 +121,11 @@
   // linkDrive (opcional): endereço do arquivo no Google Drive, mostrado como "Ver no Google Drive".
   window.PopupLinks = { abrir: function(href, titulo) { var e = urlEmbutida(href); if (e) abrir(e, href, titulo); return !!e; },
     abrirDireto: function(url, titulo, linkDrive) { abrir(url, url, titulo, linkDrive || null, "Ver no Google Drive"); }, fechar: fechar };
+
+  // × do carregamento da pasta: desiste e fecha o popup.
+  document.addEventListener("click", function(e) {
+    if (e.target.closest && e.target.closest(".popup-link-carregando-fechar")) fechar();
+  });
 
   // A pasta do kit avisa quando está pronta: o popup vira grande e tira o "Carregando...".
   window.addEventListener("message", function(e) {
