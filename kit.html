@@ -78,10 +78,9 @@
     .doc span { overflow-wrap: anywhere; }
     /* Número ímpar de documentos: o último ocupa a linha inteira (sem "viúva"). */
     .docs .doc:last-child:nth-child(odd) { grid-column: 1 / -1; }
-    .docs .doc, .docs .secao.vazia { min-height: 56px; box-sizing: border-box; }
+    .docs .doc { min-height: 56px; box-sizing: border-box; }
     .kit-drive-titulo { margin: 0 0 8px; text-align: left; }
     .btn-pasta-drive { display: inline-block; padding: 8px 16px; border-radius: 10px; background: var(--destaque); color: #fff; font-weight: 700; text-decoration: none; }
-    #botaoPastaDrive { width: auto; display: inline-block; margin-top: 0; padding: 8px 16px; }
     details.secao { border: 1px solid var(--borda); border-radius: 10px; margin-top: 8px; background: #fff; }
     details.secao > summary {
       cursor: pointer; padding: 10px 14px; font-weight: 700; color: var(--destaque); list-style: none;
@@ -105,11 +104,6 @@
       .docs .doc:last-child:nth-child(odd) { grid-column: auto; }
     }
     .kit-drive, .subtitulo { font-size: 0.92em; }
-  .secao-nome { flex: 1; min-width: 0; }
-  .secao-nome .qtd { margin-left: 8px; }
-  .secao.vazia { border: 1px dashed var(--borda); border-radius: 10px; margin-top: 8px; background: #f4f6f8; opacity: 0.7; cursor: default; }
-  .secao.vazia .secao-cab { display: flex; align-items: center; padding: 10px 14px; font-weight: 700; color: var(--suave); }
-  .docs details.secao, .docs .secao.vazia { margin-left: 10px; }
 </style>
 </head>
 <body>
@@ -147,10 +141,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009Y"></script>
-<script src="js/data/backend.js?v=20261009Y"></script>
-<script src="js/sessao-morador.js?v=20261009Y"></script>
-<script src="js/pular-campo.js?v=20261009Y"></script>
+<script src="js/regras.js?v=20261009Z"></script>
+<script src="js/data/backend.js?v=20261009Z"></script>
+<script src="js/sessao-morador.js?v=20261009Z"></script>
+<script src="js/pular-campo.js?v=20261009Z"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -159,9 +153,6 @@
     var cpf = document.getElementById("cpf");
     var nasc = document.getElementById("nasc");
     var btn = document.getElementById("btnAcessar");
-    // Modo pasta (Links úteis da administração): ?pasta=ID mostra a pasta do Drive nesta mesma tela.
-    var PASTA = new URLSearchParams(location.search).get("pasta") || "";
-    var msg = document.getElementById("mensagem");
 
     function mascarar(el, tipo) {
       el.addEventListener("input", function() {
@@ -252,7 +243,6 @@
       if (!doc) return;
       var guardado = null;
       try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e2) {}
-      if (PASTA) { abrirArquivoPasta(doc); return; }
       if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento para abrir os documentos."); return; }
       var span = doc.querySelector("span");
       var texto = span.textContent;
@@ -303,76 +293,6 @@
       document.getElementById("atualizacaoKit").hidden = true;
       form.hidden = false;
       setMensagem(mensagem || "", mensagem ? "erro" : "");
-    }
-
-    // Modo pasta: lista a pasta do Drive (administração). Arquivos do Google abrem direto em nova aba.
-    // Uma pasta do Drive vira um grupo; as subpastas ficam dentro dele. Pasta vazia: cinza, sem abrir.
-    function pastaHtml(nodo) {
-      var temConteudo = nodo.arquivos.length || (nodo.subpastas && nodo.subpastas.length);
-      var qtd = nodo.arquivos.length ? nodo.arquivos.length + (nodo.arquivos.length === 1 ? " documento" : " documentos") : "";
-      if (!temConteudo) {
-        return '<div class="secao vazia" aria-disabled="true"><div class="secao-cab"><span class="secao-nome">' + escapar(nodo.nome) + ' <span class="qtd">vazia</span></span></div></div>';
-      }
-      var corpo = (nodo.arquivos.length ? listaDocs(nodo.arquivos) : "") + (nodo.subpastas || []).map(pastaHtml).join("");
-      return '<details class="secao"><summary><span class="secao-nome">' + escapar(nodo.nome) + (qtd ? ' <span class="qtd">' + qtd + "</span>" : "") + '</span></summary><div class="docs">' + corpo + "</div></details>";
-    }
-
-    function mostrarPasta(r) {
-      document.getElementById("conteudoKit").hidden = false;
-      document.querySelector("h1").textContent = r.nome || "Pasta do Google Drive";
-      if (r.url && !document.getElementById("botaoPastaDrive")) {
-        var botao = document.createElement("p");
-        botao.innerHTML = '<a id="botaoPastaDrive" class="btn" data-nova-aba href="' + escapar(r.url) + '" target="_blank" rel="noopener noreferrer">Abrir pasta no Google Drive</a>';
-        document.querySelector(".subtitulo").after(botao);
-      }
-      var principais = r.principais || [];
-      document.getElementById("tituloPrincipais").hidden = !principais.length;
-      document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
-      document.getElementById("secoes").innerHTML = (r.arvore || []).map(pastaHtml).join("");
-      if (r.vazia) document.getElementById("docsPrincipais").innerHTML = '<p class="pasta-vazia">Esta pasta está vazia.</p>';
-    }
-
-    function abrirArquivoPasta(doc) {
-      var span = doc.querySelector("span");
-      var texto = span.textContent;
-      span.textContent = "Abrindo";
-      doc.disabled = true;
-      window.Backend.chamar("fbArquivoPasta", { id: doc.getAttribute("data-id") }, true).then(function(r) {
-        if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível abrir o arquivo.");
-        if (r.nativo) { window.open(r.url, "_blank", "noopener"); return; }
-        var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
-        for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-        var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
-        if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto, doc.getAttribute("data-drive"));
-        else window.open(url, "_blank");
-      }).catch(function(erro) { alert((erro && erro.message) || "Não foi possível abrir o arquivo."); })
-        .then(function() { span.textContent = texto; doc.disabled = false; });
-    }
-
-    if (PASTA) {
-      if (!window.AdminAuth) {
-        window.AdminAuth = { getIdToken: function() { try { return sessionStorage.getItem("adminSimplesAuthToken") || ""; } catch (e) { return ""; } }, getEmail: function() { return ""; } };
-      }
-      // Na pasta, a mensagem aparece na própria tela (o bloco do formulário fica escondido).
-      form.hidden = true;
-      document.querySelector(".kit-drive-bloco").hidden = true;
-      document.querySelector(".voltar").hidden = true;
-      document.getElementById("atualizacaoKit").hidden = true;
-      document.getElementById("conteudoKit").hidden = false;
-      var msgPasta = document.createElement("p");
-      msgPasta.className = "mensagem carregando";
-      msgPasta.textContent = "Carregando a pasta…";
-      document.getElementById("conteudoKit").insertBefore(msgPasta, document.getElementById("conteudoKit").firstChild);
-      function falhaPasta(texto) { msgPasta.className = "mensagem erro"; msgPasta.textContent = texto; avisarPopup("erro"); }
-      // Avisa a janela do popup que a pasta está pronta (ela troca o "Carregando..." pelo popup grande).
-      function avisarPopup(estado) { if (window.parent && window.parent !== window) window.parent.postMessage({ kitPasta: estado }, location.origin); }
-      window.Backend.chamar("fbListarPastaDrive", { id: PASTA }, true).then(function(r) {
-        if (!r || !r.sucesso) { falhaPasta((r && r.mensagem) || "Não foi possível abrir a pasta."); return; }
-        msgPasta.remove();
-        mostrarPasta(r);
-        avisarPopup("pronta");
-      }).catch(function(erro) { falhaPasta("Não foi possível abrir a pasta. " + ((erro && erro.message) || "Tente novamente em instantes.")); });
-      return;
     }
 
     var guardadoInicial = null;
@@ -426,7 +346,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009Y"></script>
-<script src="js/sem-conectivos.js?v=20261009Y"></script>
+<script src="js/popup-links.js?v=20261009Z"></script>
+<script src="js/sem-conectivos.js?v=20261009Z"></script>
 </body>
 </html>
