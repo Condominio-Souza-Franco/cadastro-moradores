@@ -12,10 +12,6 @@
     return String(valor || "").trim();
   }
 
-  function normalizarEmail(email) {
-    return textoLimpo(email).toLowerCase();
-  }
-
   function parseJwtPayload(jwt) {
     try {
       var parts = String(jwt || "").split(".");

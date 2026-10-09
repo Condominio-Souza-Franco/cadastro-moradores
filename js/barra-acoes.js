@@ -27,10 +27,6 @@
     return r.height > 0 && r.top < window.innerHeight && r.bottom > 0;
   }
 
-  function alturaBarra() {
-    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--altura-barra-acoes")) || 64;
-  }
-
   // Login da área de admin, se for da administradora (ela não tem cadastro de morador).
   function pessoaAdministradora() {
     try {

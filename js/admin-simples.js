@@ -360,10 +360,6 @@
     return '<div class="campo campo-frase"><p class="campo-valor">' + escaparHtml(base) + ' o <strong>' + escaparHtml(textoApto) + '</strong></p></div>';
   }
 
-  function secaoHtml(titulo, camposHtml) {
-    return '<section class="secao"><h2>' + titulo + '</h2><div class="grid-campos">' + camposHtml.join("") + '</div></section>';
-  }
-
   function extrairCamposLinha(valor, quantidade) {
     var texto = textoLimpo(valor);
     if (!texto) {
