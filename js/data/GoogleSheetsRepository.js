@@ -46,8 +46,11 @@
       return chamarBackend("gerarRelatorioApartamentosPdfDrive", {}, true);
     },
     // O histórico de alterações, a lista de veículos e a situação dos relatórios só existem no Firebase.
-    obterContadorHistorico: function() {
-      return Promise.resolve({ sucesso: false, mensagem: "O histórico só está disponível com o Firebase.", total: null });
+    obterContadores: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "Os contadores só estão disponíveis com o Firebase." });
+    },
+    salvarContador: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "Os contadores só estão disponíveis com o Firebase." });
     },
     listarHistorico: function() {
       return Promise.resolve({ sucesso: false, mensagem: "O histórico de alterações só está disponível com o Firebase.", itens: [] });

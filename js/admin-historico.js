@@ -50,21 +50,9 @@
     );
   }
 
-  // Bolinha com o número de itens. O número fica guardado no servidor e é lido logo ao abrir a página.
-  function mostrarContagem(total) {
-    var contagem = document.getElementById("contagemHistorico");
-    if (!contagem) return;
-    var texto = String(total);
-    if (contagem.textContent !== texto) contagem.textContent = texto;
-    contagem.hidden = !total;
-  }
+  // Bolinha com o número de itens: o número vai para o servidor (js/admin-badges.js).
   function guardarContagem(total) {
-    mostrarContagem(total);
-  }
-  function lerContadorDoServidor() {
-    return DataService.obterContadorHistorico().then(function(r) {
-      if (r && r.sucesso && r.total !== null && !carregado) mostrarContagem(r.total);
-    }).catch(function() {});
+    if (window.BadgeMenu) window.BadgeMenu.definir("contadorHistorico", total);
   }
 
   function renderizar() {
@@ -136,7 +124,6 @@
     function atualizarEmSegundoPlano() {
       if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
       if (carregado || carregando) return;
-      lerContadorDoServidor();
       carregar(true);
     }
     atualizarEmSegundoPlano();

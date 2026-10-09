@@ -1,21 +1,22 @@
 // ==========================================
-// BOLINHAS DE CONTAGEM DO MENU (PENDÊNCIAS, CADASTROS PARA APROVAÇÃO)
+// BOLINHAS DE CONTAGEM DO MENU (PENDÊNCIAS, CADASTROS PARA APROVAÇÃO, ÚLTIMAS ALTERAÇÕES)
 // ==========================================
-// As contagens só chegam depois que o servidor responde (pré-carga), e isso pode levar alguns
-// segundos: a página abria sem a bolinha e ela "pulava" depois. Agora a última contagem fica
-// guardada neste navegador (localStorage) e aparece logo que a página abre. Quando o servidor
-// responde, a bolinha só muda se o número for outro.
-// Só guarda números (nenhum dado de morador). Quem não tem autorização para a página não vê a
-// contagem guardada, já que a pré-carga não vai atualizá-la.
+// Cada número fica guardado no servidor (config/contadores). Ao entrar na administração, a página lê
+// os três de uma vez e a bolinha aparece logo, em qualquer navegador. Quando uma lista carrega, a página
+// grava o número novo no servidor; se mudou, a bolinha muda sozinha.
+// Se o número for 0, a bolinha fica verde com "OK".
+// Só guarda números (nenhum dado de morador). Quem não tem autorização para a página não vê a bolinha.
 (function() {
-  var PREFIXO = "contagemMenu:";
   // Bolinha -> autorização exigida (Membros > Autorizações).
-  var PERMISSAO = { contadorPendencias: "pendencias", contadorAprovacoes: "aprovacoes" };
+  var PERMISSAO = { contadorPendencias: "pendencias", contadorAprovacoes: "aprovacoes", contadorHistorico: "historico" };
+  var ultimo = {}; // último número conhecido (lido ou gravado), para não gravar à toa
 
   function mostrar(el, total) {
-    var texto = total > 99 ? "99+" : (total ? String(total) : "");
+    var ok = total === 0;
+    var texto = ok ? "OK" : (total > 99 ? "99+" : String(total));
     if (el.textContent !== texto) el.textContent = texto;
-    el.hidden = !total;
+    el.classList.toggle("ok", ok);
+    el.hidden = false;
   }
 
   function podeVer(id) {
@@ -23,26 +24,34 @@
     return !p || p[PERMISSAO[id]] !== false;
   }
 
-  // Chamado pelas páginas quando a contagem real chega do servidor.
+  // Chamado pelas páginas quando a contagem real chega (lista carregada): mostra e grava no servidor.
   function definir(id, total) {
-    var el = document.getElementById(id);
     total = Math.max(0, parseInt(total, 10) || 0);
-    try { localStorage.setItem(PREFIXO + id, String(total)); } catch (e) {}
-    if (el) mostrar(el, total);
+    var el = document.getElementById(id);
+    if (el && podeVer(id)) mostrar(el, total);
+    if (ultimo[id] === total) return;
+    ultimo[id] = total;
+    if (window.DataService && DataService.salvarContador) {
+      Promise.resolve(DataService.salvarContador(id, total)).catch(function() {});
+    }
   }
 
-  // Mostra a última contagem guardada (sem esperar o servidor).
+  // Lê os números guardados no servidor (só os que a pessoa pode ver) e mostra nas bolinhas.
   function restaurar() {
-    Object.keys(PERMISSAO).forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el || !podeVer(id)) return;
-      var guardado = null;
-      try { guardado = localStorage.getItem(PREFIXO + id); } catch (e) {}
-      if (guardado !== null) mostrar(el, parseInt(guardado, 10) || 0);
-    });
+    if (!window.DataService || !DataService.obterContadores) return;
+    if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
+    DataService.obterContadores().then(function(r) {
+      if (!r || !r.sucesso) return;
+      Object.keys(PERMISSAO).forEach(function(id) {
+        if (r[id] === undefined || r[id] === null) return;
+        ultimo[id] = r[id];
+        var el = document.getElementById(id);
+        if (el && podeVer(id)) mostrar(el, r[id]);
+      });
+    }).catch(function() {});
   }
 
   window.BadgeMenu = { definir: definir, restaurar: restaurar };
-  restaurar();
+  document.addEventListener("DOMContentLoaded", restaurar);
   window.addEventListener("admin-auth-success", restaurar);
 })();
