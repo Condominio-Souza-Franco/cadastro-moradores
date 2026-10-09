@@ -2,14 +2,17 @@
 // BOLINHAS DE CONTAGEM DO MENU (PENDÊNCIAS, CADASTROS PARA APROVAÇÃO, ÚLTIMAS ALTERAÇÕES)
 // ==========================================
 // Cada número fica guardado no servidor (config/contadores). Ao entrar na administração, a página lê
-// os três de uma vez e a bolinha aparece logo, em qualquer navegador. Quando uma lista carrega, a página
-// grava o número novo no servidor; se mudou, a bolinha muda sozinha.
+// os três de uma vez e mostra as bolinhas juntas, só depois dessa leitura. Quando uma lista carrega,
+// a página grava o número novo no servidor e a bolinha muda sozinha.
 // Se o número for 0, a bolinha fica verde com "OK".
 // Só guarda números (nenhum dado de morador). Quem não tem autorização para a página não vê a bolinha.
 (function() {
   // Bolinha -> autorização exigida (Membros > Autorizações).
   var PERMISSAO = { contadorPendencias: "pendencias", contadorAprovacoes: "aprovacoes", contadorHistorico: "historico" };
-  var ultimo = {}; // último número conhecido (lido ou gravado), para não gravar à toa
+  var valores = {};      // número conhecido de cada bolinha (vindo da lista ou do servidor)
+  var gravados = {};     // último número enviado ao servidor, para não gravar à toa
+  var pronto = false;    // as bolinhas só aparecem depois da leitura conjunta do servidor
+  var lendo = false;
 
   function mostrar(el, total) {
     var ok = total === 0;
@@ -24,31 +27,50 @@
     return !p || p[PERMISSAO[id]] !== false;
   }
 
-  // Chamado pelas páginas quando a contagem real chega (lista carregada): mostra e grava no servidor.
+  // Mostra todas de uma vez (as que têm número e que a pessoa pode ver).
+  function mostrarTodas() {
+    Object.keys(PERMISSAO).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && podeVer(id) && typeof valores[id] === "number") mostrar(el, valores[id]);
+    });
+  }
+
+  // Chamado pelas páginas quando a contagem real chega (lista carregada): atualiza e grava no servidor.
   function definir(id, total) {
     total = Math.max(0, parseInt(total, 10) || 0);
-    var el = document.getElementById(id);
-    if (el && podeVer(id)) mostrar(el, total);
-    if (ultimo[id] === total) return;
-    ultimo[id] = total;
+    valores[id] = total;
+    if (pronto) {
+      var el = document.getElementById(id);
+      if (el && podeVer(id)) mostrar(el, total);
+    }
+    if (gravados[id] === total) return;
+    gravados[id] = total;
     if (window.DataService && DataService.salvarContador) {
       Promise.resolve(DataService.salvarContador(id, total)).catch(function() {});
     }
   }
 
-  // Lê os números guardados no servidor (só os que a pessoa pode ver) e mostra nas bolinhas.
+  // Lê os três números guardados no servidor de uma vez e mostra todas juntas.
   function restaurar() {
+    if (lendo || pronto) return;
     if (!window.DataService || !DataService.obterContadores) return;
     if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
+    lendo = true;
     DataService.obterContadores().then(function(r) {
-      if (!r || !r.sucesso) return;
-      Object.keys(PERMISSAO).forEach(function(id) {
-        if (r[id] === undefined || r[id] === null) return;
-        ultimo[id] = r[id];
-        var el = document.getElementById(id);
-        if (el && podeVer(id)) mostrar(el, r[id]);
-      });
-    }).catch(function() {});
+      if (r && r.sucesso) {
+        Object.keys(PERMISSAO).forEach(function(id) {
+          // Se a lista já chegou nesta página, o número dela vale mais que o guardado.
+          if (typeof valores[id] !== "number" && typeof r[id] === "number") {
+            valores[id] = r[id];
+            gravados[id] = r[id];
+          }
+        });
+      }
+    }).catch(function() {}).then(function() {
+      lendo = false;
+      pronto = true;
+      mostrarTodas();
+    });
   }
 
   window.BadgeMenu = { definir: definir, restaurar: restaurar };
