@@ -34,11 +34,16 @@ e abra `http://localhost:8000/index.html` ou `/admin.html`. Os dados vêm do App
 - Comentários de cabeçalho no topo de cada arquivo explicam o porquê das decisões; mantenha esse estilo.
 - Nunca registre dados pessoais de moradores no `console`.
 - Links externos abrem em popup (`js/popup-links.js`), não em nova aba.
-- `js/sem-conectivos.js` impede que artigos e preposições fiquem sozinhos no fim da linha; não é preciso tratar isso à mão nos textos.
+
+## Cláusulas pétreas
+
+Nenhuma mudança de texto, de layout ou de código pode quebrar estas regras:
+
+- Não deixar conectivos, artigos ou preposições isolados no final da linha. O `js/sem-conectivos.js` já cuida disso nos textos da página, então não é preciso tratar à mão; mas nenhum layout novo pode escapar desse script.
+- Não usar reticências ("...") em nenhum texto do site (decisão de 08/10/2026).
 
 ## Regras
 
-- Não deixar conectivos, artigos ou preposições isolados no final da linha. Esta regra é cláusula pétrea: nenhuma mudança de texto ou de layout pode quebrá-la.
 - Teste toda mudança de interface também em largura de celular (por volta de 375px), além do desktop.
 - Não proponha migrar a hospedagem para Cloudflare (decisão de 08/10/2026). A hospedagem continua no GitHub Pages.
 - Entregue mudanças como PR em rascunho, com explicação em linguagem simples.
