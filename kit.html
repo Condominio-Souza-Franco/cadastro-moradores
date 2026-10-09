@@ -89,6 +89,9 @@
     details.secao .docs { padding: 0 10px 10px; }
     .qtd { font-weight: 400; color: var(--suave); font-size: 0.85rem; }
     .aviso-sessao { margin: 10px 0 0; padding: 8px 12px; border: 1px solid var(--borda); border-radius: 8px; background: var(--destaque-fundo); color: var(--suave); font-size: 0.82rem; line-height: 1.4; text-wrap: pretty; }
+    .atualizacao-kit { display: flex; align-items: center; gap: 10px; margin: -10px 0 18px; }
+    .atualizacao-kit .btn-secundario { width: auto; margin: 0; padding: 4px 12px; font-size: 0.78rem; }
+    .lido-em { font-size: 0.75rem; color: var(--suave); font-style: italic; }
     .rodape { margin-top: 28px; font-size: 0.85rem; color: var(--suave); }
     [hidden] { display: none !important; }
 
@@ -104,6 +107,11 @@
   <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
   <h1>Kit de Boas-vindas</h1>
   <p class="subtitulo">Os documentos e orientações mais importantes para a convivência no Condomínio Souza Franco.</p>
+  <!-- Só com o kit aberto: "Atualizar" lê a pasta do Drive na hora (sozinho, ela é relida a cada 6 horas). -->
+  <div id="atualizacaoKit" class="atualizacao-kit" hidden>
+    <button type="button" class="btn btn-secundario" id="btnAtualizarKit">Atualizar</button>
+    <span id="lidoEmKit" class="lido-em"></span>
+  </div>
 
   <form id="formAcesso" class="acesso" novalidate>
     <p>Para acessar, informe o CPF e a data de nascimento do seu cadastro de morador.</p>
@@ -130,10 +138,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261008c"></script>
-<script src="js/data/backend.js?v=20261008c"></script>
-<script src="js/sessao-morador.js?v=20261008c"></script>
-<script src="js/pular-campo.js?v=20261009a"></script>
+<script src="js/regras.js?v=20261009z"></script>
+<script src="js/data/backend.js?v=20261009z"></script>
+<script src="js/sessao-morador.js?v=20261009z"></script>
+<script src="js/pular-campo.js?v=20261009z"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -183,9 +191,41 @@
       }).join("");
     }
 
+    function textoLidoEm(iso) {
+      if (!iso) return "";
+      var d = new Date(iso);
+      if (isNaN(d)) return "";
+      function z(n) { return (n < 10 ? "0" : "") + n; }
+      return "Atualizado em " + z(d.getDate()) + "/" + z(d.getMonth() + 1) + "/" + d.getFullYear() + " às " + z(d.getHours()) + ":" + z(d.getMinutes());
+    }
+
+    // "Atualizar": lê a pasta do Drive de novo e redesenha a lista (mostra "Carregando..." enquanto isso).
+    document.getElementById("btnAtualizarKit").addEventListener("click", function() {
+      var guardado = null;
+      try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
+      if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento de novo."); return; }
+      var botao = this, lido = document.getElementById("lidoEmKit");
+      botao.disabled = true;
+      lido.textContent = "Carregando...";
+      window.Backend.chamar("fbAtualizarKit", { sessao: guardado.sessaoKit })
+        .then(function(r) {
+          if (!r || !r.sucesso) {
+            if (r && r.expirado) { voltarAoFormulario(r.mensagem); return; }
+            throw new Error((r && r.mensagem) || "Não foi possível atualizar.");
+          }
+          guardado.principais = r.principais; guardado.secoes = r.secoes; guardado.lidoEm = r.lidoEm;
+          try { sessionStorage.setItem(CHAVE, JSON.stringify(guardado)); } catch (e2) {}
+          mostrarKit(guardado);
+        })
+        .catch(function(erro) { lido.textContent = (erro && erro.message) || "Não foi possível atualizar."; })
+        .then(function() { botao.disabled = false; });
+    });
+
     function mostrarKit(r) {
       form.hidden = true;
       document.getElementById("conteudoKit").hidden = false;
+      document.getElementById("atualizacaoKit").hidden = false;
+      document.getElementById("lidoEmKit").textContent = textoLidoEm(r.lidoEm);
       document.getElementById("saudacao").textContent = "Olá" + (r.nome ? ", " + r.nome : "") + "! Toque num documento para abrir.";
       mostrarAvisoSessao();
       var principais = r.principais || [];
@@ -258,6 +298,7 @@
     function voltarAoFormulario(mensagem) {
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
       document.getElementById("conteudoKit").hidden = true;
+      document.getElementById("atualizacaoKit").hidden = true;
       form.hidden = false;
       setMensagem(mensagem || "", mensagem ? "erro" : "");
     }
@@ -310,12 +351,13 @@
       if (window.SessaoMorador) window.SessaoMorador.encerrar();
       cpf.value = ""; nasc.value = "";
       document.getElementById("conteudoKit").hidden = true;
+      document.getElementById("atualizacaoKit").hidden = true;
       form.hidden = false;
       setMensagem("", "");
     });
   })();
 </script>
-<script src="js/popup-links.js?v=20261008c"></script>
-<script src="js/sem-conectivos.js?v=20261008c"></script>
+<script src="js/popup-links.js?v=20261009z"></script>
+<script src="js/sem-conectivos.js?v=20261009z"></script>
 </body>
 </html>
