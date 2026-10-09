@@ -3593,3 +3593,31 @@ details.como-funcionam-notificacoes[open] > summary::before { transform: rotate(
 /* Bolinhas que ainda esperam o número do servidor: já aparecem no lugar, em cinza. */
 .badge-menu.aguardando,
 .contagem-historico.aguardando { background: #9aa7b4; box-shadow: 0 0 0 2px #fff; }
+
+/* "Aguarde" com × no canto superior direito; card do tamanho do conteúdo (o menor possível). */
+.overlay-processamento-card {
+  width: auto !important;
+  min-width: 240px;
+  max-width: min(320px, 100%);
+  position: relative !important;
+}
+.overlay-processamento .overlay-processamento-card > .overlay-processamento-fechar {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #dcdde1 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #243447 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+.overlay-processamento .overlay-processamento-card > .overlay-processamento-fechar:hover {
+  background: #f1f4f8 !important;
+}
