@@ -141,6 +141,8 @@
   }
 
   function atualizarBotoes() {
+    // Com Membros > Autorizações aberta, os botões são dela (admin-autorizacoes.js): não mexe.
+    if (window.AutorizacoesAbertas && window.AutorizacoesAbertas()) { if (window.atualizarBotoesAutorizacoes) window.atualizarBotoesAutorizacoes(); return; }
     var alterado = JSON.stringify(paraEnviar()) !== originais;
     var salvar = document.getElementById("btnSalvarMembros");
     var desfazer = document.getElementById("btnDesfazerMembros");

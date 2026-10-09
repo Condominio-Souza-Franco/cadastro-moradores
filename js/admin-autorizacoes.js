@@ -67,6 +67,8 @@
   }
 
   function alterado() { return JSON.stringify(atual) !== originais; }
+  window.AutorizacoesAbertas = function() { return aberto; };
+  window.atualizarBotoesAutorizacoes = function() { atualizarBotoes(); };
 
   function atualizarBotoes() {
     if (!aberto) return;
