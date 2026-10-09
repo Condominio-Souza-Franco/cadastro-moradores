@@ -135,10 +135,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009J"></script>
-<script src="js/data/backend.js?v=20261009J"></script>
-<script src="js/sessao-morador.js?v=20261009J"></script>
-<script src="js/pular-campo.js?v=20261009J"></script>
+<script src="js/regras.js?v=20261009K"></script>
+<script src="js/data/backend.js?v=20261009K"></script>
+<script src="js/sessao-morador.js?v=20261009K"></script>
+<script src="js/pular-campo.js?v=20261009K"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -147,6 +147,8 @@
     var cpf = document.getElementById("cpf");
     var nasc = document.getElementById("nasc");
     var btn = document.getElementById("btnAcessar");
+    // Modo pasta (Links úteis da administração): ?pasta=ID mostra a pasta do Drive nesta mesma tela.
+    var PASTA = new URLSearchParams(location.search).get("pasta") || "";
     var msg = document.getElementById("mensagem");
 
     function mascarar(el, tipo) {
@@ -238,6 +240,7 @@
       if (!doc) return;
       var guardado = null;
       try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e2) {}
+      if (PASTA) { abrirArquivoPasta(doc); return; }
       if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento para abrir os documentos."); return; }
       var span = doc.querySelector("span");
       var texto = span.textContent;
@@ -288,6 +291,55 @@
       document.getElementById("atualizacaoKit").hidden = true;
       form.hidden = false;
       setMensagem(mensagem || "", mensagem ? "erro" : "");
+    }
+
+    // Modo pasta: lista a pasta do Drive (administração). Arquivos do Google abrem direto em nova aba.
+    function mostrarPasta(r) {
+      document.getElementById("conteudoKit").hidden = false;
+      document.querySelector("h1").textContent = r.nome || "Pasta do Google Drive";
+      var principais = r.principais || [];
+      document.getElementById("tituloPrincipais").hidden = !principais.length;
+      document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
+      document.getElementById("secoes").innerHTML = (r.secoes || []).map(function(s) {
+        var corpo = s.arquivos.length ? listaDocs(s.arquivos) : '<p class="pasta-vazia">Esta pasta está vazia.</p>';
+        var qtd = s.arquivos.length ? s.arquivos.length + (s.arquivos.length === 1 ? " documento" : " documentos") : "vazia";
+        return '<details class="secao"><summary>' + escapar(s.nome) + ' <span class="qtd">' + qtd + '</span></summary><div class="docs">' + corpo + "</div></details>";
+      }).join("");
+      if (r.vazia) document.getElementById("docsPrincipais").innerHTML = '<p class="pasta-vazia">Esta pasta está vazia.</p>';
+    }
+
+    function abrirArquivoPasta(doc) {
+      var span = doc.querySelector("span");
+      var texto = span.textContent;
+      span.textContent = "Abrindo";
+      doc.disabled = true;
+      window.Backend.chamar("fbArquivoPasta", { id: doc.getAttribute("data-id") }, true).then(function(r) {
+        if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível abrir o arquivo.");
+        if (r.nativo) { window.open(r.url, "_blank", "noopener"); return; }
+        var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
+        for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+        var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
+        if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
+        else window.open(url, "_blank");
+      }).catch(function(erro) { alert((erro && erro.message) || "Não foi possível abrir o arquivo."); })
+        .then(function() { span.textContent = texto; doc.disabled = false; });
+    }
+
+    if (PASTA) {
+      if (!window.AdminAuth) {
+        window.AdminAuth = { getIdToken: function() { try { return sessionStorage.getItem("adminSimplesAuthToken") || ""; } catch (e) { return ""; } }, getEmail: function() { return ""; } };
+      }
+      form.hidden = true;
+      document.querySelector(".kit-drive").hidden = true;
+      document.getElementById("atualizacaoKit").hidden = true;
+      document.querySelector(".subtitulo").textContent = "Conteúdo da pasta do Google Drive, como aparece no kit.";
+      setMensagem("Carregando", "carregando");
+      window.Backend.chamar("fbListarPastaDrive", { id: PASTA }, true).then(function(r) {
+        setMensagem("", "");
+        if (!r || !r.sucesso) { setMensagem((r && r.mensagem) || "Não foi possível abrir a pasta.", "erro"); return; }
+        mostrarPasta(r);
+      }).catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); });
+      return;
     }
 
     var guardadoInicial = null;
@@ -341,7 +393,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009J"></script>
-<script src="js/sem-conectivos.js?v=20261009J"></script>
+<script src="js/popup-links.js?v=20261009K"></script>
+<script src="js/sem-conectivos.js?v=20261009K"></script>
 </body>
 </html>

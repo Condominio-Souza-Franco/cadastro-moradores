@@ -16,14 +16,12 @@
       return new URL("kit.html", location.href).href;
     }
     if (u.hostname === "drive.google.com") {
-      if ((m = u.pathname.match(/\/file\/d\/([^/]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
-      if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return "https://drive.google.com/embeddedfolderview?id=" + m[1] + "#list";
-      if ((m = u.search.match(/[?&]id=([^&]+)/))) return "https://drive.google.com/file/d/" + m[1] + "/preview";
+      // Pasta: mesma tela do kit (lista própria). Arquivo: não é embutido, abre direto em nova aba.
+      if ((m = u.pathname.match(/\/drive\/(?:u\/\d+\/)?folders\/([^/?]+)/))) return new URL("kit.html?pasta=" + encodeURIComponent(m[1]), location.href).href;
       return null;
     }
-    if (u.hostname === "docs.google.com" && (m = u.pathname.match(/\/(spreadsheets|document|presentation)\/d\/([^/]+)/))) {
-      return "https://docs.google.com/" + m[1] + "/d/" + m[2] + "/preview";
-    }
+    // Planilhas e documentos do Google: abrem direto em nova aba (não são embutidos).
+    if (u.hostname === "docs.google.com") return null;
     if (/(^|\.)google\.[a-z.]+$/i.test(u.hostname) && /\/maps/.test(u.pathname)) {
       var q = u.searchParams.get("query") || u.searchParams.get("q");
       return q ? "https://maps.google.com/maps?q=" + encodeURIComponent(q) + "&output=embed" : null;
