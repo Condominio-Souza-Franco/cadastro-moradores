@@ -5,8 +5,9 @@
 // logo acima de "Qual é o seu vínculo com a unidade?" (o mesmo lugar do aviso da sessão). Quando o
 // morador rola para baixo, a barra desce para o topo da tela e acompanha a rolagem; quando chega aos
 // botões de baixo, ela some (os de baixo já estão à vista).
-// Logo abaixo do aviso da sessão, "identidadeLogado" mostra nome, apto e e-mail de quem está com o
-// cadastro aberto. Ao rolar para baixo, essa faixa também vira flutuante, logo acima da barra.
+// No topo da página, logo abaixo dos links, "identidadeLogado" mostra nome, apto e e-mail de quem está
+// logado (pela sessão, mesmo sem o cadastro aberto). Ao rolar para baixo, ela vira faixa fixa e a barra
+// de ações se acumula logo abaixo dela.
 // Os botões da barra só "clicam" nos botões originais: a lógica de envio é a mesma.
 (function() {
   var barra, lugar, form, acoesDeBaixo, identidade, lugarIdentidade;
@@ -32,14 +33,19 @@
 
   // Nome, apto e e-mail de quem está com o cadastro aberto (campos do próprio formulário).
   function atualizarIdentidade() {
-    var nome = (document.getElementById("moradorNome") || {}).value || "";
-    var email = (document.getElementById("moradorEmail") || {}).value || "";
-    var aptoSel = document.getElementById("apto");
-    var apto = aptoSel && aptoSel.value ? "Apto " + aptoSel.value : "";
-    var mostrar = cadastroCarregado() && !!nome.trim();
-    identidade.hidden = !mostrar;
-    if (!mostrar) return;
-    identidade.textContent = [nome.trim(), apto, email.trim()].filter(Boolean).join(" · ");
+    var nome = "", apto = "", email = "";
+    if (cadastroCarregado() && (document.getElementById("moradorNome") || {}).value) {
+      nome = document.getElementById("moradorNome").value;
+      email = (document.getElementById("moradorEmail") || {}).value || "";
+      apto = document.getElementById("apto") && document.getElementById("apto").value || "";
+    } else if (window.SessaoMorador && window.SessaoMorador.pessoa && window.SessaoMorador.pessoa()) {
+      var p = window.SessaoMorador.pessoa();
+      nome = p.nome || ""; email = p.email || ""; apto = p.apto || "";
+    }
+    nome = String(nome).trim();
+    identidade.hidden = !nome;
+    if (!nome) return;
+    identidade.textContent = [nome, apto ? "Apto " + apto : "", String(email).trim()].filter(Boolean).join(" · ");
   }
 
   function atualizar() {
@@ -47,13 +53,16 @@
     atualizarIdentidade();
 
     // Identidade: quando o aviso sai do topo da tela, ela vira faixa fixa no topo.
-    var identidadeFixa = !identidade.hidden && identidade.getBoundingClientRect().bottom < 0;
+    var identidadeFixa = !identidade.hidden && lugarIdentidade.getBoundingClientRect().bottom < 0;
     identidade.classList.toggle("fixa", identidadeFixa);
+    lugarIdentidade.hidden = identidade.hidden;
     if (!identidade.hidden) {
       lugarIdentidade.style.height = identidade.offsetHeight + "px";
-      if (identidadeFixa) identidade.style.width = form.getBoundingClientRect().width + "px";
+      var largura = lugarIdentidade.getBoundingClientRect().width + "px";
+      var esquerda = lugarIdentidade.getBoundingClientRect().left + "px";
+      identidade.style.width = largura;
+      identidade.style.left = esquerda;
     }
-    lugarIdentidade.hidden = identidade.hidden;
 
     var mostrar = cadastroCarregado() && !noCampoDeVisao(acoesDeBaixo);
     barra.hidden = !mostrar;
@@ -108,10 +117,8 @@
     identidade.className = "identidade-logado";
     identidade.hidden = true;
     lugarIdentidade.appendChild(identidade);
-    var aviso = document.getElementById("avisoSessaoMorador");
-    var consulta = document.getElementById("boxConsultaCpf");
-    if (aviso && aviso.parentNode) aviso.parentNode.insertBefore(lugarIdentidade, aviso.nextSibling);
-    else if (consulta) consulta.appendChild(lugarIdentidade);
+    var topo = document.querySelector(".link-admin-topo");
+    if (topo && topo.parentNode) topo.parentNode.insertBefore(lugarIdentidade, topo.nextSibling);
 
     barra.querySelector(".barra-acao-enviar").addEventListener("click", function() {
       document.getElementById("btnEnviarForm").click();
@@ -127,6 +134,7 @@
       var campo = document.getElementById(id);
       if (campo) campo.addEventListener("input", atualizar);
     });
+    window.addEventListener("sessao-morador-mudou", atualizar);
     window.addEventListener("scroll", atualizar, { passive: true });
     window.addEventListener("resize", atualizar);
     // Aparece/some conforme o cadastro é carregado, enviado ou fechado (texto do botão e seções).

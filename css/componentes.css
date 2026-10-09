@@ -333,7 +333,7 @@ body.popup-aberto {
 /* O "lugar" guarda o espaço da barra (o JS ajusta a altura), para a página não pular quando ela desce. */
 .barra-acoes-lugar { margin: 0; }
 
-.identidade-lugar { margin: 8px 0 0; }
+.identidade-lugar { margin: 8px 0 10px; width: 100%; }
 .identidade-lugar[hidden] { display: none; }
 .identidade-logado {
   box-sizing: border-box; padding: 8px 12px; border-radius: 10px; background: #eef4fb; color: #243447;

@@ -50,10 +50,29 @@
     );
   }
 
+  // Bolinha com o número de itens: a última contagem fica guardada neste navegador (como as bolinhas do
+  // menu) e aparece logo ao abrir a página. Só guarda o número, nenhum dado de morador.
+  var CHAVE_CONTAGEM = "contagemMenu:contagemHistorico";
+  function mostrarContagem(total) {
+    var contagem = document.getElementById("contagemHistorico");
+    if (!contagem) return;
+    var texto = String(total);
+    if (contagem.textContent !== texto) contagem.textContent = texto;
+    contagem.hidden = !total;
+  }
+  function guardarContagem(total) {
+    try { localStorage.setItem(CHAVE_CONTAGEM, String(total)); } catch (e) {}
+    mostrarContagem(total);
+  }
+  function restaurarContagem() {
+    var guardado = null;
+    try { guardado = localStorage.getItem(CHAVE_CONTAGEM); } catch (e) {}
+    if (guardado !== null) mostrarContagem(parseInt(guardado, 10) || 0);
+  }
+
   function renderizar() {
     var lista = document.getElementById("listaHistorico");
-    var contagem = document.getElementById("contagemHistorico");
-    if (contagem) { contagem.textContent = itens.length; contagem.hidden = !itens.length; }
+    if (carregado) guardarContagem(itens.length);
     var botaoMais = document.getElementById("btnMaisHistorico");
     if (lista) lista.innerHTML = itens.slice(0, visiveis).map(itemHtml).join("");
     if (botaoMais) {
@@ -64,24 +83,25 @@
     if (carregado) setStatus(itens.length ? "" : "Nenhuma alteração registrada ainda.", "vazio");
   }
 
-  function carregar() {
+  function carregar(emSegundoPlano) {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando", "carregando");
+    if (!emSegundoPlano) setStatus("Carregando", "carregando");
 
     DataService.listarHistorico(LIMITE_BUSCA)
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) {
-          setStatus((resposta && resposta.mensagem) || "Não foi possível carregar o histórico.", "erro");
+          if (!emSegundoPlano) setStatus((resposta && resposta.mensagem) || "Não foi possível carregar o histórico.", "erro");
           return;
         }
         itens = Array.isArray(resposta.itens) ? resposta.itens : [];
         visiveis = POR_PAGINA;
         carregado = true;
         renderizar();
+        setStatus("", "");
       })
       .catch(function(erro) {
-        setStatus((erro && erro.message) || "Não foi possível carregar o histórico.", "erro");
+        if (!emSegundoPlano) setStatus((erro && erro.message) || "Não foi possível carregar o histórico.", "erro");
       })
       .then(function() {
         carregando = false;
@@ -114,6 +134,16 @@
     var botaoMais = document.getElementById("btnMaisHistorico");
     var lista = document.getElementById("listaHistorico");
     if (!secao || !window.DataService) return;
+    restaurarContagem();
+    // Em 2º plano, logo ao abrir a página (com o admin logado): atualiza a bolinha e deixa a lista pronta.
+    // Se o número for outro, a bolinha muda sozinha; a lista só aparece quando a seção é aberta.
+    function atualizarEmSegundoPlano() {
+      if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
+      if (carregado || carregando) return;
+      carregar(true);
+    }
+    atualizarEmSegundoPlano();
+    window.addEventListener("admin-auth-success", atualizarEmSegundoPlano);
 
     secao.addEventListener("toggle", function() {
       if (secao.open && !carregado) carregar();

@@ -32,12 +32,14 @@
   }
 
   // Abre a sessão (ou mantém a atual, se for o mesmo CPF: o prazo não é renovado).
-  function iniciar(cpf, nasc) {
+  // info (opcional): { nome, apto, email } de quem entrou, para mostrar no topo da página inicial.
+  function iniciar(cpf, nasc, info) {
     cpf = String(cpf || "").replace(/\D/g, "");
     if (cpf.length !== 11 || !nasc) return;
     var atual = obter();
     var expira = atual && atual.cpf === cpf ? atual.expira : Date.now() + DURACAO_MS;
-    try { sessionStorage.setItem(CHAVE, JSON.stringify({ cpf: cpf, nasc: nasc, expira: expira })); } catch (e) {}
+    var pessoa = info || (atual && atual.cpf === cpf ? atual.pessoa : null) || null;
+    try { sessionStorage.setItem(CHAVE, JSON.stringify({ cpf: cpf, nasc: nasc, expira: expira, pessoa: pessoa })); } catch (e) {}
     prefetchKit(cpf, nasc);
     avisarMudanca();
   }
@@ -168,6 +170,7 @@
 
   window.SessaoMorador = {
     obter: obter,
+    pessoa: function() { var x = obter(); return (x && x.pessoa) || null; },
     iniciar: iniciar,
     atualizarCredenciais: atualizarCredenciais,
     encerrar: encerrar,

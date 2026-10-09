@@ -72,10 +72,11 @@
     el.textContent += (el.textContent ? "\n" : "") + texto;
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
+  var emAndamento = false;
+  function tentar() {
+    if (emAndamento) return;
     diag("Sessão do admin → morador:");
     if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) { diag("parou: scripts da página não carregaram"); return; }
-    if (!document.getElementById("cpfConsulta")) { diag("parou: página sem a consulta por CPF"); return; }
     var admin = lerAdmin();
     if (!admin) {
       var bruto = null;
@@ -86,12 +87,11 @@
     }
     if (admin.papel === "condominio" || admin.papel === "administradora") { diag("parou: o cargo " + admin.papel + " não tem cadastro de morador"); return; }
     if (window.SessaoMorador.obter()) { diag("ok: a sessão de morador já estava aberta"); return; }
-    diag("login do admin encontrado (cargo: " + (admin.papel || "?") + ")");
-    // Só marca "já feito" quando a sessão abre: se der errado, tenta de novo na próxima visita; se der
-    // certo e a pessoa clicar em "Sair", não reconecta nesta aba.
     // Marca deste login (e-mail + validade): sair e entrar de novo no admin gera outra marca e reconecta.
     var marca = admin.email + "|" + admin.expiraEm;
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === marca) { diag("parou: já conectou uma vez nesta aba e você clicou em Sair"); return; } } catch (e) { return; }
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === marca) { diag("parou: já conectou uma vez neste login e você clicou em Sair"); return; } } catch (e) { return; }
+    emAndamento = true;
+    diag("login do admin encontrado (cargo: " + (admin.papel || "?") + ")");
 
     // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
     if (!window.AdminAuth) {
@@ -109,23 +109,29 @@
         var id = cargo && cargo.cadastroId;
         var candidato = id && (r.candidatos || []).filter(function(c) { return c.id === id; })[0];
         if (!candidato || !candidato.apto) { if (cargo && cargo.cadastroId) diag("parou: o cadastro escolhido em Membros não está entre os moradores ativos"); return null; }
-        return window.DataService.obterMoradorPorApto(candidato.apto, id);
+        return window.DataService.obterMoradorPorApto(candidato.apto, id).then(function(resp) { return { resp: resp, apto: candidato.apto }; });
       })
-      .then(function(resposta) {
+      .then(function(achado) {
+        if (achado === null) return;
+        var resposta = achado.resp;
         var d = resposta && resposta.encontrado && resposta.dados;
-        if (resposta === null) return;
         if (!d) { diag("parou: a consulta do cadastro não respondeu (" + ((resposta && resposta.mensagem) || "sem resposta") + ")"); return; }
         if (d.situacao === "mudou-se") { diag("parou: o cadastro está marcado como mudou-se"); return; }
         var cpf = String(d.cpf || "").replace(/\D/g, "");
         var nasc = dataBr(d.nasc);
-        // A pessoa pode ter começado a digitar ou aberto um cadastro enquanto isso: não atropela.
         if (cpf.length !== 11 || !nasc) { diag("parou: o cadastro está sem CPF ou data de nascimento válidos"); return; }
         if (window.SessaoMorador.obter()) { diag("ok: a sessão já tinha sido aberta"); return; }
-        if (document.getElementById("cpfConsulta").value) { diag("parou: o campo CPF já estava preenchido"); return; }
-        window.SessaoMorador.iniciar(cpf, nasc);
+        var campo = document.getElementById("cpfConsulta");
+        if (campo && campo.value) { diag("parou: o campo CPF já estava preenchido"); return; }
+        window.SessaoMorador.iniciar(cpf, nasc, { nome: d.nome || "", apto: achado.apto || d.apto || "", email: d.email || "" });
         try { sessionStorage.setItem(CHAVE_FEITO, marca); } catch (e) {}
         diag("ok: sessão de morador aberta");
       })
-      .catch(function(erro) { diag("parou: erro " + ((erro && erro.message) || erro)); });
-  });
+      .catch(function(erro) { diag("parou: erro " + ((erro && erro.message) || erro)); })
+      .then(function() { emAndamento = false; });
+  }
+
+  document.addEventListener("DOMContentLoaded", tentar);
+  // Na página do admin, o login pode acontecer depois de abrir a página: tenta de novo quando entrar.
+  window.addEventListener("admin-auth-success", tentar);
 })();
