@@ -331,8 +331,12 @@
       <li>As permissões de cada papel são conferidas no servidor, não só na tela.</li>
       <li>Sessão de 1 hora do morador: depois que o CPF e a data de nascimento conferem (no Kit de Boas-vindas ou na
         consulta do cadastro), o site guarda os dois só nesta aba do navegador (sessionStorage) por 1 hora, para não
-        pedir de novo. Na tela, aparecem só os 3 primeiros dígitos do CPF e o dia do aniversário. Tocar em "Sair" ou
-        fechar a aba apaga os dados; o servidor continua conferindo o CPF e a data a cada uso.</li>
+        pedir de novo. Junto, guarda o nome, o apartamento e o e-mail do cadastro, só para mostrar no topo da página.
+        Na tela, aparecem só os 3 primeiros dígitos do CPF e o dia do aniversário. Tocar em "Sair" ou fechar a aba
+        apaga esses dados; o servidor continua conferindo o CPF e a data a cada uso.</li>
+      <li>Login de admin e de morador: entrar pela área de administração com o Google também abre a sessão de morador
+        (se a pessoa tiver cadastro). Entrar pelo CPF abre só a sessão de morador, nunca o login de admin. Tocar em
+        "Sair" em qualquer lugar do site (na home ou na área de administração) encerra os dois nesta aba.</li>
       <li>Código por e-mail: o código fica guardado só como resumo criptográfico (SHA-256) por 10 minutos. Abrir com
         o código cria uma sessão de 1 hora, exigida também para gravar a atualização desse cadastro.</li>
       <li>As tentativas erradas ficam no cache do Apps Script por 15 minutos; os bloqueios, no Firestore (um registro
@@ -395,7 +399,7 @@
     if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains("topico")) abrir(hash);
   })();
 </script>
-<script src="js/popup-links.js?v=20261009G"></script>
-<script src="js/sem-conectivos.js?v=20261009G"></script>
+<script src="js/popup-links.js?v=20261009H"></script>
+<script src="js/sem-conectivos.js?v=20261009H"></script>
 </body>
 </html>

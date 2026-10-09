@@ -152,7 +152,7 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
 
 function alternarMoradorNovo() {
   // Com a sessão de 1 hora (js/sessao-morador.js), "Novo cadastro" fica desativado (o Sair fica no topo).
-  if (window.SessaoMorador && window.SessaoMorador.telaTravada()) return;
+  if (estaLogado()) return;
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
   const nascConsulta = document.getElementById('nascConsulta');
@@ -183,6 +183,12 @@ function fecharNovoCadastro() {
   tratarMoradorNovo(false);
 }
 
+// Logado = sessão de morador aberta, ou login da área de admin nesta aba.
+function estaLogado() {
+  if (window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter()) return true;
+  try { return !!sessionStorage.getItem('adminSimplesAuthToken'); } catch (e) { return false; }
+}
+
 function atualizarBloqueioNovoCadastro() {
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
@@ -193,7 +199,7 @@ function atualizarBloqueioNovoCadastro() {
 
   const temCpfDigitado = String(cpfConsulta.value || '').trim() !== '';
   const temNascDigitada = String(nascConsulta.value || '').trim() !== '';
-  const deveBloquear = temCpfDigitado || temNascDigitada;
+  const deveBloquear = temCpfDigitado || temNascDigitada || estaLogado();
 
   chkMoradorNovo.disabled = false;
   if (deveBloquear) {

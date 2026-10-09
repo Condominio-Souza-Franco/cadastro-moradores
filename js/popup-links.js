@@ -3,8 +3,7 @@
 // ==========================================
 // Qualquer link com target="_blank" que dê para mostrar embutido abre num popup (iframe), sem sair
 // do site: PDFs e pastas do Drive, planilhas do Google, endereços no Google Maps e páginas do próprio
-// site (ex.: mapa da garagem). O topo do popup tem "Abrir em nova aba" (se o navegador não mostrar o
-// conteúdo embutido — ex.: Drive pedindo login) e o × para fechar (Esc também fecha).
+// site (ex.: mapa da garagem). O topo do popup tem o × para fechar (Esc também fecha).
 // WhatsApp, telefone, e-mail e sites que não aceitam ser embutidos continuam como antes.
 (function() {
   // Kit de Boas-vindas (tinyurl -> pasta do Drive).
@@ -63,16 +62,14 @@
     popup.innerHTML =
       '<div class="popup-link-caixa" role="dialog" aria-modal="true">' +
         '<div class="popup-link-topo"><span class="popup-link-titulo"></span>' +
-          '<a class="popup-link-nova" target="_blank" rel="noopener noreferrer">Abrir em nova aba</a>' +
           '<button type="button" class="popup-link-fechar" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>' +
-        '<div class="popup-link-aviso" hidden>Arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, use "Abrir em nova aba".</div>' +
+        '<div class="popup-link-aviso" hidden>Os arquivos do Drive aparecem aqui para quem está logado na conta Google com acesso. Se ficar em branco, faça login com essa conta e tente de novo.</div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
     document.body.appendChild(popup);
     popup.addEventListener("click", function(e) {
       if (e.target === popup || e.target.closest(".popup-link-fechar")) fechar();
     });
-    popup.querySelector(".popup-link-nova").addEventListener("click", fechar);
     document.addEventListener("keydown", function(e) { if (e.key === "Escape") fechar(); });
     return popup;
   }
@@ -80,7 +77,6 @@
   function abrir(embutida, original, titulo) {
     var p = garantirPopup();
     p.querySelector(".popup-link-titulo").textContent = titulo || "";
-    p.querySelector(".popup-link-nova").href = original;
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
     p.querySelector("iframe").src = embutida;
     p.hidden = false;
