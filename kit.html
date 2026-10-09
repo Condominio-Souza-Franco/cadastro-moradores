@@ -101,6 +101,11 @@
       .docs .doc:last-child:nth-child(odd) { grid-column: auto; }
     }
     .kit-drive, .subtitulo { font-size: 0.92em; }
+  .secao-nome { flex: 1; min-width: 0; }
+  .secao-nome .qtd { margin-left: 8px; }
+  .secao.vazia { border: 1px dashed var(--borda); border-radius: 10px; margin-top: 8px; background: #f4f6f8; opacity: 0.7; cursor: default; }
+  .secao.vazia .secao-cab { display: flex; align-items: center; padding: 10px 14px; font-weight: 700; color: var(--suave); }
+  .docs details.secao, .docs .secao.vazia { margin-left: 10px; }
 </style>
 </head>
 <body>
@@ -135,10 +140,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009L"></script>
-<script src="js/data/backend.js?v=20261009L"></script>
-<script src="js/sessao-morador.js?v=20261009L"></script>
-<script src="js/pular-campo.js?v=20261009L"></script>
+<script src="js/regras.js?v=20261009M"></script>
+<script src="js/data/backend.js?v=20261009M"></script>
+<script src="js/sessao-morador.js?v=20261009M"></script>
+<script src="js/pular-campo.js?v=20261009M"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -294,17 +299,29 @@
     }
 
     // Modo pasta: lista a pasta do Drive (administração). Arquivos do Google abrem direto em nova aba.
+    // Uma pasta do Drive vira um grupo; as subpastas ficam dentro dele. Pasta vazia: cinza, sem abrir.
+    function pastaHtml(nodo) {
+      var temConteudo = nodo.arquivos.length || (nodo.subpastas && nodo.subpastas.length);
+      var qtd = nodo.arquivos.length ? nodo.arquivos.length + (nodo.arquivos.length === 1 ? " documento" : " documentos") : "";
+      if (!temConteudo) {
+        return '<div class="secao vazia" aria-disabled="true"><div class="secao-cab"><span class="secao-nome">' + escapar(nodo.nome) + ' <span class="qtd">vazia</span></span></div></div>';
+      }
+      var corpo = (nodo.arquivos.length ? listaDocs(nodo.arquivos) : "") + (nodo.subpastas || []).map(pastaHtml).join("");
+      return '<details class="secao"><summary><span class="secao-nome">' + escapar(nodo.nome) + (qtd ? ' <span class="qtd">' + qtd + "</span>" : "") + '</span></summary><div class="docs">' + corpo + "</div></details>";
+    }
+
     function mostrarPasta(r) {
       document.getElementById("conteudoKit").hidden = false;
       document.querySelector("h1").textContent = r.nome || "Pasta do Google Drive";
+      if (r.url && !document.getElementById("botaoPastaDrive")) {
+        var botao = document.createElement("p");
+        botao.innerHTML = '<a id="botaoPastaDrive" class="btn" href="' + escapar(r.url) + '" target="_blank" rel="noopener noreferrer">Abrir pasta no Google Drive</a>';
+        document.querySelector(".subtitulo").after(botao);
+      }
       var principais = r.principais || [];
       document.getElementById("tituloPrincipais").hidden = !principais.length;
       document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
-      document.getElementById("secoes").innerHTML = (r.secoes || []).map(function(s) {
-        var corpo = s.arquivos.length ? listaDocs(s.arquivos) : '<p class="pasta-vazia">Esta pasta está vazia.</p>';
-        var qtd = s.arquivos.length ? s.arquivos.length + (s.arquivos.length === 1 ? " documento" : " documentos") : "vazia";
-        return '<details class="secao"><summary>' + escapar(s.nome) + ' <span class="qtd">' + qtd + '</span></summary><div class="docs">' + corpo + "</div></details>";
-      }).join("");
+      document.getElementById("secoes").innerHTML = (r.arvore || []).map(pastaHtml).join("");
       if (r.vazia) document.getElementById("docsPrincipais").innerHTML = '<p class="pasta-vazia">Esta pasta está vazia.</p>';
     }
 
@@ -399,7 +416,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009L"></script>
-<script src="js/sem-conectivos.js?v=20261009L"></script>
+<script src="js/popup-links.js?v=20261009M"></script>
+<script src="js/sem-conectivos.js?v=20261009M"></script>
 </body>
 </html>
