@@ -210,24 +210,8 @@ button:disabled {
   text-align: center;
 }
 
-.required-hint {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #7f8c8d;
-}
-
-.required-hint-inline {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #7f8c8d;
-}
-
 label .required-star,
-.input-label .required-star,
-.required-hint-inline .required-star {
+.input-label .required-star {
   color: #e74c3c;
 }
 

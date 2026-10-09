@@ -101,25 +101,6 @@
 }
 
 /* BOTÕES DE AÇÃO */
-.btn-remove-x {
-  background: transparent;
-  color: #e74c3c;
-  border: none;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 0 8px;
-  line-height: 1;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.btn-remove-x:hover {
-  background-color: #fadbd8;
-  color: #c0392b;
-}
-
 .btn-add {
   background-color: #eaf6ff;
   color: #0f5d8c;
@@ -393,7 +374,6 @@ body.kit-modal-aberto { overflow: hidden; }
 .kit-opcao { margin-top: 12px; padding: 12px 14px; border: 1px solid #dcdde1; border-radius: 10px; }
 .kit-opcao h4 { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: #243447; }
 .kit-opcao p { margin: 0 0 8px; font-size: 0.82rem; color: #5f7287; text-wrap: pretty; }
-.kit-numero { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-color, #2f5f98); color: #fff; font-size: 0.78rem; font-weight: 700; }
 .kit-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 @media (max-width: 420px) { .kit-campos { grid-template-columns: 1fr; } }
 .kit-campos label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; font-weight: 600; color: #43566b; }

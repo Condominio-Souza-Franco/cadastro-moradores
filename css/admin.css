@@ -210,15 +210,6 @@ p {
   text-decoration: underline;
 }
 
-.acoes-admin {
-  margin-bottom: 14px;
-}
-
-.acoes-admin button {
-  height: auto;
-  padding: 8px 14px;
-}
-
 .card-fonte-dados {
   margin-bottom: 16px;
   padding: 12px 14px;
@@ -268,12 +259,6 @@ p {
 #btnTestarConexoes {
   height: auto;
   padding: 8px 14px;
-}
-
-#btnMigrarFirebase {
-  height: auto;
-  padding: 8px 14px;
-  margin-left: 8px;
 }
 
 .resultado-teste-conexoes {
@@ -348,19 +333,6 @@ p {
   height: auto;
   padding: 6px 10px;
   font-size: 0.85rem;
-}
-
-.btn-voltar-busca {
-  height: auto;
-  padding: 8px 14px;
-  margin-bottom: 14px;
-  background: #fff;
-  color: var(--primary-color-soft);
-  border: 1px solid #b9c8d8;
-}
-
-.btn-voltar-busca:hover {
-  background: #f3f7fb;
 }
 
 .linha {
@@ -601,20 +573,6 @@ button:hover {
   display: none;
 }
 
-.secao.inativa {
-  opacity: 0.82;
-  filter: grayscale(1);
-}
-
-.secao.compacta {
-  padding: 10px 12px;
-}
-
-.secao.compacta .grid-campos {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 8px;
-}
-
 .resultado-placeholder {
   background: var(--surface-soft);
   border: 1px dashed var(--border);
@@ -685,27 +643,6 @@ button:hover {
   width: fit-content;
 }
 
-.campo-link-telefone {
-  display: inline-block;
-  color: var(--accent-color);
-  background: rgba(31, 93, 153, 0.08);
-  border: 1px solid rgba(31, 93, 153, 0.22);
-  padding: 2px 7px;
-  border-radius: 999px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: none;
-}
-
-.campo-link-telefone:hover {
-  background: rgba(31, 93, 153, 0.13);
-}
-
-.campo-link-telefone:focus-visible {
-  outline: 2px solid rgba(31, 93, 153, 0.22);
-  outline-offset: 2px;
-}
-
 .campo-link-endereco {
   color: var(--accent-color);
   text-decoration: none;
@@ -732,20 +669,6 @@ button:hover {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
   margin-top: 8px;
-}
-
-.subsecoes-separadas {
-  display: grid;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.subsecoes-separadas > .subsecao {
-  margin-top: 0;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fff;
 }
 
 .subsecoes-lado-a-lado .subsecao {
@@ -1089,8 +1012,6 @@ button:hover {
 }
 
 /* Mensagens e listas vazias não ocupam espaço (antes deixavam um vão no fim da caixa de busca). */
-#statusRelatorioPdfDrive:empty,
-#statusListaVeiculos:empty,
 .situacao-relatorio:empty,
 .card-busca .status:empty,
 .card-busca .resultados-busca:empty {
@@ -1427,7 +1348,6 @@ button:hover {
 #resultadoAdmin .secao,
 #resultadoAdmin .subsecao,
 #resultadoAdmin .registro-lista,
-#resultadoAdmin .registro-item,
 #resultadoAdmin .registro-conteudo,
 #resultadoAdmin .grid-campos {
   min-width: 0;
@@ -1440,10 +1360,6 @@ button:hover {
 
 #resultadoAdmin .registro-lista {
   grid-template-columns: minmax(0, 1fr);
-}
-
-#resultadoAdmin .registro-item {
-  width: auto;
 }
 
 @media (max-width: 600px) {
@@ -1603,19 +1519,12 @@ html {
   font-size: 0.82rem;
 }
 
-#resultadoAdmin .subsecoes-separadas > .subsecao,
-#resultadoAdmin .registro-item,
 #resultadoAdmin .registro-bloco {
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-}
-
-#resultadoAdmin .registro-item + .registro-item {
-  padding-top: 8px;
-  border-top: 1px dashed var(--border);
 }
 
 #resultadoAdmin .grid-campos {
@@ -1755,24 +1664,6 @@ html {
   font-weight: 700;
 }
 
-.gabarito-linha .btn-remover-linha {
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.gabarito-linha .btn-remover-linha:hover {
-  color: var(--error);
-  border-color: var(--error);
-}
-
 .gabarito-avisos {
   grid-column: 1 / -1;
   display: flex;
@@ -1852,7 +1743,6 @@ html {
 
 #modoMapaGabarito[hidden],
 #modoTabelaGabarito[hidden],
-#btnAdicionarVagaGabarito[hidden],
 .editor-vaga-mapa[hidden] {
   display: none !important;
 }
@@ -1943,44 +1833,6 @@ html {
   font-size: 0.8rem;
   font-weight: 400;
   color: var(--muted);
-}
-
-#painelBusca .card-busca {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-
-#painelBusca .linha-busca {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-#painelBusca .campo-busca,
-#painelBusca .linha-busca > button {
-  width: 100%;
-}
-
-#painelBusca input,
-#painelBusca .linha-busca > button {
-  height: 36px;
-  min-height: 36px;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  box-sizing: border-box;
-}
-
-#painelBusca input {
-  width: 100%;
-  text-overflow: clip;
-}
-
-#painelBusca .resultados-busca,
-#painelBusca .status {
-  font-size: 0.85rem;
 }
 
 /* Menu em duas linhas cheias: Consulta e Busca na 1ª (metade cada), os outros 3 na 2ª (um terço
@@ -2245,19 +2097,6 @@ button.pendencia-item::before {
   margin-top: 0;
 }
 
-.pendencias-em-linha {
-  margin: 0 0 8px;
-  padding: 0 8px 0 22px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  line-height: 1.6;
-  color: var(--text);
-}
-
-.pendencias-em-linha .sem-quebra {
-  white-space: nowrap;
-}
-
 /* Pendências: o número vem antes do título ("9 Apartamentos sem cadastro"). */
 .grupo-pendencia > summary .contador-pendencia {
   margin-left: 0;
@@ -2365,25 +2204,6 @@ button.pendencia-item::before {
          2ª linha Links úteis (7) · Gabarito de vagas (10) · Membros (7). */
 .menu-admin button[data-painel="painelMembros"] { grid-column: span 7; }
 
-/* Links úteis lado a lado, separados por "•". */
-.links-em-linha {
-  display: block;
-  margin: 0;
-  line-height: 1.8;
-}
-
-.links-em-linha a {
-  display: inline;
-  white-space: nowrap;
-}
-
-.links-em-linha a + a::before {
-  content: "•";
-  display: inline-block;
-  margin: 0 8px;
-  color: var(--muted);
-  text-decoration: none;
-}
 
 /* Consulta por apartamento: sem espaço sobrando embaixo do campo. */
 #painelConsulta .linha {
@@ -2402,11 +2222,6 @@ button.pendencia-item::before {
 /* ==========================================
    MEMBROS (js/admin-membros.js)
    ========================================== */
-.form-membros {
-  display: flex;
-  flex-direction: column;
-}
-
 .cargo-membro {
   display: flex;
   flex-direction: column;
@@ -2487,14 +2302,6 @@ button.pendencia-item::before {
   display: none;
 }
 
-.links-em-linha {
-  font-size: 0.82rem;
-}
-
-.links-em-linha a {
-  white-space: normal;
-}
-
 #statusMembros {
   font-size: 0.82rem;
 }
@@ -2553,21 +2360,9 @@ button.pendencia-item::before {
   padding-left: 6px;
 }
 
-.grupo-pendencia li.ignorada .pendencia-item,
-.pendencias-em-linha .ignorada {
+.grupo-pendencia li.ignorada .pendencia-item {
   opacity: 0.45;
   text-decoration: line-through;
-}
-
-.pendencias-em-linha label {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-}
-
-.pendencias-em-linha .ignorar-pendencia {
-  margin: 0;
 }
 
 /* Grupo zerado só porque tudo foi ignorado: ✓ verde, mas abre para poder reativar. */
@@ -2848,32 +2643,16 @@ button.pendencia-item::before {
 
 /* ---------- Notificações ---------- */
 .lista-notificacoes { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
-.item-notificacao {
-  display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px;
-  border: 1px solid #d7e0ea; border-radius: 12px; background: #fff; cursor: pointer;
-}
-.item-notificacao input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #2f5f98; }
-.item-notificacao.travado { opacity: 0.6; cursor: default; }
-.notif-texto { display: flex; flex-direction: column; min-width: 0; }
-.notif-nome { font-weight: 600; color: #243447; }
-.notif-apto { font-weight: 400; color: #5f7287; }
-.notif-cargo { font-size: 0.8rem; color: #2f5f98; }
-.notif-email { font-size: 0.85rem; color: #5f7287; overflow-wrap: anywhere; }
 .titulo-exemplo-email { margin: 24px 0 4px; font-size: 1rem; color: #243447; }
 .exemplo-email { border: 1px solid #d7e0ea; border-radius: 12px; overflow: hidden; background: #fff; font-family: Arial, Helvetica, sans-serif; color: #243447; font-size: 13px; }
 .exemplo-email-cabecalho { background: #f3f6fa; padding: 10px 12px; border-bottom: 1px solid #d7e0ea; font-size: 12px; }
 .exemplo-email-cabecalho span { color: #5f7287; }
 .exemplo-email-corpo { padding: 4px 12px 8px; }
-.exemplo-email-tabela { overflow-x: auto; }
 .exemplo-email table { border-collapse: collapse; font-size: 12px; }
 .exemplo-email th { text-align: left; color: #5f7287; padding: 6px 8px; font-weight: 600; }
 .exemplo-email td { padding: 6px 8px; border-bottom: 1px solid #e3e8ee; vertical-align: top; }
-.exemplo-detalhe { color: #5f7287; font-size: 11px; }
-.exemplo-email-sub { margin: 14px 0 4px; }
 .exemplo-email ul { margin-top: 0; padding-left: 20px; }
 .exemplo-email u { color: #1a5fb4; }
-.exemplo-novo { color: #1f7a3a; }
-.exemplo-email-rodape { color: #8a99a8; font-size: 11px; }
 
 /* Menu com 7 botões, sem "viúva" (grade de 24 colunas, duas linhas cheias):
    1ª: Consulta (10) · Pendências (7) · Relatórios (7)
@@ -2884,16 +2663,10 @@ button.pendencia-item::before {
 .menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 7; }
 
 /* Notificações: fontes no mesmo tamanho das outras páginas. */
-.item-notificacao { padding: 8px 10px; gap: 10px; }
-.item-notificacao input { width: 18px; height: 18px; }
-.notif-nome { font-size: 0.88rem; }
-.notif-cargo { font-size: 0.75rem; }
-.notif-email { font-size: 0.78rem; }
 .titulo-exemplo-email { font-size: 0.92rem; }
 .exemplo-email { font-size: 12px; }
 .exemplo-email-cabecalho { font-size: 11px; }
 .exemplo-email table { font-size: 11px; }
-.exemplo-detalhe, .exemplo-email-rodape { font-size: 10px; }
 
 /* Celular: 4 botões numa linha cortariam o texto. Fica 2 + 2 + 3, sem viúva:
    Consulta · Pendências / Relatórios · Links úteis / Gabarito · Membros · Notificações */
@@ -2939,14 +2712,6 @@ button.pendencia-item::before {
   box-sizing: border-box;
 }
 
-/* Link para o PDF mais recente do cadastro (Consulta por apartamento e Pendências). */
-.link-pdf-cadastro {
-  display: inline-block;
-  margin: 4px 0 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--accent-color);
-}
 .sem-pdf-cadastro {
   margin: 4px 0 6px;
   font-size: 0.8rem;
@@ -3017,7 +2782,6 @@ button.pendencia-item::before {
 #painelBloqueios .sem-itens { font-size: 0.8rem; }
 
 /* Consulta: situação do código por e-mail do cadastro. */
-.codigo-status { margin: 4px 0 6px; font-size: 0.8rem; color: #243447; }
 .btn-desativar-codigo { margin-left: 6px; padding: 2px 10px; border: 1px solid #c62828; border-radius: 999px; background: #fff; color: #c62828; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
 /* Pendências: chip do PDF logo depois do nome (dentro da linha do item). */
@@ -3104,7 +2868,6 @@ button.pendencia-item::before {
 .aprov-rejeicao { margin-top: 8px; }
 .aprov-rejeicao label { display: block; margin-bottom: 4px; font-size: 0.78rem; color: #5f7287; }
 .aprov-motivo { width: 100%; box-sizing: border-box; font-size: 0.82rem; }
-
 .aprov-mapa { margin: 6px 0 2px; }
 .aprov-mapa a { display: block; max-width: 320px; border: 1px solid #d7e0ea; border-radius: 8px; padding: 4px; background: #fff; }
 .aprov-mapa svg { display: block; width: 100%; height: auto; }
@@ -3189,15 +2952,12 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 .barra-rotulo { color: #5f7287; white-space: nowrap; }
 .barra-trilho { height: 12px; border-radius: 999px; background: #eef1f4; overflow: hidden; }
 .barra { display: block; height: 100%; border-radius: 999px; background: var(--accent-color); }
-.grafico-genero .barra-linha:nth-child(3) .barra { background: #8e5bb5; }
 .barra-valor { font-weight: 700; white-space: nowrap; }
 .barra-valor small { font-weight: 400; color: #5f7287; }
 
 /* ---------- Membros: Autorizações + Desfazer + Salvar na mesma linha; tabela de autorizações ---------- */
 .acoes-50.acoes-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .btn-autorizacoes.ativo { background: var(--accent-color) !important; color: #fff !important; border-color: var(--accent-color) !important; }
-.aut-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.aut-topo h3 { margin: 6px 0; font-size: 0.95rem; color: #243447; }
 .aut-tabela-rolagem { overflow-x: auto; }
 .aut-tabela { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
 .aut-tabela th { padding: 6px 4px; text-align: center; color: #5f7287; font-weight: 700; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -3253,9 +3013,6 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
   .form-membros { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; align-items: start; }
   .membros-coluna { display: flex; flex-direction: column; }
 }
-.conselho-cabecalho { display: flex; align-items: center; gap: 8px; padding: 10px 0 0; font-weight: 700; color: var(--primary-color); font-size: 0.9rem; }
-.btn-mais-conselho { width: 26px; height: 26px; min-height: 0; padding: 0; border-radius: 50%; border: 1px solid var(--accent-color); background: #fff; color: var(--accent-color); font-size: 1.1rem; font-weight: 700; line-height: 1; cursor: pointer; }
-.btn-mais-conselho:hover { background: #e9f1fa !important; color: var(--accent-color) !important; }
 .btn-apagar-conselho { margin-left: 8px; width: auto; height: auto; min-height: 0; padding: 1px 9px; border-radius: 999px; border: 1px solid #c62828; background: #fff; color: #c62828; font-size: 0.68rem; font-weight: 700; cursor: pointer; vertical-align: 1px; }
 .btn-apagar-conselho:hover { background: #fdecec !important; color: #c62828 !important; }
 .conselho-vazio { padding: 8px 0; font-style: italic; }
@@ -3286,9 +3043,8 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 .pizza-legenda li { display: flex; align-items: center; gap: 6px; margin: 5px 0; }
 .pizza-cor { width: 12px; height: 12px; border-radius: 3px; flex: none; }
 .pizza-legenda small { color: #5f7287; }
-
-.btn-mais-conselho:disabled, .btn-apagar-conselho:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
-.btn-mais-conselho:disabled:hover, .btn-apagar-conselho:disabled:hover { background: #fff !important; }
+.btn-apagar-conselho:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+.btn-apagar-conselho:disabled:hover { background: #fff !important; }
 
 /* Sem autorização de ESCREVER (Membros > Autorizações): controles de gravação com visual desativado. */
 body.sem-pendenciasEscrever .ignorar-pendencia,
@@ -3312,14 +3068,6 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 .aut-sep { color: #b8c4d0; font-weight: 400; margin: 0 1px; }
 .aut-sem-escrita { display: inline-block; width: 20px; text-align: center; color: #b8c4d0; }
 
-/* "+" do Conselho: pequeno, redondo, com o + centralizado. */
-.conselho-cabecalho .btn-mais-conselho {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px; min-height: 0; padding: 0; margin: 0;
-  border-radius: 50%; border: 1px solid var(--accent-color); background: #fff; color: var(--accent-color);
-  font-size: 15px; font-weight: 700; line-height: 1; font-family: Arial, Helvetica, sans-serif;
-}
-.conselho-cabecalho .btn-mais-conselho::before { content: ""; }
 
 /* Membros e Autorizações se alternam: o display do formulário não pode anular o "hidden". */
 #formMembros[hidden], #autorizacoesMembros[hidden], #descricaoMembros[hidden] { display: none !important; }
@@ -3331,7 +3079,6 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 .aut-regras li { margin: 3px 0; padding-left: 12px; position: relative; }
 .aut-regras li::before { content: ""; position: absolute; left: 2px; top: 0.55em; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-color); }
 .aut-so-ver { margin-top: 6px !important; font-style: italic; color: #8a5a00; }
-
 .atualizado-em.carregando-indicador { font-style: italic; color: #5f7287; }
 
 /* ---------- Tabelas do admin (Autorizações e Notificações) ----------
