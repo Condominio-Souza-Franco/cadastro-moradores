@@ -78,6 +78,8 @@
         '<div class="popup-link-carregando" hidden><div class="popup-link-carregando-card"><button type="button" class="popup-link-carregando-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button><div class="popup-link-carregando-bolinha" aria-hidden="true"></div><p class="popup-link-carregando-texto">Carregando…</p></div></div>' +
         '<iframe title="Conteúdo do link" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
       "</div>";
+    // O card de carregamento fica fora da janela: a janela some enquanto a pasta carrega.
+    popup.appendChild(popup.querySelector(".popup-link-carregando"));
     document.body.appendChild(popup);
     popup.addEventListener("click", function(e) {
       if (e.target === popup || e.target.closest(".popup-link-fechar")) fechar();
