@@ -31,8 +31,8 @@
     obterMoradorPorApto: function(apto, ocorrencia) {
       return chamarBackend("fbObterMoradorPorApto", { apto: apto, ocorrencia: ocorrencia }, true);
     },
-    obterMoradorPorCpf: function(cpf, nascimento) {
-      return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento }, false);
+    obterMoradorPorCpf: function(cpf, nascimento, opcoes) {
+      return chamarBackend("fbObterMoradorPorCpf", { cpf: cpf, nascimento: nascimento, previa: !!(opcoes && opcoes.previa) }, false);
     },
     // Cadastro protegido por código por e-mail (codigoAcesso.gs).
     confirmarCodigoCpf: function(cpf, nascimento, codigo) {

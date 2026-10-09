@@ -38,7 +38,8 @@
     if (atual && atual.cpf === cpf && atual.nasc === nasc && Date.now() - atual.em < VALIDADE_MS) {
       return Promise.resolve(true);
     }
-    return window.DataService.obterMoradorPorCpf(cpf, nasc)
+    // previa: não manda código por e-mail sozinho (cadastro com código: só avisa precisaCodigo).
+    return window.DataService.obterMoradorPorCpf(cpf, nasc, { previa: true })
       .then(function(r) {
         if (!r || !r.encontrado || r.precisaCodigo) { apagar(); return false; }
         gravar({ cpf: cpf, nasc: nasc, em: Date.now(), resposta: r });
