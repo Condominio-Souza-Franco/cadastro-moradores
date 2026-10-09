@@ -81,7 +81,8 @@
           if (!r || !r.encontrado) { aviso((r && r.mensagem) || "CPF ou data de nascimento não conferem.", "erro"); return; }
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
           if (window.SessaoMorador) window.SessaoMorador.iniciar(cpf, form.nasc.value);
-          window.location.href = "kit.html";
+          fechar();
+          abrirKitPopup();
         })
         .catch(function() { aviso("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
         .then(function() { botao.disabled = false; });
@@ -94,6 +95,13 @@
     m.hidden = false;
     document.body.classList.add("kit-modal-aberto");
     setTimeout(function() { m.querySelector("input[name=cpf]").focus(); }, 50);
+  }
+
+  // O kit abre num popup dentro do site (a página kit.html embutida), sem sair da página inicial.
+  function abrirKitPopup() {
+    var url = new URL("kit.html", location.href).href;
+    if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, "Kit de Boas-vindas");
+    else window.location.href = "kit.html";
   }
 
   function fechar() {
@@ -109,7 +117,7 @@
     e.preventDefault();
     e.stopPropagation();
     // Sessão de 1 hora ativa (js/sessao-morador.js): vai direto para o kit, sem pedir o CPF de novo.
-    if (window.SessaoMorador && window.SessaoMorador.obter()) { window.location.href = "kit.html"; return; }
+    if (window.SessaoMorador && window.SessaoMorador.obter()) { abrirKitPopup(); return; }
     abrir();
   }, true);
 

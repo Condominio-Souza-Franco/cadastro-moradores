@@ -10,7 +10,7 @@
 // de ações se acumula logo abaixo dela.
 // Os botões da barra só "clicam" nos botões originais: a lógica de envio é a mesma.
 (function() {
-  var barra, lugar, form, acoesDeBaixo, identidade, lugarIdentidade;
+  var barra, lugar, form, acoesDeBaixo, identidade, identidadeTexto, lugarIdentidade;
 
   function cadastroCarregado() {
     var secao = document.getElementById("secTipoResidente");
@@ -43,9 +43,13 @@
       nome = p.nome || ""; email = p.email || ""; apto = p.apto || "";
     }
     nome = String(nome).trim();
-    identidade.hidden = !nome;
-    if (!nome) return;
-    identidade.textContent = [nome, apto ? "Apto " + apto : "", String(email).trim()].filter(Boolean).join(" · ");
+    // Com a sessão aberta, a faixa aparece sempre (com o "Sair"), mesmo sem o nome carregado ainda.
+    var sessao = !!(window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter());
+    identidade.hidden = !nome && !sessao;
+    if (identidade.hidden) return;
+    identidadeTexto.textContent = nome
+      ? [nome, apto ? "Apto " + apto : "", String(email).trim()].filter(Boolean).join(" · ")
+      : "Você está conectado";
   }
 
   function atualizar() {
@@ -116,6 +120,18 @@
     identidade.id = "identidadeLogado";
     identidade.className = "identidade-logado";
     identidade.hidden = true;
+    identidadeTexto = document.createElement("span");
+    identidadeTexto.className = "identidade-texto";
+    var botaoSair = document.createElement("button");
+    botaoSair.type = "button";
+    botaoSair.className = "identidade-sair";
+    botaoSair.textContent = "Sair";
+    botaoSair.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
+    botaoSair.addEventListener("click", function() {
+      if (window.SessaoMorador) window.SessaoMorador.sair();
+    });
+    identidade.appendChild(identidadeTexto);
+    identidade.appendChild(botaoSair);
     lugarIdentidade.appendChild(identidade);
     var topo = document.querySelector(".link-admin-topo");
     if (topo && topo.parentNode) topo.parentNode.insertBefore(lugarIdentidade, topo.nextSibling);

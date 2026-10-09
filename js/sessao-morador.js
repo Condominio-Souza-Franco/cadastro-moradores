@@ -131,10 +131,12 @@
       nasc.classList.remove("input-erro-destaque", "input-ok-destaque");
       buscar.disabled = false;
       buscar.innerText = "Visualizar cadastro";
-      novo.textContent = "Sair";
-      novo.classList.remove("bloqueado", "ativo");
-      novo.setAttribute("aria-disabled", "false");
-      novo.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
+      // Com a sessão, "Novo cadastro" fica desativado: o "Sair" fica ao lado do nome, no topo da página.
+      novo.textContent = "Novo cadastro";
+      novo.classList.remove("ativo");
+      novo.classList.add("bloqueado");
+      novo.setAttribute("aria-disabled", "true");
+      novo.title = "Para abrir outro cadastro, primeiro clique em Sair (ao lado do seu nome, no topo)";
       var linha = novo.closest(".row-checkbox-morador");
       if (linha) linha.classList.remove("bloqueado");
     } else if (telaTravada()) {
@@ -152,7 +154,9 @@
   }
 
   // "Sair" da página inicial: encerra a sessão e volta à consulta vazia.
+  // "Sair" do morador também sai da área de admin desta aba, para não ficar um login preso.
   function sair() {
+    try { sessionStorage.removeItem("adminSimplesAuthUser"); sessionStorage.removeItem("adminSimplesAuthToken"); } catch (e) {}
     encerrar();
     aplicarNaTela();
     var cpf = document.getElementById("cpfConsulta");

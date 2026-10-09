@@ -151,11 +151,8 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
 }
 
 function alternarMoradorNovo() {
-  // Com a sessão de 1 hora (js/sessao-morador.js), este botão vira "Sair".
-  if (window.SessaoMorador && window.SessaoMorador.telaTravada()) {
-    window.SessaoMorador.sair();
-    return;
-  }
+  // Com a sessão de 1 hora (js/sessao-morador.js), "Novo cadastro" fica desativado (o Sair fica no topo).
+  if (window.SessaoMorador && window.SessaoMorador.telaTravada()) return;
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
   const nascConsulta = document.getElementById('nascConsulta');
