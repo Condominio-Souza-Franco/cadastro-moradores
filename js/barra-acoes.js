@@ -1,15 +1,15 @@
 // ==========================================
-// BARRA FLUTUANTE COM "ATUALIZAR/ENVIAR CADASTRO" E "FECHAR VISUALIZAÇÃO"
+// BARRA DE AÇÕES DO CADASTRO + IDENTIFICAÇÃO DE QUEM ESTÁ LOGADO
 // ==========================================
-// Depois que o morador carrega o próprio cadastro (ou abre um novo cadastro), aparece uma barra logo acima de "Qual é o seu
-// vínculo com a unidade?" com o botão de enviar do fim do formulário e um × para fechar.
-// Não tem "Sair": ao lado do "Sair" da sessão (embaixo de "Visualizar cadastro") ficava ambíguo;
-// o × já fecha o formulário sem alterar nada. Enquanto está
-// à mostra, fica FIXA no topo da tela (com a largura do formulário), sem rolar com o conteúdo.
-// Some quando os botões de baixo entram na tela — não faz sentido mostrar os dois.
+// Com o cadastro aberto, a barra "Atualizar cadastro" / "Fechar visualização" aparece no lugar vazio
+// logo acima de "Qual é o seu vínculo com a unidade?" (o mesmo lugar do aviso da sessão). Quando o
+// morador rola para baixo, a barra desce para o topo da tela e acompanha a rolagem; quando chega aos
+// botões de baixo, ela some (os de baixo já estão à vista).
+// Logo abaixo do aviso da sessão, "identidadeLogado" mostra nome, apto e e-mail de quem está com o
+// cadastro aberto. Ao rolar para baixo, essa faixa também vira flutuante, logo acima da barra.
 // Os botões da barra só "clicam" nos botões originais: a lógica de envio é a mesma.
 (function() {
-  var barra, lugar, form, acoesDeBaixo;
+  var barra, lugar, form, acoesDeBaixo, identidade, lugarIdentidade;
 
   function cadastroCarregado() {
     var secao = document.getElementById("secTipoResidente");
@@ -30,18 +30,35 @@
     return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--altura-barra-acoes")) || 64;
   }
 
+  // Nome, apto e e-mail de quem está com o cadastro aberto (campos do próprio formulário).
+  function atualizarIdentidade() {
+    var nome = (document.getElementById("moradorNome") || {}).value || "";
+    var email = (document.getElementById("moradorEmail") || {}).value || "";
+    var aptoSel = document.getElementById("apto");
+    var apto = aptoSel && aptoSel.value ? "Apto " + aptoSel.value : "";
+    var mostrar = cadastroCarregado() && !!nome.trim();
+    identidade.hidden = !mostrar;
+    if (!mostrar) return;
+    identidade.textContent = [nome.trim(), apto, email.trim()].filter(Boolean).join(" · ");
+  }
+
   function atualizar() {
     if (!barra) return;
-    // Só aparece quando "Qual é o seu vínculo" chega ao topo da tela (antes disso, o topo da página
-    // ainda está à mostra e a barra cobriria o aviso da sessão).
-    var secao = document.getElementById("secTipoResidente");
-    var chegou = secao.getBoundingClientRect().top <= (alturaBarra() + 24);
-    var mostrar = cadastroCarregado() && chegou && !noCampoDeVisao(acoesDeBaixo);
+    atualizarIdentidade();
+
+    // Identidade: quando o aviso sai do topo da tela, ela vira faixa fixa no topo.
+    var identidadeFixa = !identidade.hidden && identidade.getBoundingClientRect().bottom < 0;
+    identidade.classList.toggle("fixa", identidadeFixa);
+    if (!identidade.hidden) {
+      lugarIdentidade.style.height = identidade.offsetHeight + "px";
+      if (identidadeFixa) identidade.style.width = form.getBoundingClientRect().width + "px";
+    }
+    lugarIdentidade.hidden = identidade.hidden;
+
+    var mostrar = cadastroCarregado() && !noCampoDeVisao(acoesDeBaixo);
     barra.hidden = !mostrar;
     lugar.hidden = !mostrar;
-    // O espaço no topo fica enquanto o cadastro está aberto (não só enquanto a barra aparece),
-    // para a página não "pular" quando a barra some perto dos botões de baixo.
-    document.body.classList.toggle("com-barra-acoes", cadastroCarregado());
+    document.body.classList.toggle("com-barra-acoes", mostrar);
     if (!mostrar) return;
 
     var enviar = document.getElementById("btnEnviarForm");
@@ -50,13 +67,17 @@
     botaoEnviar.disabled = enviar.disabled;
     barra.querySelector(".barra-acao-fechar").textContent = (document.getElementById("btnSairSemAlterar").textContent || "Fechar visualização").trim();
 
-    // Sempre fixa no topo da tela, alinhada ao formulário. Enquanto ela aparece, o topo da página
-    // ganha um espaço do tamanho dela, para não cobrir o começo do conteúdo.
-    barra.classList.add("fixa");
+    // Rolou para baixo (o lugar da barra saiu do topo): a barra vira flutuante e acompanha a rolagem.
+    // Prende quando o lugar sobe até o topo (abaixo da faixa de identificação, se ela estiver fixa).
+    var fixa = lugar.getBoundingClientRect().top < (identidadeFixa ? identidade.offsetHeight : 0);
+    barra.classList.toggle("fixa", fixa);
     var r = form.getBoundingClientRect();
     barra.style.left = r.left + "px";
     barra.style.width = r.width + "px";
-    if (barra.offsetHeight) document.documentElement.style.setProperty("--altura-barra-acoes", barra.offsetHeight + "px");
+    barra.style.top = identidadeFixa ? identidade.offsetHeight + "px" : "0px";
+    if (!fixa) lugar.style.height = barra.offsetHeight + "px";
+    document.documentElement.style.setProperty("--altura-barra-acoes", barra.offsetHeight + "px");
+    document.documentElement.style.setProperty("--altura-topo-fixo", (identidadeFixa ? identidade.offsetHeight : 0) + barra.offsetHeight + "px");
   }
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -65,6 +86,7 @@
     form = document.getElementById("cadForm");
     if (!secao || !acoesDeBaixo || !form) return;
 
+    // Lugar da barra: fica no fluxo da página logo antes da seção "Qual é o seu vínculo".
     lugar = document.createElement("div");
     lugar.className = "barra-acoes-lugar";
     lugar.hidden = true;
@@ -73,10 +95,23 @@
     barra.hidden = true;
     barra.innerHTML =
       '<button type="button" class="btn-submit barra-acao-enviar">Atualizar cadastro</button>' +
-      // Mesmo texto do botão de baixo: "Fechar visualização" (cadastro existente) ou "Sair" (cadastro novo).
       '<button type="button" class="btn-secondary barra-acao-fechar">Fechar visualização</button>';
     lugar.appendChild(barra);
     secao.parentNode.insertBefore(lugar, secao);
+
+    // Identidade: depois do aviso da sessão, dentro da consulta.
+    lugarIdentidade = document.createElement("div");
+    lugarIdentidade.className = "identidade-lugar";
+    lugarIdentidade.hidden = true;
+    identidade = document.createElement("div");
+    identidade.id = "identidadeLogado";
+    identidade.className = "identidade-logado";
+    identidade.hidden = true;
+    lugarIdentidade.appendChild(identidade);
+    var aviso = document.getElementById("avisoSessaoMorador");
+    var consulta = document.getElementById("boxConsultaCpf");
+    if (aviso && aviso.parentNode) aviso.parentNode.insertBefore(lugarIdentidade, aviso.nextSibling);
+    else if (consulta) consulta.appendChild(lugarIdentidade);
 
     barra.querySelector(".barra-acao-enviar").addEventListener("click", function() {
       document.getElementById("btnEnviarForm").click();
@@ -86,14 +121,19 @@
     });
 
     window.atualizarBarraAcoes = atualizar;
-    document.getElementById("apto") && document.getElementById("apto").addEventListener("change", atualizar);
+    var apto = document.getElementById("apto");
+    if (apto) apto.addEventListener("change", atualizar);
+    ["moradorNome", "moradorEmail"].forEach(function(id) {
+      var campo = document.getElementById(id);
+      if (campo) campo.addEventListener("input", atualizar);
+    });
     window.addEventListener("scroll", atualizar, { passive: true });
     window.addEventListener("resize", atualizar);
     // Aparece/some conforme o cadastro é carregado, enviado ou fechado (texto do botão e seções).
     var observador = new MutationObserver(atualizar);
     observador.observe(document.getElementById("btnEnviarForm"), { childList: true, characterData: true, subtree: true, attributes: true });
-    observador.observe(secao, { attributes: true, attributeFilter: ["class"] });
     observador.observe(document.getElementById("btnSairSemAlterar"), { childList: true, characterData: true, subtree: true });
+    observador.observe(secao, { attributes: true, attributeFilter: ["class"] });
     atualizar();
   });
 })();

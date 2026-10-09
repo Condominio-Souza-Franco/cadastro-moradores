@@ -312,7 +312,6 @@ body.popup-aberto {
 /* Presa no topo da tela enquanto o morador rola o formulário. */
 .barra-acoes-flutuante.fixa {
   position: fixed;
-  top: 0;
   z-index: 50;
   padding: 8px 10px;
   border-radius: 0 0 10px 10px;
@@ -331,10 +330,20 @@ body.popup-aberto {
   margin: 0;
 }
 
-/* Barra fixa no topo: o "lugar" no formulário não ocupa espaço; a página ganha espaço no topo. */
-.barra-acoes-lugar {
-  height: 0;
-  margin: 0;
+/* O "lugar" guarda o espaço da barra (o JS ajusta a altura), para a página não pular quando ela desce. */
+.barra-acoes-lugar { margin: 0; }
+
+.identidade-lugar { margin: 8px 0 0; }
+.identidade-lugar[hidden] { display: none; }
+.identidade-logado {
+  box-sizing: border-box; padding: 8px 12px; border-radius: 10px; background: #eef4fb; color: #243447;
+  font-size: 0.86rem; font-weight: 600; text-align: center; overflow-wrap: anywhere;
+}
+.identidade-logado[hidden] { display: none; }
+/* Quando rola para baixo, a faixa de quem está logado fica presa no topo, acima da barra. */
+.identidade-logado.fixa {
+  position: fixed; top: 0; z-index: 51; border-radius: 0 0 10px 10px;
+  box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.3); background: #fff; border-bottom: 1px solid #d7e0ea;
 }
 
 /* A barra só aparece quando o formulário já chegou ao topo: a página não precisa de espaço extra. */

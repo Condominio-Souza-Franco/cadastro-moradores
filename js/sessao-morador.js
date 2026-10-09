@@ -38,7 +38,19 @@
     var atual = obter();
     var expira = atual && atual.cpf === cpf ? atual.expira : Date.now() + DURACAO_MS;
     try { sessionStorage.setItem(CHAVE, JSON.stringify({ cpf: cpf, nasc: nasc, expira: expira })); } catch (e) {}
+    prefetchKit(cpf, nasc);
     avisarMudanca();
+  }
+
+  // Em segundo plano, logo no login: busca a lista do Kit (só os nomes dos arquivos, não os PDFs) e
+  // guarda nesta aba. Assim a página do kit abre na hora, sem a tela de "Carregando". Se falhar, a
+  // página do kit busca de novo como antes.
+  function prefetchKit(cpf, nasc) {
+    if (!window.Backend || !window.Backend.chamar) return;
+    window.Backend.chamar("fbAbrirKit", { cpf: cpf, nascimento: nasc }).then(function(r) {
+      if (!r || !r.encontrado) return;
+      try { sessionStorage.setItem(CHAVE_KIT, JSON.stringify(r)); } catch (e) {}
+    }).catch(function() {});
   }
 
   // Troca as credenciais guardadas (ex.: o morador corrigiu o CPF ou a data no próprio cadastro).
