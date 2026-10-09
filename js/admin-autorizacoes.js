@@ -58,7 +58,8 @@
           '<li><strong>Desenvolvedor</strong> → acesso a tudo; altera as colunas do Condomínio, Síndico, Conselho e Administradora</li>' +
           '<li><strong>Condomínio</strong> → altera as colunas do Síndico, Conselho e Administradora</li>' +
           '<li><strong>Síndico</strong> → altera as colunas do Conselho e da Administradora</li>' +
-          '<li><strong>Conselho</strong> e <strong>Administradora</strong> → só visualizam</li>' +
+          '<li><strong>Conselho</strong> e <strong>Administradora</strong> → só visualizam esta tabela</li>' +
+          '<li><strong>Conselho</strong> → sempre pode ver e escrever em Membros e Notificações, mas só no que é dele: o próprio e-mail de acesso e quais e-mails recebe (por isso essas caixinhas ficam travadas)</li>' +
         '</ul>' +
         (dados.podeEditar ? '' : '<p class="aut-so-ver">Você pode apenas visualizar esta tabela.</p>') +
       '</div>' +
