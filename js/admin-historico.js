@@ -52,6 +52,8 @@
 
   function renderizar() {
     var lista = document.getElementById("listaHistorico");
+    var contagem = document.getElementById("contagemHistorico");
+    if (contagem) { contagem.textContent = itens.length; contagem.hidden = !itens.length; }
     var botaoMais = document.getElementById("btnMaisHistorico");
     if (lista) lista.innerHTML = itens.slice(0, visiveis).map(itemHtml).join("");
     if (botaoMais) {

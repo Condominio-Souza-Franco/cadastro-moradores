@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261009u">
+  <link rel="stylesheet" href="css/admin.css?v=20261009v">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -171,8 +171,15 @@
               Marque, para cada membro, quais e-mails ele recebe. A lista vem da página Membros; quem sair da
               administração deixa de receber.
             </p>
-            <div class="como-funcionam-notificacoes">
-              <strong>Como funcionam os e-mails do sistema</strong>
+            <div id="statusNotificacoes" class="status"></div>
+            <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
+            <div id="listaNotificacoes" class="lista-notificacoes"></div>
+            <div id="acoesNotificacoes" class="acoes-50">
+              <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
+              <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
+            </div>
+            <details class="como-funcionam-notificacoes">
+              <summary>Como funcionam os e-mails do sistema</summary>
               <ul>
                 <li><strong>Resumo mensal</strong> (para quem estiver marcado na coluna): no dia 1 de cada mês, um e-mail com todas as
                   alterações cadastrais do mês anterior e os links dos relatórios. Se nada mudou, não é enviado.</li>
@@ -186,14 +193,7 @@
                   cadastro novo, a cópia do cadastro em PDF a cada envio, o código para abrir o cadastro (se ele ativou) e o
                   lembrete de revisão uma vez por ano.</li>
               </ul>
-            </div>
-            <div id="statusNotificacoes" class="status"></div>
-            <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
-            <div id="listaNotificacoes" class="lista-notificacoes"></div>
-            <div id="acoesNotificacoes" class="acoes-50">
-              <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
-              <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
-            </div>
+            </details>
             <h3 class="titulo-exemplo-email">Exemplos dos e-mails</h3>
             <div class="botoes-exemplo-email" role="group" aria-label="Exemplos dos e-mails">
               <button type="button" class="btn-exemplo-email" data-exemplo="resumo" aria-pressed="false">Resumo mensal</button>
@@ -344,7 +344,7 @@
         <div id="homeAdmin" class="home-admin">
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
-          <summary><span>Últimas alterações cadastrais</span><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
+          <summary><span>Últimas alterações cadastrais</span><b id="contagemHistorico" class="contagem-historico" hidden></b><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
           <div class="historico-conteudo">
             <div id="statusHistorico" class="status"></div>
             <ol id="listaHistorico" class="lista-historico"></ol>
@@ -382,35 +382,35 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261009u"></script>
-  <script src="js/utils.js?v=20261009u"></script>
-  <script src="js/data/backend.js?v=20261009u"></script>
+  <script src="js/regras.js?v=20261009v"></script>
+  <script src="js/utils.js?v=20261009v"></script>
+  <script src="js/data/backend.js?v=20261009v"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261009u"></script>
-  <script src="js/admin-badges.js?v=20261009u"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261009u"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261009u"></script>
-  <script src="js/data/DataService.js?v=20261009u"></script>
-  <script src="js/admin-fonte-dados.js?v=20261009u"></script>
-  <script src="js/admin-simples.js?v=20261009u"></script>
-  <script src="js/admin-relatorio.js?v=20261009u"></script>
-  <script src="js/admin-busca.js?v=20261009u"></script>
-  <script src="js/admin-historico.js?v=20261009u"></script>
-  <script src="js/admin-pendencias.js?v=20261009u"></script>
-  <script src="js/admin-permissoes.js?v=20261009u"></script>
-  <script src="js/admin-autorizacoes.js?v=20261009u"></script>
-  <script src="js/admin-membros.js?v=20261009u"></script>
-  <script src="js/admin-bloqueios.js?v=20261009u"></script>
-  <script src="js/vaga-miniatura.js?v=20261009u"></script>
-  <script src="js/admin-aprovacoes.js?v=20261009u"></script>
-  <script src="js/admin-notificacoes.js?v=20261009u"></script>
-  <script src="js/admin-gabarito.js?v=20261009u"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261009u"></script>
-  <script src="js/admin-pre-carga.js?v=20261009u"></script>
-  <script src="js/admin-paineis.js?v=20261009u"></script>
-  <script src="js/popup-links.js?v=20261009u"></script>
-  <script src="js/sem-conectivos.js?v=20261009u"></script>
+  <script src="js/admin-auth.js?v=20261009v"></script>
+  <script src="js/admin-badges.js?v=20261009v"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261009v"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261009v"></script>
+  <script src="js/data/DataService.js?v=20261009v"></script>
+  <script src="js/admin-fonte-dados.js?v=20261009v"></script>
+  <script src="js/admin-simples.js?v=20261009v"></script>
+  <script src="js/admin-relatorio.js?v=20261009v"></script>
+  <script src="js/admin-busca.js?v=20261009v"></script>
+  <script src="js/admin-historico.js?v=20261009v"></script>
+  <script src="js/admin-pendencias.js?v=20261009v"></script>
+  <script src="js/admin-permissoes.js?v=20261009v"></script>
+  <script src="js/admin-autorizacoes.js?v=20261009v"></script>
+  <script src="js/admin-membros.js?v=20261009v"></script>
+  <script src="js/admin-bloqueios.js?v=20261009v"></script>
+  <script src="js/vaga-miniatura.js?v=20261009v"></script>
+  <script src="js/admin-aprovacoes.js?v=20261009v"></script>
+  <script src="js/admin-notificacoes.js?v=20261009v"></script>
+  <script src="js/admin-gabarito.js?v=20261009v"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261009v"></script>
+  <script src="js/admin-pre-carga.js?v=20261009v"></script>
+  <script src="js/admin-paineis.js?v=20261009v"></script>
+  <script src="js/popup-links.js?v=20261009v"></script>
+  <script src="js/sem-conectivos.js?v=20261009v"></script>
 </body>
 </html>

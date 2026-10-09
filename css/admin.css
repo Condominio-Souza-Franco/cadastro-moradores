@@ -3567,3 +3567,19 @@ body.sem-membrosEscrever [data-espelho="acoesMembros"] button:not(.btn-autorizac
 }
 #resultadoAdmin .contratos-vazio em,
 #resultadoAdmin .observacoes-valor.vazio em { font-style: normal; }
+
+/* "Como funcionam os e-mails do sistema": caixa que abre e fecha (nasce fechada). */
+details.como-funcionam-notificacoes > summary { cursor: pointer; font-weight: 700; list-style: none; }
+details.como-funcionam-notificacoes > summary::-webkit-details-marker { display: none; }
+details.como-funcionam-notificacoes > summary::before { content: "▸"; display: inline-block; margin-right: 6px; transition: transform .15s; }
+details.como-funcionam-notificacoes[open] > summary::before { transform: rotate(90deg); }
+
+/* "Últimas alterações cadastrais": texto um pouco maior, "Atualizar" menor, contagem e sem quebrar linha. */
+.card-historico > summary { font-size: 0.86rem; flex-wrap: nowrap; white-space: nowrap; }
+.card-historico > summary > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+.card-historico > summary .btn-atualizar-pendencias { font-size: 0.68rem; white-space: nowrap; }
+.contagem-historico {
+  flex: none; min-width: 19px; height: 19px; padding: 0 5px; box-sizing: border-box; border-radius: 999px;
+  background: var(--accent-color, #2f5f98); color: #fff; font-size: 0.68rem; font-weight: 700; line-height: 19px; text-align: center;
+}
+.contagem-historico[hidden] { display: none; }

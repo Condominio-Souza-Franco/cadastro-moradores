@@ -18,7 +18,7 @@
 (function() {
   var CHAVE_ADMIN = "adminSimplesAuthUser";     // mesmas chaves do js/admin-auth.js
   var CHAVE_TOKEN = "adminSimplesAuthToken";
-  var CHAVE_FEITO = "sessaoMoradorDoAdmin";     // e-mail do login para o qual já tentamos
+  var CHAVE_FEITO = "sessaoMoradorDoAdmin";     // marca do login (e-mail + validade) que já conectou
 
   function lerAdmin() {
     try {
@@ -89,7 +89,9 @@
     diag("login do admin encontrado (cargo: " + (admin.papel || "?") + ")");
     // Só marca "já feito" quando a sessão abre: se der errado, tenta de novo na próxima visita; se der
     // certo e a pessoa clicar em "Sair", não reconecta nesta aba.
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) { diag("parou: já conectou uma vez nesta aba e você clicou em Sair"); return; } } catch (e) { return; }
+    // Marca deste login (e-mail + validade): sair e entrar de novo no admin gera outra marca e reconecta.
+    var marca = admin.email + "|" + admin.expiraEm;
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === marca) { diag("parou: já conectou uma vez nesta aba e você clicou em Sair"); return; } } catch (e) { return; }
 
     // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
     if (!window.AdminAuth) {
@@ -121,7 +123,7 @@
         if (window.SessaoMorador.obter()) { diag("ok: a sessão já tinha sido aberta"); return; }
         if (document.getElementById("cpfConsulta").value) { diag("parou: o campo CPF já estava preenchido"); return; }
         window.SessaoMorador.iniciar(cpf, nasc);
-        try { sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) {}
+        try { sessionStorage.setItem(CHAVE_FEITO, marca); } catch (e) {}
         diag("ok: sessão de morador aberta");
       })
       .catch(function(erro) { diag("parou: erro " + ((erro && erro.message) || erro)); });

@@ -220,6 +220,9 @@ function preencherFormularioComCadastro(d) {
   }
 
   alterarTextoBotaoEnviar("Atualizar cadastro");
+  // Cadastro existente: "Fechar visualização" (só o cadastro novo usa "Sair").
+  const btnFechar = document.getElementById("btnSairSemAlterar");
+  if (btnFechar && !window.modoAdminEdicao) btnFechar.textContent = "Fechar visualização";
   exibirPassoTipoResidente();
 }
 

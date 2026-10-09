@@ -138,10 +138,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009u"></script>
-<script src="js/data/backend.js?v=20261009u"></script>
-<script src="js/sessao-morador.js?v=20261009u"></script>
-<script src="js/pular-campo.js?v=20261009u"></script>
+<script src="js/regras.js?v=20261009v"></script>
+<script src="js/data/backend.js?v=20261009v"></script>
+<script src="js/sessao-morador.js?v=20261009v"></script>
+<script src="js/pular-campo.js?v=20261009v"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -309,15 +309,22 @@
       mostrarKit(guardadoInicial);
     } else if (window.SessaoMorador && window.SessaoMorador.obter()) {
       // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo.
+      // Enquanto confere a sessão, mostra só "Carregando" (sem o formulário de CPF piscando antes do kit).
       btn.disabled = true;
-      setMensagem("Abrindo o kit", "carregando");
+      form.hidden = true;
+      var carregandoKit = document.createElement("p");
+      carregandoKit.className = "mensagem carregando";
+      carregandoKit.textContent = "Carregando o kit";
+      form.parentNode.insertBefore(carregandoKit, form);
       entrarPelaSessao()
         .then(function(r) {
+          carregandoKit.remove();
           setMensagem("", "");
+          if (!r) form.hidden = false;
           if (r) mostrarKit(r);
           else setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
         })
-        .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
+        .catch(function() { carregandoKit.remove(); form.hidden = false; setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
         .then(function() { btn.disabled = false; });
     } else {
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
@@ -357,7 +364,7 @@
     });
   })();
 </script>
-<script src="js/popup-links.js?v=20261009u"></script>
-<script src="js/sem-conectivos.js?v=20261009u"></script>
+<script src="js/popup-links.js?v=20261009v"></script>
+<script src="js/sem-conectivos.js?v=20261009v"></script>
 </body>
 </html>

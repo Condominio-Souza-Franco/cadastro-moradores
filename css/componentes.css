@@ -337,9 +337,7 @@ body.popup-aberto {
   margin: 0;
 }
 
-body.com-barra-acoes {
-  padding-top: calc(var(--altura-barra-acoes, 64px) + 8px) !important;
-}
+/* A barra só aparece quando o formulário já chegou ao topo: a página não precisa de espaço extra. */
 
 .aviso-somente-leitura {
   font-size: 0.8rem;
@@ -348,12 +346,14 @@ body.com-barra-acoes {
 
 /* "Sair sem fazer alterações" com cara de botão ativo (contorno azul), para não parecer
    desabilitado ao lado do "Atualizar cadastro" desabilitado quando nada mudou. */
-#btnSairSemAlterar {
+#btnSairSemAlterar,
+.barra-acoes-flutuante .barra-acao-fechar {
   background: #ffffff;
   color: #1f5d99;
   border: 1px solid #1f5d99;
 }
-#btnSairSemAlterar:hover {
+#btnSairSemAlterar:hover,
+.barra-acoes-flutuante .barra-acao-fechar:hover {
   background: #eef4fb;
 }
 
