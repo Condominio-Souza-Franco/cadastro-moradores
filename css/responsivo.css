@@ -10,6 +10,11 @@
   .btn-secondary {
     flex: 1;
   }
+  /* Com o "Sair" (sessão do morador): Atualizar cadastro, Fechar visualização e Sair com a mesma largura. */
+  .form-actions.tres-botoes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 600px) {

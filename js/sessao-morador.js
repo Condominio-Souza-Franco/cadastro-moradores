@@ -121,7 +121,11 @@
     }
     // "Sair" no fim do formulário (depois de "Atualizar cadastro" e "Fechar visualização"): só com a sessão.
     var sairFim = document.getElementById("btnSairSessaoFim");
-    if (sairFim) sairFim.hidden = !s;
+    if (sairFim) {
+      sairFim.hidden = !s;
+      // Com os 3 botões, a largura é dividida igualmente (css/responsivo.css).
+      if (sairFim.parentElement) sairFim.parentElement.classList.toggle("tres-botoes", !!s);
+    }
     if (cadastroAberto()) return; // com o cadastro aberto, a consulta continua como está
 
     if (s) {
