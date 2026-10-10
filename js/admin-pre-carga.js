@@ -13,15 +13,46 @@
   var PERMISSAO_LEITURA = { listarAprovacoes: "aprovacoes", listarPendencias: "pendencias", obterMembros: "membros",
     obterNotificacoes: "notificacoes", obterGabaritoVagasCompleto: "gabarito", listarBloqueios: "bloqueios" };
 
-  function preCarregar() {
-    if (!window.DataService) return;
+  // Quantas leituras correm ao mesmo tempo (o Apps Script aguenta bem; uma de cada vez seria bem mais lento).
+  var SIMULTANEAS = 3;
+  var jaExecutou = false;
+
+  // Tarefas permitidas ao cargo: as leituras acima + a tela Autorizações (parte de Membros).
+  function tarefas() {
     var pode = window.AdminPermissoes ? window.AdminPermissoes.pode : function() { return true; };
-    LEITURAS.filter(function(nome) { return pode(PERMISSAO_LEITURA[nome]); }).reduce(function(fila, nome) {
-      return fila.then(function() {
-        return Promise.resolve(DataService[nome]()).catch(function() {});
-      });
-    }, Promise.resolve());
+    var lista = LEITURAS.filter(function(nome) { return pode(PERMISSAO_LEITURA[nome]); }).map(function(nome) {
+      return function() { return DataService[nome](); };
+    });
+    if (pode("membros") && window.AutorizacoesPreCarga) lista.push(window.AutorizacoesPreCarga);
+    return lista;
   }
+
+  // Roda as tarefas (as "extras" primeiro) com até SIMULTANEAS ao mesmo tempo. A cada uma que termina,
+  // chama progresso(0 a 100). Erros não interrompem: a página tenta de novo quando for aberta.
+  function executar(extras, progresso) {
+    jaExecutou = true;
+    if (!window.DataService) { if (progresso) progresso(100); return Promise.resolve(); }
+    var fila = (extras || []).concat(tarefas());
+    var total = fila.length;
+    var feitas = 0;
+    var proxima = 0;
+    function avisar() { if (progresso) progresso(total ? feitas * 100 / total : 100); }
+    avisar();
+
+    function trabalhador() {
+      if (proxima >= total) return Promise.resolve();
+      var tarefa = fila[proxima++];
+      var rodar;
+      try { rodar = Promise.resolve(tarefa()); } catch (e) { rodar = Promise.resolve(); }
+      return rodar.catch(function() {}).then(function() { feitas++; avisar(); return trabalhador(); });
+    }
+
+    var trabalhadores = [];
+    for (var i = 0; i < Math.min(SIMULTANEAS, total); i++) trabalhadores.push(trabalhador());
+    return Promise.all(trabalhadores);
+  }
+
+  window.AdminPreCarga = { executar: executar };
 
   function textoIdade(ms) {
     if (!ms) return "";
@@ -54,7 +85,11 @@
     });
   }
 
-  window.addEventListener("admin-auth-success", function() { setTimeout(preCarregar, 1500); });
+  // Novo login depois que a tela de carregamento já passou (sessão expirada): pré-carrega em segundo plano.
+  // No primeiro login quem chama é o admin-badges.js, junto com a tela "Carregando a administração".
+  window.addEventListener("admin-auth-success", function() {
+    setTimeout(function() { if (!jaExecutou) executar([], null); }, 1500);
+  });
   window.addEventListener("cache-admin-gravado", atualizarIndicadores);
   window.addEventListener("painel-aberto", function() { setTimeout(atualizarIndicadores, 0); });
   document.addEventListener("DOMContentLoaded", function() {

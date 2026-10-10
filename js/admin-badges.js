@@ -61,8 +61,13 @@
     lendo = true;
     // Enquanto o servidor responde, a administração fica numa tela de carregamento (não aparece pela metade).
     // Limite de 10 segundos: se a resposta demorar mais, a tela libera mesmo assim.
+    // Junto com os números do menu, a tela já busca as páginas que pedem carregamento (Pendências, Membros,
+    // Autorizações, Notificações, Gabarito, Bloqueios...), com a porcentagem dentro da bolinha. Se passar de
+    // 25 segundos, libera a tela e o que faltar termina em segundo plano.
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Carregando a administração");
-    var limite = setTimeout(terminar, 10000);
+    function progresso(pct) { if (window.setProgressoOverlayAdmin) window.setProgressoOverlayAdmin(pct); }
+    progresso(0);
+    var limite = setTimeout(terminar, 25000);
     function terminar() {
       clearTimeout(limite);
       if (!lendo) return;
@@ -71,17 +76,24 @@
       mostrarTodas();
       if (window.setOverlayAdmin) window.setOverlayAdmin(false);
     }
-    DataService.obterContadores().then(function(r) {
-      if (r && r.sucesso) {
-        Object.keys(PERMISSAO).forEach(function(id) {
-          // Se a lista já chegou nesta página, o número dela vale mais que o guardado.
-          if (typeof valores[id] !== "number" && typeof r[id] === "number") {
-            valores[id] = r[id];
-            gravados[id] = r[id];
-          }
-        });
-      }
-    }).catch(function() {}).then(terminar);
+    function lerContadores() {
+      return DataService.obterContadores().then(function(r) {
+        if (r && r.sucesso) {
+          Object.keys(PERMISSAO).forEach(function(id) {
+            // Se a lista já chegou nesta página, o número dela vale mais que o guardado.
+            if (typeof valores[id] !== "number" && typeof r[id] === "number") {
+              valores[id] = r[id];
+              gravados[id] = r[id];
+            }
+          });
+        }
+      });
+    }
+    if (window.AdminPreCarga) {
+      window.AdminPreCarga.executar([lerContadores], progresso).then(terminar);
+    } else {
+      lerContadores().catch(function() {}).then(terminar);
+    }
   }
 
   window.BadgeMenu = { definir: definir, restaurar: restaurar };

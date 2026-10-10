@@ -80,6 +80,15 @@
     if (desfazer) { desfazer.hidden = false; desfazer.disabled = !pode || !alterado(); }
   }
 
+  // Leitura antecipada (pré-carga do login): a 1ª abertura da tela usa esta resposta se for recente.
+  var preCarga = null;
+  window.AutorizacoesPreCarga = function() {
+    return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
+      if (r && r.sucesso) preCarga = { r: r, em: Date.now() };
+      return r;
+    });
+  };
+
   function carregar() {
     // "Carregando" no lugar do "atualizado há" ao lado do Atualizar: a página não pula.
     var indicador = document.querySelector("#painelMembros .atualizado-em");
@@ -87,7 +96,9 @@
     if (indicador) { indicador.dataset.manual = "1"; indicador.textContent = "Carregando"; indicador.classList.add("carregando-indicador"); }
     function restaurar() { if (indicador) { delete indicador.dataset.manual; indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
     setStatus("", "");
-    return window.Backend.chamar("fbObterAutorizacoes", {}, true).then(function(r) {
+    var antecipada = preCarga && Date.now() - preCarga.em < 60000 ? preCarga.r : null;
+    preCarga = null;
+    return (antecipada ? Promise.resolve(antecipada) : window.Backend.chamar("fbObterAutorizacoes", {}, true)).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as autorizações.");
       dados = r;
       atual = JSON.parse(JSON.stringify(r.permissoes));
@@ -122,6 +133,7 @@
   }
 
   function salvar() {
+    preCarga = null;
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando as autorizações");
     window.Backend.chamar("fbSalvarAutorizacoes", { permissoes: atual }, true).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
