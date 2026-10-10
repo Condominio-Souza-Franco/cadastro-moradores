@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="css/base.css?v=20261009Z">
   <link rel="stylesheet" href="css/inputs.css?v=20261010E">
   <link rel="stylesheet" href="css/consulta.css?v=20261009Z">
-  <link rel="stylesheet" href="css/componentes.css?v=20261009ZA">
+  <link rel="stylesheet" href="css/componentes.css?v=20261010F">
   <link rel="stylesheet" href="css/utilitarios.css?v=20261010E">
   <link rel="stylesheet" href="css/responsivo.css?v=20261009Z">
 
@@ -35,7 +35,7 @@
   <script src="js/pular-campo.js?v=20261009Z" defer></script>
   <script src="js/ui-formulario.js?v=20261009Z" defer></script>
   <script src="js/form-controle.js?v=20261010E" defer></script>
-  <script src="js/sessao-morador.js?v=20261010E" defer></script>
+  <script src="js/sessao-morador.js?v=20261010F" defer></script>
   <script src="js/sessao-admin-morador.js?v=20261009Z" defer></script>
   <script src="js/validacoes-form.js?v=20261009Z" defer></script>
   <script src="js/codigo-email.js?v=20261009Z"></script>
@@ -341,6 +341,7 @@
       <div class="form-actions">
         <button type="button" id="btnEnviarForm" class="btn-submit" onclick="enviar()">Enviar Cadastro</button>
         <button type="button" id="btnSairSemAlterar" class="btn-secondary" onclick="voltarTelaInicial()">Fechar visualização</button>
+        <button type="button" id="btnSairSessaoFim" class="btn-secondary btn-sair-sessao" onclick="SessaoMorador.sair()" title="Encerrar a sessão e apagar o CPF e a data de nascimento desta aba" hidden>Sair</button>
       </div>
 
     </div>

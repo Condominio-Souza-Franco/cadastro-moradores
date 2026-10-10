@@ -119,6 +119,9 @@
       aviso.textContent = textoAviso(s);
       aviso.hidden = !s;
     }
+    // "Sair" no fim do formulário (depois de "Atualizar cadastro" e "Fechar visualização"): só com a sessão.
+    var sairFim = document.getElementById("btnSairSessaoFim");
+    if (sairFim) sairFim.hidden = !s;
     if (cadastroAberto()) return; // com o cadastro aberto, a consulta continua como está
 
     if (s) {
@@ -135,6 +138,7 @@
       // o clique é tratado em alternarMoradorNovo() (form-controle.js), que chama sair().
       novo.textContent = "Sair";
       novo.classList.remove("ativo", "bloqueado");
+      novo.classList.add("btn-sair-sessao");
       novo.setAttribute("aria-disabled", "false");
       novo.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
       var linha = novo.closest(".row-checkbox-morador");
@@ -148,6 +152,7 @@
       buscar.disabled = false;
       buscar.innerText = "Buscar Cadastro";
       novo.textContent = "Novo cadastro";
+      novo.classList.remove("btn-sair-sessao");
       novo.title = "";
       if (typeof atualizarBloqueioNovoCadastro === "function") atualizarBloqueioNovoCadastro();
     }
