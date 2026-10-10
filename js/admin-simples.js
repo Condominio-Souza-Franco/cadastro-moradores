@@ -99,40 +99,12 @@
     status.textContent = texto || "";
   }
 
-  // Porcentagem dentro da bolinha (só no "Carregando a administração"): o número sobe de forma suave
-  // até o valor real. null desliga e a bolinha volta ao tamanho normal.
-  var pctExibido = 0;
-  var pctAlvo = 0;
-  var pctTimer = null;
-
-  function desenharPercentual() {
-    var el = document.getElementById("overlayProcessamentoPercentual");
-    if (el) el.textContent = pctExibido + "%";
-  }
-
+  // Porcentagem dentro da bolinha: js/progresso-overlay.js. Os "Aguarde" mostram um número estimado;
+  // só o "Carregando a administração" informa o andamento real por aqui (null desliga).
   function setProgressoOverlayAdmin(pct) {
-    var overlay = document.getElementById("overlayProcessamento");
-    if (!overlay) return;
-    if (pct === null || pct === undefined) {
-      clearInterval(pctTimer);
-      pctTimer = null;
-      pctExibido = 0;
-      pctAlvo = 0;
-      overlay.classList.remove("com-percentual");
-      return;
-    }
-    pctAlvo = Math.max(0, Math.min(100, Math.round(pct)));
-    if (!overlay.classList.contains("com-percentual")) {
-      pctExibido = 0;
-      overlay.classList.add("com-percentual");
-    }
-    desenharPercentual();
-    if (pctTimer) return;
-    pctTimer = setInterval(function() {
-      if (pctExibido >= pctAlvo) { clearInterval(pctTimer); pctTimer = null; return; }
-      pctExibido = Math.min(pctAlvo, pctExibido + Math.max(1, Math.ceil((pctAlvo - pctExibido) / 6)));
-      desenharPercentual();
-    }, 30);
+    if (!window.ProgressoOverlay) return;
+    if (pct === null || pct === undefined) window.ProgressoOverlay.parar();
+    else window.ProgressoOverlay.definir(pct);
   }
 
   function setOverlayAdmin(visivel, mensagem) {
@@ -146,6 +118,8 @@
     }
 
     if (visivel) {
+      // Já aberto (só mudou a mensagem): a contagem continua de onde está.
+      if (overlay.classList.contains("hidden") && window.ProgressoOverlay) window.ProgressoOverlay.iniciar();
       overlay.classList.remove("hidden");
       if (spinner && typeof spinner.animate === "function") {
         if (animacaoOverlay) animacaoOverlay.cancel();
@@ -155,12 +129,15 @@
         );
       }
     } else {
-      overlay.classList.add("hidden");
-      setProgressoOverlayAdmin(null);
-      if (animacaoOverlay) {
-        animacaoOverlay.cancel();
-        animacaoOverlay = null;
-      }
+      var fechar = function() {
+        overlay.classList.add("hidden");
+        if (animacaoOverlay) {
+          animacaoOverlay.cancel();
+          animacaoOverlay = null;
+        }
+      };
+      if (window.ProgressoOverlay && !overlay.classList.contains("hidden")) window.ProgressoOverlay.concluir(fechar);
+      else fechar();
     }
   }
 

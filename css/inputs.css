@@ -230,9 +230,7 @@ label .required-star,
 
 /* "Novo cadastro" desativado (com login, ou enquanto o CPF estiver preenchido): cinza, sem clique. */
 .btn-novo-cadastro.bloqueado,
-.btn-novo-cadastro[aria-disabled="true"],
-.btn-novo-cadastro.travado-sessao,
-.btn-novo-cadastro.travado-sessao:hover {
+.btn-novo-cadastro[aria-disabled="true"] {
   background: #eef1f4;
   color: #9aa6b2;
   border-color: #d5dce3;
