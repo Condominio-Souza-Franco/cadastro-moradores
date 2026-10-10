@@ -135,6 +135,7 @@
       novo.textContent = "Novo cadastro";
       novo.classList.remove("ativo");
       novo.classList.add("bloqueado");
+      novo.classList.add("travado-sessao");
       novo.setAttribute("aria-disabled", "true");
       novo.title = "Para abrir outro cadastro, primeiro clique em Sair (ao lado do seu nome, no topo)";
       var linha = novo.closest(".row-checkbox-morador");
@@ -148,6 +149,7 @@
       buscar.disabled = false;
       buscar.innerText = "Buscar Cadastro";
       novo.textContent = "Novo cadastro";
+      novo.classList.remove("travado-sessao");
       novo.title = "";
       if (typeof atualizarBloqueioNovoCadastro === "function") atualizarBloqueioNovoCadastro();
     }
