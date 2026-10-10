@@ -327,6 +327,21 @@ body.popup-aberto {
   font-size: 0.8rem; font-weight: 700; cursor: pointer;
 }
 .identidade-sair:hover { background: #fbf1f1; }
+/* Outros botões "Sair" da página inicial (no lugar de "Novo cadastro" e no fim do formulário): mesmo vermelho suave. */
+.btn-novo-cadastro.btn-sair-sessao,
+.btn-novo-cadastro.btn-sair-sessao:hover,
+#btnSairSessaoFim {
+  background: #fff;
+  color: #9b4a4a;
+  border: 1px solid #c98a8a;
+  box-shadow: none;
+}
+.btn-novo-cadastro.btn-sair-sessao:hover,
+#btnSairSessaoFim:hover {
+  background: #fbf1f1;
+  color: #9b4a4a;
+  border-color: #c98a8a;
+}
 .identidade-logado[hidden] { display: none; }
 /* Quando rola para baixo, a faixa de quem está logado fica presa no topo, acima da barra. */
 .identidade-logado.fixa {
