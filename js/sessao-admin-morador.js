@@ -18,7 +18,7 @@
 (function() {
   var CHAVE_ADMIN = "adminSimplesAuthUser";     // mesmas chaves do js/admin-auth.js
   var CHAVE_TOKEN = "adminSimplesAuthToken";
-  var CHAVE_FEITO = "sessaoMoradorDoAdmin";     // e-mail do login para o qual já tentamos
+  var CHAVE_FEITO = "sessaoMoradorDoAdmin";     // marca do login (e-mail + validade) que já conectou
 
   function lerAdmin() {
     try {
@@ -38,21 +38,60 @@
   }
 
   // Cadastro do cargo de quem está logado, pelo papel que o backend informou.
-  function cargoDoLogado(r) {
+  // Cadastro de quem está logado: procura em TODOS os cargos (síndico, desenvolvedor, conselho) um que
+  // tenha morador escolhido e cujo e-mail de acesso seja o do login. Assim, quem tem dois cargos (ex.:
+  // desenvolvedor e conselho) é encontrado mesmo que só um deles esteja ligado ao cadastro.
+  function cargoDoLogado(r, email) {
     var membros = (r && r.membros) || {};
+    var alvo = String(email || "").trim().toLowerCase();
+    var cargos = [membros.sindico, membros.desenvolvedor].concat(membros.conselho || []).filter(function(c) { return c && c.cadastroId; });
+    var porId = {};
+    (r.candidatos || []).forEach(function(c) { porId[c.id] = c; });
+    var doLogado = cargos.filter(function(c) {
+      var efetivo = c.usarEmailCadastro !== false ? (porId[c.cadastroId] && porId[c.cadastroId].email) : c.email;
+      return String(efetivo || "").trim().toLowerCase() === alvo;
+    })[0];
+    if (doLogado) return doLogado;
     if (r.papel === "sindico") return membros.sindico;
     if (r.papel === "desenvolvedor") return membros.desenvolvedor;
     if (r.papel === "conselho") return (membros.conselho || [])[r.indice];
     return null;
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) return;
-    if (!document.getElementById("cpfConsulta")) return;
+  // Diagnóstico (sem dados pessoais): com ?diag=1 no endereço, mostra em qual passo parou.
+  var DIAG = /[?&]diag=1/.test(location.search);
+  function diag(texto) {
+    if (!DIAG) return;
+    var el = document.getElementById("diagSessaoAdmin");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "diagSessaoAdmin";
+      el.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:99999;max-width:92vw;padding:8px 12px;border-radius:8px;background:#243447;color:#fff;font:12px/1.4 Arial,sans-serif;white-space:pre-line";
+      document.body.appendChild(el);
+    }
+    el.textContent += (el.textContent ? "\n" : "") + texto;
+  }
+
+  var emAndamento = false;
+  function tentar() {
+    if (emAndamento) return;
+    diag("Sessão do admin → morador:");
+    if (window.modoAdminEdicao || !window.SessaoMorador || !window.DataService) { diag("parou: scripts da página não carregaram"); return; }
     var admin = lerAdmin();
-    if (!admin || admin.papel === "condominio" || admin.papel === "administradora") return;
-    if (window.SessaoMorador.obter()) return;
-    try { if (sessionStorage.getItem(CHAVE_FEITO) === admin.email) return; sessionStorage.setItem(CHAVE_FEITO, admin.email); } catch (e) { return; }
+    if (!admin) {
+      var bruto = null;
+      try { bruto = JSON.parse(sessionStorage.getItem(CHAVE_ADMIN) || "null"); } catch (e) {}
+      diag(!bruto ? "parou: não há login do admin NESTA aba (entre no admin e volte pela mesma aba)"
+        : (bruto.expiraEm && Date.now() >= bruto.expiraEm ? "parou: o login do admin expirou (vale 1 hora); entre de novo" : "parou: login do admin incompleto (sem token)"));
+      return;
+    }
+    if (admin.papel === "condominio" || admin.papel === "administradora") { diag("parou: o cargo " + admin.papel + " não tem cadastro de morador"); return; }
+    if (window.SessaoMorador.obter()) { diag("ok: a sessão de morador já estava aberta"); return; }
+    // Marca deste login (e-mail + validade): sair e entrar de novo no admin gera outra marca e reconecta.
+    var marca = admin.email + "|" + admin.expiraEm;
+    try { if (sessionStorage.getItem(CHAVE_FEITO) === marca) { diag("parou: já conectou uma vez neste login e você clicou em Sair"); return; } } catch (e) { return; }
+    emAndamento = true;
+    diag("login do admin encontrado (cargo: " + (admin.papel || "?") + ")");
 
     // O formulário não carrega o admin-auth.js; as rotas protegidas leem o token por aqui.
     if (!window.AdminAuth) {
@@ -64,23 +103,35 @@
 
     window.DataService.obterMembros()
       .then(function(r) {
-        if (!r || !r.sucesso) return null;
-        var cargo = cargoDoLogado(r);
+        if (!r || !r.sucesso) { diag("parou: a página Membros não respondeu (" + ((r && r.mensagem) || "sem resposta") + ")"); return null; }
+        var cargo = cargoDoLogado(r, admin.email);
+        diag(cargo && cargo.cadastroId ? "cargo com cadastro encontrado" : "parou: nenhum cargo com o seu e-mail tem morador escolhido em Membros");
         var id = cargo && cargo.cadastroId;
         var candidato = id && (r.candidatos || []).filter(function(c) { return c.id === id; })[0];
-        if (!candidato || !candidato.apto) return null;
-        return window.DataService.obterMoradorPorApto(candidato.apto, id);
+        if (!candidato || !candidato.apto) { if (cargo && cargo.cadastroId) diag("parou: o cadastro escolhido em Membros não está entre os moradores ativos"); return null; }
+        return window.DataService.obterMoradorPorApto(candidato.apto, id).then(function(resp) { return { resp: resp, apto: candidato.apto }; });
       })
-      .then(function(resposta) {
+      .then(function(achado) {
+        if (achado === null) return;
+        var resposta = achado.resp;
         var d = resposta && resposta.encontrado && resposta.dados;
-        if (!d || d.situacao === "mudou-se") return;
+        if (!d) { diag("parou: a consulta do cadastro não respondeu (" + ((resposta && resposta.mensagem) || "sem resposta") + ")"); return; }
+        if (d.situacao === "mudou-se") { diag("parou: o cadastro está marcado como mudou-se"); return; }
         var cpf = String(d.cpf || "").replace(/\D/g, "");
         var nasc = dataBr(d.nasc);
-        // A pessoa pode ter começado a digitar ou aberto um cadastro enquanto isso: não atropela.
-        if (cpf.length !== 11 || !nasc || window.SessaoMorador.obter()) return;
-        if (document.getElementById("cpfConsulta").value) return;
-        window.SessaoMorador.iniciar(cpf, nasc);
+        if (cpf.length !== 11 || !nasc) { diag("parou: o cadastro está sem CPF ou data de nascimento válidos"); return; }
+        if (window.SessaoMorador.obter()) { diag("ok: a sessão já tinha sido aberta"); return; }
+        var campo = document.getElementById("cpfConsulta");
+        if (campo && campo.value) { diag("parou: o campo CPF já estava preenchido"); return; }
+        window.SessaoMorador.iniciar(cpf, nasc, { nome: d.nome || "", apto: achado.apto || d.apto || "", email: d.email || "" });
+        try { sessionStorage.setItem(CHAVE_FEITO, marca); } catch (e) {}
+        diag("ok: sessão de morador aberta");
       })
-      .catch(function() {});
-  });
+      .catch(function(erro) { diag("parou: erro " + ((erro && erro.message) || erro)); })
+      .then(function() { emAndamento = false; });
+  }
+
+  document.addEventListener("DOMContentLoaded", tentar);
+  // Na página do admin, o login pode acontecer depois de abrir a página: tenta de novo quando entrar.
+  window.addEventListener("admin-auth-success", tentar);
 })();

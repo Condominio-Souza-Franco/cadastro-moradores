@@ -50,8 +50,14 @@
     );
   }
 
+  // Bolinha com o número de itens: o número vai para o servidor (js/admin-badges.js).
+  function guardarContagem(total) {
+    if (window.BadgeMenu) window.BadgeMenu.definir("contadorHistorico", total);
+  }
+
   function renderizar() {
     var lista = document.getElementById("listaHistorico");
+    if (carregado) guardarContagem(itens.length);
     var botaoMais = document.getElementById("btnMaisHistorico");
     if (lista) lista.innerHTML = itens.slice(0, visiveis).map(itemHtml).join("");
     if (botaoMais) {
@@ -62,24 +68,25 @@
     if (carregado) setStatus(itens.length ? "" : "Nenhuma alteração registrada ainda.", "vazio");
   }
 
-  function carregar() {
+  function carregar(emSegundoPlano) {
     if (carregando) return;
     carregando = true;
-    setStatus("Carregando", "carregando");
+    if (!emSegundoPlano) setStatus("Carregando", "carregando");
 
     DataService.listarHistorico(LIMITE_BUSCA)
       .then(function(resposta) {
         if (!resposta || !resposta.sucesso) {
-          setStatus((resposta && resposta.mensagem) || "Não foi possível carregar o histórico.", "erro");
+          if (!emSegundoPlano) setStatus((resposta && resposta.mensagem) || "Não foi possível carregar o histórico.", "erro");
           return;
         }
         itens = Array.isArray(resposta.itens) ? resposta.itens : [];
         visiveis = POR_PAGINA;
         carregado = true;
         renderizar();
+        setStatus("", "");
       })
       .catch(function(erro) {
-        setStatus((erro && erro.message) || "Não foi possível carregar o histórico.", "erro");
+        if (!emSegundoPlano) setStatus((erro && erro.message) || "Não foi possível carregar o histórico.", "erro");
       })
       .then(function() {
         carregando = false;
@@ -112,6 +119,15 @@
     var botaoMais = document.getElementById("btnMaisHistorico");
     var lista = document.getElementById("listaHistorico");
     if (!secao || !window.DataService) return;
+    // Em 2º plano, logo ao abrir a página (com o admin logado): o número vem do servidor e a lista é
+    // atualizada. Se o número for outro, a bolinha muda sozinha; a lista só aparece quando a seção abre.
+    function atualizarEmSegundoPlano() {
+      if (!window.AdminAuth || !window.AdminAuth.getIdToken || !window.AdminAuth.getIdToken()) return;
+      if (carregado || carregando) return;
+      carregar(true);
+    }
+    atualizarEmSegundoPlano();
+    window.addEventListener("admin-auth-success", atualizarEmSegundoPlano);
 
     secao.addEventListener("toggle", function() {
       if (secao.open && !carregado) carregar();

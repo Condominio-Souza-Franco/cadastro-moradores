@@ -210,24 +210,8 @@ button:disabled {
   text-align: center;
 }
 
-.required-hint {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #7f8c8d;
-}
-
-.required-hint-inline {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #7f8c8d;
-}
-
 label .required-star,
-.input-label .required-star,
-.required-hint-inline .required-star {
+.input-label .required-star {
   color: #e74c3c;
 }
 
@@ -243,3 +227,13 @@ label .required-star,
 #secTipoResidente { margin-bottom: 0; }
 #secApto { margin-top: 20px !important; padding-top: 0; }
 .opcao-mora-imovel { margin-top: 20px !important; }
+
+/* "Novo cadastro" desativado (com login, ou enquanto o CPF estiver preenchido): cinza, sem clique. */
+.btn-novo-cadastro.bloqueado,
+.btn-novo-cadastro[aria-disabled="true"] {
+  background: #eef1f4;
+  color: #9aa6b2;
+  border-color: #d5dce3;
+  box-shadow: none;
+  cursor: not-allowed;
+}

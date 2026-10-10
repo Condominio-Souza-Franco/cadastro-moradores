@@ -78,6 +78,9 @@
     .doc span { overflow-wrap: anywhere; }
     /* Número ímpar de documentos: o último ocupa a linha inteira (sem "viúva"). */
     .docs .doc:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .docs .doc { min-height: 56px; box-sizing: border-box; }
+    .kit-drive-titulo { margin: 0 0 8px; text-align: left; }
+    .btn-pasta-drive { display: inline-block; padding: 8px 16px; border-radius: 10px; background: var(--destaque); color: #fff; font-weight: 700; text-decoration: none; }
     details.secao { border: 1px solid var(--borda); border-radius: 10px; margin-top: 8px; background: #fff; }
     details.secao > summary {
       cursor: pointer; padding: 10px 14px; font-weight: 700; color: var(--destaque); list-style: none;
@@ -100,13 +103,18 @@
       .docs { grid-template-columns: 1fr; }
       .docs .doc:last-child:nth-child(odd) { grid-column: auto; }
     }
-  </style>
+    .kit-drive, .subtitulo { font-size: 0.92em; }
+</style>
 </head>
 <body>
 <main>
   <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
   <h1>Kit de Boas-vindas</h1>
   <p class="subtitulo">Os documentos e orientações mais importantes para a convivência no Condomínio Souza Franco.</p>
+  <div class="kit-drive-bloco">
+    <p class="kit-drive-titulo"><a class="btn-pasta-drive" data-nova-aba href="https://drive.google.com/drive/folders/1ZLt6ZQP8lMK8R3VEbgoaIz8_Qz6kFxCe" target="_blank" rel="noopener noreferrer">Pasta do Google Drive</a></p>
+    <p class="kit-drive">O conteúdo abaixo é espelhado dessa pasta, o que for adicionado, alterado ou removido lá aparece aqui. Quem tem o e-mail cadastrado abre a pasta com a conta Google desse e-mail; quem não usa e-mail acessa pelo CPF e pela data de nascimento, como aqui.</p>
+  </div>
   <!-- Só com o kit aberto: "Atualizar" lê a pasta do Drive na hora (sozinho, ela é relida a cada 6 horas). -->
   <div id="atualizacaoKit" class="atualizacao-kit" hidden>
     <button type="button" class="btn btn-secundario" id="btnAtualizarKit">Atualizar</button>
@@ -126,11 +134,6 @@
   </form>
 
   <section id="conteudoKit" hidden>
-    <div class="topo-kit">
-      <p id="saudacao"></p>
-      <button type="button" class="btn btn-secundario" id="btnSair">Sair</button>
-    </div>
-    <p id="avisoSessao" class="aviso-sessao" role="status" hidden></p>
     <h2 id="tituloPrincipais">Documentos</h2>
     <div id="docsPrincipais" class="docs"></div>
     <div id="secoes"></div>
@@ -138,10 +141,10 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
-<script src="js/regras.js?v=20261009x"></script>
-<script src="js/data/backend.js?v=20261009x"></script>
-<script src="js/sessao-morador.js?v=20261009x"></script>
-<script src="js/pular-campo.js?v=20261009x"></script>
+<script src="js/regras.js?v=20261009Z"></script>
+<script src="js/data/backend.js?v=20261009Z"></script>
+<script src="js/sessao-morador.js?v=20261009Z"></script>
+<script src="js/pular-campo.js?v=20261009Z"></script>
 <script>
   (function() {
     // O kit carregado fica só nesta aba (sessionStorage), para não pedir o CPF de novo ao recarregar.
@@ -150,7 +153,6 @@
     var cpf = document.getElementById("cpf");
     var nasc = document.getElementById("nasc");
     var btn = document.getElementById("btnAcessar");
-    var msg = document.getElementById("mensagem");
 
     function mascarar(el, tipo) {
       el.addEventListener("input", function() {
@@ -187,7 +189,7 @@
     function listaDocs(arquivos) {
       return arquivos.map(function(a) {
         // O PDF vem do servidor (fbArquivoKit), com a sessão aberta pelo CPF + data: não precisa de conta Google.
-        return '<button type="button" class="doc" data-id="' + escapar(a.id || "") + '" data-nome="' + escapar(a.nome) + '">' + ICONE + "<span>" + escapar(a.nome) + "</span></button>";
+        return '<button type="button" class="doc" data-id="' + escapar(a.id || "") + '" data-nome="' + escapar(a.nome) + '" data-drive="' + escapar(a.url || "") + '">' + ICONE + "<span>" + escapar(a.nome) + "</span></button>";
       }).join("");
     }
 
@@ -226,8 +228,6 @@
       document.getElementById("conteudoKit").hidden = false;
       document.getElementById("atualizacaoKit").hidden = false;
       document.getElementById("lidoEmKit").textContent = textoLidoEm(r.lidoEm);
-      document.getElementById("saudacao").textContent = "Olá" + (r.nome ? ", " + r.nome : "") + "! Toque num documento para abrir.";
-      mostrarAvisoSessao();
       var principais = r.principais || [];
       document.getElementById("tituloPrincipais").hidden = !principais.length;
       document.getElementById("docsPrincipais").innerHTML = listaDocs(principais);
@@ -269,20 +269,12 @@
           var bytes = atob(r.base64), arr = new Uint8Array(bytes.length);
           for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
           var url = URL.createObjectURL(new Blob([arr], { type: r.mime || "application/pdf" }));
-          if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto);
+          if (window.PopupLinks && window.PopupLinks.abrirDireto) window.PopupLinks.abrirDireto(url, r.nome || texto, doc.getAttribute("data-drive"));
           else window.open(url, "_blank");
         })
         .catch(function(erro) { delete doc.dataset.reentrou; alert((erro && erro.message) || "Não foi possível abrir o documento."); })
         .then(function(res) { if (res !== "repetido") { span.textContent = texto; doc.disabled = false; } });
     });
-
-    // Sessão de 1 hora (js/sessao-morador.js): aviso com o horário em que ela termina.
-    function mostrarAvisoSessao() {
-      var aviso = document.getElementById("avisoSessao");
-      var texto = window.SessaoMorador ? window.SessaoMorador.textoAviso() : "";
-      aviso.textContent = texto;
-      aviso.hidden = !texto;
-    }
 
     // Entra no kit com o CPF e a data guardados na sessão de 1 hora, sem pedir de novo.
     function entrarPelaSessao() {
@@ -309,15 +301,22 @@
       mostrarKit(guardadoInicial);
     } else if (window.SessaoMorador && window.SessaoMorador.obter()) {
       // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo.
+      // Enquanto confere a sessão, mostra só "Carregando" (sem o formulário de CPF piscando antes do kit).
       btn.disabled = true;
-      setMensagem("Abrindo o kit", "carregando");
+      form.hidden = true;
+      var carregandoKit = document.createElement("p");
+      carregandoKit.className = "mensagem carregando";
+      carregandoKit.textContent = "Carregando o kit";
+      form.parentNode.insertBefore(carregandoKit, form);
       entrarPelaSessao()
         .then(function(r) {
+          carregandoKit.remove();
           setMensagem("", "");
+          if (!r) form.hidden = false;
           if (r) mostrarKit(r);
           else setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
         })
-        .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
+        .catch(function() { carregandoKit.remove(); form.hidden = false; setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
         .then(function() { btn.disabled = false; });
     } else {
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
@@ -345,19 +344,9 @@
         .then(function() { btn.disabled = false; });
     });
 
-    document.getElementById("btnSair").addEventListener("click", function() {
-      // Sair encerra também a sessão de 1 hora (o cadastro volta a pedir o CPF e a data).
-      try { sessionStorage.removeItem(CHAVE); } catch (e) {}
-      if (window.SessaoMorador) window.SessaoMorador.encerrar();
-      cpf.value = ""; nasc.value = "";
-      document.getElementById("conteudoKit").hidden = true;
-      document.getElementById("atualizacaoKit").hidden = true;
-      form.hidden = false;
-      setMensagem("", "");
-    });
   })();
 </script>
-<script src="js/popup-links.js?v=20261009x"></script>
-<script src="js/sem-conectivos.js?v=20261009x"></script>
+<script src="js/popup-links.js?v=20261009Z"></script>
+<script src="js/sem-conectivos.js?v=20261009Z"></script>
 </body>
 </html>

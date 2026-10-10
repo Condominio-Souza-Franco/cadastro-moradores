@@ -32,13 +32,27 @@
   }
 
   // Abre a sessão (ou mantém a atual, se for o mesmo CPF: o prazo não é renovado).
-  function iniciar(cpf, nasc) {
+  // info (opcional): { nome, apto, email } de quem entrou, para mostrar no topo da página inicial.
+  function iniciar(cpf, nasc, info) {
     cpf = String(cpf || "").replace(/\D/g, "");
     if (cpf.length !== 11 || !nasc) return;
     var atual = obter();
     var expira = atual && atual.cpf === cpf ? atual.expira : Date.now() + DURACAO_MS;
-    try { sessionStorage.setItem(CHAVE, JSON.stringify({ cpf: cpf, nasc: nasc, expira: expira })); } catch (e) {}
+    var pessoa = info || (atual && atual.cpf === cpf ? atual.pessoa : null) || null;
+    try { sessionStorage.setItem(CHAVE, JSON.stringify({ cpf: cpf, nasc: nasc, expira: expira, pessoa: pessoa })); } catch (e) {}
+    prefetchKit(cpf, nasc);
     avisarMudanca();
+  }
+
+  // Em segundo plano, logo no login: busca a lista do Kit (só os nomes dos arquivos, não os PDFs) e
+  // guarda nesta aba. Assim a página do kit abre na hora, sem a tela de "Carregando". Se falhar, a
+  // página do kit busca de novo como antes.
+  function prefetchKit(cpf, nasc) {
+    if (!window.Backend || !window.Backend.chamar) return;
+    window.Backend.chamar("fbAbrirKit", { cpf: cpf, nascimento: nasc }).then(function(r) {
+      if (!r || !r.encontrado) return;
+      try { sessionStorage.setItem(CHAVE_KIT, JSON.stringify(r)); } catch (e) {}
+    }).catch(function() {});
   }
 
   // Troca as credenciais guardadas (ex.: o morador corrigiu o CPF ou a data no próprio cadastro).
@@ -117,10 +131,12 @@
       nasc.classList.remove("input-erro-destaque", "input-ok-destaque");
       buscar.disabled = false;
       buscar.innerText = "Visualizar cadastro";
-      novo.textContent = "Sair";
-      novo.classList.remove("bloqueado", "ativo");
-      novo.setAttribute("aria-disabled", "false");
-      novo.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
+      // Com a sessão, "Novo cadastro" fica desativado: o "Sair" fica ao lado do nome, no topo da página.
+      novo.textContent = "Novo cadastro";
+      novo.classList.remove("ativo");
+      novo.classList.add("bloqueado");
+      novo.setAttribute("aria-disabled", "true");
+      novo.title = "Para abrir outro cadastro, primeiro clique em Sair (ao lado do seu nome, no topo)";
       var linha = novo.closest(".row-checkbox-morador");
       if (linha) linha.classList.remove("bloqueado");
     } else if (telaTravada()) {
@@ -138,7 +154,13 @@
   }
 
   // "Sair" da página inicial: encerra a sessão e volta à consulta vazia.
+  // "Sair" (em qualquer lugar do site) desloga de tudo nesta aba: morador e área de admin.
   function sair() {
+    try {
+      sessionStorage.removeItem("adminSimplesAuthUser");
+      sessionStorage.removeItem("adminSimplesAuthToken");
+      sessionStorage.removeItem("sessaoMoradorDoAdmin");
+    } catch (e) {}
     encerrar();
     aplicarNaTela();
     var cpf = document.getElementById("cpfConsulta");
@@ -156,6 +178,7 @@
 
   window.SessaoMorador = {
     obter: obter,
+    pessoa: function() { var x = obter(); return (x && x.pessoa) || null; },
     iniciar: iniciar,
     atualizarCredenciais: atualizarCredenciais,
     encerrar: encerrar,

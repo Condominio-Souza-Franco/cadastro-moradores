@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261009x">
+  <link rel="stylesheet" href="css/admin.css?v=20261009ZA">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -75,9 +75,9 @@
              abrir outra substitui a atual. Cada página tem um × para voltar à home. -->
         <button type="button" id="btnPaginaInicial" class="btn-pagina-inicial ativo" aria-pressed="true"><svg class="icone-casa" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 9v11h4.5v-6h4v6h4.5V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Página inicial</span></button>
         <nav class="menu-admin" aria-label="Seções da administração">
-          <button type="button" data-painel="painelAprovacoes" aria-pressed="false"><span class="rotulo-longo">Cadastros para aprovação</span><span class="rotulo-curto">Para aprovação</span><span id="contadorAprovacoes" class="badge-menu" hidden></span></button>
+          <button type="button" data-painel="painelAprovacoes" aria-pressed="false"><span class="rotulo-longo">Cadastros para aprovação</span><span class="rotulo-curto">Para aprovação</span><span id="contadorAprovacoes" class="badge-menu aguardando">…</span></button>
           <button type="button" data-painel="painelConsulta" aria-pressed="false"><span class="rotulo-longo">Consulta por apartamento</span><span class="rotulo-curto">Consulta por apto</span></button>
-          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências<span id="contadorPendencias" class="badge-menu" hidden></span></button>
+          <button type="button" data-painel="painelPendencias" aria-pressed="false">Pendências<span id="contadorPendencias" class="badge-menu aguardando">…</span></button>
           <button type="button" data-painel="painelRelatorios" aria-pressed="false">Relatórios</button>
           <button type="button" data-painel="painelLinks" aria-pressed="false">Links úteis</button>
           <button type="button" data-painel="painelGabarito" aria-pressed="false">Gabarito de vagas</button>
@@ -90,10 +90,10 @@
           <section id="painelLinks" class="painel-admin" hidden>
             <div class="painel-topo"><h2>Links úteis</h2><button type="button" class="btn-fechar-painel" aria-label="Fechar" title="Fechar">&times;</button></div>
             <div class="link-planilha-admin links-lista">
-              <a href="https://drive.google.com/drive/folders/1FTurO5xqwDv2g91N8n6ni34DOKnTnLFG?usp=sharing" target="_blank" rel="noopener noreferrer">Fichas individuais em PDF</a>
-              <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer">Contratos dos inquilinos</a>
-              <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Planilha com todos os dados</a>
-              <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer">Backup de planilhas anteriores</a>
+              <a href="https://drive.google.com/drive/folders/1FTurO5xqwDv2g91N8n6ni34DOKnTnLFG?usp=sharing" target="_blank" rel="noopener noreferrer" data-nova-aba>Fichas individuais em PDF</a>
+              <a href="https://drive.google.com/drive/folders/1suzcg7X3weWwFU44TM9MauYu63jddAxP?usp=sharing" target="_blank" rel="noopener noreferrer" data-nova-aba>Contratos dos inquilinos</a>
+              <a href="https://docs.google.com/spreadsheets/d/1E3gMvcYwkJaxoSnNp1ZL3PPJj6UzXS36iLCau0YSqYA/edit?usp=sharing" target="_blank" rel="noopener noreferrer" data-nova-aba>Planilha com todos os dados</a>
+              <a href="https://drive.google.com/drive/folders/1EKkLAM5PsL09IIiSkitG4cZ1JX3thknl?usp=sharing" target="_blank" rel="noopener noreferrer" data-nova-aba>Backup de planilhas anteriores</a>
               <a href="https://tinyurl.com/kit-souzafranco" target="_blank" rel="noopener noreferrer">Kit de Boas-vindas</a>
             </div>
           </section>
@@ -171,8 +171,15 @@
               Marque, para cada membro, quais e-mails ele recebe. A lista vem da página Membros; quem sair da
               administração deixa de receber.
             </p>
-            <div class="como-funcionam-notificacoes">
-              <strong>Como funcionam os e-mails do sistema</strong>
+            <div id="statusNotificacoes" class="status"></div>
+            <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
+            <div id="listaNotificacoes" class="lista-notificacoes"></div>
+            <div id="acoesNotificacoes" class="acoes-50">
+              <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
+              <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
+            </div>
+            <details class="como-funcionam-notificacoes">
+              <summary>Como funcionam os e-mails do sistema</summary>
               <ul>
                 <li><strong>Resumo mensal</strong> (para quem estiver marcado na coluna): no dia 1 de cada mês, um e-mail com todas as
                   alterações cadastrais do mês anterior e os links dos relatórios. Se nada mudou, não é enviado.</li>
@@ -186,14 +193,7 @@
                   cadastro novo, a cópia do cadastro em PDF a cada envio, o código para abrir o cadastro (se ele ativou) e o
                   lembrete de revisão uma vez por ano.</li>
               </ul>
-            </div>
-            <div id="statusNotificacoes" class="status"></div>
-            <div class="acoes-50" data-espelho="acoesNotificacoes"></div>
-            <div id="listaNotificacoes" class="lista-notificacoes"></div>
-            <div id="acoesNotificacoes" class="acoes-50">
-              <button type="button" id="btnDesfazerNotificacoes" class="btn-secundario">Desfazer</button>
-              <button type="button" id="btnSalvarNotificacoes">Salvar alterações</button>
-            </div>
+            </details>
             <h3 class="titulo-exemplo-email">Exemplos dos e-mails</h3>
             <div class="botoes-exemplo-email" role="group" aria-label="Exemplos dos e-mails">
               <button type="button" class="btn-exemplo-email" data-exemplo="resumo" aria-pressed="false">Resumo mensal</button>
@@ -344,7 +344,7 @@
         <div id="homeAdmin" class="home-admin">
         <!-- Seção recolhível (fechada por padrão). O histórico só é buscado ao abrir. -->
         <details id="historicoAdmin" class="card-historico">
-          <summary><span>Últimas alterações cadastrais</span><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
+          <summary><span>Últimas alterações cadastrais</span><b id="contadorHistorico" class="contagem-historico aguardando">…</b><button type="button" id="btnAtualizarHistorico" class="btn-atualizar-pendencias">Atualizar</button></summary>
           <div class="historico-conteudo">
             <div id="statusHistorico" class="status"></div>
             <ol id="listaHistorico" class="lista-historico"></ol>
@@ -376,41 +376,44 @@
 
   <div id="overlayProcessamento" class="overlay-processamento hidden" aria-live="polite" aria-busy="true">
     <div class="overlay-processamento-card">
+      <button type="button" class="overlay-processamento-fechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button>
       <div class="overlay-processamento-spinner" aria-hidden="true"></div>
       <p id="overlayProcessamentoMensagem">Aguarde: buscando cadastro</p>
     </div>
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="js/regras.js?v=20261009x"></script>
-  <script src="js/utils.js?v=20261009x"></script>
-  <script src="js/data/backend.js?v=20261009x"></script>
+  <script src="js/regras.js?v=20261009Z"></script>
+  <script src="js/utils.js?v=20261009Z"></script>
+  <script src="js/data/backend.js?v=20261009Z"></script>
 <footer class="rodape-site" style="max-width:750px;margin:18px auto 6px;text-align:center;font-size:0.82rem;">
   <a href="seguranca.html" style="display:inline-block;padding:6px 12px;border-radius:999px;border:1px solid #c9d7e5;background:#f3f7fb;color:#3b5873;font-size:0.84rem;font-weight:600;text-decoration:none;">Documentação: meus dados estão seguros?</a>
 </footer>
-  <script src="js/admin-auth.js?v=20261009x"></script>
-  <script src="js/admin-badges.js?v=20261009x"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261009x"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261009x"></script>
-  <script src="js/data/DataService.js?v=20261009x"></script>
-  <script src="js/admin-fonte-dados.js?v=20261009x"></script>
-  <script src="js/admin-simples.js?v=20261009x"></script>
-  <script src="js/admin-relatorio.js?v=20261009x"></script>
-  <script src="js/admin-busca.js?v=20261009x"></script>
-  <script src="js/admin-historico.js?v=20261009x"></script>
-  <script src="js/admin-pendencias.js?v=20261009x"></script>
-  <script src="js/admin-permissoes.js?v=20261009x"></script>
-  <script src="js/admin-autorizacoes.js?v=20261009y"></script>
-  <script src="js/admin-membros.js?v=20261009x"></script>
-  <script src="js/admin-bloqueios.js?v=20261009x"></script>
-  <script src="js/vaga-miniatura.js?v=20261009x"></script>
-  <script src="js/admin-aprovacoes.js?v=20261009x"></script>
-  <script src="js/admin-notificacoes.js?v=20261009x"></script>
-  <script src="js/admin-gabarito.js?v=20261009x"></script>
-  <script src="js/admin-acoes-espelho.js?v=20261009x"></script>
-  <script src="js/admin-pre-carga.js?v=20261009x"></script>
-  <script src="js/admin-paineis.js?v=20261009x"></script>
-  <script src="js/popup-links.js?v=20261009x"></script>
-  <script src="js/sem-conectivos.js?v=20261009x"></script>
+  <script src="js/admin-auth.js?v=20261009ZA"></script>
+  <script src="js/admin-badges.js?v=20261009Z"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261009Z"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261009Z"></script>
+  <script src="js/data/DataService.js?v=20261009Z"></script>
+  <script src="js/sessao-morador.js?v=20261009Z" defer></script>
+  <script src="js/sessao-admin-morador.js?v=20261009Z" defer></script>
+  <script src="js/admin-fonte-dados.js?v=20261009Z"></script>
+  <script src="js/admin-simples.js?v=20261009ZA"></script>
+  <script src="js/admin-relatorio.js?v=20261009Z"></script>
+  <script src="js/admin-busca.js?v=20261009Z"></script>
+  <script src="js/admin-historico.js?v=20261009Z"></script>
+  <script src="js/admin-pendencias.js?v=20261009Z"></script>
+  <script src="js/admin-permissoes.js?v=20261009Z"></script>
+  <script src="js/admin-autorizacoes.js?v=20261010a"></script>
+  <script src="js/admin-membros.js?v=20261009Z"></script>
+  <script src="js/admin-bloqueios.js?v=20261009Z"></script>
+  <script src="js/vaga-miniatura.js?v=20261009Z"></script>
+  <script src="js/admin-aprovacoes.js?v=20261009Z"></script>
+  <script src="js/admin-notificacoes.js?v=20261009Z"></script>
+  <script src="js/admin-gabarito.js?v=20261009Z"></script>
+  <script src="js/admin-acoes-espelho.js?v=20261009Z"></script>
+  <script src="js/admin-pre-carga.js?v=20261009Z"></script>
+  <script src="js/admin-paineis.js?v=20261009Z"></script>
+  <script src="js/popup-links.js?v=20261009Z"></script>
+  <script src="js/sem-conectivos.js?v=20261009Z"></script>
 </body>
 </html>

@@ -60,6 +60,13 @@
     listarHistorico: function(limite) {
       return chamarBackend("fbListarHistorico", { limite: limite }, true);
     },
+    // Números das bolinhas do menu (guardados no servidor, só os que o usuário pode ver).
+    obterContadores: function() {
+      return chamarBackend("fbObterContadores", {}, true);
+    },
+    salvarContador: function(nome, total) {
+      return chamarBackend("fbSalvarContador", { nome: nome, total: total }, true);
+    },
     // Membros da administração (quem acessa a área restrita e com qual papel).
     obterMembros: function() {
       return chamarBackend("fbObterMembros", {}, true);

@@ -360,10 +360,6 @@
     return '<div class="campo campo-frase"><p class="campo-valor">' + escaparHtml(base) + ' o <strong>' + escaparHtml(textoApto) + '</strong></p></div>';
   }
 
-  function secaoHtml(titulo, camposHtml) {
-    return '<section class="secao"><h2>' + titulo + '</h2><div class="grid-campos">' + camposHtml.join("") + '</div></section>';
-  }
-
   function extrairCamposLinha(valor, quantidade) {
     var texto = textoLimpo(valor);
     if (!texto) {
@@ -764,6 +760,10 @@
 
   window.adminSimplesCarregarApartamento = carregarRegistro;
   window.setOverlayAdmin = setOverlayAdmin;
+  // × do "Aguarde": o usuário desiste da espera (a operação, se já foi enviada, termina sozinha).
+  document.addEventListener("click", function(e) {
+    if (e.target.closest && e.target.closest(".overlay-processamento-fechar")) setOverlayAdmin(false);
+  });
 
   function iniciarAppAdmin() {
     if (appInicializado) {

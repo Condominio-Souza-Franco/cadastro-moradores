@@ -70,7 +70,7 @@
           '<li><strong>Condomínio</strong> → altera as colunas do Síndico, Conselho e Administradora</li>' +
           '<li><strong>Síndico</strong> → altera as colunas do Conselho e da Administradora</li>' +
           '<li><strong>Administradora</strong> → só visualiza</li>' +
-          '<li><strong>Conselho</strong> → só visualiza, exceto em Membros e Notificações: nessas duas páginas, sempre pode mudar o próprio e-mail e desligar os próprios avisos, mesmo sem outras autorizações</li>' +
+          '<li><strong>Conselho</strong> → sempre pode ver e escrever em Membros e Notificações, mas só no que é dele: o próprio e-mail de acesso e quais e-mails recebe (por isso essas caixinhas ficam travadas)</li>' +
         '</ul>' +
         (dados.podeEditar ? '' : '<p class="aut-so-ver">Você pode apenas visualizar esta tabela.</p>') +
       '</div>' +

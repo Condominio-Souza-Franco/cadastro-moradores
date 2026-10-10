@@ -49,6 +49,14 @@ function formatarListaCamposFaltantes(campos) {
   return `${campos.slice(0, -1).join(', ')} e ${campos[campos.length - 1]}`;
 }
 
+// × do "Aguarde" (em qualquer página): a pessoa desiste da espera; o envio, se já saiu, termina sozinho.
+document.addEventListener('click', function(e) {
+  if (e.target.closest && e.target.closest('.overlay-processamento-fechar')) {
+    const overlay = e.target.closest('.overlay-processamento');
+    if (overlay && overlay.id === 'overlayProcessamento') setOverlayProcessamento(false);
+  }
+});
+
 function setOverlayProcessamento(visivel, mensagem) {
   const overlay = document.getElementById('overlayProcessamento');
   const mensagemEl = document.getElementById('overlayProcessamentoMensagem');
@@ -75,23 +83,6 @@ function setOverlayProcessamento(visivel, mensagem) {
       window.__animacaoOverlayProcessamento = null;
     }
   }
-}
-
-function interpretarRespostaComoJson(response, contextoErro) {
-  return response.text().then(function(texto) {
-    try {
-      return JSON.parse(texto);
-    } catch (erroParse) {
-      var textoNormalizado = String(texto || "").trim();
-      var servidorRetornouHtml = textoNormalizado.startsWith("<!DOCTYPE") || textoNormalizado.startsWith("<html");
-
-      if (servidorRetornouHtml) {
-        throw new Error(contextoErro + " O servidor retornou uma página HTML em vez de JSON. Verifique se o Apps Script foi publicado/reimplantado corretamente e se não ocorreu erro interno no script.");
-      }
-
-      throw new Error(contextoErro + " Resposta inválida do servidor.");
-    }
-  });
 }
 
 function normalizarHistoricoContratosParaEnvio(contratos) {
