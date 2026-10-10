@@ -96,7 +96,7 @@
     if (indicador) { indicador.dataset.manual = "1"; indicador.textContent = "Carregando"; indicador.classList.add("carregando-indicador"); }
     function restaurar() { if (indicador) { delete indicador.dataset.manual; indicador.textContent = textoAntes; indicador.classList.remove("carregando-indicador"); } }
     setStatus("", "");
-    var antecipada = preCarga && Date.now() - preCarga.em < 60000 ? preCarga.r : null;
+    var antecipada = preCarga && Date.now() - preCarga.em < 150000 ? preCarga.r : null;
     preCarga = null;
     return (antecipada ? Promise.resolve(antecipada) : window.Backend.chamar("fbObterAutorizacoes", {}, true)).then(function(r) {
       if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível carregar as autorizações.");
