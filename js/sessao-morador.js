@@ -6,7 +6,7 @@
 //   - o Kit abre direto, sem pedir de novo;
 //   - na página inicial, os campos da consulta ficam preenchidos e travados, mostrando só os 3
 //     primeiros dígitos do CPF e o dia do aniversário; no lugar de "Buscar Cadastro" e
-//     "Novo cadastro" aparecem "Visualizar cadastro" e "Sair".
+//     "Novo cadastro" aparecem "Visualizar cadastro" e "Sair" (o "Sair" também fica ao lado do nome, no topo).
 // A hora de início não muda ao usar o site: a sessão vale 1 hora a partir do primeiro acesso.
 //
 // Por que sessionStorage (e não localStorage): os dados ficam só nesta aba e somem ao fechá-la,
@@ -131,13 +131,12 @@
       nasc.classList.remove("input-erro-destaque", "input-ok-destaque");
       buscar.disabled = false;
       buscar.innerText = "Visualizar cadastro";
-      // Com a sessão, "Novo cadastro" fica desativado: o "Sair" fica ao lado do nome, no topo da página.
-      novo.textContent = "Novo cadastro";
-      novo.classList.remove("ativo");
-      novo.classList.add("bloqueado");
-      novo.classList.add("travado-sessao");
-      novo.setAttribute("aria-disabled", "true");
-      novo.title = "Para abrir outro cadastro, primeiro clique em Sair (ao lado do seu nome, no topo)";
+      // Com a sessão, "Novo cadastro" vira "Sair" (redundância do "Sair" ao lado do nome, no topo da página):
+      // o clique é tratado em alternarMoradorNovo() (form-controle.js), que chama sair().
+      novo.textContent = "Sair";
+      novo.classList.remove("ativo", "bloqueado");
+      novo.setAttribute("aria-disabled", "false");
+      novo.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
       var linha = novo.closest(".row-checkbox-morador");
       if (linha) linha.classList.remove("bloqueado");
     } else if (telaTravada()) {
@@ -149,7 +148,6 @@
       buscar.disabled = false;
       buscar.innerText = "Buscar Cadastro";
       novo.textContent = "Novo cadastro";
-      novo.classList.remove("travado-sessao");
       novo.title = "";
       if (typeof atualizarBloqueioNovoCadastro === "function") atualizarBloqueioNovoCadastro();
     }

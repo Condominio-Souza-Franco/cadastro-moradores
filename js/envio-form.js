@@ -68,6 +68,8 @@ function setOverlayProcessamento(visivel, mensagem) {
   }
 
   if (visivel) {
+    // Já aberto (só mudou a mensagem): a contagem continua de onde está.
+    if (overlay.classList.contains('hidden') && window.ProgressoOverlay) window.ProgressoOverlay.iniciar();
     overlay.classList.remove('hidden');
     if (spinner && typeof spinner.animate === 'function') {
       if (window.__animacaoOverlayProcessamento) window.__animacaoOverlayProcessamento.cancel();
@@ -77,11 +79,15 @@ function setOverlayProcessamento(visivel, mensagem) {
       );
     }
   } else {
-    overlay.classList.add('hidden');
-    if (window.__animacaoOverlayProcessamento) {
-      window.__animacaoOverlayProcessamento.cancel();
-      window.__animacaoOverlayProcessamento = null;
-    }
+    const fechar = function() {
+      overlay.classList.add('hidden');
+      if (window.__animacaoOverlayProcessamento) {
+        window.__animacaoOverlayProcessamento.cancel();
+        window.__animacaoOverlayProcessamento = null;
+      }
+    };
+    if (window.ProgressoOverlay && !overlay.classList.contains('hidden')) window.ProgressoOverlay.concluir(fechar);
+    else fechar();
   }
 }
 

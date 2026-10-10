@@ -151,7 +151,8 @@ function atualizarEstadoBotaoNovoCadastro(ativo, bloqueado) {
 }
 
 function alternarMoradorNovo() {
-  // Com a sessão de 1 hora (js/sessao-morador.js), "Novo cadastro" fica desativado (o Sair fica no topo).
+  // Com a sessão de 1 hora (js/sessao-morador.js), o botão vira "Sair" e faz o mesmo que o "Sair" do topo.
+  if (sessaoMoradorAberta()) { window.SessaoMorador.sair(); return; }
   if (estaLogado()) return;
   const chkMoradorNovo = document.getElementById('chkMoradorNovo');
   const cpfConsulta = document.getElementById('cpfConsulta');
@@ -183,6 +184,10 @@ function fecharNovoCadastro() {
   tratarMoradorNovo(false);
 }
 
+function sessaoMoradorAberta() {
+  return !!(window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter());
+}
+
 // Logado = sessão de morador aberta, ou login da área de admin nesta aba.
 function estaLogado() {
   if (window.SessaoMorador && window.SessaoMorador.obter && window.SessaoMorador.obter()) return true;
@@ -199,10 +204,12 @@ function atualizarBloqueioNovoCadastro() {
 
   const temCpfDigitado = String(cpfConsulta.value || '').trim() !== '';
   const temNascDigitada = String(nascConsulta.value || '').trim() !== '';
-  const deveBloquear = temCpfDigitado || temNascDigitada || estaLogado();
+  // Com a sessão do morador o botão é o "Sair" (nunca bloqueado, mesmo com o CPF censurado no campo).
+  const comSessao = sessaoMoradorAberta();
+  const deveBloquear = !comSessao && (temCpfDigitado || temNascDigitada || estaLogado());
 
   chkMoradorNovo.disabled = false;
-  if (deveBloquear) {
+  if (deveBloquear || comSessao) {
     chkMoradorNovo.checked = false;
   }
 
