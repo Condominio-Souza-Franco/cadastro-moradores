@@ -99,6 +99,42 @@
     status.textContent = texto || "";
   }
 
+  // Porcentagem dentro da bolinha (só no "Carregando a administração"): o número sobe de forma suave
+  // até o valor real. null desliga e a bolinha volta ao tamanho normal.
+  var pctExibido = 0;
+  var pctAlvo = 0;
+  var pctTimer = null;
+
+  function desenharPercentual() {
+    var el = document.getElementById("overlayProcessamentoPercentual");
+    if (el) el.textContent = pctExibido + "%";
+  }
+
+  function setProgressoOverlayAdmin(pct) {
+    var overlay = document.getElementById("overlayProcessamento");
+    if (!overlay) return;
+    if (pct === null || pct === undefined) {
+      clearInterval(pctTimer);
+      pctTimer = null;
+      pctExibido = 0;
+      pctAlvo = 0;
+      overlay.classList.remove("com-percentual");
+      return;
+    }
+    pctAlvo = Math.max(0, Math.min(100, Math.round(pct)));
+    if (!overlay.classList.contains("com-percentual")) {
+      pctExibido = 0;
+      overlay.classList.add("com-percentual");
+    }
+    desenharPercentual();
+    if (pctTimer) return;
+    pctTimer = setInterval(function() {
+      if (pctExibido >= pctAlvo) { clearInterval(pctTimer); pctTimer = null; return; }
+      pctExibido = Math.min(pctAlvo, pctExibido + Math.max(1, Math.ceil((pctAlvo - pctExibido) / 6)));
+      desenharPercentual();
+    }, 30);
+  }
+
   function setOverlayAdmin(visivel, mensagem) {
     var overlay = document.getElementById("overlayProcessamento");
     var mensagemEl = document.getElementById("overlayProcessamentoMensagem");
@@ -120,6 +156,7 @@
       }
     } else {
       overlay.classList.add("hidden");
+      setProgressoOverlayAdmin(null);
       if (animacaoOverlay) {
         animacaoOverlay.cancel();
         animacaoOverlay = null;
@@ -702,6 +739,17 @@
     });
   }
 
+  // O cadastro pode ser aberto por outro caminho (busca geral, pendências...): o seletor da Consulta
+  // passa a mostrar o apartamento que está na tela. Se não houver a opção, deixa como está.
+  function sincronizarSelectApto(apto, ocorrencia) {
+    var select = document.getElementById("aptoAdmin");
+    if (!select) return;
+    var valor = String(apto || "").trim() + "__" + (String(ocorrencia || "").trim() || "1");
+    for (var i = 0; i < select.options.length; i++) {
+      if (select.options[i].value === valor) { select.value = valor; return; }
+    }
+  }
+
   function carregarRegistro(apto, ocorrencia) {
     // O cadastro aparece no painel "Consulta por apartamento" (abre e vai para o topo).
     if (window.AdminPaineis) window.AdminPaineis.abrir("painelConsulta");
@@ -733,6 +781,7 @@
         }
 
         setStatus("Dados carregados com sucesso.", "ok");
+        sincronizarSelectApto(apto, ocorrencia);
         renderizarDados(validas, ocorrencia);
         return true;
       })
@@ -760,6 +809,7 @@
 
   window.adminSimplesCarregarApartamento = carregarRegistro;
   window.setOverlayAdmin = setOverlayAdmin;
+  window.setProgressoOverlayAdmin = setProgressoOverlayAdmin;
   // × do "Aguarde": o usuário desiste da espera (a operação, se já foi enviada, termina sozinha).
   document.addEventListener("click", function(e) {
     if (e.target.closest && e.target.closest(".overlay-processamento-fechar")) setOverlayAdmin(false);
