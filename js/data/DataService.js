@@ -244,7 +244,7 @@
   // Qualquer gravação (salvar, ignorar, desbloquear...) apaga o cache inteiro.
   // sessionStorage: some ao fechar a aba ou sair; nada fica guardado de forma permanente no aparelho.
   var PREFIXO_CACHE_ADMIN = "cacheAdmin_";
-  var SEGUNDOS_SEM_REVALIDAR = 20;
+  var SEGUNDOS_SEM_REVALIDAR = 150; // 2min30: abrir uma página logo após o login não busca de novo; "Atualizar" força
 
   function ehAreaAdmin() { return /admin\.html$/.test(location.pathname); }
 
