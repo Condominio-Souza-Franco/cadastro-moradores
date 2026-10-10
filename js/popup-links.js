@@ -45,6 +45,11 @@
     ".popup-link-aviso[hidden]{display:none}" +
     ".popup-link iframe{flex:1;width:100%;border:0;background:#f4f7f6}" +
     ".popup-link-caixa{position:relative}" +
+    // Kit de Boas-vindas: sem a caixa de fora (topo com título e ×); só o cartão da própria página,
+    // que traz o seu × (kit.html avisa o popup por mensagem).
+    ".popup-link-kit .popup-link-caixa{width:min(800px,100%);background:transparent;box-shadow:none;border-radius:0;overflow:visible}" +
+    ".popup-link-kit .popup-link-topo,.popup-link-kit .popup-link-aviso{display:none}" +
+    ".popup-link-kit iframe{background:transparent;color-scheme:light}" +
     "@keyframes popupGirar{to{transform:rotate(360deg)}}" +
     "body.popup-link-aberto{overflow:hidden}";
 
@@ -72,6 +77,11 @@
     });
     popup.querySelector(".popup-link-nova").addEventListener("click", fechar);
     document.addEventListener("keydown", function(e) { if (e.key === "Escape") fechar(); });
+    // Pedido de fechar vindo da página embutida (× do kit).
+    window.addEventListener("message", function(e) {
+      var quadro = popup.querySelector("iframe");
+      if (e.origin === location.origin && e.source === quadro.contentWindow && e.data === "fechar-popup-link") fechar();
+    });
     return popup;
   }
 
@@ -85,6 +95,7 @@
     if (linkNova) nova.href = linkNova;
     nova.textContent = textoNova || "Abrir em nova aba";
     p.querySelector(".popup-link-titulo").textContent = titulo || "";
+    p.classList.toggle("popup-link-kit", /kit\.html/.test(embutida));
     p.querySelector(".popup-link-aviso").hidden = !/(drive|docs).google.com/.test(embutida);
     // Pasta do kit: janela pequena com "Carregando..." até a pasta ficar pronta (aí vira grande).
     var caixa = p.querySelector(".popup-link-caixa");

@@ -29,6 +29,7 @@
       line-height: 1.6;
     }
     main {
+      position: relative;
       max-width: 750px;
       margin: 0 auto;
       background: var(--cartao);
@@ -36,6 +37,16 @@
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
+    /* Dentro do popup (js/popup-links.js) não há caixa de fora: o × fica no próprio cartão. */
+    .fechar-embutido {
+      display: none; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; padding: 0;
+      align-items: center; justify-content: center; border: 1px solid var(--borda); border-radius: 50%;
+      background: #fff; color: var(--texto); cursor: pointer;
+    }
+    .fechar-embutido:hover { background: #f1f4f8; }
+    html.embutido body { background: transparent; }
+    html.embutido .fechar-embutido { display: flex; }
+    html.embutido .voltar { display: block; margin-right: 40px; }
     .voltar { font-size: 0.9rem; font-weight: 600; color: var(--destaque); text-decoration: none; }
     h1 { font-size: 1.5rem; line-height: 1.3; margin: 12px 0 6px; text-wrap: balance; }
     h2 { font-size: 1.05rem; margin: 22px 0 8px; }
@@ -107,7 +118,21 @@
 </style>
 </head>
 <body>
+<script>
+  // Dentro do popup do site: sem fundo próprio, e o × (ou Esc, ou clicar fora do cartão) fecha o popup.
+  (function() {
+    if (window.parent === window) return;
+    document.documentElement.classList.add("embutido");
+    function fechar() { window.parent.postMessage("fechar-popup-link", location.origin); }
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelector(".fechar-embutido").addEventListener("click", fechar);
+      document.addEventListener("click", function(e) { if (!e.target.closest("main")) fechar(); });
+    });
+    document.addEventListener("keydown", function(e) { if (e.key === "Escape") fechar(); });
+  })();
+</script>
 <main>
+  <button type="button" class="fechar-embutido" aria-label="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button>
   <a class="voltar" href="index.html">← voltar para o cadastro de moradores</a>
   <h1>Kit de Boas-vindas</h1>
   <p class="subtitulo">Os documentos e orientações mais importantes para a convivência no Condomínio Souza Franco.</p>
@@ -346,7 +371,7 @@
 
   })();
 </script>
-<script src="js/popup-links.js?v=20261009Z"></script>
+<script src="js/popup-links.js?v=20261010C"></script>
 <script src="js/sem-conectivos.js?v=20261009Z"></script>
 </body>
 </html>
