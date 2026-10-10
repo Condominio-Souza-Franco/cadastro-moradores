@@ -8,9 +8,11 @@
   --text: #243447;
   --muted: #5f7287;
   --ok: #0b6a2f;
+  --error: #a12622;
+}
+
 .secao + .secao {
   margin-top: 16px;
-  --error: #a12622;
 }
 
 body {
@@ -1412,10 +1414,6 @@ button:hover {
 /* ==========================================
    REVISÃO DO LAYOUT: FONTE MENOR, PÁGINAS SEM CAIXA, CADASTRO "ACHATADO"
    ========================================== */
-/* Tudo na página usa rem: baixar a base reduz a fonte de forma geral. */
-html {
-  font-size: 14px;
-}
 
 /* Páginas (painéis) sem caixa própria: só uma linha separando do menu (e entre páginas). */
 .paineis-admin {
