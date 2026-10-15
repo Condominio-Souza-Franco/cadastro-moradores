@@ -2905,23 +2905,35 @@ button.pendencia-item::before {
 .aprov-mapa a { display: block; max-width: 320px; border: 1px solid #d7e0ea; border-radius: 8px; padding: 4px; background: #fff; }
 .aprov-mapa svg { display: block; width: 100%; height: auto; }
 
-/* ---------- Menu: 1ª linha "Cadastros para aprovação" + "Pendências" (50/50); depois 4 + 3 na tela
-   larga e 2 + 2 + 3 no celular (grade de 24 colunas, sem "viúva"). ---------- */
+/* ---------- Menu (grade de 24 colunas, sem "viúva"):
+   1ª linha: os 3 botões com bolinha (Cadastros para aprovação · Pendências · Bloqueios), com visual
+   levemente diferente; uma linha fina os separa dos outros 6, que ficam 3 + 3 (celular: 2 + 2 + 2). ---------- */
 .menu-admin button { position: relative; overflow: visible; }
-.menu-admin button[data-painel="painelAprovacoes"] { order: 1; grid-column: span 12 !important; }
-.menu-admin button[data-painel="painelPendencias"] { order: 2; grid-column: span 12 !important; }
-.menu-admin button[data-painel="painelConsulta"] { order: 3; grid-column: span 7 !important; }
-.menu-admin button[data-painel="painelRelatorios"] { order: 4; grid-column: span 5 !important; }
-.menu-admin button[data-painel="painelLinks"] { order: 5; grid-column: span 5 !important; }
-.menu-admin button[data-painel="painelGabarito"] { order: 6; grid-column: span 7 !important; }
-.menu-admin button[data-painel="painelMembros"] { order: 7; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelNotificacoes"] { order: 8; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelBloqueios"] { order: 9; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelAprovacoes"] { order: 1; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelPendencias"] { order: 2; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelBloqueios"] { order: 3; grid-column: span 8 !important; }
+.menu-admin .menu-admin-divisor {
+  order: 4; grid-column: 1 / -1; height: 1px; margin: 4px 0;
+  background: linear-gradient(90deg, transparent, #cfdbe8 18%, #cfdbe8 82%, transparent);
+}
+.menu-admin button[data-painel="painelConsulta"] { order: 5; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelRelatorios"] { order: 6; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelLinks"] { order: 7; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelGabarito"] { order: 8; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelMembros"] { order: 9; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelNotificacoes"] { order: 10; grid-column: span 8 !important; }
 @media (max-width: 560px) {
   .menu-admin button[data-painel="painelConsulta"],
   .menu-admin button[data-painel="painelRelatorios"],
   .menu-admin button[data-painel="painelLinks"],
-  .menu-admin button[data-painel="painelGabarito"] { grid-column: span 12 !important; }
+  .menu-admin button[data-painel="painelGabarito"],
+  .menu-admin button[data-painel="painelMembros"],
+  .menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 12 !important; }
+}
+/* Botões com bolinha: fundo e borda levemente azulados (destaque discreto em relação aos demais). */
+.menu-admin button.btn-menu-badge:not(.ativo):not(.sem-autorizacao) {
+  background: #f1f6fb;
+  border-color: #c3d4e6;
 }
 /* Bolinha vermelha com a quantidade (estilo notificação de aplicativo), no canto do botão. */
 .badge-menu {

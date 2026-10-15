@@ -1,14 +1,14 @@
 // ==========================================
-// BOLINHAS DE CONTAGEM DO MENU (PENDÊNCIAS, CADASTROS PARA APROVAÇÃO, ÚLTIMAS ALTERAÇÕES)
+// BOLINHAS DE CONTAGEM DO MENU (PENDÊNCIAS, CADASTROS PARA APROVAÇÃO, BLOQUEIOS, ÚLTIMAS ALTERAÇÕES)
 // ==========================================
 // Cada número fica guardado no servidor (config/contadores). Ao entrar na administração, a página lê
-// os três de uma vez e mostra as bolinhas juntas, só depois dessa leitura. Quando uma lista carrega,
+// todos de uma vez e mostra as bolinhas juntas, só depois dessa leitura. Quando uma lista carrega,
 // a página grava o número novo no servidor e a bolinha muda sozinha.
 // Se o número for 0, a bolinha fica verde com "OK".
 // Só guarda números (nenhum dado de morador). Quem não tem autorização para a página não vê a bolinha.
 (function() {
   // Bolinha -> autorização exigida (Membros > Autorizações).
-  var PERMISSAO = { contadorPendencias: "pendencias", contadorAprovacoes: "aprovacoes", contadorHistorico: "historico" };
+  var PERMISSAO = { contadorPendencias: "pendencias", contadorAprovacoes: "aprovacoes", contadorHistorico: "historico", contadorBloqueios: "bloqueios" };
   var valores = {};      // número conhecido de cada bolinha (vindo da lista ou do servidor)
   var gravados = {};     // último número enviado ao servidor, para não gravar à toa
   var pronto = false;    // as bolinhas só aparecem depois da leitura conjunta do servidor

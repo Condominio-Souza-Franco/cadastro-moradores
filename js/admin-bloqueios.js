@@ -45,8 +45,19 @@
     "</div>";
   }
 
+  // Bolinha com a quantidade de CPFs bloqueados no botão "Bloqueios" do menu (0 = "OK" verde).
+  // A última contagem fica guardada (js/admin-badges.js) e aparece assim que a página abre.
+  function atualizarBadgeBloqueios(r) {
+    if (window.BadgeMenu && r && r.sucesso) window.BadgeMenu.definir("contadorBloqueios", (r.ativos || []).length);
+  }
+  window.addEventListener("cache-admin-gravado", function(e) {
+    if (!e.detail || e.detail.nome !== "listarBloqueios" || !window.DataService) return;
+    DataService.listarBloqueios().then(atualizarBadgeBloqueios).catch(function() {});
+  });
+
   function renderizar(r) {
     var ativos = r.ativos || [];
+    atualizarBadgeBloqueios({ sucesso: true, ativos: ativos });
     var historico = r.historico || [];
     document.getElementById("listaBloqueiosAtivos").innerHTML = ativos.length
       ? ativos.map(function(b) { return cartao(b, true); }).join("")
