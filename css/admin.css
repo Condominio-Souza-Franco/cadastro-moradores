@@ -2930,6 +2930,32 @@ button.pendencia-item::before {
   .menu-admin button[data-painel="painelMembros"],
   .menu-admin button[data-painel="painelNotificacoes"] { grid-column: span 12 !important; }
 }
+/* Botões com bolinha: mais altos, texto centrado (na horizontal e na vertical) e, quando preciso, em duas
+   linhas ("Cadastros / para aprovação"): a bolinha fica no canto, sem encostar no texto. */
+.menu-admin button.btn-menu-badge {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 58px; padding-top: 8px; padding-bottom: 8px; line-height: 1.2;
+}
+/* Mais espaço entre "Página inicial" e os botões com bolinha (a bolinha sobressai acima do botão). */
+#conteudoPrincipalAdmin .btn-pagina-inicial { margin-bottom: 20px; }
+
+/* Visualizar como (só o desenvolvedor). */
+.visualizar-como { display: flex; align-items: center; gap: 8px; margin: 2px 0 10px; font-size: 0.78rem; color: var(--muted); }
+.visualizar-como[hidden], .aviso-visualizar-como[hidden] { display: none; }
+.visualizar-como select {
+  flex: 1; min-width: 0; height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--primary-color); font-size: 0.8rem; font-weight: 600;
+}
+.aviso-visualizar-como {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  margin: 0 0 10px; padding: 8px 10px; border: 1px solid #f0c36d; border-radius: 10px;
+  background: #fff8e6; color: #6b4e00; font-size: 0.78rem; line-height: 1.35;
+}
+.aviso-visualizar-como button {
+  height: 26px; padding: 0 12px; border: 1px solid #c9a24a; border-radius: 999px; background: #fff;
+  color: #6b4e00; font-size: 0.74rem; font-weight: 700; cursor: pointer;
+}
+
 /* Botões com bolinha: fundo e borda levemente azulados (destaque discreto em relação aos demais). */
 .menu-admin button.btn-menu-badge:not(.ativo):not(.sem-autorizacao) {
   background: #f1f6fb;
