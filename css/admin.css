@@ -2918,10 +2918,10 @@ button.pendencia-item::before {
 }
 .menu-admin button[data-painel="painelConsulta"] { order: 5; grid-column: span 8 !important; }
 .menu-admin button[data-painel="painelRelatorios"] { order: 6; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelLinks"] { order: 7; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelGabarito"] { order: 8; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelMembros"] { order: 9; grid-column: span 8 !important; }
-.menu-admin button[data-painel="painelNotificacoes"] { order: 10; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelLinks"] { order: 10; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelGabarito"] { order: 7; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelMembros"] { order: 8; grid-column: span 8 !important; }
+.menu-admin button[data-painel="painelNotificacoes"] { order: 9; grid-column: span 8 !important; }
 @media (max-width: 560px) {
   .menu-admin button[data-painel="painelConsulta"],
   .menu-admin button[data-painel="painelRelatorios"],
