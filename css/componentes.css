@@ -396,7 +396,7 @@ body.kit-modal-aberto { overflow: hidden; }
 .kit-btn { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; box-sizing: border-box; border: 1px solid var(--accent-color, #2f5f98); border-radius: 10px; background: var(--accent-color, #2f5f98); color: #fff; font-size: 0.92rem; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; }
 .kit-btn:disabled { opacity: 0.6; cursor: default; }
 .kit-btn-secundario { background: #fff; color: var(--accent-color, #2f5f98); }
-.kit-btn-secundario:hover { background: #e9f1fa; text-decoration: none; }
+.kit-btn-secundario:hover { background: #e9f1fa; color: #1f4d80; text-decoration: none; }
 .kit-mensagem { min-height: 1.2em; margin: 8px 0 0 !important; font-size: 0.8rem !important; }
 .kit-mensagem.erro { color: #c62828 !important; }
 .kit-mensagem.carregando { font-style: italic; }
