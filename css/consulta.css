@@ -39,7 +39,8 @@
 #cpfConsulta,
 #nascConsulta,
 #btnBuscarCpf,
-#btnMoradorNovo {
+#btnMoradorNovo,
+#btnSairConsulta {
   width: 100% !important;
   min-height: 50px !important;
   height: 50px !important;

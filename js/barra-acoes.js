@@ -60,7 +60,7 @@
     identidade.hidden = !nome && !sessao && !administradora;
     if (identidade.hidden) return;
     identidadeTexto.textContent = nome
-      ? [nome, apto ? "Apto " + apto : "", String(email).trim()].filter(Boolean).join(" · ")
+      ? [apto ? "Apto " + apto : "", nome, String(email).trim()].filter(Boolean).join(" · ")
       : (administradora ? "Administradora - " + administradora.email : "Você está conectado");
   }
 

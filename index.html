@@ -19,10 +19,10 @@
   <!-- Estilos CSS -->
   <link rel="stylesheet" href="css/base.css?v=20261009Z">
   <link rel="stylesheet" href="css/inputs.css?v=20261010E">
-  <link rel="stylesheet" href="css/consulta.css?v=20261009Z">
-  <link rel="stylesheet" href="css/componentes.css?v=20261010F">
+  <link rel="stylesheet" href="css/consulta.css?v=20261015A">
+  <link rel="stylesheet" href="css/componentes.css?v=20261015A">
   <link rel="stylesheet" href="css/utilitarios.css?v=20261010E">
-  <link rel="stylesheet" href="css/responsivo.css?v=20261010I">
+  <link rel="stylesheet" href="css/responsivo.css?v=20261015A">
 
   <!-- Scripts JS -->
   <script src="js/regras.js?v=20261009Z" defer></script>
@@ -34,8 +34,8 @@
   <script src="js/mascaras.js?v=20261009Z" defer></script>
   <script src="js/pular-campo.js?v=20261009Z" defer></script>
   <script src="js/ui-formulario.js?v=20261009Z" defer></script>
-  <script src="js/form-controle.js?v=20261010E" defer></script>
-  <script src="js/sessao-morador.js?v=20261010H" defer></script>
+  <script src="js/form-controle.js?v=20261015A" defer></script>
+  <script src="js/sessao-morador.js?v=20261015A" defer></script>
   <script src="js/sessao-admin-morador.js?v=20261009Z" defer></script>
   <script src="js/validacoes-form.js?v=20261009Z" defer></script>
   <script src="js/codigo-email.js?v=20261009Z"></script>
@@ -47,7 +47,7 @@
   <script src="js/popup-links.js?v=20261010C" defer></script>
   <script src="js/sem-conectivos.js?v=20261009Z" defer></script>
   <script src="js/kit-acesso.js?v=20261009Z" defer></script>
-  <script src="js/barra-acoes.js?v=20261009ZA" defer></script>
+  <script src="js/barra-acoes.js?v=20261015A" defer></script>
 </head>
 <body>
 
@@ -99,6 +99,7 @@
     <div class="row-checkbox-morador">
       <input type="checkbox" id="chkMoradorNovo" onchange="tratarMoradorNovo(this.checked)" hidden>
       <button type="button" id="btnMoradorNovo" class="btn-novo-cadastro" onclick="alternarMoradorNovo()" aria-pressed="false" aria-disabled="false">Novo cadastro</button>
+      <button type="button" id="btnSairConsulta" class="btn-novo-cadastro btn-sair-sessao" onclick="SessaoMorador.sair()" title="Encerrar a sessão e apagar o CPF e a data de nascimento desta aba" hidden>Sair</button>
       <button type="button" id="btnFecharNovoCadastro" class="btn-fechar-novo-cadastro hidden" onclick="fecharNovoCadastro()" aria-label="Fechar novo cadastro">x</button>
     </div>
     <!-- Sessão de 1 hora depois do CPF + data de nascimento (js/sessao-morador.js). -->
