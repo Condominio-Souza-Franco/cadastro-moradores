@@ -93,6 +93,12 @@
       return chamarBackend("fbDesbloquear", { id: id }, true);
     },
     // Quem recebe o e-mail com as alterações cadastrais.
+    obterHistoricoCargos: function() {
+      return chamarBackend("fbObterHistoricoCargos", {}, true);
+    },
+    salvarHistoricoCargos: function(itens) {
+      return chamarBackend("fbSalvarHistoricoCargos", { itens: itens }, true);
+    },
     obterNotificacoes: function() {
       return chamarBackend("fbObterNotificacoes", {}, true);
     },

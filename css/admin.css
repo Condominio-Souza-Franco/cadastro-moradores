@@ -2950,6 +2950,38 @@ button.pendencia-item::before {
 @media (max-width: 560px) {
   #conteudoPrincipalAdmin .topo-links { flex-direction: column; align-items: flex-start; }
 }
+/* Dados: abas e Histórico de cargos. */
+.abas-dados { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.aba-dados {
+  height: 30px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+  color: var(--accent-color); font-size: 0.8rem; font-weight: 700; cursor: pointer;
+}
+.aba-dados.ativo { background: var(--accent-color); border-color: var(--accent-color); color: #fff; }
+.form-cargo-hist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; margin: 10px 0 8px; }
+.form-cargo-hist label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; font-weight: 700; color: var(--primary-color); }
+.form-cargo-hist .opcional { font-weight: 400; color: var(--muted); }
+.form-cargo-hist input, .form-cargo-hist select {
+  width: 100%; height: 34px; padding: 0 8px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text); font-size: 0.85rem; font-weight: 400;
+}
+.form-cargo-hist input:read-only { background: #f3f6fa; }
+.form-cargo-hist-botoes { grid-column: 1 / -1; display: flex; gap: 8px; }
+.form-cargo-hist-botoes button { height: 34px; padding: 0 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.form-cargo-hist-botoes .btn-secundario { background: #fff; color: var(--accent-color); border: 1px solid var(--accent-color); }
+.lista-cargos-hist { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.cargo-hist-item { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.cargo-hist-item.atual { border-color: #c3d4e6; background: #f1f6fb; }
+.cargo-hist-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--primary-color); }
+.cargo-hist-acoes { display: flex; gap: 6px; }
+.cargo-hist-acoes button {
+  height: 24px; min-width: 24px; padding: 0 10px; border: 1px solid #b9c8d8; border-radius: 999px; background: #fff;
+  color: var(--primary-color-soft); font-size: 0.72rem; font-weight: 700; cursor: pointer;
+}
+.cargo-hist-acoes .btn-cargo-remover { padding: 0; font-size: 1rem; line-height: 1; }
+.cargo-hist-nome { margin-top: 2px; font-size: 0.88rem; }
+.cargo-hist-periodo { margin-top: 2px; font-size: 0.78rem; color: var(--muted); }
+@media (max-width: 560px) { .form-cargo-hist { grid-template-columns: 1fr; } }
+
 /* Chip com o cargo de quem alterou, nas últimas alterações cadastrais. */
 .historico-papel {
   display: inline-block; padding: 1px 8px; border-radius: 999px; border: 1px solid #c3d4e6; background: #f1f6fb;
