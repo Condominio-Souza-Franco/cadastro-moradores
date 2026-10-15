@@ -44,6 +44,8 @@
         '<div class="historico-linha">' +
           '<span class="historico-quando">' + escaparHtml(formatarQuando(item.quando)) + "</span>" +
           '<span class="historico-autor">por ' + escaparHtml(item.autor || "—") + "</span>" +
+          // Chip com o cargo de quem alterou (Síndico, Conselho, Desenvolvedor...); morador comum não tem.
+          (item.papelAutor ? '<span class="historico-papel">' + escaparHtml(item.papelAutor) + "</span>" : "") +
         "</div>" +
         (item.detalhe ? '<div class="historico-detalhe">' + escaparHtml(item.detalhe) + "</div>" : "") +
       "</li>"

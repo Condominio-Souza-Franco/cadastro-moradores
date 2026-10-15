@@ -2939,12 +2939,21 @@ button.pendencia-item::before {
 /* Mais espaço entre "Página inicial" e os botões com bolinha (a bolinha sobressai acima do botão). */
 #conteudoPrincipalAdmin .btn-pagina-inicial { margin-bottom: 20px; }
 
-/* Visualizar como (só o desenvolvedor). */
-.visualizar-como { display: flex; align-items: center; gap: 8px; margin: 2px 0 10px; font-size: 0.78rem; color: var(--muted); }
+/* Visualizar como (só o desenvolvedor): na linha do "voltar para...", à direita; no celular, embaixo dele. */
+#conteudoPrincipalAdmin .topo-links { display: flex; align-items: center; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; }
+.visualizar-como { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
 .visualizar-como[hidden], .aviso-visualizar-como[hidden] { display: none; }
 .visualizar-como select {
-  flex: 1; min-width: 0; height: 30px; padding: 0 8px; border: 1px solid var(--border); border-radius: 8px;
-  background: var(--surface); color: var(--primary-color); font-size: 0.8rem; font-weight: 600;
+  width: auto; max-width: 190px; height: 28px; padding: 0 6px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--primary-color); font-size: 0.78rem; font-weight: 600;
+}
+@media (max-width: 560px) {
+  #conteudoPrincipalAdmin .topo-links { flex-direction: column; align-items: flex-start; }
+}
+/* Chip com o cargo de quem alterou, nas últimas alterações cadastrais. */
+.historico-papel {
+  display: inline-block; padding: 1px 8px; border-radius: 999px; border: 1px solid #c3d4e6; background: #f1f6fb;
+  color: var(--accent-color); font-size: 0.68rem; font-weight: 700; line-height: 1.5;
 }
 .aviso-visualizar-como {
   display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
