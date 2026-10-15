@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261015G">
+  <link rel="stylesheet" href="css/admin.css?v=20261016B">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -79,28 +79,36 @@
         <div id="dadosHistorico" hidden>
           <h2>Histórico de cargos</h2>
           <p class="descricao-acao">Registro de quem ocupou cada cargo (síndico, subsíndico, conselho...) e por quanto tempo. É preenchido à mão:
-            escolha um morador cadastrado ou digite o nome. Com o e-mail da pessoa, as "Últimas alterações cadastrais" mostram
-            "Ex-síndico (2026)" quando ela já não tem o cargo.</p>
+            escolha um morador cadastrado ou digite o nome e o apartamento. Assim, as "Últimas alterações cadastrais" mostram
+            "Ex-síndico (2026)" quando quem alterou um cadastro já não tem o cargo.</p>
           <p id="avisoSoLeituraCargos" class="aviso-somente-leitura" hidden>Somente visualização: seu cargo não pode alterar este registro.</p>
+          <div id="cargosAtuais" class="cargos-atuais" hidden>
+            <strong>Cargos atuais (conforme Membros) ainda fora do histórico</strong>
+            <div id="listaCargosAtuais"></div>
+          </div>
           <form id="formCargoHist" class="form-cargo-hist" novalidate>
-            <label>Cargo
-              <input type="text" id="cargoHistCargo" list="cargosSugeridos" maxlength="60" placeholder="Ex.: Síndico" autocomplete="off">
-              <datalist id="cargosSugeridos"><option value="Síndico"><option value="Subsíndico"><option value="Conselheiro"><option value="Administradora"></datalist>
+            <label><span class="rotulo-campo">Cargo</span>
+              <select id="cargoHistCargo">
+                <option value="">Escolha o cargo</option>
+                <option value="Síndico">Síndico</option>
+                <option value="Subsíndico">Subsíndico</option>
+                <option value="Conselheiro">Conselheiro</option>
+              </select>
             </label>
-            <label>Morador no sistema
+            <label><span class="rotulo-campo">Morador no sistema</span>
               <select id="cargoHistMorador"><option value="">Digitar o nome à mão</option></select>
             </label>
-            <label>Nome
+            <label><span class="rotulo-campo">Nome</span>
               <input type="text" id="cargoHistNome" maxlength="120" placeholder="Nome da pessoa" autocomplete="off">
             </label>
-            <label>E-mail <span class="opcional">(opcional)</span>
-              <input type="email" id="cargoHistEmail" maxlength="120" placeholder="Para o chip no histórico de alterações" autocomplete="off">
+            <label><span class="rotulo-campo">Apto</span>
+              <input type="text" id="cargoHistApto" maxlength="10" placeholder="Ex.: 901" autocomplete="off">
             </label>
-            <label>Início
-              <input type="date" id="cargoHistInicio">
+            <label><span class="rotulo-campo">Início</span>
+              <input type="text" id="cargoHistInicio" class="campo-mascara" data-mascara="data" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off">
             </label>
-            <label>Fim <span class="opcional">(vazio = em exercício)</span>
-              <input type="date" id="cargoHistFim">
+            <label><span class="rotulo-campo">Fim <span class="opcional">(vazio = em exercício)</span></span>
+              <input type="text" id="cargoHistFim" class="campo-mascara" data-mascara="data" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off">
             </label>
             <div class="form-cargo-hist-botoes">
               <button type="submit" id="btnSalvarCargoHist">Adicionar</button>
@@ -444,6 +452,7 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="js/mascaras.js?v=20261016A"></script>
   <script src="js/regras.js?v=20261009Z"></script>
   <script src="js/utils.js?v=20261009Z"></script>
   <script src="js/data/backend.js?v=20261009Z"></script>
@@ -473,7 +482,7 @@
   <script src="js/admin-notificacoes.js?v=20261009Z"></script>
   <script src="js/admin-gabarito.js?v=20261009Z"></script>
   <script src="js/admin-acoes-espelho.js?v=20261009Z"></script>
-  <script src="js/admin-historico-cargos.js?v=20261015G"></script>
+  <script src="js/admin-historico-cargos.js?v=20261016A"></script>
   <script src="js/admin-visualizar-como.js?v=20261015C"></script>
   <script src="js/admin-pre-carga.js?v=20261010B"></script>
   <script src="js/admin-paineis.js?v=20261009Z"></script>

@@ -2953,13 +2953,22 @@ button.pendencia-item::before {
 /* Dados: abas e Histórico de cargos. */
 .abas-dados { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .aba-dados {
-  height: 30px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
+  width: auto; flex: 1 1 auto; height: 30px; padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface);
   color: var(--accent-color); font-size: 0.8rem; font-weight: 700; cursor: pointer;
 }
 .aba-dados.ativo { background: var(--accent-color); border-color: var(--accent-color); color: #fff; }
 .form-cargo-hist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; margin: 10px 0 8px; }
 .form-cargo-hist label { display: flex; flex-direction: column; gap: 3px; font-size: 0.78rem; font-weight: 700; color: var(--primary-color); }
+.form-cargo-hist .rotulo-campo { display: block; }
 .form-cargo-hist .opcional { font-weight: 400; color: var(--muted); }
+.cargos-atuais { margin: 10px 0; padding: 10px 12px; border: 1px solid #c3d4e6; border-radius: 10px; background: #f1f6fb; font-size: 0.82rem; color: var(--primary-color); }
+.cargos-atuais[hidden] { display: none; }
+.cargo-atual-linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
+.cargo-atual-linha > span { min-width: 0; }
+.btn-registrar-cargo-atual {
+  width: auto; flex: none; height: 26px; padding: 0 12px; border: 1px solid var(--accent-color); border-radius: 999px; background: #fff;
+  color: var(--accent-color); font-size: 0.74rem; font-weight: 700; cursor: pointer;
+}
 .form-cargo-hist input, .form-cargo-hist select {
   width: 100%; height: 34px; padding: 0 8px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px;
   background: var(--surface); color: var(--text); font-size: 0.85rem; font-weight: 400;
@@ -3111,6 +3120,15 @@ body.sem-editarCadastros .btn-desativar-codigo { pointer-events: none !important
 .btn-aprovar:hover { background: #17652f !important; color: #fff !important; }
 .segmentado > button.ativo:hover,
 .btn-autorizacoes.ativo:hover { color: #fff !important; }
+
+/* Hover legível (auditoria): botões claros de texto colorido que, no hover, ficavam azul-escuro sobre texto colorido. */
+.aba-dados:not(.ativo):hover,
+.cargo-hist-acoes button:not(:disabled):hover,
+.btn-registrar-cargo-atual:hover { background: #e9f1fa !important; }
+.aba-dados.ativo:hover { background: var(--accent-color) !important; color: #fff !important; }
+.cargo-hist-acoes .btn-cargo-remover:hover { background: #fdecec !important; color: var(--error) !important; border-color: var(--error) !important; }
+.btn-apagar-historico:hover { background: #fdecec !important; }
+.form-cargo-hist-botoes .btn-secundario:hover { background: #e9f1fa !important; }
 
 /* ---------- Membros: 2 colunas na tela larga (1: Condomínio, Síndico, Administradora, Desenvolvedor;
    2: Conselho). No celular, uma coluna: Condomínio, Síndico, Administradora, Conselho, Desenvolvedor. */
