@@ -1,6 +1,9 @@
 (function() {
   var AUTH_STORAGE_KEY = "adminSimplesAuthUser";
   var AUTH_TOKEN_STORAGE_KEY = "adminSimplesAuthToken";
+  // "Visualizar como" (só o desenvolvedor; js/admin-visualizar-como.js): cargo simulado e as permissões dele.
+  var SIMULACAO_CARGO_KEY = "adminSimulacaoCargo";
+  var SIMULACAO_PERMISSOES_KEY = "adminSimulacaoPermissoes";
   var RELOAD_MAX_TENTATIVAS = 20;
   var RELOAD_INTERVAL_MS = 400;
   var MENSAGEM_SESSAO_EXPIRADA = "Sua sessão expirou. Faça login novamente.";
@@ -103,6 +106,20 @@
     }
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    sessionStorage.removeItem(SIMULACAO_CARGO_KEY);
+    sessionStorage.removeItem(SIMULACAO_PERMISSOES_KEY);
+  }
+
+  // Simulação ativa: só vale para o desenvolvedor (para qualquer outro cargo é ignorada). É só a tela;
+  // o backend sempre confere com as permissões reais.
+  function lerSimulacao() {
+    var s = carregarSessao();
+    if (!s || s.papel !== "desenvolvedor") return null;
+    try {
+      var cargo = sessionStorage.getItem(SIMULACAO_CARGO_KEY);
+      var permissoes = JSON.parse(sessionStorage.getItem(SIMULACAO_PERMISSOES_KEY) || "null");
+      return cargo && permissoes ? { cargo: cargo, permissoes: permissoes } : null;
+    } catch (e) { return null; }
   }
 
   function obterIdToken() {
@@ -316,9 +333,19 @@
   window.AdminAuth = {
     getIdToken: obterIdToken,
     // Papel de quem está logado: "condominio", "desenvolvedor", "sindico" ou "conselho".
-    getPapel: function() { var s = carregarSessao(); return (s && s.papel) || ""; },
+    getPapel: function() { var sim = lerSimulacao(); if (sim) return sim.cargo; var s = carregarSessao(); return (s && s.papel) || ""; },
+    getPapelReal: function() { var s = carregarSessao(); return (s && s.papel) || ""; },
+    getSimulacao: lerSimulacao,
+    definirSimulacao: function(cargo, permissoes) {
+      sessionStorage.setItem(SIMULACAO_CARGO_KEY, cargo);
+      sessionStorage.setItem(SIMULACAO_PERMISSOES_KEY, JSON.stringify(permissoes));
+    },
+    limparSimulacao: function() {
+      sessionStorage.removeItem(SIMULACAO_CARGO_KEY);
+      sessionStorage.removeItem(SIMULACAO_PERMISSOES_KEY);
+    },
     getEmail: function() { var s = carregarSessao(); return (s && s.email) || ""; },
-    getPermissoes: function() { var s = carregarSessao(); return (s && s.permissoes) || null; }
+    getPermissoes: function() { var sim = lerSimulacao(); if (sim) return sim.permissoes; var s = carregarSessao(); return (s && s.permissoes) || null; }
   };
 
   document.addEventListener("DOMContentLoaded", init);
