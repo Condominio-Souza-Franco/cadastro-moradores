@@ -70,6 +70,12 @@
     desbloquearCpf: function() {
       return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
     },
+    obterHistoricoCargos: function() {
+      return Promise.resolve({ sucesso: false, mensagem: "O histórico de cargos só está disponível com o Firebase." });
+    },
+    salvarHistoricoCargos: function() {
+      return Promise.reject(window.Backend.criarErroFonte("somente-leitura", "O Google Sheets está disponível apenas para leitura."));
+    },
     obterNotificacoes: function() {
       return Promise.resolve({ sucesso: false, mensagem: "As notificações só estão disponíveis com o Firebase." });
     },

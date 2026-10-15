@@ -152,7 +152,7 @@
     gerarRelatorioApartamentosPdfDrive: 25000
   };
 
-  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarAprovacoes", "decidirAprovacao", "estatisticas", "listarHistorico", "obterContadores", "salvarContador", "situacaoRelatorios"];
+  var SOMENTE_FIREBASE = ["confirmarCodigoCpf", "listarPendencias", "obterMembros", "obterNotificacoes", "listarBloqueios", "listarAprovacoes", "decidirAprovacao", "estatisticas", "listarHistorico", "obterHistoricoCargos", "obterContadores", "salvarContador", "situacaoRelatorios"];
 
   function executarLeitura(nomeMetodo, args) {
     var modo = state.configuredSource;
@@ -453,6 +453,13 @@
     },
     obterNotificacoes: function() {
       return lerComCacheAdmin("obterNotificacoes", []);
+    },
+    // Dados > Histórico de cargos (quem foi síndico, conselho... e por quanto tempo; preenchido à mão).
+    obterHistoricoCargos: function() {
+      return lerComCacheAdmin("obterHistoricoCargos", []);
+    },
+    salvarHistoricoCargos: function(itens) {
+      return executarEscrita("salvarHistoricoCargos", [itens]);
     },
     listarBloqueios: function() {
       return lerComCacheAdmin("listarBloqueios", []);

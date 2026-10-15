@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261015F">
+  <link rel="stylesheet" href="css/admin.css?v=20261015G">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -46,6 +46,11 @@
       </div>
 
       <div id="fonteDadosAdmin" class="card-fonte-dados" hidden>
+        <div class="abas-dados" role="tablist">
+          <button type="button" id="abaDadosGeral" class="aba-dados ativo" role="tab">Fonte e perfil</button>
+          <button type="button" id="abaDadosHistorico" class="aba-dados" role="tab">Histórico de cargos</button>
+        </div>
+        <div id="dadosGeral">
         <h2>Fonte de dados</h2>
         <p id="avisoSomenteLeituraDados" class="aviso-somente-leitura" hidden>Somente visualização: apenas Síndico, Condomínio e Desenvolvedor podem alterar.</p>
         <div class="opcoes-fonte-dados">
@@ -69,6 +74,42 @@
           em nomes incomuns.</p>
         <div id="statusPerfil" class="status"></div>
         <div id="graficosPerfil" class="graficos-perfil"></div>
+        </div>
+
+        <div id="dadosHistorico" hidden>
+          <h2>Histórico de cargos</h2>
+          <p class="descricao-acao">Registro de quem ocupou cada cargo (síndico, subsíndico, conselho...) e por quanto tempo. É preenchido à mão:
+            escolha um morador cadastrado ou digite o nome. Com o e-mail da pessoa, as "Últimas alterações cadastrais" mostram
+            "Ex-síndico (2026)" quando ela já não tem o cargo.</p>
+          <p id="avisoSoLeituraCargos" class="aviso-somente-leitura" hidden>Somente visualização: seu cargo não pode alterar este registro.</p>
+          <form id="formCargoHist" class="form-cargo-hist" novalidate>
+            <label>Cargo
+              <input type="text" id="cargoHistCargo" list="cargosSugeridos" maxlength="60" placeholder="Ex.: Síndico" autocomplete="off">
+              <datalist id="cargosSugeridos"><option value="Síndico"><option value="Subsíndico"><option value="Conselheiro"><option value="Administradora"></datalist>
+            </label>
+            <label>Morador no sistema
+              <select id="cargoHistMorador"><option value="">Digitar o nome à mão</option></select>
+            </label>
+            <label>Nome
+              <input type="text" id="cargoHistNome" maxlength="120" placeholder="Nome da pessoa" autocomplete="off">
+            </label>
+            <label>E-mail <span class="opcional">(opcional)</span>
+              <input type="email" id="cargoHistEmail" maxlength="120" placeholder="Para o chip no histórico de alterações" autocomplete="off">
+            </label>
+            <label>Início
+              <input type="date" id="cargoHistInicio">
+            </label>
+            <label>Fim <span class="opcional">(vazio = em exercício)</span>
+              <input type="date" id="cargoHistFim">
+            </label>
+            <div class="form-cargo-hist-botoes">
+              <button type="submit" id="btnSalvarCargoHist">Adicionar</button>
+              <button type="button" id="btnCancelarCargoHist" class="btn-secundario" hidden>Cancelar</button>
+            </div>
+          </form>
+          <div id="statusHistoricoCargos" class="status"></div>
+          <div id="listaHistoricoCargos" class="lista-cargos-hist"></div>
+        </div>
       </div>
 
       <div id="conteudoPrincipalAdmin">
@@ -411,9 +452,9 @@
 </footer>
   <script src="js/admin-auth.js?v=20261015C"></script>
   <script src="js/admin-badges.js?v=20261015B"></script>
-  <script src="js/data/FirebaseRepository.js?v=20261009Z"></script>
-  <script src="js/data/GoogleSheetsRepository.js?v=20261009Z"></script>
-  <script src="js/data/DataService.js?v=20261010D"></script>
+  <script src="js/data/FirebaseRepository.js?v=20261015G"></script>
+  <script src="js/data/GoogleSheetsRepository.js?v=20261015G"></script>
+  <script src="js/data/DataService.js?v=20261015G"></script>
   <script src="js/sessao-morador.js?v=20261010E" defer></script>
   <script src="js/sessao-admin-morador.js?v=20261009Z" defer></script>
   <script src="js/admin-fonte-dados.js?v=20261009Z"></script>
@@ -432,6 +473,7 @@
   <script src="js/admin-notificacoes.js?v=20261009Z"></script>
   <script src="js/admin-gabarito.js?v=20261009Z"></script>
   <script src="js/admin-acoes-espelho.js?v=20261009Z"></script>
+  <script src="js/admin-historico-cargos.js?v=20261015G"></script>
   <script src="js/admin-visualizar-como.js?v=20261015C"></script>
   <script src="js/admin-pre-carga.js?v=20261010B"></script>
   <script src="js/admin-paineis.js?v=20261009Z"></script>
