@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <link rel="stylesheet" href="css/admin.css?v=20261015E">
+  <link rel="stylesheet" href="css/admin.css?v=20261015F">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="shortcut icon" href="favicon/favicon.ico">
@@ -40,17 +40,6 @@
         </div>
       </div>
 
-      <!-- Só para o desenvolvedor: simula a tela dos outros cargos (js/admin-visualizar-como.js). -->
-      <div id="visualizarComo" class="visualizar-como" hidden>
-        <label for="visualizarComoSelect">Visualizar como</label>
-        <select id="visualizarComoSelect">
-          <option value="desenvolvedor">Desenvolvedor (você)</option>
-          <option value="condominio">Condomínio</option>
-          <option value="sindico">Síndico</option>
-          <option value="administradora">Administradora</option>
-          <option value="conselho">Conselho (membro)</option>
-        </select>
-      </div>
       <div id="avisoVisualizarComo" class="aviso-visualizar-como" hidden>
         <span id="avisoVisualizarComoTexto"></span>
         <button type="button" id="btnVoltarVisualizarComo">Voltar ao desenvolvedor</button>
@@ -85,6 +74,17 @@
       <div id="conteudoPrincipalAdmin">
         <div class="topo-links">
           <a href="https://condominio-souza-franco.github.io/cadastro-moradores/index.html">← voltar para o cadastro de moradores</a>
+          <!-- Só para o desenvolvedor: simula a tela dos outros cargos (js/admin-visualizar-como.js). -->
+          <div id="visualizarComo" class="visualizar-como" hidden>
+            <label for="visualizarComoSelect">Visualizar como</label>
+            <select id="visualizarComoSelect">
+              <option value="desenvolvedor">Desenvolvedor (você)</option>
+              <option value="condominio">Condomínio</option>
+              <option value="sindico">Síndico</option>
+              <option value="administradora">Administradora</option>
+              <option value="conselho">Conselho (membro)</option>
+            </select>
+          </div>
         </div>
 
         <!-- Menu: cada botão abre/fecha a sua página (js/admin-paineis.js). Só uma página por vez:
@@ -421,7 +421,7 @@
   <script src="js/admin-simples.js?v=20261010E"></script>
   <script src="js/admin-relatorio.js?v=20261009Z"></script>
   <script src="js/admin-busca.js?v=20261009Z"></script>
-  <script src="js/admin-historico.js?v=20261009Z"></script>
+  <script src="js/admin-historico.js?v=20261015F"></script>
   <script src="js/admin-pendencias.js?v=20261009Z"></script>
   <script src="js/admin-permissoes.js?v=20261009Z"></script>
   <script src="js/admin-autorizacoes.js?v=20261015D"></script>
