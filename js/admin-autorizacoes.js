@@ -150,11 +150,18 @@
     var botao = el("btnAutorizacoes");
     if (!botao || !window.Backend) return;
     botao.addEventListener("click", function() { abrir(!aberto); });
-    // O × do topo, com Autorizações aberta, volta para Membros (em vez de fechar a página).
+    // O × do topo fecha a página Membros inteira, também com Autorizações aberta. Antes de fechar, a tela volta
+    // para Membros (para a próxima abertura não cair em Autorizações); alterações não salvas pedem confirmação.
     document.querySelector("#painelMembros .btn-fechar-painel").addEventListener("click", function(e) {
       if (!aberto) return;
-      e.stopImmediatePropagation();
-      e.preventDefault();
+      if (alterado()) {
+        if (!window.confirm("Há alterações não salvas nas autorizações. Fechar e descartar?")) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return;
+        }
+        atual = JSON.parse(originais);
+      }
       abrir(false);
     }, true);
     el("autorizacoesMembros").addEventListener("change", function(e) {
