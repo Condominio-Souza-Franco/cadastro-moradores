@@ -6,7 +6,7 @@
 //   - o Kit abre direto, sem pedir de novo;
 //   - na página inicial, os campos da consulta ficam preenchidos e travados, mostrando só os 3
 //     primeiros dígitos do CPF e o dia do aniversário; no lugar de "Buscar Cadastro" e
-//     "Novo cadastro" aparecem "Visualizar cadastro" e "Sair" (o "Sair" também fica ao lado do nome, no topo).
+//     "Novo cadastro" some e aparece "Sair" no lugar dele (e também "Visualizar cadastro"); o "Sair" fica ainda ao lado do nome, no topo, e no fim do formulário.
 // A hora de início não muda ao usar o site: a sessão vale 1 hora a partir do primeiro acesso.
 //
 // Por que sessionStorage (e não localStorage): os dados ficam só nesta aba e somem ao fechá-la,
@@ -119,6 +119,11 @@
       aviso.textContent = textoAviso(s);
       aviso.hidden = !s;
     }
+    // Com a sessão, "Novo cadastro" some e o "Sair" aparece no lugar dele (botões separados: o "x" de cancelar
+    // do Novo cadastro nunca cai no Sair). Fica antes do "cadastro aberto" abaixo para valer sempre.
+    var sairConsulta = document.getElementById("btnSairConsulta");
+    if (sairConsulta) sairConsulta.hidden = !s;
+    novo.hidden = !!s;
     // "Sair" no fim do formulário (depois de "Atualizar cadastro" e "Fechar visualização"): só com a sessão.
     var sairFim = document.getElementById("btnSairSessaoFim");
     if (sairFim) {
@@ -138,15 +143,7 @@
       nasc.classList.remove("input-erro-destaque", "input-ok-destaque");
       buscar.disabled = false;
       buscar.innerText = "Visualizar cadastro";
-      // Com a sessão, "Novo cadastro" vira "Sair" (redundância do "Sair" ao lado do nome, no topo da página):
-      // o clique é tratado em alternarMoradorNovo() (form-controle.js), que chama sair().
-      novo.textContent = "Sair";
-      novo.classList.remove("ativo", "bloqueado");
-      novo.classList.add("btn-sair-sessao");
-      novo.setAttribute("aria-disabled", "false");
-      novo.title = "Encerrar a sessão e apagar o CPF e a data de nascimento desta aba";
-      var linha = novo.closest(".row-checkbox-morador");
-      if (linha) linha.classList.remove("bloqueado");
+      novo.classList.remove("ativo");
     } else if (telaTravada()) {
       delete cpf.dataset.sessao;
       cpf.value = "";
@@ -155,9 +152,6 @@
       nasc.disabled = false;
       buscar.disabled = false;
       buscar.innerText = "Buscar Cadastro";
-      novo.textContent = "Novo cadastro";
-      novo.classList.remove("btn-sair-sessao");
-      novo.title = "";
       if (typeof atualizarBloqueioNovoCadastro === "function") atualizarBloqueioNovoCadastro();
     }
   }
@@ -171,7 +165,9 @@
       sessionStorage.removeItem("sessaoMoradorDoAdmin");
     } catch (e) {}
     encerrar();
-    aplicarNaTela();
+    // Com o cadastro aberto, a tela inicial não se refaz sozinha: volta à consulta vazia (fecha o cadastro).
+    if (typeof voltarTelaInicial === "function") voltarTelaInicial();
+    else aplicarNaTela();
     var cpf = document.getElementById("cpfConsulta");
     if (cpf) cpf.focus();
   }

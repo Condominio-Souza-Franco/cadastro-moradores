@@ -67,7 +67,8 @@
   #cpfConsulta,
   #nascConsulta,
   #btnBuscarCpf,
-  #btnMoradorNovo {
+  #btnMoradorNovo,
+  #btnSairConsulta {
     font-size: 16px !important;
     height: 50px !important;
     min-height: 50px !important;
