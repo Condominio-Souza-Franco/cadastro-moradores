@@ -160,8 +160,17 @@
     if (window.self !== window.top) document.body.classList.add("no-popup");
     document.getElementById("btnImprimir").addEventListener("click", function() { window.print(); });
     montar();
-    // Girou o celular / mudou a largura da janela: remonta na outra orientação.
-    var aoMudar = function() { montar(); };
+    // Girou o celular / mudou a largura da janela: remonta na outra orientação, só se de fato mudou.
+    // Durante a impressão o navegador mede a janela como se estivesse em pé e dispara este "change":
+    // remontar nesse momento troca os mapas e o @page no meio do trabalho (página 1 em paisagem e a
+    // 2 em retrato). Por isso o que muda entre beforeprint e afterprint é ignorado.
+    var imprimindo = false;
+    var remontarSeMudou = function() {
+      if (consultaRetrato.matches !== document.body.classList.contains("retrato")) montar();
+    };
+    var aoMudar = function() { if (!imprimindo) remontarSeMudou(); };
+    window.addEventListener("beforeprint", function() { imprimindo = true; });
+    window.addEventListener("afterprint", function() { imprimindo = false; remontarSeMudou(); });
     if (consultaRetrato.addEventListener) consultaRetrato.addEventListener("change", aoMudar);
     else if (consultaRetrato.addListener) consultaRetrato.addListener(aoMudar);
   });
