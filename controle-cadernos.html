@@ -66,7 +66,6 @@
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     th, td { border: 1px solid var(--cinza); padding: 0 1.5mm; }
     th { font-size: 9pt; font-weight: 700; text-align: left; background: #e4e9ee; vertical-align: middle; height: 6.5mm; }
-    th.grupo { text-align: center; height: 5.5mm; border-bottom-color: var(--cinza); }
     td { height: 10.5mm; vertical-align: middle; }
     td.caderno { padding: 0 1.5mm; font-size: 9pt; font-weight: 600; line-height: 1.5; }
     .opcao { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
@@ -104,49 +103,41 @@
 
   <table>
     <colgroup>
-      <col style="width:7%">   <!-- Data -->
-      <col style="width:12%">  <!-- Caderno -->
-      <col style="width:23%">  <!-- Nome -->
+      <col style="width:9%">   <!-- Data da retirada -->
+      <col style="width:13%">  <!-- Caderno -->
+      <col style="width:25%">  <!-- Nome -->
       <col style="width:6%">   <!-- Apto -->
-      <col style="width:6%">   <!-- Hora retirada -->
-      <col style="width:15%">  <!-- Assinatura retirada -->
-      <col style="width:6%">   <!-- Hora devolução -->
-      <col style="width:15%">  <!-- Visto devolução -->
-      <col style="width:10%">  <!-- Observação -->
+      <col style="width:18%">  <!-- Assinatura do morador -->
+      <col style="width:9%">   <!-- Data da devolução -->
+      <col style="width:20%">  <!-- Observação -->
     </colgroup>
     <thead>
       <tr>
-        <th rowspan="2">Data</th>
-        <th rowspan="2">Caderno</th>
-        <th rowspan="2">Nome do morador</th>
-        <th rowspan="2">Apto</th>
-        <th class="grupo" colspan="2">Retirada</th>
-        <th class="grupo" colspan="2">Devolução</th>
-        <th rowspan="2">Observação</th>
-      </tr>
-      <tr>
-        <th>Hora</th>
+        <th>Data da retirada</th>
+        <th>Caderno</th>
+        <th>Nome do morador</th>
+        <th>Apto</th>
         <th>Assinatura do morador</th>
-        <th>Hora</th>
-        <th>Visto do porteiro</th>
+        <th>Data da devolução</th>
+        <th>Observação</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td class="caderno"><span class="opcao"><span class="caixa"></span> Regulamento</span><span class="opcao"><span class="caixa"></span> Convenção</span></td><td></td><td></td><td></td><td></td><td></td></tr>
     </tbody>
   </table>
 
