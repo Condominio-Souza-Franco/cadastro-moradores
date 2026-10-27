@@ -71,13 +71,38 @@
     .mensagem { min-height: 1.4em; margin: 12px 0 0; font-size: 0.9rem; text-wrap: pretty; }
     .mensagem.erro { color: var(--erro); }
     .mensagem.carregando { color: var(--suave); font-style: italic; }
-    /* Rodinha girando ao lado de "Conferindo", "Carregando o kit" e "Atualizando". */
-    .mensagem.carregando::before, .lido-em.atualizando::before {
+    /* Rodinha girando ao lado de "Conferindo". */
+    .mensagem.carregando::before {
       content: ""; display: inline-block; width: 13px; height: 13px; margin-right: 8px; vertical-align: -2px;
       border: 2px solid var(--borda); border-top-color: var(--destaque); border-radius: 50%;
       animation: kitGirar 0.8s linear infinite;
     }
     @keyframes kitGirar { to { transform: rotate(360deg); } }
+
+    /* Popup "Aguarde: atualizando o kit": o mesmo da página inicial (css/utilitarios.css), com a
+       porcentagem dentro da bolinha (js/progresso-overlay.js). O kit só aparece quando ele fecha. */
+    .overlay-processamento { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.58); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10000; }
+    .overlay-processamento.hidden { display: none !important; }
+    .overlay-processamento-card {
+      position: relative; width: auto; min-width: 240px; max-width: min(320px, 100%); background: #fff; border-radius: 12px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22); padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+    }
+    .overlay-processamento-fechar {
+      position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; min-height: 0; margin: 0; padding: 0; border-radius: 50%;
+      border: 1px solid #dcdde1; background: #fff; color: #243447; font-size: 18px; line-height: 1; cursor: pointer;
+    }
+    .overlay-processamento-fechar:hover { background: #f1f4f8; }
+    .overlay-processamento-roda { position: relative; width: 34px; height: 34px; }
+    .overlay-processamento-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #dbeafe; border-top-color: #1f5f8b; animation: overlaySpin 0.9s linear infinite; }
+    .overlay-processamento-percentual { display: none; }
+    .overlay-processamento.com-percentual .overlay-processamento-roda { width: 80px; height: 80px; }
+    .overlay-processamento.com-percentual .overlay-processamento-spinner { width: 100%; height: 100%; border-width: 5px; }
+    .overlay-processamento.com-percentual .overlay-processamento-percentual {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; font-weight: 700; color: #1f5f8b; font-variant-numeric: tabular-nums;
+    }
+    #overlayProcessamentoMensagem { margin: 0; color: #1f2937; font-weight: 700; }
+    @keyframes overlaySpin { to { transform: rotate(360deg); } }
     .nota { font-size: 0.8rem; color: var(--suave); margin-top: 16px; text-wrap: pretty; }
 
     /* Conteúdo do kit */
@@ -137,7 +162,7 @@
     document.addEventListener("DOMContentLoaded", function() {
       document.querySelector(".fechar-embutido").addEventListener("click", fechar);
       document.addEventListener("click", function(e) {
-        if (!e.target.closest("main") && !e.target.closest(".popup-link")) fechar();
+        if (!e.target.closest("main") && !e.target.closest(".popup-link") && !e.target.closest(".overlay-processamento")) fechar();
       });
     });
     document.addEventListener("keydown", function(e) { if (e.key === "Escape" && !pdfAberto()) fechar(); });
@@ -178,8 +203,21 @@
 
   <p class="rodape">Condomínio Souza Franco · <a href="seguranca.html">Documentação: meus dados estão seguros?</a></p>
 </main>
+
+<!-- "Aguarde": aparece sempre que o kit abre ou é atualizado; o kit só fica à mostra quando ele fecha. -->
+<div id="overlayProcessamento" class="overlay-processamento hidden" aria-live="polite" aria-busy="true">
+  <div class="overlay-processamento-card">
+    <button type="button" class="overlay-processamento-fechar" id="overlayProcessamentoFechar" aria-label="Desistir e fechar" title="Desistir e fechar">&times;</button>
+    <div class="overlay-processamento-roda">
+      <div class="overlay-processamento-spinner" aria-hidden="true"></div>
+      <span id="overlayProcessamentoPercentual" class="overlay-processamento-percentual" aria-hidden="true"></span>
+    </div>
+    <p id="overlayProcessamentoMensagem">Aguarde: atualizando o kit</p>
+  </div>
+</div>
 <script src="js/regras.js?v=20261009Z"></script>
 <script src="js/data/backend.js?v=20261009Z"></script>
+<script src="js/progresso-overlay.js?v=20261010E"></script>
 <script src="js/sessao-morador.js?v=20261009Z"></script>
 <script src="js/pular-campo.js?v=20261009Z"></script>
 <script>
@@ -239,20 +277,42 @@
       return "Atualizado em " + z(d.getDate()) + "/" + z(d.getMonth() + 1) + "/" + d.getFullYear() + " às " + z(d.getHours()) + ":" + z(d.getMinutes());
     }
 
-    // Lê a pasta do Drive de novo e redesenha a lista, com a rodinha e "Atualizando" enquanto isso.
-    // Roda sozinha toda vez que o kit abre (o servidor, por conta própria, só relê a pasta a cada 6 horas)
-    // e também no botão "Atualizar". Se falhar, o kit já mostrado continua na tela, com o aviso.
+    // Popup "Aguarde: atualizando o kit" (o mesmo da página inicial, com a porcentagem na bolinha).
+    var overlay = document.getElementById("overlayProcessamento");
+    function mostrarAguarde(mensagem) {
+      document.getElementById("overlayProcessamentoMensagem").textContent = mensagem;
+      // Já aberto (só mudou a mensagem): a contagem continua de onde está.
+      if (overlay.classList.contains("hidden") && window.ProgressoOverlay) window.ProgressoOverlay.iniciar();
+      overlay.classList.remove("hidden");
+    }
+    function esconderAguarde(imediato) {
+      var fechar = function() { overlay.classList.add("hidden"); };
+      if (!imediato && window.ProgressoOverlay && !overlay.classList.contains("hidden")) window.ProgressoOverlay.concluir(fechar);
+      else { if (window.ProgressoOverlay) window.ProgressoOverlay.parar(); fechar(); }
+    }
+    // × do popup: a pessoa desiste de esperar e vê o kit como estava (o que já foi lido antes).
+    // A atualização, se já saiu, termina sozinha e redesenha a lista.
+    document.getElementById("overlayProcessamentoFechar").addEventListener("click", function() {
+      var guardado = null;
+      try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
+      if (guardado && guardado.encontrado) mostrarKit(guardado); else form.hidden = false;
+      esconderAguarde(true);
+    });
+
+    // Lê a pasta do Drive de novo e redesenha a lista. Roda sozinha toda vez que o kit abre (o servidor,
+    // por conta própria, só relê a pasta a cada 6 horas) e também no botão "Atualizar". Enquanto isso o
+    // popup "Aguarde" fica na frente e o kit só aparece quando termina. Se a leitura falhar, aparece o
+    // kit da última vez, com o aviso.
     var atualizandoKit = false;
     function atualizarKit() {
       var guardado = null;
       try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
-      if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento de novo."); return Promise.resolve(); }
+      if (!guardado || !guardado.sessaoKit) { esconderAguarde(true); voltarAoFormulario("Informe o CPF e a data de nascimento de novo."); return Promise.resolve(); }
       if (atualizandoKit) return Promise.resolve();
       atualizandoKit = true;
       var botao = document.getElementById("btnAtualizarKit"), lido = document.getElementById("lidoEmKit");
       botao.disabled = true;
-      lido.className = "lido-em atualizando";
-      lido.textContent = "Atualizando";
+      mostrarAguarde("Aguarde: atualizando o kit");
       return window.Backend.chamar("fbAtualizarKit", { sessao: guardado.sessaoKit })
         .then(function(r) {
           if (!r || !r.sucesso) {
@@ -263,8 +323,11 @@
           try { sessionStorage.setItem(CHAVE, JSON.stringify(guardado)); } catch (e2) {}
           mostrarKit(guardado);
         })
-        .catch(function(erro) { lido.textContent = (erro && erro.message) || "Não foi possível atualizar."; })
-        .then(function() { atualizandoKit = false; lido.classList.remove("atualizando"); botao.disabled = false; });
+        .catch(function(erro) {
+          mostrarKit(guardado);
+          lido.textContent = ((erro && erro.message) || "Não foi possível atualizar.") + " Mostrando a última leitura.";
+        })
+        .then(function() { atualizandoKit = false; botao.disabled = false; esconderAguarde(); });
     }
     document.getElementById("btnAtualizarKit").addEventListener("click", atualizarKit);
 
@@ -343,26 +406,25 @@
     var guardadoInicial = null;
     try { guardadoInicial = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
     if (guardadoInicial && guardadoInicial.encontrado && window.SessaoMorador && window.SessaoMorador.obter()) {
-      mostrarKit(guardadoInicial);
+      // Já tinha aberto o kit nesta aba: atualiza com o popup "Aguarde" e só então mostra.
+      form.hidden = true;
+      mostrarAguarde("Aguarde: atualizando o kit");
       atualizarKit();
     } else if (window.SessaoMorador && window.SessaoMorador.obter()) {
-      // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo.
-      // Enquanto confere a sessão, mostra só "Carregando" (sem o formulário de CPF piscando antes do kit).
+      // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo. O popup "Aguarde"
+      // cobre as duas etapas (conferir a sessão e atualizar), sem o formulário de CPF piscando antes do kit.
       btn.disabled = true;
       form.hidden = true;
-      var carregandoKit = document.createElement("p");
-      carregandoKit.className = "mensagem carregando";
-      carregandoKit.textContent = "Carregando o kit";
-      form.parentNode.insertBefore(carregandoKit, form);
+      mostrarAguarde("Aguarde: atualizando o kit");
       entrarPelaSessao()
         .then(function(r) {
-          carregandoKit.remove();
           setMensagem("", "");
-          if (!r) form.hidden = false;
-          if (r) { mostrarKit(r); atualizarKit(); }
-          else setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
+          if (r) return atualizarKit();
+          esconderAguarde(true);
+          form.hidden = false;
+          setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
         })
-        .catch(function() { carregandoKit.remove(); form.hidden = false; setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
+        .catch(function() { esconderAguarde(true); form.hidden = false; setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
         .then(function() { btn.disabled = false; });
     } else {
       try { sessionStorage.removeItem(CHAVE); } catch (e) {}
@@ -384,7 +446,7 @@
           setMensagem("", "");
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
           if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfDigitos, nasc.value);
-          mostrarKit(r);
+          form.hidden = true;
           atualizarKit();
         })
         .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
