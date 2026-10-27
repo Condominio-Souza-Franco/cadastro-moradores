@@ -104,6 +104,14 @@
       display: flex; justify-content: space-between; gap: 10px; font-size: 8pt; color: var(--suave);
     }
 
+    /* Só para a administração (js/acesso-admin.js): o conteúdo aparece depois que o backend confirma o acesso. */
+    html:not(.acesso-liberado) .barra, html:not(.acesso-liberado) .folha { display: none !important; }
+    html.acesso-liberado .aviso-acesso { display: none; }
+    .aviso-acesso {
+      width: min(560px, 100%); margin: 60px auto; padding: 18px 22px; background: #fff;
+      border: 1px solid var(--cinza); border-radius: 10px; font-size: 11pt; text-align: center; line-height: 1.5;
+    }
+
     @media print {
       html, body { background: #fff; }
       body { padding: 0; min-width: 0; }
@@ -115,6 +123,8 @@
   </style>
 </head>
 <body>
+
+<p id="avisoAcessoAdmin" class="aviso-acesso">Verificando o acesso</p>
 
 <div class="barra">
   <a href="index.html">&larr; Voltar para o cadastro</a>
@@ -327,6 +337,9 @@
   <div class="rodape-folha"><span>Condomínio Souza Franco · Cadastro de moradores</span><span class="site-rodape">https://tinyurl.com/cadastro-souzafranco</span><span>Folha 2 de 2</span></div>
 </section>
 
+<script src="js/regras.js?v=20261009Z"></script>
+<script src="js/data/backend.js?v=20261009Z"></script>
+<script src="js/acesso-admin.js?v=20261027A"></script>
 <script src="js/sem-conectivos.js?v=20261009Z"></script>
 </body>
 </html>
