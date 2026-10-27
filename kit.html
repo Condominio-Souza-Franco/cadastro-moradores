@@ -71,6 +71,13 @@
     .mensagem { min-height: 1.4em; margin: 12px 0 0; font-size: 0.9rem; text-wrap: pretty; }
     .mensagem.erro { color: var(--erro); }
     .mensagem.carregando { color: var(--suave); font-style: italic; }
+    /* Rodinha girando ao lado de "Conferindo", "Carregando o kit" e "Atualizando". */
+    .mensagem.carregando::before, .lido-em.atualizando::before {
+      content: ""; display: inline-block; width: 13px; height: 13px; margin-right: 8px; vertical-align: -2px;
+      border: 2px solid var(--borda); border-top-color: var(--destaque); border-radius: 50%;
+      animation: kitGirar 0.8s linear infinite;
+    }
+    @keyframes kitGirar { to { transform: rotate(360deg); } }
     .nota { font-size: 0.8rem; color: var(--suave); margin-top: 16px; text-wrap: pretty; }
 
     /* Conteúdo do kit */
@@ -124,11 +131,16 @@
     if (window.parent === window) return;
     document.documentElement.classList.add("embutido");
     function fechar() { window.parent.postMessage("fechar-popup-link", location.origin); }
+    // O PDF de um documento abre num popup próprio (js/popup-links.js) por cima do kit, fora do <main>.
+    // Cliques e Esc nele são só dele: fecham o PDF e voltam ao kit, não o kit inteiro.
+    function pdfAberto() { return !!document.querySelector(".popup-link:not([hidden])"); }
     document.addEventListener("DOMContentLoaded", function() {
       document.querySelector(".fechar-embutido").addEventListener("click", fechar);
-      document.addEventListener("click", function(e) { if (!e.target.closest("main")) fechar(); });
+      document.addEventListener("click", function(e) {
+        if (!e.target.closest("main") && !e.target.closest(".popup-link")) fechar();
+      });
     });
-    document.addEventListener("keydown", function(e) { if (e.key === "Escape") fechar(); });
+    document.addEventListener("keydown", function(e) { if (e.key === "Escape" && !pdfAberto()) fechar(); });
   })();
 </script>
 <main>
@@ -178,6 +190,7 @@
     var cpf = document.getElementById("cpf");
     var nasc = document.getElementById("nasc");
     var btn = document.getElementById("btnAcessar");
+    var msg = document.getElementById("mensagem");
 
     function mascarar(el, tipo) {
       el.addEventListener("input", function() {
@@ -226,15 +239,21 @@
       return "Atualizado em " + z(d.getDate()) + "/" + z(d.getMonth() + 1) + "/" + d.getFullYear() + " às " + z(d.getHours()) + ":" + z(d.getMinutes());
     }
 
-    // "Atualizar": lê a pasta do Drive de novo e redesenha a lista (mostra "Carregando..." enquanto isso).
-    document.getElementById("btnAtualizarKit").addEventListener("click", function() {
+    // Lê a pasta do Drive de novo e redesenha a lista, com a rodinha e "Atualizando" enquanto isso.
+    // Roda sozinha toda vez que o kit abre (o servidor, por conta própria, só relê a pasta a cada 6 horas)
+    // e também no botão "Atualizar". Se falhar, o kit já mostrado continua na tela, com o aviso.
+    var atualizandoKit = false;
+    function atualizarKit() {
       var guardado = null;
       try { guardado = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
-      if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento de novo."); return; }
-      var botao = this, lido = document.getElementById("lidoEmKit");
+      if (!guardado || !guardado.sessaoKit) { voltarAoFormulario("Informe o CPF e a data de nascimento de novo."); return Promise.resolve(); }
+      if (atualizandoKit) return Promise.resolve();
+      atualizandoKit = true;
+      var botao = document.getElementById("btnAtualizarKit"), lido = document.getElementById("lidoEmKit");
       botao.disabled = true;
-      lido.textContent = "Carregando...";
-      window.Backend.chamar("fbAtualizarKit", { sessao: guardado.sessaoKit })
+      lido.className = "lido-em atualizando";
+      lido.textContent = "Atualizando";
+      return window.Backend.chamar("fbAtualizarKit", { sessao: guardado.sessaoKit })
         .then(function(r) {
           if (!r || !r.sucesso) {
             if (r && r.expirado) { voltarAoFormulario(r.mensagem); return; }
@@ -245,8 +264,9 @@
           mostrarKit(guardado);
         })
         .catch(function(erro) { lido.textContent = (erro && erro.message) || "Não foi possível atualizar."; })
-        .then(function() { botao.disabled = false; });
-    });
+        .then(function() { atualizandoKit = false; lido.classList.remove("atualizando"); botao.disabled = false; });
+    }
+    document.getElementById("btnAtualizarKit").addEventListener("click", atualizarKit);
 
     function mostrarKit(r) {
       form.hidden = true;
@@ -324,6 +344,7 @@
     try { guardadoInicial = JSON.parse(sessionStorage.getItem(CHAVE) || "null"); } catch (e) {}
     if (guardadoInicial && guardadoInicial.encontrado && window.SessaoMorador && window.SessaoMorador.obter()) {
       mostrarKit(guardadoInicial);
+      atualizarKit();
     } else if (window.SessaoMorador && window.SessaoMorador.obter()) {
       // Veio da página inicial com a sessão ativa: abre o kit sem pedir o CPF de novo.
       // Enquanto confere a sessão, mostra só "Carregando" (sem o formulário de CPF piscando antes do kit).
@@ -338,7 +359,7 @@
           carregandoKit.remove();
           setMensagem("", "");
           if (!r) form.hidden = false;
-          if (r) mostrarKit(r);
+          if (r) { mostrarKit(r); atualizarKit(); }
           else setMensagem("A sessão não vale mais. Informe o CPF e a data de nascimento de novo.", "erro");
         })
         .catch(function() { carregandoKit.remove(); form.hidden = false; setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
@@ -364,6 +385,7 @@
           try { sessionStorage.setItem(CHAVE, JSON.stringify(r)); } catch (e2) {}
           if (window.SessaoMorador) window.SessaoMorador.iniciar(cpfDigitos, nasc.value);
           mostrarKit(r);
+          atualizarKit();
         })
         .catch(function() { setMensagem("Não foi possível conectar ao sistema. Tente novamente em instantes.", "erro"); })
         .then(function() { btn.disabled = false; });
