@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <title>Formulário impresso — Cadastro de moradores</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <style>
+    /* Versão em papel do cadastro, para moradores que não usam o formulário digital.
+       Mesmos campos e mesma ordem de index.html; se o formulário digital mudar, atualize aqui.
+       Esta página NÃO é responsiva (decisão da administração): a folha tem sempre o tamanho de
+       um A4, na tela e no papel, para a prévia ser igual ao impresso. São 2 folhas. Para caber,
+       os campos ficam lado a lado e os itens repetidos (ocupantes, veículos, pets etc.) têm
+       poucas linhas; o que passar disso vai em Observações. Sem JavaScript próprio: só o
+       sem-conectivos.js, para nenhuma palavra curta ficar sozinha no fim da linha. */
+    :root {
+      --texto: #1b2733;
+      --suave: #52616f;
+      --linha: #1b2733;
+      --cinza: #c9ced3;
+      --fundo: #eef1f3;
+      --destaque: #2f5f98;
+    }
+    * { box-sizing: border-box; }
+    @page { size: A4; margin: 0; }
+    body {
+      margin: 0;
+      padding: 16px;
+      min-width: 230mm;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 9.5pt;
+      line-height: 1.25;
+    }
+    p, li, label { text-wrap: pretty; }
+
+    /* Barra só da tela */
+    .barra { width: 210mm; margin: 0 auto 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 11pt; }
+    .barra a { color: var(--destaque); font-weight: 600; text-decoration: none; }
+    .barra button {
+      font: inherit; font-weight: 700; color: #fff; background: var(--destaque);
+      border: 0; border-radius: 8px; padding: 10px 20px; cursor: pointer;
+    }
+    .barra button:hover { background: #244b79; }
+    .barra span { color: var(--suave); font-size: 10pt; flex-basis: 100%; }
+
+    /* Folha A4 (um pouco abaixo de 297 mm, para o arredondamento não criar uma página extra) */
+    .folha {
+      position: relative;
+      width: 210mm; height: 296mm;
+      margin: 0 auto 16px;
+      padding: 9mm 11mm;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      break-after: page;
+    }
+    .cabecalho {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      gap: 6px 16px; border-bottom: 3px solid var(--linha); padding-bottom: 4px; margin-bottom: 6px;
+    }
+    .cabecalho h1 { font-size: 13pt; line-height: 1.2; margin: 0; }
+    .cabecalho h1 small { font-size: 9.5pt; font-weight: 600; color: var(--suave); margin-left: 8px; }
+    .site-topo, .site-rodape { text-transform: uppercase; }
+    .site-topo { font-size: 8.5pt; font-weight: 700; line-height: 1; }
+
+    h2 {
+      font-size: 10pt; margin: 7px 0 3px; padding: 2px 8px;
+      background: #e4e9ee; border-left: 5px solid var(--linha); break-after: avoid;
+    }
+    h2 small { font-weight: 400; font-size: 0.85em; }
+    .dica { color: var(--suave); font-size: 8.5pt; margin: 1px 0 2px; }
+    .obrig { font-weight: 700; }
+
+    /* Campos: caixa cinza sutil, rótulo pequeno em cima e uma pauta para escrever, com folga até a base. */
+    .linha-campos { display: flex; flex-wrap: wrap; gap: 0 8px; }
+    .campo { flex: 1 1 var(--larg, 100%); margin-top: 2px; border: 1px solid var(--cinza); border-radius: 3px; padding: 0.5mm 1.5mm 2mm; }
+    .campo label { display: block; font-size: 9pt; font-weight: 700; }
+    .campo .escrita { display: block; height: 7.5mm; border-bottom: 1px solid #777; }
+    /* Rótulo ao lado da pauta (Nome completo, Apartamento). */
+    .campo.inline { display: flex; align-items: flex-end; gap: 8px; }
+    .campo.inline label { flex: none; white-space: nowrap; }
+    .campo.inline .escrita { flex: 1; height: 6mm; }
+    .l15 { --larg: 14%; } .l17 { --larg: 17%; } .l20 { --larg: 17%; } .l22 { --larg: 20%; } .l25 { --larg: 22%; } .l30 { --larg: 28%; }
+    .minimo { flex: 0 0 auto; }
+    .l33 { --larg: 30%; } .l40 { --larg: 36%; } .l50 { --larg: 45%; } .l60 { --larg: 55%; }
+
+    /* Escolhas de marcar */
+    .opcoes { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 16px; margin: 2px 0 0; }
+    .opcoes > b { font-size: 9.5pt; }
+    .opcao { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+    .caixa { flex: none; width: 14px; height: 14px; border: 2px solid var(--linha); border-radius: 3px; background: #fff; }
+    /* Opções dentro de um campo: rótulo em cima (alinhado aos outros) e opções na altura da pauta. */
+    .campo .opcoes.na-pauta { height: 7.5mm; margin: 0; align-items: flex-end; flex-wrap: nowrap; gap: 0 12px; padding-bottom: 0.3mm; }
+
+    /* Item repetido (contato, ocupante, carro etc.): só agrupa, sem contorno. */
+    .item { break-inside: avoid; }
+
+    .aviso-lgpd { font-size: 8pt; border: 1px solid var(--cinza); border-radius: 4px; padding: 3px 8px; margin: 5px 0 0; }
+    .rodape-folha {
+      position: absolute; left: 11mm; right: 11mm; bottom: 7mm;
+      padding-top: 3px; border-top: 1px solid var(--cinza);
+      display: flex; justify-content: space-between; gap: 10px; font-size: 8pt; color: var(--suave);
+    }
+
+    @media print {
+      html, body { background: #fff; }
+      body { padding: 0; min-width: 0; }
+      .barra { display: none; }
+      .folha { margin: 0; box-shadow: none; }
+      .folha:last-of-type { break-after: auto; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="barra">
+  <a href="index.html">&larr; Voltar para o cadastro</a>
+  <button type="button" onclick="window.print()">Imprimir (2 folhas A4)</button>
+  <span>Imprima só a frente de cada folha. Depois de preenchido, entregue o formulário à administração do condomínio.</span>
+</div>
+
+<!-- FOLHA 1: vínculo, apartamento, titular, emergência, locação, ocupantes e aluguel de vaga -->
+<section class="folha">
+  <div class="cabecalho">
+    <h1>Condomínio Souza Franco<small>Cadastro de moradores</small></h1>
+    <div class="site-topo">https://tinyurl.com/cadastro-souzafranco</div>
+  </div>
+
+  <h2>1. Vínculo e apartamento</h2>
+  <div class="opcoes">
+    <b>Vínculo com a unidade <span class="obrig">*</span></b>
+    <span class="opcao"><span class="caixa"></span> Proprietário</span>
+    <span class="opcao"><span class="caixa"></span> Inquilino</span>
+  </div>
+  <div class="opcoes">
+    <b>Mora no imóvel? <span class="obrig">*</span> (só proprietário)</b>
+    <span class="opcao"><span class="caixa"></span> Sim</span>
+    <span class="opcao"><span class="caixa"></span> Não, está alugado</span>
+    <span class="opcao"><span class="caixa"></span> Não, está desocupado</span>
+  </div>
+  <div class="linha-campos">
+    <div class="campo inline l40"><label>Qual é o seu apartamento? <span class="obrig">*</span></label><span class="escrita"></span></div>
+  </div>
+
+  <h2>2. Dados do morador titular</h2>
+  <div class="linha-campos">
+    <div class="campo inline"><label>Nome completo <span class="obrig">*</span></label><span class="escrita"></span></div>
+  </div>
+  <div class="linha-campos">
+    <div class="campo l25"><label>Data de nascimento <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>CPF <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Identidade (RG)</label><span class="escrita"></span></div>
+    <div class="campo l20"><label>Órgão emissor</label><span class="escrita"></span></div>
+  </div>
+  <div class="linha-campos">
+    <div class="campo l25"><label>Celular, com DDD <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Telefone residencial/comercial</label><span class="escrita"></span></div>
+    <div class="campo l40"><label>E-mail</label><span class="escrita"></span></div>
+  </div>
+
+  <h2>3. Em caso de emergência procurar por</h2>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Vínculo</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Endereço</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Vínculo</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Endereço</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Vínculo</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Endereço</label><span class="escrita"></span></div>
+  </div></div>
+
+  <h2>4. Dados da locação <small>(só inquilino)</small></h2>
+  <div class="linha-campos">
+    <div class="campo l40"><label>Proprietário ou administradora <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Contato (telefone, celular ou e-mail)</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Vigência do contrato</label><span class="escrita"></span></div>
+  </div>
+  <p class="dica">Se puder, entregue junto uma cópia do contrato de locação.</p>
+
+  <h2>5. Demais ocupantes <small>(só se houver outras pessoas morando na unidade)</small></h2>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l22"><label>Vínculo/parentesco <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Data de nascimento</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l22"><label>Vínculo/parentesco</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Data de nascimento</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l22"><label>Vínculo/parentesco</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Data de nascimento</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l22"><label>Vínculo/parentesco</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Data de nascimento</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l30"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l22"><label>Vínculo/parentesco</label><span class="escrita"></span></div>
+    <div class="campo l17"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Data de nascimento</label><span class="escrita"></span></div>
+  </div></div>
+
+  <h2>6. Aluguel de vagas de garagem</h2>
+  <p class="dica">Permitido só entre moradores do condomínio. Marque apenas se você aluga a sua vaga ou usa a vaga de outro morador.</p>
+  <div class="opcoes">
+    <span class="opcao"><span class="caixa"></span> Minha vaga está alugada para</span>
+    <span class="opcao"><span class="caixa"></span> Alugo a vaga do</span>
+    <span class="opcao">Apto envolvido: <span style="display:inline-block;width:70px;border-bottom:1.5px solid var(--linha)">&nbsp;</span></span>
+  </div>
+
+  <div class="rodape-folha"><span>Condomínio Souza Franco · Cadastro de moradores</span><span class="site-rodape">https://tinyurl.com/cadastro-souzafranco</span><span>Folha 1 de 2</span></div>
+</section>
+
+<!-- FOLHA 2: veículos, pets, prestadores, observações e declaração -->
+<section class="folha">
+  <div class="cabecalho">
+    <h1>Condomínio Souza Franco<small>Cadastro de moradores</small></h1>
+    <div class="site-topo">https://tinyurl.com/cadastro-souzafranco</div>
+  </div>
+
+  <h2>7. Veículos</h2>
+  <p class="dica">Registre os meios de transporte da unidade que usam a garagem ou o bicicletário. Visita ocasional não precisa de cadastro: basta avisar o porteiro. Veículo que usa a vaga com frequência deve ser cadastrado. O bicicletário tem acesso por tag eletrônica, que se retira com a administração ou o síndico.</p>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Carro: marca e modelo <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Placa <span class="obrig">*</span></label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Carro: marca e modelo</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Placa</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Moto: marca e modelo <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Placa <span class="obrig">*</span></label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Moto: marca e modelo</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Placa</label><span class="escrita"></span></div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Bicicleta: marca</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25" style="visibility:hidden"></div>
+  </div></div>
+
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Bicicleta: marca</label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Cor</label><span class="escrita"></span></div>
+    <div class="campo l25" style="visibility:hidden"></div>
+  </div></div>
+  <h2>8. Pets</h2>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l15"><label>Nome <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l30"><label>Espécie e raça <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l50">
+      <label>Porte <span class="obrig">*</span></label>
+      <div class="opcoes na-pauta"><span class="opcao"><span class="caixa"></span> Pequeno</span><span class="opcao"><span class="caixa"></span> Médio</span><span class="opcao"><span class="caixa"></span> Grande</span></div>
+    </div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l15"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l30"><label>Espécie e raça</label><span class="escrita"></span></div>
+    <div class="campo l50">
+      <label>Porte</label>
+      <div class="opcoes na-pauta"><span class="opcao"><span class="caixa"></span> Pequeno</span><span class="opcao"><span class="caixa"></span> Médio</span><span class="opcao"><span class="caixa"></span> Grande</span></div>
+    </div>
+  </div></div>
+
+  <h2>9. Prestadores de serviço <small>(diaristas, cuidadores, professores particulares etc.)</small></h2>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Nome <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Serviço <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l15"><label>Telefone <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo minimo">
+      <label>Possui chave? <span class="obrig">*</span></label>
+      <div class="opcoes na-pauta"><span class="opcao"><span class="caixa"></span> Sim</span><span class="opcao"><span class="caixa"></span> Não</span></div>
+    </div>
+  </div></div>
+  <div class="item"><div class="linha-campos">
+    <div class="campo l40"><label>Nome</label><span class="escrita"></span></div>
+    <div class="campo l25"><label>Serviço</label><span class="escrita"></span></div>
+    <div class="campo l15"><label>Telefone</label><span class="escrita"></span></div>
+    <div class="campo minimo">
+      <label>Possui chave?</label>
+      <div class="opcoes na-pauta"><span class="opcao"><span class="caixa"></span> Sim</span><span class="opcao"><span class="caixa"></span> Não</span></div>
+    </div>
+  </div></div>
+
+  <h2>10. Observações <small>(mais ocupantes, veículos ou pets? Escreva aqui)</small></h2>
+  <div class="campo pautas" style="margin-top:0"><span class="escrita"></span><span class="escrita"></span></div>
+
+  <p class="aviso-lgpd">
+    <strong>Privacidade (LGPD):</strong> os dados deste formulário, inclusive os dos demais ocupantes, são usados exclusivamente pela administração do Condomínio Souza Franco para identificação dos moradores, segurança, controle de acesso e contato em caso de emergência. O acesso é restrito ao síndico e ao conselho, e os dados não são compartilhados com terceiros. Para esclarecimentos, consulta, correção ou exclusão dos seus dados, escreva para condominiosouzafranco@gmail.com.
+  </p>
+
+  <h2>11. Declaração</h2>
+  <p class="opcao" style="align-items:flex-start;margin:2px 0 0"><span class="caixa" style="margin-top:2px"></span> <span>Declaro que as informações prestadas são verdadeiras. <span class="obrig">*</span></span></p>
+  <div class="linha-campos">
+    <div class="campo l60"><label>Assinatura do morador titular <span class="obrig">*</span></label><span class="escrita"></span></div>
+    <div class="campo l33"><label>Data <span class="obrig">*</span></label><span class="escrita"></span></div>
+  </div>
+
+  <div class="rodape-folha"><span>Condomínio Souza Franco · Cadastro de moradores</span><span class="site-rodape">https://tinyurl.com/cadastro-souzafranco</span><span>Folha 2 de 2</span></div>
+</section>
+
+<script src="js/sem-conectivos.js?v=20261009Z"></script>
+</body>
+</html>
