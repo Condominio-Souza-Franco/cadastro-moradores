@@ -86,7 +86,6 @@
 
   // Sem rota de "bloquear de novo" no backend: a gravação espera os 5 segundos do DESFAZER.
   function desbloquear(id, botao) {
-    if (!window.confirm("Desbloquear este CPF? A pessoa volta a poder consultar e atualizar o cadastro. O registro do bloqueio continua no histórico.")) return;
     var item = botao && botao.closest(".bloqueio-item");
     if (!window.Desfazer) { gravarDesbloqueio(id); return; }
     if (item) item.classList.add("desfazer-pendente");

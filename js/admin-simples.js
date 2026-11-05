@@ -623,10 +623,6 @@
         var nome = botao.getAttribute("data-nome");
         if (!apto) return;
 
-        // Deixa claro QUAL cadastro será excluído: o apartamento pode ter outros (proprietário, inquilino...).
-        var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.\n\nSe o morador saiu do prédio, prefira \"Mudou-se\": o cadastro e o histórico ficam guardados. Excluir apaga tudo.");
-        if (!confirmar) return;
-
         // Excluir apaga tudo e não tem volta no backend: a gravação espera os 5 segundos do DESFAZER
         // (js/admin-desfazer.js). Nesse prazo o cadastro na tela fica esmaecido.
         var excluirAgora = function() {
@@ -661,7 +657,8 @@
         if (!window.Desfazer) { excluirAgora(); return; }
         resultado.classList.add("desfazer-pendente");
         window.Desfazer.adiar({
-          texto: "Excluindo o cadastro",
+          // O box diz QUAL cadastro será excluído: o apartamento pode ter outros (proprietário, inquilino...).
+          texto: "Excluindo o cadastro " + (nome ? "de " + nome + " " : "") + "do apto " + apto,
           aplicar: function() { resultado.classList.remove("desfazer-pendente"); excluirAgora(); },
           aoCancelar: function() { resultado.classList.remove("desfazer-pendente"); }
         });
@@ -677,11 +674,6 @@
         var situacao = botao.getAttribute("data-situacao");
         var marcandoMudouSe = situacao === "mudou-se";
 
-        var pergunta = marcandoMudouSe
-          ? "Marcar o cadastro " + (nome ? "de " + nome + " " : "") + "(apto " + apto + ") como \"mudou-se\"?\n\n" +
-            "Ele sai dos relatórios, da planilha e da consulta por CPF do formulário, mas continua guardado aqui e pode ser reativado."
-          : "Reativar o cadastro " + (nome ? "de " + nome + " " : "") + "(apto " + apto + ")? Ele volta aos relatórios, à planilha e à consulta por CPF.";
-        if (!window.confirm(pergunta)) return;
 
         setOverlayAdmin(true, marcandoMudouSe ? "Aguarde: marcando \"mudou-se\"" : "Aguarde: reativando cadastro");
         DataService.definirSituacaoCadastro(apto, ocorrencia, situacao)

@@ -127,7 +127,6 @@
   // Aprovar e rejeitar mandam e-mail ao morador e não têm volta no backend: por isso esperam os 5
   // segundos do DESFAZER (js/admin-desfazer.js) antes de gravar. O cartão fica esmaecido nesse prazo.
   function decidir(id, decisao, motivo) {
-    if (decisao === "aprovar" && !window.confirm("Aprovar este cadastro? Ele passa a valer no sistema (consulta e relatórios) e o morador recebe a confirmação por e-mail.")) return;
     var item = document.querySelector('.aprovacao-item[data-id="' + id + '"]');
     if (!window.Desfazer) { gravarDecisao(id, decisao, motivo); return; }
     if (item) item.classList.add("desfazer-pendente");
