@@ -99,8 +99,6 @@
     var id = botao.getAttribute("data-id");
     var item = itens.filter(function(i) { return i._id === id; })[0];
     if (!id || !item) return;
-    var descricao = (item.tipo || "alteração") + " do apto " + (item.apto || "?") + " em " + formatarQuando(item.quando);
-    if (!window.confirm("Apagar esta entrada do histórico?\n\n" + descricao + "\n\nO cadastro em si não é alterado.")) return;
 
     // Apagar não tem volta: a gravação espera os 5 segundos do DESFAZER (js/admin-desfazer.js).
     var linhaItem = botao.closest("li");
