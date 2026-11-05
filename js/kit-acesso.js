@@ -9,7 +9,7 @@
 //   2. Abrir pasta no Drive -> a pasta do kit (abre para quem entrar com a conta Google do e-mail
 //      cadastrado).
 (function() {
-  var URL_PASTA = "https://tinyurl.com/kit-souzafranco";
+  var URL_PASTA = "https://drive.google.com/drive/folders/1ZLt6ZQP8lMK8R3VEbgoaIz8_Qz6kFxCe";
   var CHAVE = "kitBoasVindas"; // mesma chave que a kit.html lê (sessionStorage desta aba)
   var modal = null;
 
