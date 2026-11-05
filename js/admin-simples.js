@@ -627,6 +627,9 @@
         var confirmar = window.confirm("Deseja realmente excluir o cadastro " + (nome ? "de " + nome + " " : "") + "do apartamento " + apto + "? Os outros cadastros deste apartamento não serão afetados.\n\nSe o morador saiu do prédio, prefira \"Mudou-se\": o cadastro e o histórico ficam guardados. Excluir apaga tudo.");
         if (!confirmar) return;
 
+        // Excluir apaga tudo e não tem volta no backend: a gravação espera os 5 segundos do DESFAZER
+        // (js/admin-desfazer.js). Nesse prazo o cadastro na tela fica esmaecido.
+        var excluirAgora = function() {
         setOverlayAdmin(true, "Aguarde: excluindo cadastro");
         DataService.excluirCadastro(apto, ocorrencia)
           .then(function(resposta) {
@@ -654,6 +657,14 @@
             setOverlayAdmin(false);
             setStatus((err && err.message) || "Não foi possível excluir o cadastro.", "erro");
           });
+        };
+        if (!window.Desfazer) { excluirAgora(); return; }
+        resultado.classList.add("desfazer-pendente");
+        window.Desfazer.adiar({
+          texto: "Excluindo o cadastro",
+          aplicar: function() { resultado.classList.remove("desfazer-pendente"); excluirAgora(); },
+          aoCancelar: function() { resultado.classList.remove("desfazer-pendente"); }
+        });
       });
     });
 
@@ -681,6 +692,21 @@
               return;
             }
             window.dispatchEvent(new CustomEvent("cadastro-alterado"));
+            // DESFAZER: aplica a situação oposta à que acabou de ser gravada.
+            if (window.Desfazer) window.Desfazer.mostrar({
+              texto: marcandoMudouSe ? "Marcado como mudou-se" : "Cadastro reativado",
+              reverter: function() {
+                return DataService.definirSituacaoCadastro(apto, ocorrencia, marcandoMudouSe ? "ativo" : "mudou-se").then(function(r2) {
+                  if (!r2 || !r2.sucesso) throw new Error("falha");
+                  window.dispatchEvent(new CustomEvent("cadastro-alterado"));
+                  return carregarAptosDoServidor().then(function() {
+                    var sel = document.getElementById("aptoAdmin");
+                    if (sel) sel.value = apto + "__" + ocorrencia;
+                    return carregarRegistro(apto, ocorrencia);
+                  });
+                });
+              }
+            });
             carregarAptosDoServidor().then(function() {
               var select = document.getElementById("aptoAdmin");
               if (select) select.value = apto + "__" + ocorrencia;

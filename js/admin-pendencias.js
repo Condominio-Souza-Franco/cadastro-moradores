@@ -87,7 +87,21 @@
     item.ignorado = ignorar;
     renderizar();
     DataService.ignorarPendencia(chave, ignorar)
-      .then(function(r) { if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar."); })
+      .then(function(r) {
+        if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
+        // DESFAZER: regrava o valor oposto e redesenha a lista.
+        if (window.Desfazer) window.Desfazer.mostrar({
+          texto: ignorar ? "Pendência ignorada" : "Pendência reativada",
+          reverter: function() {
+            return DataService.ignorarPendencia(chave, !ignorar).then(function(r2) {
+              if (!r2 || !r2.sucesso) throw new Error("falha");
+              item.ignorado = !ignorar;
+              grupos.forEach(function(g) { g.ativos = g.itens.filter(function(it) { return !it.ignorado; }).length; });
+              renderizar();
+            });
+          }
+        });
+      })
       .catch(function(erro) {
         item.ignorado = !ignorar;
         grupos.forEach(function(g) { g.ativos = g.itens.filter(function(it) { return !it.ignorado; }).length; });

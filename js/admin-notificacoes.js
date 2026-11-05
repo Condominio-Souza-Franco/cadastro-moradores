@@ -92,9 +92,20 @@
   function salvar() {
     document.getElementById("btnSalvarNotificacoes").disabled = true;
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando");
+    var anterior = JSON.parse(originais);   // estado gravado antes deste Salvar, para o DESFAZER
     DataService.salvarNotificacoes(marcados())
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
+        if (window.Desfazer) window.Desfazer.mostrar({
+          texto: "Notificações salvas",
+          reverter: function() {
+            return DataService.salvarNotificacoes(anterior).then(function(r2) {
+              if (!r2 || !r2.sucesso) throw new Error("falha");
+              aplicar(r2);
+              setStatus("Alteração desfeita. A tabela anterior voltou a valer.", "ok");
+            });
+          }
+        });
         aplicar(r);
         setStatus("Salvo. Os próximos e-mails seguem esta tabela.", "ok");
       })

@@ -124,8 +124,21 @@
       .then(function() { carregando = false; });
   }
 
+  // Aprovar e rejeitar mandam e-mail ao morador e não têm volta no backend: por isso esperam os 5
+  // segundos do DESFAZER (js/admin-desfazer.js) antes de gravar. O cartão fica esmaecido nesse prazo.
   function decidir(id, decisao, motivo) {
     if (decisao === "aprovar" && !window.confirm("Aprovar este cadastro? Ele passa a valer no sistema (consulta e relatórios) e o morador recebe a confirmação por e-mail.")) return;
+    var item = document.querySelector('.aprovacao-item[data-id="' + id + '"]');
+    if (!window.Desfazer) { gravarDecisao(id, decisao, motivo); return; }
+    if (item) item.classList.add("desfazer-pendente");
+    window.Desfazer.adiar({
+      texto: decisao === "aprovar" ? "Aprovando o cadastro" : "Rejeitando o cadastro",
+      aplicar: function() { gravarDecisao(id, decisao, motivo); },
+      aoCancelar: function() { if (item) item.classList.remove("desfazer-pendente"); }
+    });
+  }
+
+  function gravarDecisao(id, decisao, motivo) {
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, decisao === "aprovar" ? "Aguarde: aprovando" : "Aguarde: rejeitando");
     DataService.decidirAprovacao(id, decisao, motivo)
       .then(function(r) {
