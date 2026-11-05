@@ -172,6 +172,8 @@
     function pdfAberto() { return !!document.querySelector(".popup-link:not([hidden])"); }
     document.addEventListener("DOMContentLoaded", function() {
       document.querySelector(".fechar-embutido").addEventListener("click", fechar);
+      // "Voltar" no popup: fecha o popup (sem isso o link abriria a página inicial dentro do próprio popup).
+      document.querySelector(".voltar").addEventListener("click", function(e) { e.preventDefault(); fechar(); });
       document.addEventListener("click", function(e) {
         if (!e.target.closest("main") && !e.target.closest(".popup-link") && !e.target.closest(".overlay-processamento")) fechar();
       });
