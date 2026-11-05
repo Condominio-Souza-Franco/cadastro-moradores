@@ -174,6 +174,11 @@
       document.querySelector(".fechar-embutido").addEventListener("click", fechar);
       // "Voltar" no popup: fecha o popup (sem isso o link abriria a página inicial dentro do próprio popup).
       document.querySelector(".voltar").addEventListener("click", function(e) { e.preventDefault(); fechar(); });
+      // Documentação de segurança no popup: abre no mesmo popup da página inicial (troca o conteúdo), sem carregar a página dentro do kit.
+      var doc = document.querySelector(".rodape a[href=\"seguranca.html\"]");
+      if (doc) doc.addEventListener("click", function(e) {
+        if (window.parent.PopupLinks && window.parent.PopupLinks.abrirDireto) { e.preventDefault(); window.parent.PopupLinks.abrirDireto(new URL("seguranca.html", location.href).href, "Documentação de segurança"); }
+      });
       document.addEventListener("click", function(e) {
         if (!e.target.closest("main") && !e.target.closest(".popup-link") && !e.target.closest(".overlay-processamento")) fechar();
       });
