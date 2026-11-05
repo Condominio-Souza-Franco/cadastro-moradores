@@ -84,8 +84,20 @@
       .then(function() { carregando = false; });
   }
 
-  function desbloquear(id) {
+  // Sem rota de "bloquear de novo" no backend: a gravação espera os 5 segundos do DESFAZER.
+  function desbloquear(id, botao) {
     if (!window.confirm("Desbloquear este CPF? A pessoa volta a poder consultar e atualizar o cadastro. O registro do bloqueio continua no histórico.")) return;
+    var item = botao && botao.closest(".bloqueio-item");
+    if (!window.Desfazer) { gravarDesbloqueio(id); return; }
+    if (item) item.classList.add("desfazer-pendente");
+    window.Desfazer.adiar({
+      texto: "Desbloqueando o CPF",
+      aplicar: function() { gravarDesbloqueio(id); },
+      aoCancelar: function() { if (item) item.classList.remove("desfazer-pendente"); }
+    });
+  }
+
+  function gravarDesbloqueio(id) {
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: desbloqueando");
     DataService.desbloquearCpf(id)
       .then(function(r) {
@@ -115,7 +127,7 @@
     });
     painel.addEventListener("click", function(e) {
       var botao = e.target.closest(".btn-desbloquear");
-      if (botao) desbloquear(botao.getAttribute("data-id"));
+      if (botao) desbloquear(botao.getAttribute("data-id"), botao);
     });
   });
 })();

@@ -3498,3 +3498,59 @@ details.como-funcionam-notificacoes[open] > summary::before { transform: rotate(
 .overlay-processamento .overlay-processamento-card > .overlay-processamento-fechar:hover {
   background: #f1f4f8 !important;
 }
+
+/* ==========================================
+   DESFAZER: box de 5 segundos (js/admin-desfazer.js)
+   ========================================== */
+/* Fica acima do overlay "Aguarde" (z-index 10000). A linha na base do box encolhe de ponta a ponta
+   em 5 segundos; a duração real vem do JS (animation-duration inline), este valor é só reserva. */
+.desfazer-box {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 10050;
+  width: min(380px, calc(100vw - 32px));
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+.desfazer-box[hidden] { display: none; }
+.desfazer-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.desfazer-texto { font-size: 0.92rem; line-height: 1.3; min-width: 0; }
+.desfazer-box .desfazer-botao {
+  width: auto;
+  height: auto;
+  flex: 0 0 auto;
+  background: #fff;
+  color: var(--primary-color);
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  min-height: 40px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.desfazer-box .desfazer-botao:hover { background: #e6edf4; }
+.desfazer-box .desfazer-botao:disabled { opacity: 0.6; cursor: default; }
+.desfazer-trilha { height: 4px; background: rgba(255, 255, 255, 0.2); }
+.desfazer-barra { height: 100%; width: 100%; background: #fff; transform-origin: left center; }
+.desfazer-correndo .desfazer-barra { animation: desfazer-percurso 5s linear forwards; }
+.desfazer-aviso .desfazer-linha { justify-content: center; }
+.desfazer-aviso .desfazer-botao, .desfazer-aviso .desfazer-trilha { display: none; }
+@keyframes desfazer-percurso { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (max-width: 560px) {
+  .desfazer-box { bottom: 12px; }
+}
+
+/* Item esperando os 5 segundos do DESFAZER (ainda não foi gravado). */
+.desfazer-pendente { opacity: 0.45; pointer-events: none; }

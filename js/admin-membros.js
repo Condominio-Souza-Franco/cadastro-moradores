@@ -177,9 +177,23 @@
     var botao = document.getElementById("btnSalvarMembros");
     if (botao) botao.disabled = true;
     if (window.setOverlayAdmin) window.setOverlayAdmin(true, "Aguarde: salvando os membros");
+    var anterior = JSON.parse(originais);   // estado gravado antes deste Salvar, para o DESFAZER
     DataService.salvarMembros(paraEnviar())
       .then(function(r) {
         if (!r || !r.sucesso) throw new Error((r && r.mensagem) || "Não foi possível salvar.");
+        if (window.Desfazer) window.Desfazer.mostrar({
+          texto: "Membros salvos",
+          reverter: function() {
+            return DataService.salvarMembros(anterior).then(function(r2) {
+              if (!r2 || !r2.sucesso) throw new Error("falha");
+              membros = r2.membros;
+              originais = JSON.stringify(paraEnviar());
+              renderizar();
+              setStatus("Alteração desfeita. A lista anterior voltou a valer.", "ok");
+              window.dispatchEvent(new CustomEvent("cadastro-alterado"));
+            });
+          }
+        });
         membros = r.membros;
         originais = JSON.stringify(paraEnviar());
         renderizar();

@@ -102,6 +102,22 @@
     var descricao = (item.tipo || "alteração") + " do apto " + (item.apto || "?") + " em " + formatarQuando(item.quando);
     if (!window.confirm("Apagar esta entrada do histórico?\n\n" + descricao + "\n\nO cadastro em si não é alterado.")) return;
 
+    // Apagar não tem volta: a gravação espera os 5 segundos do DESFAZER (js/admin-desfazer.js).
+    var linhaItem = botao.closest("li");
+    if (window.Desfazer) {
+      botao.disabled = true;
+      if (linhaItem) linhaItem.classList.add("desfazer-pendente");
+      window.Desfazer.adiar({
+        texto: "Apagando a entrada do histórico",
+        aplicar: function() { gravarExclusao(botao, id); },
+        aoCancelar: function() { botao.disabled = false; if (linhaItem) linhaItem.classList.remove("desfazer-pendente"); }
+      });
+      return;
+    }
+    gravarExclusao(botao, id);
+  }
+
+  function gravarExclusao(botao, id) {
     botao.disabled = true;
     DataService.excluirHistorico(id)
       .then(function(resposta) {
