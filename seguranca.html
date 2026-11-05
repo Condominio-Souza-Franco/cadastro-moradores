@@ -364,6 +364,11 @@
   // devolve a página no mesmo ponto em que estava (ex.: o painel aberto no admin).
   (function() {
     var link = document.getElementById("linkVoltar");
+    // Dentro do popup do site (aberto pelo kit): "voltar" fecha o popup, em vez de carregar outra página dentro dele.
+    if (window.parent !== window) {
+      link.addEventListener("click", function(e) { e.preventDefault(); window.parent.postMessage("fechar-popup-link", location.origin); });
+      return;
+    }
     var origem = "";
     try { var r = new URL(document.referrer); if (r.origin === location.origin) origem = r.pathname; } catch (e) {}
     if (!origem) return;
